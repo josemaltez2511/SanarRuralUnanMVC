@@ -1,0 +1,9 @@
+﻿# Visual Studio directories
+.vs/
+bin/
+obj/
+[Bb]in/
+[Oo]bj/
+*.user
+*.suo
+*.cache
