@@ -12,9 +12,17 @@ namespace SanarRuralUnan
     using System;
     using System.Data.Entity;
     using System.Data.Entity.Infrastructure;
-    
+
+    //Es la clase auto‑generada de Entity Framework que actúa
+    //como punto de entrada a la base de datos: SanarRuralDBEntities : DbContext.
+    // Permite acceder a las tablas como colecciones de entidades
+    // (por ejemplo DbSet<Usuario> Usuarios) y ejecutar operaciones CRUD con Entity Framework (LINQ, Add, SaveChanges, etc.).
     public partial class SanarRuralDBEntities : DbContext
     {
+
+        //Constructor : base("name=SanarRuralDBEntities"): le indica a Entity Framework
+        //que use la cadena de conexión llamada SanarRuralDBEntities en App.config
+        //(esa cadena incluye metadata del .edmx).
         public SanarRuralDBEntities()
             : base("name=SanarRuralDBEntities")
         {

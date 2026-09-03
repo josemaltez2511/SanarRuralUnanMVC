@@ -112,6 +112,10 @@
       <Generator>EntityModelCodeGenerator</Generator>
       <LastGenOutput>ModelSanarRural.Designer.cs</LastGenOutput>
     </EntityDeploy>
+    <None Include=".Designer.gitignore" />
+    <None Include=".gitignore">
+      <SubType>Form</SubType>
+    </None>
     <None Include="ModelSanarRural.edmx.diagram">
       <DependentUpon>ModelSanarRural.edmx</DependentUpon>
     </None>

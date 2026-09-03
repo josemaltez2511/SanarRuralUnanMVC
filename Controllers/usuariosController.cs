@@ -7,7 +7,7 @@ using SanarRuralUnan.Models;
 
 // Controller de usuarios para la aplicación SanarRuralUnan
 // Este controlador maneja la lógica de negocio relacionada con los usuarios,
-// Un controller es responsable de recibir las solicitudes del usuario,
+// Un controller es responsable de recibir las solicitudes del usuario desde la vista,
 // procesarlas entre el modelo y la vista, y devolver la respuesta adecuada al usuario.
 namespace SanarRuralUnan.Controllers
 {
@@ -24,8 +24,7 @@ namespace SanarRuralUnan.Controllers
             // Instanciamos el objeto del modelo usuarios
             // o sea que estamos creando un objeto de la clase usuarios
             // que se encuentra en el modelo, para poder utilizar sus métodos y propiedades
-            usuarios objetoUsuario = new usuarios();
-
+            usuariosModel objetoUsuario = new usuariosModel();
             // Retornamos el resultado del método IniciarSesion del modelo
             // que verifica si el correo y la contraseña son correctos
             return objetoUsuario.IniciarSesion(correo, contrasena);
@@ -41,11 +40,51 @@ namespace SanarRuralUnan.Controllers
             // Instanciamos el objeto del modelo usuarios
             // o sea que estamos creando un objeto de la clase usuarios 
             // que se encuentra en el modelo, para poder utilizar sus métodos y propiedades
-            usuarios objetoUsuario = new usuarios();
+            usuariosModel objetoUsuario = new usuariosModel();
 
             // Ejecutamos el método CerrarSesion del modelo
             // que elimina la información de la sesión del usuario
             objetoUsuario.CerrarSesion();
+        }
+
+        // Método para saber si un correo ya está registrado
+        // La Vista llama a este método en vez de consultar la base de datos directamente
+        public bool CorreoYaExiste(string correo)
+        {
+            // creamos nuevo objeto de la clase usuario para acceder a la tabla Usuarios de la base de datos
+            usuariosModel objetoUsuario = new usuariosModel();
+
+            // mandamos a llamar a la clase ExisteCorreo del modelo usuarios
+            // la cual cumple con la funcion de validar si existe el correo
+            // le pasamos como parametro el correo ingresado por el usuario
+            return objetoUsuario.ExisteCorreo(correo);
+        }
+
+        // Método para crear un nuevo usuario
+        // Recibe los datos que la Vista recolectó del formulario
+        // y le pasa la orden de guardar al Modelo
+        // Retorna true si se pudo crear, false si el correo ya existía
+        public bool CrearUsuario(string correo, string contrasena)
+        {
+            // creamos nuevo objeto de la clase usuario para acceder a la tabla Usuarios de la base de datos
+            usuariosModel objetoUsuario = new usuariosModel();
+
+            // Verificamos primero que el correo no esté repetido
+            if (objetoUsuario.ExisteCorreo(correo))
+            {
+                return false;
+            }
+
+            // Armamos los datos del nuevo usuario
+            objetoUsuario.Correo = correo;
+            objetoUsuario.Contrasena = contrasena;
+            objetoUsuario.FechaRegistro = DateTime.Now;
+            objetoUsuario.Estado = "Activo";
+
+            // Le pedimos al Modelo que lo guarde en la base de datos
+            objetoUsuario.Guardar();
+
+            return true;
         }
     }
 }

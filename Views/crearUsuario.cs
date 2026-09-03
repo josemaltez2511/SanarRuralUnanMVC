@@ -8,12 +8,17 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Text.RegularExpressions;
-using SanarRuralUnan.Models;
+using SanarRuralUnan.Controllers;
 
 namespace SanarRuralUnan.Views
 {
     public partial class crearUsuario : Form
     {
+        // Objeto del Controller de usuarios
+        // Lo usamos para pedirle validaciones y guardar el usuario,
+        // así la Vista nunca habla directo con la base de datos
+        private usuariosControllers controlador = new usuariosControllers();
+
         public crearUsuario()
         {
             InitializeComponent();
@@ -65,28 +70,35 @@ namespace SanarRuralUnan.Views
                 return;
             }
 
-            // Validar en tiempo real si el correo ya existe en la base de datos
-            try
+            // Le preguntamos al Controller si el correo ya existe
+            // (la Vista ya NO consulta la base de datos directamente, eso lo hace el Modelo)
+            if (controlador.CorreoYaExiste(correo))
             {
-                SanarRuralDBEntities db = new SanarRuralDBEntities();
-                var existe = db.Usuarios.Any(u => u.Correo == correo);
-
-                if (existe)
-                {
-                    lblErrorCorreo.Text = "Este correo ya está registrado en la base de datos.";
-                    lblErrorCorreo.ForeColor = Color.Red;
-                }
-                else
-                {
-                    lblErrorCorreo.Text = "Correo disponible.";
-                    lblErrorCorreo.ForeColor = Color.FromArgb(120, 190, 32);
-                }
+                lblErrorCorreo.Text = "Este correo ya está registrado en la base de datos.";
+                lblErrorCorreo.ForeColor = Color.Red;
             }
-            catch
+            else
             {
-                lblErrorCorreo.Text = "";
+                lblErrorCorreo.Text = "Correo disponible.";
+                lblErrorCorreo.ForeColor = Color.FromArgb(120, 190, 32);
             }
         }
+
+        // metodo privado para validar que la contraseña ingresada por el usuario sea correcta
+        private void ValidarCoincidenciaContrasenas()
+        {
+            if (txtContrasena.Text != txtConfirmarContrasena.Text)
+            {
+                lblErrorConfirmar.Text = "Las contraseñas no coinciden";
+                lblErrorConfirmar.ForeColor = Color.Red;
+            }
+            else
+            {
+                lblErrorConfirmar.Text = "Las contraseñas coinciden";
+                lblErrorConfirmar.ForeColor = Color.FromArgb(120, 190, 32);
+            }
+        }
+
 
         // Validación en tiempo real de la Contraseña (Mínimo 5 caracteres)
         private void txtContrasena_TextChanged(object sender, EventArgs e)
@@ -113,26 +125,11 @@ namespace SanarRuralUnan.Views
             ValidarCoincidenciaContrasenas();
         }
 
-        private void ValidarCoincidenciaContrasenas()
-        {
-            if (txtContrasena.Text != txtConfirmarContrasena.Text)
-            {
-                lblErrorConfirmar.Text = "Las contraseñas no coinciden";
-                lblErrorConfirmar.ForeColor = Color.Red;
-            }
-            else
-            {
-                lblErrorConfirmar.Text = "Las contraseñas coinciden";
-                lblErrorConfirmar.ForeColor = Color.FromArgb(120, 190, 32);
-            }
-        }
-
         // Botón Guardar con validaciones finales antes de registrar
         private void btnGuardar_Click(object sender, EventArgs e)
         {
             string correo = txtCorreo.Text.Trim();
             string contrasena = txtContrasena.Text.Trim();
-            DateTime fechaRegistro = DateTime.Now;
             string confirmar = txtConfirmarContrasena.Text.Trim();
 
             if (string.IsNullOrEmpty(correo) || string.IsNullOrEmpty(contrasena) || string.IsNullOrEmpty(confirmar))
@@ -155,20 +152,16 @@ namespace SanarRuralUnan.Views
 
             try
             {
-                SanarRuralDBEntities db = new SanarRuralDBEntities();
-                if (db.Usuarios.Any(u => u.Correo == correo))
+                // Le pedimos al Controller que cree el usuario
+                // El controller se encarga de preguntarle al Modelo si el correo ya existe y de guardar
+                // La Vista ya no sabe nada de la base de datos, solo del Controller
+                bool creado = controlador.CrearUsuario(correo, contrasena);
+
+                if (!creado)
                 {
                     MessageBox.Show("El correo ya se encuentra registrado.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
                 }
-
-                usuarios nuevoUsuario = new usuarios();
-                nuevoUsuario.Correo = correo;
-                nuevoUsuario.Contrasena = contrasena;
-                nuevoUsuario.FechaRegistro = fechaRegistro; // Aseguramos el envío de la fecha actual
-                nuevoUsuario.Estado = "Activo";
-
-                nuevoUsuario.Guardar();
 
                 MessageBox.Show("¡Usuario registrado con éxito!", "Registro Exitoso", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
