@@ -11,6 +11,8 @@ namespace SanarRuralUnan.Models
 {
     public class usuariosModel
     {
+        // ESTE COMENTARIO LO HIZO ETHER 
+        // El modelo de usuario es una clase que representa un usuario en la aplicación
         // INICIALIZAR OBJETO DE CONEXIÓN A LA BD
         // (la conexión a la base de datos SOLO debe existir aquí, en el Modelo, nunca en la Vista)
 
