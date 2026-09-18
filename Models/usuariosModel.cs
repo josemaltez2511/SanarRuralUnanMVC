@@ -19,6 +19,12 @@ namespace SanarRuralUnan.Models
         SanarRuralDBEntities db = new SanarRuralDBEntities();
 
         // DECLARACIÓN DE LAS PROPIEDADES (CORREO, CONTRASENA, ESTADO)
+
+
+        // estamos aprendiendo a usar github
+
+
+
         public string Correo { get; set; }
         public string Contrasena { get; set; }
         public string Estado { get; set; }
