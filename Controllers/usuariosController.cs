@@ -74,7 +74,7 @@ namespace SanarRuralUnan.Controllers
             {
                 return false;
             }
-
+            // Hola, estamos aprendiendo a usar github
             // Armamos los datos del nuevo usuario
             objetoUsuario.Correo = correo;
             objetoUsuario.Contrasena = contrasena;
