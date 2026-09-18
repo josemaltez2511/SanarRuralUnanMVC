@@ -20,7 +20,7 @@ namespace SanarRuralUnan.Models
 
         // DECLARACIÓN DE LAS PROPIEDADES (CORREO, CONTRASENA, ESTADO)
 
-
+        // Hola, cambio realizado por Esther
         // estamos aprendiendo a usar github
 
 
