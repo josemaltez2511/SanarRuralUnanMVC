@@ -40,7 +40,7 @@ namespace SanarRuralUnan.Controllers
 
         // Método para verificar si un hospital existe o está activo mediante su Id
         // La Vista llama a este método en vez de consultar la base de datos directamente
-        public bool ospitalExiste(int idHospital)
+        public bool hospitalExiste(int idHospital)
         {
             // Instanciamos el objeto del modelo hospitalesModel
             Models.hospitalesModel objetoHospital = new Models. hospitalesModel();
@@ -53,7 +53,7 @@ namespace SanarRuralUnan.Controllers
         // Recibe los datos que la Vista recolectó del formulario (Nombre y Ubicación)
         // y le pasa la orden de guardar al Modelo
 
-        public void GuardarHospital(string nombre, string ubicacion, int id)
+        public void GuardarHospital(string nombre, string ubicacion)
         {
             // Instanciamos el objeto del modelo hospitalesModel
             Models.hospitalesModel objetoHospital = new Models.hospitalesModel();
@@ -62,15 +62,16 @@ namespace SanarRuralUnan.Controllers
             objetoHospital.Ubicacion = ubicacion;
             // Ejecutamos el método GuardarHospital del modelo hospitalesModel
             // que crea un nuevo registro en la base de datos con los datos proporcionados
-            objetoHospital.GuardarHospital(id);
+
 
             //asignamos los valores de nombre y ubicacion a la instancia del modelo hospitalesModel
+            // le pedimos al modelo que ejecute el método GuardarHospital para guardar el nuevo hospital en la base de datos
 
             objetoHospital.Nombre = nombre;
             objetoHospital.Ubicacion = ubicacion;
 
-            // le pedimos al modelo que ejecute el método GuardarHospital para guardar el nuevo hospital en la base de datos
-            objetoHospital.GuardarHospital(id);
+            
+
         }
 
             //Metodo para eliminar un hospital de la base de datos, recibe el id del hospital a eliminar y se la pasa al modelo para que ejecute la eliminación
