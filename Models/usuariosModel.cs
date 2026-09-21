@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-// como guardar un nuevo usuario en la base de datos
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 // Modelo de usuario para la aplicación SanarRuralUnan
 // Este modelo representa un usuario en la aplicación y contiene métodos para guardar un usuario,
 // El modelo es para manejar la lógica de negocio relacionada con los usuarios,
+// como guardar un nuevo usuario en la base de datos
 namespace SanarRuralUnan.Models
 {
     public class usuariosModel
@@ -48,7 +48,7 @@ namespace SanarRuralUnan.Models
         // devuelve true si el correo ya está registrado, false si está libre
         public bool ExisteCorreo(string correo)
         {
-
+          
             try
             {
                 return db.Usuarios.Any(u => u.Correo == correo);
@@ -129,6 +129,5 @@ namespace SanarRuralUnan.Models
         {
             usuarioActual = null;
         }
-
     }
 }
