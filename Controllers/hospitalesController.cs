@@ -43,46 +43,62 @@ namespace SanarRuralUnan.Controllers
         public bool hospitalExiste(int idHospital)
         {
             // Instanciamos el objeto del modelo hospitalesModel
-            Models.hospitalesModel objetoHospital = new Models. hospitalesModel();
+            Models.hospitalesModel objetoHospital = new Models.hospitalesModel();
             // Mandamos a llamar al método ExisteHospital del modelo hospitalesModel
             // que verifica si el hospital con el Id proporcionado existe y está activo
             return objetoHospital.ExisteHospital(idHospital);
         }
 
         // Método para crear y guardar un nuevo hospital
-        // Recibe los datos que la Vista recolectó del formulario (Nombre y Ubicación)
+        // Recibe los datos que la Vista recolectó del formulario (Id, Nombre y Ubicación)
         // y le pasa la orden de guardar al Modelo
 
-        public void GuardarHospital(string nombre, string ubicacion)
+        public void guardarHospital(int id, string nombre, string ubicacion)
         {
             // Instanciamos el objeto del modelo hospitalesModel
             Models.hospitalesModel objetoHospital = new Models.hospitalesModel();
             // Asignamos los valores recibidos a las propiedades del objeto hospital
+            objetoHospital.IdHospital = id;
             objetoHospital.Nombre = nombre;
             objetoHospital.Ubicacion = ubicacion;
 
-         
-       
+            // Llamamos al método GuardarHospital con los parámetros requeridos "nombre" y "ubicacion"
+            objetoHospital.guardarHospital(nombre, ubicacion);
         }
 
-            //Metodo para eliminar un hospital de la base de datos, recibe el id del hospital a eliminar y se la pasa al modelo para que ejecute la eliminación
+        //Metodo para eliminar un hospital de la base de datos, recibe el id del hospital a eliminar y se la pasa al modelo para que ejecute la eliminación
 
-            public void EliminarHospital(int id)
-            {
-                // Instanciamos el objeto del modelo hospitalesModel
-                Models.hospitalesModel objetoHospital = new Models.hospitalesModel();
-                // Ejecutamos el método EliminarHospital del modelo hospitalesModel
-                // que elimina el registro del hospital con el Id proporcionado de la base de datos
-                objetoHospital.EliminarHospital(id);
+        public void eliminarHospital(int id)
+        {
+            // Instanciamos el objeto del modelo hospitalesModel
+            Models.hospitalesModel objetoHospital = new Models.hospitalesModel();
+            // Ejecutamos el método EliminarHospital del modelo hospitalesModel
+            // que elimina el registro del hospital con el Id proporcionado de la base de datos
+            objetoHospital.EliminarHospital(id);
 
             // creamos un objeto  de la clase hospitalesModel para acceder a la tabla Hospitales de la base de datos
 
             hospitalesModel objetohospital = new hospitalesModel();
 
-            
         }
     }
 }
+
+
+
+            
+        
+    
+
+
+
+
+
+
+
+
+ 
+
     
     
     
