@@ -63,8 +63,17 @@ namespace SanarRuralUnan.Controllers
         // Método para crear un nuevo usuario
         // Recibe los datos que la Vista recolectó del formulario
         // y le pasa la orden de guardar al Modelo
-        // Retorna true si se pudo crear, false si el correo ya existía
-        public bool CrearUsuario(string correo, string contrasena)
+        //
+        // CAMBIO IMPORTANTE: antes este método era "bool" (solo true/false).
+        // Ahora es "int" porque necesitamos saber EXACTAMENTE cuál fue el IdUsuario
+        // que se acaba de crear, para poder usarlo después al registrar el Paciente
+        // o el Doctor asociado a esta cuenta (esto resuelve el RF-02: saber a qué
+        // formulario de perfil mandar al usuario después de crear su cuenta).
+        //
+        // Ahora esta función devuelve:
+        //   - el IdUsuario (un número mayor a 0) si el registro fue exitoso
+        //   - el número -1 si el correo ya existía y no se creó nada
+        public int CrearUsuario(string correo, string contrasena)
         {
             // creamos nuevo objeto de la clase usuario para acceder a la tabla Usuarios de la base de datos
             usuariosModel objetoUsuario = new usuariosModel();
@@ -72,7 +81,9 @@ namespace SanarRuralUnan.Controllers
             // Verificamos primero que el correo no esté repetido
             if (objetoUsuario.ExisteCorreo(correo))
             {
-                return false;
+                // Usamos -1 como "código de error" para decirle a la Vista
+                // que el correo ya existía y no se creó ningún usuario nuevo
+                return -1;
             }
             // Hola, estamos aprendiendo a usar github
             // Armamos los datos del nuevo usuario
@@ -81,10 +92,12 @@ namespace SanarRuralUnan.Controllers
             objetoUsuario.FechaRegistro = DateTime.Now;
             objetoUsuario.Estado = "Activo";
 
-            // Le pedimos al Modelo que lo guarde en la base de datos
-            objetoUsuario.Guardar();
+            // Le pedimos al Modelo que lo guarde en la base de datos.
+            // Ahora Guardar() ya no es "void", nos devuelve el IdUsuario que se generó,
+            // así que lo guardamos en una variable para poder devolverlo a la Vista.
+            int idUsuarioGenerado = objetoUsuario.Guardar();
 
-            return true;
+            return idUsuarioGenerado;
         }
     }
 }

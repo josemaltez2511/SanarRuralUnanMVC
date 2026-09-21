@@ -48,7 +48,7 @@ namespace SanarRuralUnan.Models
         // devuelve true si el correo ya está registrado, false si está libre
         public bool ExisteCorreo(string correo)
         {
-          
+
             try
             {
                 return db.Usuarios.Any(u => u.Correo == correo);
@@ -62,13 +62,17 @@ namespace SanarRuralUnan.Models
         }
 
         // MÉTODO PARA GUARDAR UN USUARIO
-        public void Guardar()
+        // CAMBIO: antes este método era "void" (no devolvía nada).
+        // Ahora es "int" y devuelve el IdUsuario que la base de datos generó automáticamente,
+        // porque lo necesitamos para poder crear después el Paciente o el Doctor
+        // asociado a esta misma cuenta (RF-02, RF-03, RF-07).
+        public int Guardar()
         {
 
             // CREAR OBJETO CON LA ENTIDAD USUARIO DE LA BD
             // esto es como un contrato para definir y verificar si recibimos los mismos datos
             // que requerimos para crear un usuario 
-            Usuario usuarioNuevo = new Usuario();
+            Usuarios usuarioNuevo = new Usuarios();
 
 
             // ASIGNAR LOS VALORES DE LAS PROPIEDADES RECIBIDAS
@@ -84,6 +88,11 @@ namespace SanarRuralUnan.Models
 
             // GUARDAR LOS CAMBIOS EN LA BD
             db.SaveChanges();
+
+            // IMPORTANTE: después de db.SaveChanges(), Entity Framework ya conoce
+            // el IdUsuario que la base de datos generó automáticamente (autoincremental)
+            // y lo escribe de vuelta en el objeto "usuarioNuevo". Por eso ya lo podemos leer aquí.
+            return usuarioNuevo.IdUsuario;
         }
 
 

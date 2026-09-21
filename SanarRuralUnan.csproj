@@ -59,7 +59,26 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Citas.cs">
+      <DependentUpon>ModelSanarRural.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Controllers\pacientesController.cs" />
     <Compile Include="Controllers\usuariosController.cs" />
+    <Compile Include="Diagnosticos_Tratamientos.cs">
+      <DependentUpon>ModelSanarRural.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Doctores.cs">
+      <DependentUpon>ModelSanarRural.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Enfermedades.cs">
+      <DependentUpon>ModelSanarRural.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Hospitales.cs">
+      <DependentUpon>ModelSanarRural.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Medicamentos.cs">
+      <DependentUpon>ModelSanarRural.tt</DependentUpon>
+    </Compile>
     <Compile Include="ModelSanarRural.Context.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -75,9 +94,29 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>ModelSanarRural.edmx</DependentUpon>
     </Compile>
-    <Compile Include="Models\usuarios.cs" />
-    <Compile Include="Usuario.cs">
+    <Compile Include="Models\pacientesModels.cs" />
+    <Compile Include="Models\usuariosModel.cs" />
+    <Compile Include="obj\Debug\.NETFramework,Version=v4.7.2.AssemblyAttributes.cs" />
+    <Compile Include="Pacientes.cs">
       <DependentUpon>ModelSanarRural.tt</DependentUpon>
+    </Compile>
+    <Compile Include="RecomendacionesMedicas.cs">
+      <DependentUpon>ModelSanarRural.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Sintomas.cs">
+      <DependentUpon>ModelSanarRural.tt</DependentUpon>
+    </Compile>
+    <Compile Include="sysdiagram.cs">
+      <DependentUpon>ModelSanarRural.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Usuarios.cs">
+      <DependentUpon>ModelSanarRural.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Views\crearPaciente.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Views\crearPaciente.Designer.cs">
+      <DependentUpon>crearPaciente.cs</DependentUpon>
     </Compile>
     <Compile Include="Views\crearUsuario.cs">
       <SubType>Form</SubType>
@@ -93,6 +132,9 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="obj\Debug\SanarRuralUnan.iniciarSesion.resources" />
+    <EmbeddedResource Include="obj\Debug\SanarRuralUnan.Properties.Resources.resources" />
+    <EmbeddedResource Include="obj\Debug\SanarRuralUnan.Views.crearUsuario.resources" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -102,6 +144,9 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="Views\crearPaciente.resx">
+      <DependentUpon>crearPaciente.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Views\crearUsuario.resx">
       <DependentUpon>crearUsuario.cs</DependentUpon>
     </EmbeddedResource>
@@ -116,10 +161,44 @@
     <None Include=".gitignore">
       <SubType>Form</SubType>
     </None>
+    <None Include="bin\Debug\SanarRuralUnan.exe.config" />
     <None Include="ModelSanarRural.edmx.diagram">
       <DependentUpon>ModelSanarRural.edmx</DependentUpon>
     </None>
+    <None Include="obj\Debug\DesignTimeResolveAssemblyReferences.cache" />
+    <None Include="obj\Debug\DesignTimeResolveAssemblyReferencesInput.cache" />
+    <None Include="obj\Debug\edmxResourcesToEmbed\ModelSanarRural.csdl" />
+    <None Include="obj\Debug\edmxResourcesToEmbed\ModelSanarRural.msl" />
+    <None Include="obj\Debug\edmxResourcesToEmbed\ModelSanarRural.ssdl" />
+    <None Include="obj\Debug\SanarRur.584D474E.Up2Date" />
+    <None Include="obj\Debug\SanarRuralUnan.csproj.AssemblyReference.cache" />
+    <None Include="obj\Debug\SanarRuralUnan.csproj.CoreCompileInputs.cache" />
+    <None Include="obj\Debug\SanarRuralUnan.csproj.GenerateResource.cache" />
+    <None Include="obj\Debug\SanarRuralUnan.exe.config" />
     <None Include="packages.config" />
+    <None Include="packages\EntityFramework.6.5.2\.signature.p7s" />
+    <None Include="packages\EntityFramework.6.5.2\buildTransitive\EntityFramework.props" />
+    <None Include="packages\EntityFramework.6.5.2\buildTransitive\EntityFramework.targets" />
+    <None Include="packages\EntityFramework.6.5.2\buildTransitive\net6.0\EntityFramework.props" />
+    <None Include="packages\EntityFramework.6.5.2\buildTransitive\net6.0\EntityFramework.targets" />
+    <None Include="packages\EntityFramework.6.5.2\build\EntityFramework.DefaultItems.props" />
+    <None Include="packages\EntityFramework.6.5.2\build\EntityFramework.props" />
+    <None Include="packages\EntityFramework.6.5.2\build\EntityFramework.targets" />
+    <None Include="packages\EntityFramework.6.5.2\build\net6.0\EntityFramework.props" />
+    <None Include="packages\EntityFramework.6.5.2\build\net6.0\EntityFramework.targets" />
+    <None Include="packages\EntityFramework.6.5.2\content\net40\App.config.install.xdt" />
+    <None Include="packages\EntityFramework.6.5.2\content\net40\App.config.transform" />
+    <None Include="packages\EntityFramework.6.5.2\content\net40\Web.config.install.xdt" />
+    <None Include="packages\EntityFramework.6.5.2\content\net40\Web.config.transform" />
+    <None Include="packages\EntityFramework.6.5.2\EntityFramework.6.5.2.nupkg" />
+    <None Include="packages\EntityFramework.6.5.2\README.md" />
+    <None Include="packages\EntityFramework.6.5.2\tools\EntityFramework6.PS2.psd1" />
+    <None Include="packages\EntityFramework.6.5.2\tools\EntityFramework6.PS2.psm1" />
+    <None Include="packages\EntityFramework.6.5.2\tools\EntityFramework6.psd1" />
+    <None Include="packages\EntityFramework.6.5.2\tools\EntityFramework6.psm1" />
+    <None Include="packages\EntityFramework.6.5.2\tools\init.ps1" />
+    <None Include="packages\EntityFramework.6.5.2\tools\install.ps1" />
+    <None Include="packages\EntityFramework.6.5.2\tools\net6.0\any\ef6.runtimeconfig.json" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -129,11 +208,18 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <None Include="README.md" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="bin\Debug\EntityFramework.dll" />
+    <Content Include="bin\Debug\EntityFramework.SqlServer.dll" />
+    <Content Include="bin\Debug\EntityFramework.SqlServer.xml" />
+    <Content Include="bin\Debug\EntityFramework.xml" />
+    <Content Include="bin\Debug\SanarRuralUnan.exe" />
+    <Content Include="bin\Debug\SanarRuralUnan.pdb" />
     <Content Include="ModelSanarRural.Context.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <DependentUpon>ModelSanarRural.edmx</DependentUpon>
@@ -144,9 +230,40 @@
       <DependentUpon>ModelSanarRural.edmx</DependentUpon>
       <LastGenOutput>ModelSanarRural.cs</LastGenOutput>
     </Content>
+    <Content Include="obj\Debug\SanarRuralUnan.csproj.FileListAbsolute.txt" />
+    <Content Include="obj\Debug\SanarRuralUnan.exe" />
+    <Content Include="obj\Debug\SanarRuralUnan.pdb" />
+    <Content Include="obj\Debug\TempPE\ModelSanarRural.Context.cs.dll" />
+    <Content Include="obj\Debug\TempPE\ModelSanarRural.cs.dll" />
+    <Content Include="obj\Debug\TempPE\ModelSanarRural.Designer.cs.dll" />
+    <Content Include="packages\EntityFramework.6.5.2\build\Microsoft.Data.Entity.Build.Tasks.dll" />
+    <Content Include="packages\EntityFramework.6.5.2\Icon.png" />
+    <Content Include="packages\EntityFramework.6.5.2\lib\net40\EntityFramework.dll" />
+    <Content Include="packages\EntityFramework.6.5.2\lib\net40\EntityFramework.SqlServer.dll" />
+    <Content Include="packages\EntityFramework.6.5.2\lib\net40\EntityFramework.SqlServer.xml" />
+    <Content Include="packages\EntityFramework.6.5.2\lib\net40\EntityFramework.xml" />
+    <Content Include="packages\EntityFramework.6.5.2\lib\net45\EntityFramework.dll" />
+    <Content Include="packages\EntityFramework.6.5.2\lib\net45\EntityFramework.SqlServer.dll" />
+    <Content Include="packages\EntityFramework.6.5.2\lib\net45\EntityFramework.SqlServer.xml" />
+    <Content Include="packages\EntityFramework.6.5.2\lib\net45\EntityFramework.xml" />
+    <Content Include="packages\EntityFramework.6.5.2\lib\netstandard2.1\EntityFramework.dll" />
+    <Content Include="packages\EntityFramework.6.5.2\lib\netstandard2.1\EntityFramework.SqlServer.dll" />
+    <Content Include="packages\EntityFramework.6.5.2\lib\netstandard2.1\EntityFramework.SqlServer.xml" />
+    <Content Include="packages\EntityFramework.6.5.2\lib\netstandard2.1\EntityFramework.xml" />
+    <Content Include="packages\EntityFramework.6.5.2\tools\about_EntityFramework6.help.txt" />
+    <Content Include="packages\EntityFramework.6.5.2\tools\net40\any\ef6.exe" />
+    <Content Include="packages\EntityFramework.6.5.2\tools\net40\win-arm64\ef6.exe" />
+    <Content Include="packages\EntityFramework.6.5.2\tools\net40\win-x86\ef6.exe" />
+    <Content Include="packages\EntityFramework.6.5.2\tools\net45\any\ef6.exe" />
+    <Content Include="packages\EntityFramework.6.5.2\tools\net45\win-arm64\ef6.exe" />
+    <Content Include="packages\EntityFramework.6.5.2\tools\net45\win-x86\ef6.exe" />
+    <Content Include="packages\EntityFramework.6.5.2\tools\net6.0\any\ef6.dll" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="bin\Release\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

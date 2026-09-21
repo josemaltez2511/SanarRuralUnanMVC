@@ -12,17 +12,9 @@ namespace SanarRuralUnan
     using System;
     using System.Data.Entity;
     using System.Data.Entity.Infrastructure;
-
-    //Es la clase auto‑generada de Entity Framework que actúa
-    //como punto de entrada a la base de datos: SanarRuralDBEntities : DbContext.
-    // Permite acceder a las tablas como colecciones de entidades
-    // (por ejemplo DbSet<Usuario> Usuarios) y ejecutar operaciones CRUD con Entity Framework (LINQ, Add, SaveChanges, etc.).
+    
     public partial class SanarRuralDBEntities : DbContext
     {
-
-        //Constructor : base("name=SanarRuralDBEntities"): le indica a Entity Framework
-        //que use la cadena de conexión llamada SanarRuralDBEntities en App.config
-        //(esa cadena incluye metadata del .edmx).
         public SanarRuralDBEntities()
             : base("name=SanarRuralDBEntities")
         {
@@ -33,6 +25,16 @@ namespace SanarRuralUnan
             throw new UnintentionalCodeFirstException();
         }
     
-        public virtual DbSet<Usuario> Usuarios { get; set; }
+        public virtual DbSet<Usuarios> Usuarios { get; set; }
+        public virtual DbSet<Citas> Citas { get; set; }
+        public virtual DbSet<Diagnosticos_Tratamientos> Diagnosticos_Tratamientos { get; set; }
+        public virtual DbSet<Doctores> Doctores { get; set; }
+        public virtual DbSet<Enfermedades> Enfermedades { get; set; }
+        public virtual DbSet<Hospitales> Hospitales { get; set; }
+        public virtual DbSet<Medicamentos> Medicamentos { get; set; }
+        public virtual DbSet<Pacientes> Pacientes { get; set; }
+        public virtual DbSet<RecomendacionesMedicas> RecomendacionesMedicas { get; set; }
+        public virtual DbSet<Sintomas> Sintomas { get; set; }
+        public virtual DbSet<sysdiagram> sysdiagrams { get; set; }
     }
 }

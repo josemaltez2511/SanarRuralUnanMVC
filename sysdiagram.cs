@@ -12,12 +12,12 @@ namespace SanarRuralUnan
     using System;
     using System.Collections.Generic;
     
-    public partial class Usuario
+    public partial class sysdiagram
     {
-        public int IdUsuario { get; set; }
-        public string Correo { get; set; }
-        public string Contrasena { get; set; }
-        public Nullable<System.DateTime> FechaRegistro { get; set; }
-        public string Estado { get; set; }
+        public string name { get; set; }
+        public int principal_id { get; set; }
+        public int diagram_id { get; set; }
+        public Nullable<int> version { get; set; }
+        public byte[] definition { get; set; }
     }
 }
