@@ -60,18 +60,9 @@ namespace SanarRuralUnan.Controllers
             // Asignamos los valores recibidos a las propiedades del objeto hospital
             objetoHospital.Nombre = nombre;
             objetoHospital.Ubicacion = ubicacion;
-            // Ejecutamos el método GuardarHospital del modelo hospitalesModel
-            // que crea un nuevo registro en la base de datos con los datos proporcionados
 
-
-            //asignamos los valores de nombre y ubicacion a la instancia del modelo hospitalesModel
-            // le pedimos al modelo que ejecute el método GuardarHospital para guardar el nuevo hospital en la base de datos
-
-            objetoHospital.Nombre = nombre;
-            objetoHospital.Ubicacion = ubicacion;
-
-            
-
+         
+       
         }
 
             //Metodo para eliminar un hospital de la base de datos, recibe el id del hospital a eliminar y se la pasa al modelo para que ejecute la eliminación
@@ -88,9 +79,7 @@ namespace SanarRuralUnan.Controllers
 
             hospitalesModel objetohospital = new hospitalesModel();
 
-            // mandamos a llamar al método EliminarHospital del modelo hospitalesModel
-
-            objetohospital.EliminarHospital(id);
+            
         }
     }
 }
