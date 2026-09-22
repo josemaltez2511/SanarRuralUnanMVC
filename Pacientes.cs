@@ -28,6 +28,14 @@ namespace SanarRuralUnan
         public string Genero { get; set; }
         public string Telefono { get; set; }
         public string Estado { get; set; }
+        public string Departamento { get; set; }
+        public string Municipio { get; set; }
+        public string Comunidad { get; set; }
+        public string Direccion { get; set; }
+        public string ContactoEmergencia { get; set; }
+        public string TipoSangre { get; set; }
+        public string Alergias { get; set; }
+        public string Antecedentes { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Citas> Citas { get; set; }

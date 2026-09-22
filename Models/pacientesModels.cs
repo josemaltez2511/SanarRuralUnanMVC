@@ -1,133 +1,334 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 // Modelo de paciente para la aplicación SanarRuralUnan
 // Este modelo representa a un paciente en la aplicación y contiene los métodos para
 // crear, consultar, editar y "eliminar" (de forma lógica) un paciente en la base de datos.
-// El modelo es para manejar la lógica de negocio relacionada con los pacientes,
-// nunca la Vista debe hablar directo con la base de datos, solo el Modelo.
+// El modelo maneja la lógica de negocio relacionada con los pacientes.
+// La Vista nunca debe hablar directamente con la base de datos; solo el Modelo.
+
 namespace SanarRuralUnan.Models
 {
     public class pacientesModel
     {
-        // INICIALIZAR OBJETO DE CONEXIÓN A LA BD
-        // (la conexión a la base de datos SOLO debe existir aquí, en el Modelo, nunca en la Vista)
+        // ============================================================
+        // CONEXIÓN A LA BASE DE DATOS
+        // ============================================================
+
+        // La conexión a la BD solo existe en el Modelo.
         SanarRuralDBEntities db = new SanarRuralDBEntities();
 
-        // DECLARACIÓN DE LAS PROPIEDADES
-        // Estas propiedades son las mismas columnas que tiene la tabla Pacientes en la BD
-        // IdPaciente es el identificador único del paciente (se genera solo, no lo llenamos nosotros)
+
+        // ============================================================
+        // PROPIEDADES DEL PACIENTE
+        // ============================================================
+
+        // Identificador único del paciente.
+        // Se genera automáticamente en la base de datos.
         public int IdPaciente { get; set; }
 
-        // IdUsuario es la llave que conecta este paciente con su cuenta de usuario
-        // (la cuenta se crea primero en RF-01, y luego se completa el perfil de paciente aquí)
+        // Identificador del usuario relacionado con este paciente.
         public int IdUsuario { get; set; }
 
-        // Nombres y Apellidos del paciente
+
+        // ============================================================
+        // DATOS PERSONALES
+        // ============================================================
+
         public string Nombres { get; set; }
+
         public string Apellidos { get; set; }
 
-        // Fecha de nacimiento del paciente, se usa para calcular la edad si hace falta
         public DateTime FechaNacimiento { get; set; }
 
-        // Genero del paciente (por ejemplo: Masculino, Femenino)
         public string Genero { get; set; }
 
-        // Numero de telefono de contacto del paciente
         public string Telefono { get; set; }
 
-        // Estado del paciente (por ejemplo: Activo, Inactivo)
+
+        // ============================================================
+        // DATOS DE UBICACIÓN
+        // ============================================================
+
+        public string Departamento { get; set; }
+
+        public string Municipio { get; set; }
+
+        public string Comunidad { get; set; }
+
+        public string Direccion { get; set; }
+
+
+        // ============================================================
+        // INFORMACIÓN DE SALUD
+        // ============================================================
+
+        public string ContactoEmergencia { get; set; }
+
+        public string TipoSangre { get; set; }
+
+        public string Alergias { get; set; }
+
+        public string Antecedentes { get; set; }
+
+
+        // ============================================================
+        // ESTADO DEL PACIENTE
+        // ============================================================
+
+        // Ejemplo:
+        // "Activo"
+        // "Inactivo"
+        //
+        // Se utiliza para realizar el soft delete.
         public string Estado { get; set; }
 
-        // CONSTRUCTOR VACÍO
-        // Se usa cuando queremos crear el objeto e ir llenando las propiedades una por una
-        public pacientesModel() { }
 
+        // ============================================================
+        // CONSTRUCTOR VACÍO
+        // ============================================================
+
+        // Permite crear un objeto y llenar sus propiedades
+        // individualmente.
+
+        public pacientesModel()
+        {
+        }
+
+
+        // ============================================================
         // CONSTRUCTOR CON PARÁMETROS
-        // Se usa cuando ya tenemos todos los datos y queremos crear el objeto de una sola vez
-        public pacientesModel(int idUsuario, string nombres, string apellidos, DateTime fechaNacimiento, string genero, string telefono)
+        // ============================================================
+
+        // Permite crear un paciente con todos sus datos.
+
+        public pacientesModel(
+            int idUsuario,
+            string nombres,
+            string apellidos,
+            DateTime fechaNacimiento,
+            string genero,
+            string telefono,
+            string departamento,
+            string municipio,
+            string comunidad,
+            string direccion,
+            string contactoEmergencia,
+            string tipoSangre,
+            string alergias,
+            string antecedentes)
         {
             this.IdUsuario = idUsuario;
+
+            // Datos personales
             this.Nombres = nombres;
             this.Apellidos = apellidos;
             this.FechaNacimiento = fechaNacimiento;
             this.Genero = genero;
             this.Telefono = telefono;
+
+            // Ubicación
+            this.Departamento = departamento;
+            this.Municipio = municipio;
+            this.Comunidad = comunidad;
+            this.Direccion = direccion;
+
+            // Información de salud
+            this.ContactoEmergencia = contactoEmergencia;
+            this.TipoSangre = tipoSangre;
+            this.Alergias = alergias;
+            this.Antecedentes = antecedentes;
         }
 
-        // MÉTODO PARA GUARDAR UN PACIENTE NUEVO (esto cumple el RF-03)
-        // Este método se llama justo después de haber creado la cuenta de usuario (RF-01),
-        // porque el paciente necesita un IdUsuario ya existente para poder registrarse
+
+        // ============================================================
+        // CREAR / GUARDAR PACIENTE
+        // RF-03
+        // ============================================================
+
+        // Crea un nuevo paciente y lo guarda en la base de datos.
+
         public void guardarPaciente()
         {
-            // CREAR OBJETO CON LA ENTIDAD PACIENTE DE LA BD
-            // esto es como un contrato para definir y verificar si recibimos los mismos datos
-            // que requerimos para crear un paciente
+            // Crear una nueva entidad Pacientes.
             Pacientes pacienteNuevo = new Pacientes();
 
-            // ASIGNAR LOS VALORES DE LAS PROPIEDADES RECIBIDAS
-            // A LAS PROPIEDADES DEL OBJETO PACIENTE
+
+            // --------------------------------------------------------
+            // DATOS PERSONALES
+            // --------------------------------------------------------
+
             pacienteNuevo.IdUsuario = IdUsuario;
             pacienteNuevo.Nombres = Nombres;
             pacienteNuevo.Apellidos = Apellidos;
             pacienteNuevo.FechaNacimiento = FechaNacimiento;
             pacienteNuevo.Genero = Genero;
             pacienteNuevo.Telefono = Telefono;
+
+
+            // --------------------------------------------------------
+            // DATOS DE UBICACIÓN
+            // --------------------------------------------------------
+
+            pacienteNuevo.Departamento = Departamento;
+            pacienteNuevo.Municipio = Municipio;
+            pacienteNuevo.Comunidad = Comunidad;
+            pacienteNuevo.Direccion = Direccion;
+
+
+            // --------------------------------------------------------
+            // INFORMACIÓN DE SALUD
+            // --------------------------------------------------------
+
+            pacienteNuevo.ContactoEmergencia = ContactoEmergencia;
+            pacienteNuevo.TipoSangre = TipoSangre;
+            pacienteNuevo.Alergias = Alergias;
+            pacienteNuevo.Antecedentes = Antecedentes;
+
+
+            // --------------------------------------------------------
+            // ESTADO INICIAL
+            // --------------------------------------------------------
+
+            // Todo paciente nuevo comienza como Activo.
             pacienteNuevo.Estado = "Activo";
 
-            // AGREGAR EL OBJETO PACIENTE NUEVO A LA TABLA PACIENTES DE LA BD
+
+            // --------------------------------------------------------
+            // GUARDAR EN LA BASE DE DATOS
+            // --------------------------------------------------------
+
             db.Pacientes.Add(pacienteNuevo);
 
-            // GUARDAR LOS CAMBIOS EN LA BD.
             db.SaveChanges();
         }
 
-        // MÉTODO PARA CONSULTAR UN PACIENTE (esto cumple el RF-05)
-        // Recibe el IdUsuario (el de la cuenta que inició sesión) y busca su perfil de paciente
-        // Usamos FirstOrDefault de LINQ: si encuentra un paciente con ese IdUsuario, lo devuelve;
-        // si no encuentra nada, devuelve null (vacío) en vez de dar error
+
+        // ============================================================
+        // CONSULTAR PACIENTE
+        // RF-05
+        // ============================================================
+
+        // Busca un paciente mediante el IdUsuario.
+        //
+        // Solo devuelve pacientes activos.
+        //
+        // Los pacientes eliminados lógicamente permanecen
+        // en la base de datos, pero no aparecen en las
+        // consultas normales.
+
         public Pacientes buscarPaciente(int idUsuario)
         {
-            return db.Pacientes.FirstOrDefault(p => p.IdUsuario == idUsuario);
+            return db.Pacientes.FirstOrDefault(
+                p => p.IdUsuario == idUsuario &&
+                     p.Estado == "Activo"
+            );
         }
 
-        // MÉTODO PARA EDITAR UN PACIENTE YA EXISTENTE (esto cumple el RF-04)
-        // Recibe el IdPaciente de quien se quiere editar, y los nuevos datos que se van a guardar
-        public void actualizarPaciente(int idPaciente, string nombres, string apellidos, string genero, string telefono)
-        {
-            // Buscamos primero el registro del paciente en la BD
-            var paciente = db.Pacientes.FirstOrDefault(p => p.IdPaciente == idPaciente);
 
-            // Si lo encontramos, actualizamos sus datos con los valores nuevos
-            // Si "paciente" es null (no existe), no hacemos nada, para evitar un error
+        // ============================================================
+        // EDITAR PACIENTE
+        // RF-04
+        // ============================================================
+
+        // Actualiza todos los datos del paciente.
+
+        public void actualizarPaciente(
+            int idPaciente,
+            string nombres,
+            string apellidos,
+            DateTime fechaNacimiento,
+            string genero,
+            string telefono,
+            string departamento,
+            string municipio,
+            string comunidad,
+            string direccion,
+            string contactoEmergencia,
+            string tipoSangre,
+            string alergias,
+            string antecedentes)
+        {
+            // Buscar el paciente mediante su IdPaciente.
+            var paciente = db.Pacientes.FirstOrDefault(
+                p => p.IdPaciente == idPaciente
+            );
+
+
+            // Si el paciente existe, actualizar sus datos.
             if (paciente != null)
             {
+                // ----------------------------------------------------
+                // DATOS PERSONALES
+                // ----------------------------------------------------
+
                 paciente.Nombres = nombres;
                 paciente.Apellidos = apellidos;
+                paciente.FechaNacimiento = fechaNacimiento;
                 paciente.Genero = genero;
                 paciente.Telefono = telefono;
 
-                // Guardamos los cambios hechos en el paciente encontrado
+
+                // ----------------------------------------------------
+                // DATOS DE UBICACIÓN
+                // ----------------------------------------------------
+
+                paciente.Departamento = departamento;
+                paciente.Municipio = municipio;
+                paciente.Comunidad = comunidad;
+                paciente.Direccion = direccion;
+
+
+                // ----------------------------------------------------
+                // INFORMACIÓN DE SALUD
+                // ----------------------------------------------------
+
+                paciente.ContactoEmergencia = contactoEmergencia;
+                paciente.TipoSangre = tipoSangre;
+                paciente.Alergias = alergias;
+                paciente.Antecedentes = antecedentes;
+
+
+                // ----------------------------------------------------
+                // GUARDAR CAMBIOS
+                // ----------------------------------------------------
+
                 db.SaveChanges();
             }
         }
 
-        // MÉTODO PARA "ELIMINAR" UN PACIENTE SIN BORRARLO DE VERDAD (esto cumple el RF-06, soft delete)
-        // "Soft delete" significa que no borramos el registro de la base de datos,
-        // solo lo marcamos como "Inactivo" para que deje de aparecer en las consultas normales,
-        // pero su información y su historial siguen existiendo por si se necesitan después
+
+        // ============================================================
+        // ELIMINAR PACIENTE
+        // RF-06
+        // ============================================================
+
+        // Soft delete.
+        //
+        // NO elimina físicamente el paciente de la base de datos.
+        //
+        // Solamente cambia:
+        //
+        // Activo → Inactivo
+        //
+        // De esta manera se conserva el historial del paciente.
+
         public void eliminarPaciente(int idPaciente)
         {
-            var paciente = db.Pacientes.FirstOrDefault(p => p.IdPaciente == idPaciente);
+            // Buscar el paciente.
+            var paciente = db.Pacientes.FirstOrDefault(
+                p => p.IdPaciente == idPaciente
+            );
 
+
+            // Si el paciente existe...
             if (paciente != null)
             {
-                // IMPORTANTE: esta línea necesita que la tabla Pacientes ya tenga la columna "Estado"
-                // (agregada con: ALTER TABLE Pacientes ADD Estado VARCHAR(20) NOT NULL DEFAULT 'Activo')
+                // Marcar como inactivo.
                 paciente.Estado = "Inactivo";
 
+
+                // Guardar cambios.
                 db.SaveChanges();
             }
         }

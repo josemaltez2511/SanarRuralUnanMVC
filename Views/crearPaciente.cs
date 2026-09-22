@@ -6,54 +6,109 @@ namespace SanarRuralUnan.Views
 {
     public partial class crearPaciente : Form
     {
-        // Objeto del Controller de pacientes
-        // Lo usamos para pedirle que guarde el paciente,
-        // así la Vista nunca habla directo con la base de datos
+        // ============================================================
+        // CONTROLLER
+        // ============================================================
+        // La Vista utiliza el Controller para comunicarse con el Modelo.
+        // La Vista nunca accede directamente a la base de datos.
+
         private pacientesController controlador = new pacientesController();
 
-        // Guardamos el IdUsuario de la cuenta que se acaba de crear en RF-01,
-        // porque el paciente necesita quedar ligado a esa cuenta
+
+        // ============================================================
+        // ID DEL USUARIO
+        // ============================================================
+        // El paciente queda relacionado con la cuenta de usuario
+        // que fue creada previamente.
+
         private int idUsuario;
 
-        // Constructor que recibe el IdUsuario desde la pantalla de crearUsuario
-        // Así este formulario ya sabe a qué cuenta pertenece el paciente que se va a registrar
+
+        // ============================================================
+        // CONSTRUCTOR
+        // ============================================================
+
         public crearPaciente(int idUsuarioRecibido)
         {
             InitializeComponent();
+
             idUsuario = idUsuarioRecibido;
         }
 
-        // Método para centrar dinámicamente la tarjeta principal de manera responsiva
+
+        // ============================================================
+        // CENTRAR PANEL PRINCIPAL
+        // ============================================================
+        // Mantiene la tarjeta centrada cuando cambia el tamaño
+        // de la ventana.
+
         private void CentrarPanelCard()
         {
             int x = (this.ClientSize.Width - panelCard.Width) / 2;
             int y = (this.ClientSize.Height - panelCard.Height) / 2;
-            panelCard.Location = new System.Drawing.Point(Math.Max(10, x), Math.Max(10, y));
+
+            panelCard.Location = new System.Drawing.Point(
+                Math.Max(10, x),
+                Math.Max(10, y)
+            );
         }
+
+
+        // ============================================================
+        // LOAD
+        // ============================================================
 
         private void crearPaciente_Load(object sender, EventArgs e)
         {
+            // Colocar el cursor inicialmente en nombres.
             txtNombres.Focus();
+
+            // Centrar la tarjeta.
             CentrarPanelCard();
 
-            // Dejamos el ComboBox de Género con una opción seleccionada por defecto
-            if (cmbGenero.Items.Count > 0)
-                cmbGenero.SelectedIndex = 0;
 
-            // La fecha de nacimiento no puede ser en el futuro,
-            // así que limitamos el DateTimePicker hasta el día de hoy
-            dtpFechaNacimiento.MaxDate = DateTime.Now;
+            // --------------------------------------------------------
+            // GÉNERO
+            // --------------------------------------------------------
+            // Si el ComboBox tiene opciones, seleccionar la primera.
+
+            if (cmbGenero.Items.Count > 0)
+            {
+                cmbGenero.SelectedIndex = 0;
+            }
+
+
+            // --------------------------------------------------------
+            // FECHA DE NACIMIENTO
+            // --------------------------------------------------------
+            // No permitimos seleccionar una fecha futura.
+
+            dtpFechaNacimiento.MaxDate = DateTime.Today;
+
+
+            // --------------------------------------------------------
+            // MENSAJES DE ERROR
+            // --------------------------------------------------------
 
             lblErrorNombres.Text = "";
             lblErrorTelefono.Text = "";
         }
+
+
+        // ============================================================
+        // RESPONSIVE
+        // ============================================================
 
         private void crearPaciente_Resize(object sender, EventArgs e)
         {
             CentrarPanelCard();
         }
 
-        // Validación en tiempo real de Nombres (no puede quedar vacío)
+
+        // ============================================================
+        // VALIDACIÓN DE NOMBRES
+        // ============================================================
+
         private void txtNombres_TextChanged(object sender, EventArgs e)
         {
             if (string.IsNullOrWhiteSpace(txtNombres.Text))
@@ -67,18 +122,29 @@ namespace SanarRuralUnan.Views
             }
         }
 
-        // Validación en tiempo real de Teléfono (solo números, largo razonable)
+
+        // ============================================================
+        // VALIDACIÓN DE TELÉFONO
+        // ============================================================
+        // El teléfono es opcional.
+        // Si se escribe, solamente permitimos números.
+
         private void txtTelefono_TextChanged(object sender, EventArgs e)
         {
             string telefono = txtTelefono.Text.Trim();
 
+
+            // Si está vacío, no mostramos error porque es opcional.
             if (string.IsNullOrEmpty(telefono))
             {
                 lblErrorTelefono.Text = "";
                 return;
             }
 
+
+            // Comprobar que todos los caracteres sean números.
             bool esSoloNumeros = true;
+
             foreach (char c in telefono)
             {
                 if (!char.IsDigit(c))
@@ -88,10 +154,14 @@ namespace SanarRuralUnan.Views
                 }
             }
 
+
             if (!esSoloNumeros)
             {
-                lblErrorTelefono.Text = "El teléfono solo debe contener números.";
-                lblErrorTelefono.ForeColor = System.Drawing.Color.Red;
+                lblErrorTelefono.Text =
+                    "El teléfono solo debe contener números.";
+
+                lblErrorTelefono.ForeColor =
+                    System.Drawing.Color.Red;
             }
             else
             {
@@ -99,52 +169,217 @@ namespace SanarRuralUnan.Views
             }
         }
 
-        // Botón Guardar con validaciones finales antes de registrar el paciente
+
+        // ============================================================
+        // GUARDAR PACIENTE
+        // RF-03
+        // ============================================================
+
         private void btnGuardar_Click(object sender, EventArgs e)
         {
-            string nombres = txtNombres.Text.Trim();
-            string apellidos = txtApellidos.Text.Trim();
-            string genero = cmbGenero.SelectedItem != null ? cmbGenero.SelectedItem.ToString() : "";
-            string telefono = txtTelefono.Text.Trim();
-            DateTime fechaNacimiento = dtpFechaNacimiento.Value;
+            // ========================================================
+            // DATOS PERSONALES
+            // ========================================================
 
-            if (string.IsNullOrEmpty(nombres) || string.IsNullOrEmpty(apellidos))
+            string nombres = txtNombres.Text.Trim();
+
+            string apellidos = txtApellidos.Text.Trim();
+
+            DateTime fechaNacimiento =
+                dtpFechaNacimiento.Value;
+
+            string genero =
+                cmbGenero.SelectedItem != null
+                    ? cmbGenero.SelectedItem.ToString()
+                    : "";
+
+            string telefono =
+                txtTelefono.Text.Trim();
+
+
+            // ========================================================
+            // DATOS DE UBICACIÓN
+            // ========================================================
+
+            string departamento =
+                txtDepartamento.Text.Trim();
+
+            string municipio =
+                txtMunicipio.Text.Trim();
+
+            string comunidad =
+                txtComunidad.Text.Trim();
+
+            string direccion =
+                txtDireccion.Text.Trim();
+
+
+            // ========================================================
+            // INFORMACIÓN DE SALUD
+            // ========================================================
+
+            string contactoEmergencia =
+                txtContactoEmergencia.Text.Trim();
+
+            string tipoSangre =
+                cmbTipoSangre.SelectedItem != null
+                    ? cmbTipoSangre.SelectedItem.ToString()
+                    : "";
+
+            string alergias =
+                txtAlergias.Text.Trim();
+
+            string antecedentes =
+                txtAntecedentes.Text.Trim();
+
+
+            // ========================================================
+            // VALIDACIONES OBLIGATORIAS
+            // ========================================================
+            // Solamente estos datos son obligatorios:
+            // - Nombres
+            // - Apellidos
+            // - Fecha de nacimiento
+
+            if (string.IsNullOrWhiteSpace(nombres))
             {
-                MessageBox.Show("Por favor, complete al menos el nombre y los apellidos.", "Campos Vacíos", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show(
+                    "Por favor, ingrese los nombres del paciente.",
+                    "Campo requerido",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning
+                );
+
+                txtNombres.Focus();
                 return;
             }
 
+
+            if (string.IsNullOrWhiteSpace(apellidos))
+            {
+                MessageBox.Show(
+                    "Por favor, ingrese los apellidos del paciente.",
+                    "Campo requerido",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning
+                );
+
+                txtApellidos.Focus();
+                return;
+            }
+
+
+            // ========================================================
+            // VALIDACIÓN DEL TELÉFONO
+            // ========================================================
+
+            if (!string.IsNullOrEmpty(telefono))
+            {
+                bool esSoloNumeros = true;
+
+                foreach (char c in telefono)
+                {
+                    if (!char.IsDigit(c))
+                    {
+                        esSoloNumeros = false;
+                        break;
+                    }
+                }
+
+                if (!esSoloNumeros)
+                {
+                    MessageBox.Show(
+                        "El teléfono solo debe contener números.",
+                        "Teléfono inválido",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Warning
+                    );
+
+                    txtTelefono.Focus();
+                    return;
+                }
+            }
+
+
+            // ========================================================
+            // GUARDAR
+            // ========================================================
+
             try
             {
-                // Le pedimos al Controller que cree el paciente
-                // Él se encarga de hablar con el Modelo y guardar en la base de datos
-                // La Vista nunca toca la base de datos directamente
-                controlador.crearPaciente(idUsuario, nombres, apellidos, fechaNacimiento, genero, telefono);
+                // Enviamos todos los datos al Controller.
+                controlador.crearPaciente(
+                    idUsuario,
+                    nombres,
+                    apellidos,
+                    fechaNacimiento,
+                    genero,
+                    telefono,
+                    departamento,
+                    municipio,
+                    comunidad,
+                    direccion,
+                    contactoEmergencia,
+                    tipoSangre,
+                    alergias,
+                    antecedentes
+                );
 
-                MessageBox.Show("¡Paciente registrado con éxito!", "Registro Exitoso", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
+                // Confirmación al usuario.
+                MessageBox.Show(
+                    "¡Paciente registrado con éxito!",
+                    "Registro Exitoso",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Information
+                );
+
+
+                // Cerrar formulario.
                 this.Close();
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Ocurrió un error al guardar: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(
+                    "Ocurrió un error al guardar el paciente:\n\n"
+                    + ex.Message,
+                    "Error",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error
+                );
             }
         }
 
-        // Permite continuar sin completar el perfil de paciente en este momento
-        private void lnkVolver_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+
+        // ============================================================
+        // VOLVER / OMITIR
+        // ============================================================
+        // Permite cerrar el formulario sin completar información
+        // adicional del paciente.
+
+        private void lnkVolver_LinkClicked(
+            object sender,
+            LinkLabelLinkClickedEventArgs e)
         {
             this.Close();
         }
 
-        private void crearPaciente_Load_1(object sender, EventArgs e)
-        {
 
+        // ============================================================
+        // EVENTOS EXISTENTES DEL FORMULARIO
+        // ============================================================
+
+        private void crearPaciente_Load_1(
+            object sender,
+            EventArgs e)
+        {
         }
 
-        private void panelCard_Paint(object sender, PaintEventArgs e)
-        {
 
+        private void panelCard_Paint(
+            object sender,
+            PaintEventArgs e)
+        {
         }
     }
 }

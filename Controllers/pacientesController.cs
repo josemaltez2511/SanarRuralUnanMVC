@@ -1,26 +1,41 @@
 ﻿using System;
 using SanarRuralUnan.Models;
+
 // Controller de pacientes para la aplicación SanarRuralUnan
-// Este controlador maneja la lógica de negocio relacionada con los pacientes,
-// Un controller es responsable de recibir las solicitudes del usuario desde la vista,
-// procesarlas entre el modelo y la vista, y devolver la respuesta adecuada al usuario.
-// La Vista NUNCA debe hablar directo con "pacientesModel" ni con la base de datos,
-// siempre debe pasar primero por aquí, por el Controller.
+// Este controlador comunica la Vista con el Modelo.
+// La Vista no accede directamente a la base de datos.
+
 namespace SanarRuralUnan.Controllers
 {
     public class pacientesController
     {
-        // Método para crear un paciente nuevo (RF-03)
-        // Recibe todos los datos que la Vista recolectó del formulario
-        // Este método instancia el Modelo, le llena las propiedades, y le pide que se guarde
-        public void crearPaciente(int idUsuario, string nombres, string apellidos, DateTime fechaNacimiento, string genero, string telefono)
+        // ============================================================
+        // CREAR PACIENTE
+        // RF-03
+        // ============================================================
+        // Recibe todos los datos enviados desde la Vista
+        // y los pasa al Modelo.
+
+        public void crearPaciente(
+            int idUsuario,
+            string nombres,
+            string apellidos,
+            DateTime fechaNacimiento,
+            string genero,
+            string telefono,
+            string departamento,
+            string municipio,
+            string comunidad,
+            string direccion,
+            string contactoEmergencia,
+            string tipoSangre,
+            string alergias,
+            string antecedentes)
         {
-            // Instanciamos el objeto del modelo pacientesModel
-            // o sea que estamos creando un objeto de la clase pacientesModel
-            // que se encuentra en el modelo, para poder utilizar sus métodos y propiedades
+            // Crear objeto del modelo.
             pacientesModel objetoPaciente = new pacientesModel();
 
-            // Le asignamos al objeto los datos que llegaron desde la Vista
+            // Datos personales
             objetoPaciente.IdUsuario = idUsuario;
             objetoPaciente.Nombres = nombres;
             objetoPaciente.Apellidos = apellidos;
@@ -28,32 +43,94 @@ namespace SanarRuralUnan.Controllers
             objetoPaciente.Genero = genero;
             objetoPaciente.Telefono = telefono;
 
-            // Le pedimos al Modelo que guarde este paciente en la base de datos
+            // Datos de ubicación
+            objetoPaciente.Departamento = departamento;
+            objetoPaciente.Municipio = municipio;
+            objetoPaciente.Comunidad = comunidad;
+            objetoPaciente.Direccion = direccion;
+
+            // Información de salud
+            objetoPaciente.ContactoEmergencia = contactoEmergencia;
+            objetoPaciente.TipoSangre = tipoSangre;
+            objetoPaciente.Alergias = alergias;
+            objetoPaciente.Antecedentes = antecedentes;
+
+            // Pedir al Modelo que guarde el paciente.
             objetoPaciente.guardarPaciente();
         }
 
-        // Método para consultar los datos de un paciente (RF-05)
-        // Recibe el IdUsuario y retorna el objeto Paciente encontrado (o null si no existe)
-        // La Vista usa este dato para mostrarlo en pantalla
+
+        // ============================================================
+        // CONSULTAR PACIENTE
+        // RF-05
+        // ============================================================
+        // Busca un paciente utilizando el IdUsuario.
+
         public Pacientes consultarPaciente(int idUsuario)
         {
             pacientesModel objetoPaciente = new pacientesModel();
+
             return objetoPaciente.buscarPaciente(idUsuario);
         }
 
-        // Método para editar los datos de un paciente (RF-04)
-        // Recibe el IdPaciente a modificar y los nuevos valores de cada campo
-        public void editarPaciente(int idPaciente, string nombres, string apellidos, string genero, string telefono)
+
+        // ============================================================
+        // EDITAR PACIENTE
+        // RF-04
+        // ============================================================
+        // Recibe todos los datos que pueden modificarse
+        // y los envía al Modelo.
+
+        public void editarPaciente(
+            int idPaciente,
+            string nombres,
+            string apellidos,
+            DateTime fechaNacimiento,
+            string genero,
+            string telefono,
+            string departamento,
+            string municipio,
+            string comunidad,
+            string direccion,
+            string contactoEmergencia,
+            string tipoSangre,
+            string alergias,
+            string antecedentes)
         {
+            // Crear objeto del modelo.
             pacientesModel objetoPaciente = new pacientesModel();
-            objetoPaciente.actualizarPaciente(idPaciente, nombres, apellidos, genero, telefono);
+
+            // Enviar todos los datos al Modelo.
+            objetoPaciente.actualizarPaciente(
+                idPaciente,
+                nombres,
+                apellidos,
+                fechaNacimiento,
+                genero,
+                telefono,
+                departamento,
+                municipio,
+                comunidad,
+                direccion,
+                contactoEmergencia,
+                tipoSangre,
+                alergias,
+                antecedentes
+            );
         }
 
-        // Método para dar de baja a un paciente sin borrar su historial (RF-06)
-        // Es void porque no necesitamos que devuelva nada, solo que haga el cambio
+
+        // ============================================================
+        // ELIMINAR PACIENTE
+        // RF-06
+        // ============================================================
+        // Realiza un soft delete.
+        // El registro NO se elimina físicamente de la BD.
+
         public void eliminarPaciente(int idPaciente)
         {
             pacientesModel objetoPaciente = new pacientesModel();
+
             objetoPaciente.eliminarPaciente(idPaciente);
         }
     }
