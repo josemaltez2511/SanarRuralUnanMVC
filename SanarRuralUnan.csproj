@@ -62,6 +62,7 @@
     <Compile Include="Citas.cs">
       <DependentUpon>ModelSanarRural.tt</DependentUpon>
     </Compile>
+    <Compile Include="Controllers\doctoresControllers.cs" />
     <Compile Include="Controllers\pacientesController.cs" />
     <Compile Include="Controllers\usuariosController.cs" />
     <Compile Include="Diagnosticos_Tratamientos.cs">
@@ -94,6 +95,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>ModelSanarRural.edmx</DependentUpon>
     </Compile>
+    <Compile Include="Models\doctoresModels.cs" />
     <Compile Include="Models\pacientesModels.cs" />
     <Compile Include="Models\usuariosModel.cs" />
     <Compile Include="obj\Debug\.NETFramework,Version=v4.7.2.AssemblyAttributes.cs" />
@@ -112,22 +114,28 @@
     <Compile Include="Usuarios.cs">
       <DependentUpon>ModelSanarRural.tt</DependentUpon>
     </Compile>
-    <Compile Include="Views\crearPaciente.cs">
+    <Compile Include="Views\Doctores\crearDoctor.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Views\crearPaciente.Designer.cs">
+    <Compile Include="Views\Doctores\crearDoctor.Designer.cs">
+      <DependentUpon>crearDoctor.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Pacientes\crearPaciente.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Views\Pacientes\crearPaciente.Designer.cs">
       <DependentUpon>crearPaciente.cs</DependentUpon>
     </Compile>
-    <Compile Include="Views\crearUsuario.cs">
+    <Compile Include="Views\Usuarios\crearUsuario.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Views\crearUsuario.Designer.cs">
+    <Compile Include="Views\Usuarios\crearUsuario.Designer.cs">
       <DependentUpon>crearUsuario.cs</DependentUpon>
     </Compile>
-    <Compile Include="Views\iniciarSesion.cs">
+    <Compile Include="Views\IniciarSesion\iniciarSesion.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Views\iniciarSesion.Designer.cs">
+    <Compile Include="Views\IniciarSesion\iniciarSesion.Designer.cs">
       <DependentUpon>iniciarSesion.cs</DependentUpon>
     </Compile>
     <Compile Include="Program.cs" />
@@ -144,13 +152,16 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <EmbeddedResource Include="Views\crearPaciente.resx">
+    <EmbeddedResource Include="Views\Doctores\crearDoctor.resx">
+      <DependentUpon>crearDoctor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\Pacientes\crearPaciente.resx">
       <DependentUpon>crearPaciente.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Views\crearUsuario.resx">
+    <EmbeddedResource Include="Views\Usuarios\crearUsuario.resx">
       <DependentUpon>crearUsuario.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Views\iniciarSesion.resx">
+    <EmbeddedResource Include="Views\IniciarSesion\iniciarSesion.resx">
       <DependentUpon>iniciarSesion.cs</DependentUpon>
     </EmbeddedResource>
     <EntityDeploy Include="ModelSanarRural.edmx">

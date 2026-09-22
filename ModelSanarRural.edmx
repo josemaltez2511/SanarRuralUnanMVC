@@ -42,6 +42,7 @@
           <Property Name="Especialidad" Type="varchar" MaxLength="100" Nullable="false" />
           <Property Name="NumeroLicencia" Type="varchar" MaxLength="50" Nullable="false" />
           <Property Name="IdHospital" Type="int" />
+          <Property Name="Estado" Type="varchar" MaxLength="20" Nullable="false" />
         </EntityType>
         <EntityType Name="Enfermedades">
           <Key>
@@ -464,6 +465,7 @@
           <NavigationProperty Name="Citas" Relationship="SanarRuralDBModel.FK__Citas__IdDoctor__60A75C0F" FromRole="Doctore" ToRole="Cita" />
           <NavigationProperty Name="Usuario" Relationship="SanarRuralDBModel.FK__Doctores__IdUsua__5629CD9C" FromRole="Doctore" ToRole="Usuario" />
           <NavigationProperty Name="Hospitale" Relationship="SanarRuralDBModel.FK_Doctores_Hospitales" FromRole="Doctore" ToRole="Hospitale" />
+          <Property Name="Estado" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="false" />
         </EntityType>
         <EntityType Name="Enfermedades">
           <Key>
@@ -720,6 +722,7 @@
           <EntitySetMapping Name="Doctores">
             <EntityTypeMapping TypeName="SanarRuralDBModel.Doctores">
               <MappingFragment StoreEntitySet="Doctores">
+                <ScalarProperty Name="Estado" ColumnName="Estado" />
                 <ScalarProperty Name="IdHospital" ColumnName="IdHospital" />
                 <ScalarProperty Name="NumeroLicencia" ColumnName="NumeroLicencia" />
                 <ScalarProperty Name="Especialidad" ColumnName="Especialidad" />

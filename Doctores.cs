@@ -27,6 +27,7 @@ namespace SanarRuralUnan
         public string Especialidad { get; set; }
         public string NumeroLicencia { get; set; }
         public Nullable<int> IdHospital { get; set; }
+        public string Estado { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Citas> Citas { get; set; }
