@@ -60,7 +60,7 @@ namespace SanarRuralUnan.Models
         // MÉTODO PARA GUARDAR UN PACIENTE NUEVO (esto cumple el RF-03)
         // Este método se llama justo después de haber creado la cuenta de usuario (RF-01),
         // porque el paciente necesita un IdUsuario ya existente para poder registrarse
-        public void Guardar()
+        public void guardarPaciente()
         {
             // CREAR OBJETO CON LA ENTIDAD PACIENTE DE LA BD
             // esto es como un contrato para definir y verificar si recibimos los mismos datos
@@ -88,14 +88,14 @@ namespace SanarRuralUnan.Models
         // Recibe el IdUsuario (el de la cuenta que inició sesión) y busca su perfil de paciente
         // Usamos FirstOrDefault de LINQ: si encuentra un paciente con ese IdUsuario, lo devuelve;
         // si no encuentra nada, devuelve null (vacío) en vez de dar error
-        public Pacientes BuscarPorUsuario(int idUsuario)
+        public Pacientes buscarPaciente(int idUsuario)
         {
             return db.Pacientes.FirstOrDefault(p => p.IdUsuario == idUsuario);
         }
 
         // MÉTODO PARA EDITAR UN PACIENTE YA EXISTENTE (esto cumple el RF-04)
         // Recibe el IdPaciente de quien se quiere editar, y los nuevos datos que se van a guardar
-        public void Actualizar(int idPaciente, string nombres, string apellidos, string genero, string telefono)
+        public void actualizarPaciente(int idPaciente, string nombres, string apellidos, string genero, string telefono)
         {
             // Buscamos primero el registro del paciente en la BD
             var paciente = db.Pacientes.FirstOrDefault(p => p.IdPaciente == idPaciente);
@@ -118,7 +118,7 @@ namespace SanarRuralUnan.Models
         // "Soft delete" significa que no borramos el registro de la base de datos,
         // solo lo marcamos como "Inactivo" para que deje de aparecer en las consultas normales,
         // pero su información y su historial siguen existiendo por si se necesitan después
-        public void EliminarLogico(int idPaciente)
+        public void eliminarPaciente(int idPaciente)
         {
             var paciente = db.Pacientes.FirstOrDefault(p => p.IdPaciente == idPaciente);
 

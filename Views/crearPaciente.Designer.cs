@@ -63,6 +63,7 @@
             this.panelCard.Name = "panelCard";
             this.panelCard.Size = new System.Drawing.Size(500, 550);
             this.panelCard.TabIndex = 0;
+            this.panelCard.Paint += new System.Windows.Forms.PaintEventHandler(this.panelCard_Paint);
             // 
             // panelLineaVerde
             // 

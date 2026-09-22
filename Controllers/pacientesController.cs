@@ -13,7 +13,7 @@ namespace SanarRuralUnan.Controllers
         // Método para crear un paciente nuevo (RF-03)
         // Recibe todos los datos que la Vista recolectó del formulario
         // Este método instancia el Modelo, le llena las propiedades, y le pide que se guarde
-        public void CrearPaciente(int idUsuario, string nombres, string apellidos, DateTime fechaNacimiento, string genero, string telefono)
+        public void crearPaciente(int idUsuario, string nombres, string apellidos, DateTime fechaNacimiento, string genero, string telefono)
         {
             // Instanciamos el objeto del modelo pacientesModel
             // o sea que estamos creando un objeto de la clase pacientesModel
@@ -29,32 +29,32 @@ namespace SanarRuralUnan.Controllers
             objetoPaciente.Telefono = telefono;
 
             // Le pedimos al Modelo que guarde este paciente en la base de datos
-            objetoPaciente.Guardar();
+            objetoPaciente.guardarPaciente();
         }
 
         // Método para consultar los datos de un paciente (RF-05)
         // Recibe el IdUsuario y retorna el objeto Paciente encontrado (o null si no existe)
         // La Vista usa este dato para mostrarlo en pantalla
-        public Pacientes ConsultarPaciente(int idUsuario)
+        public Pacientes consultarPaciente(int idUsuario)
         {
             pacientesModel objetoPaciente = new pacientesModel();
-            return objetoPaciente.BuscarPorUsuario(idUsuario);
+            return objetoPaciente.buscarPaciente(idUsuario);
         }
 
         // Método para editar los datos de un paciente (RF-04)
         // Recibe el IdPaciente a modificar y los nuevos valores de cada campo
-        public void EditarPaciente(int idPaciente, string nombres, string apellidos, string genero, string telefono)
+        public void editarPaciente(int idPaciente, string nombres, string apellidos, string genero, string telefono)
         {
             pacientesModel objetoPaciente = new pacientesModel();
-            objetoPaciente.Actualizar(idPaciente, nombres, apellidos, genero, telefono);
+            objetoPaciente.actualizarPaciente(idPaciente, nombres, apellidos, genero, telefono);
         }
 
         // Método para dar de baja a un paciente sin borrar su historial (RF-06)
         // Es void porque no necesitamos que devuelva nada, solo que haga el cambio
-        public void EliminarPaciente(int idPaciente)
+        public void eliminarPaciente(int idPaciente)
         {
             pacientesModel objetoPaciente = new pacientesModel();
-            objetoPaciente.EliminarLogico(idPaciente);
+            objetoPaciente.eliminarPaciente(idPaciente);
         }
     }
 }

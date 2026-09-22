@@ -119,7 +119,7 @@ namespace SanarRuralUnan.Views
                 // Le pedimos al Controller que cree el paciente
                 // Él se encarga de hablar con el Modelo y guardar en la base de datos
                 // La Vista nunca toca la base de datos directamente
-                controlador.CrearPaciente(idUsuario, nombres, apellidos, fechaNacimiento, genero, telefono);
+                controlador.crearPaciente(idUsuario, nombres, apellidos, fechaNacimiento, genero, telefono);
 
                 MessageBox.Show("¡Paciente registrado con éxito!", "Registro Exitoso", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
@@ -138,6 +138,11 @@ namespace SanarRuralUnan.Views
         }
 
         private void crearPaciente_Load_1(object sender, EventArgs e)
+        {
+
+        }
+
+        private void panelCard_Paint(object sender, PaintEventArgs e)
         {
 
         }
