@@ -98,7 +98,7 @@
     <Compile Include="Models\doctoresModels.cs" />
     <Compile Include="Models\hospitalesModels.cs" />
     <Compile Include="Models\pacientesModels.cs" />
-    <Compile Include="Models\usuariosModel.cs" />
+    <Compile Include="Models\usuariosModels.cs" />
     <Compile Include="obj\Debug\.NETFramework,Version=v4.7.2.AssemblyAttributes.cs" />
     <Compile Include="Pacientes.cs">
       <DependentUpon>ModelSanarRural.tt</DependentUpon>

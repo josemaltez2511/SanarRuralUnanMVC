@@ -4,29 +4,29 @@
   <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
-      <Diagram DiagramId="e4e66d38bc884235929f3e932a45f7d5" Name="Diagram1" ZoomLevel="108">
-        <EntityTypeShape EntityType="SanarRuralDBModel.Usuarios" Width="1.5" PointX="0.625" PointY="0.75" IsExpanded="true" />
+      <Diagram DiagramId="e4e66d38bc884235929f3e932a45f7d5" Name="Diagram1" ZoomLevel="71">
         <EntityTypeShape EntityType="SanarRuralDBModel.Citas" Width="1.5" PointX="5.625" PointY="4.75" />
         <EntityTypeShape EntityType="SanarRuralDBModel.Diagnosticos_Tratamientos" Width="1.5" PointX="7.875" PointY="4.875" />
-        <EntityTypeShape EntityType="SanarRuralDBModel.Doctores" Width="1.5" PointX="3.375" PointY="0.625" />
         <EntityTypeShape EntityType="SanarRuralDBModel.Enfermedades" Width="1.5" PointX="5.625" PointY="9.625" />
         <EntityTypeShape EntityType="SanarRuralDBModel.Hospitales" Width="1.5" PointX="1.125" PointY="5" />
         <EntityTypeShape EntityType="SanarRuralDBModel.Medicamentos" Width="1.5" PointX="5.625" PointY="2.125" />
-        <EntityTypeShape EntityType="SanarRuralDBModel.Pacientes" Width="1.5" PointX="3.375" PointY="9.5" />
         <EntityTypeShape EntityType="SanarRuralDBModel.RecomendacionesMedicas" Width="1.5" PointX="7.875" PointY="12" />
         <EntityTypeShape EntityType="SanarRuralDBModel.Sintomas" Width="1.5" PointX="7.875" PointY="9.625" />
         <EntityTypeShape EntityType="SanarRuralDBModel.sysdiagram" Width="1.5" PointX="7.875" PointY="0.875" />
-        <AssociationConnector Association="SanarRuralDBModel.FK__Citas__IdDoctor__60A75C0F" />
         <AssociationConnector Association="SanarRuralDBModel.FK__Citas__IdHospita__619B8048" />
-        <AssociationConnector Association="SanarRuralDBModel.FK__Citas__IdPacient__5FB337D6" />
         <AssociationConnector Association="SanarRuralDBModel.FK__Diagnosti__IdCit__656C112C" />
         <AssociationConnector Association="SanarRuralDBModel.FK__Diagnosti__IdEnf__66603565" />
         <AssociationConnector Association="SanarRuralDBModel.FK__Diagnosti__IdMed__6754599E" />
+        <AssociationConnector Association="SanarRuralDBModel.FK__Recomenda__IdEnf__6EF57B66" />
+        <AssociationConnector Association="SanarRuralDBModel.Enfermedades_Sintomas" />
+        <EntityTypeShape EntityType="SanarRuralDBModel.Doctores" Width="1.5" PointX="3.375" PointY="7.5" />
+        <EntityTypeShape EntityType="SanarRuralDBModel.Pacientes" Width="1.5" PointX="3.375" PointY="2.25" />
+        <EntityTypeShape EntityType="SanarRuralDBModel.Usuarios" Width="1.5" PointX="1.125" PointY="8.25" />
+        <AssociationConnector Association="SanarRuralDBModel.FK__Citas__IdDoctor__60A75C0F" />
+        <AssociationConnector Association="SanarRuralDBModel.FK__Citas__IdPacient__5FB337D6" />
         <AssociationConnector Association="SanarRuralDBModel.FK__Doctores__IdUsua__5629CD9C" />
         <AssociationConnector Association="SanarRuralDBModel.FK_Doctores_Hospitales" />
-        <AssociationConnector Association="SanarRuralDBModel.FK__Recomenda__IdEnf__6EF57B66" />
         <AssociationConnector Association="SanarRuralDBModel.FK__Pacientes__IdUsu__5165187F" />
-        <AssociationConnector Association="SanarRuralDBModel.Enfermedades_Sintomas" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

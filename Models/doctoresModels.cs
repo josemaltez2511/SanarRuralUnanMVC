@@ -51,7 +51,7 @@ namespace SanarRuralUnan.Models
 
         // Estado del doctor.
         // Puede ser Activo o Inactivo.
-        public string Estado { get; set; }
+        public bool Estado { get; set; }
 
 
         // ============================================================
@@ -83,7 +83,7 @@ namespace SanarRuralUnan.Models
             this.IdHospital = idHospital;
 
             // Todo doctor nuevo comienza activo.
-            this.Estado = "Activo";
+            this.Estado = true;
         }
 
 
@@ -112,7 +112,7 @@ namespace SanarRuralUnan.Models
             doctorNuevo.IdHospital = IdHospital;
 
             // Todo doctor nuevo se crea como Activo.
-            doctorNuevo.Estado = "Activo";
+            doctorNuevo.Estado = true;
 
 
             // --------------------------------------------------------
@@ -139,8 +139,7 @@ namespace SanarRuralUnan.Models
         public Doctores buscarDoctor(int idUsuario)
         {
             return db.Doctores.FirstOrDefault(
-                d => d.IdUsuario == idUsuario &&
-                     d.Estado == "Activo"
+                d => d.IdUsuario == idUsuario && d.Estado == true
             );
         }
 
@@ -165,8 +164,7 @@ namespace SanarRuralUnan.Models
             // Buscar el doctor por su IdDoctor
             // y verificar que esté activo.
             var doctor = db.Doctores.FirstOrDefault(
-                d => d.IdDoctor == idDoctor &&
-                     d.Estado == "Activo"
+                d => d.IdDoctor == idDoctor && d.Estado == true
             );
 
 
@@ -180,7 +178,7 @@ namespace SanarRuralUnan.Models
                 doctor.IdHospital = idHospital;
 
                 // El estado se mantiene como Activo.
-                doctor.Estado = "Activo";
+                doctor.Estado = true;
 
 
                 // Guardar cambios.
@@ -208,8 +206,7 @@ namespace SanarRuralUnan.Models
         {
             // Buscar únicamente un doctor que esté activo.
             var doctor = db.Doctores.FirstOrDefault(
-                d => d.IdDoctor == idDoctor &&
-                     d.Estado == "Activo"
+               d => d.IdDoctor == idDoctor && d.Estado == true
             );
 
 
@@ -217,7 +214,7 @@ namespace SanarRuralUnan.Models
             // cambiar su estado a Inactivo.
             if (doctor != null)
             {
-                doctor.Estado = "Inactivo";
+                doctor.Estado = false;
 
                 // Guardar el cambio en la base de datos.
                 db.SaveChanges();

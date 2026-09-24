@@ -77,11 +77,11 @@ namespace SanarRuralUnan.Models
         // ============================================================
 
         // Ejemplo:
-        // "Activo"
-        // "Inactivo"
+        // true  -> Activo
+        // false -> Inactivo
         //
         // Se utiliza para realizar el soft delete.
-        public string Estado { get; set; }
+        public bool Estado { get; set; }
 
 
         // ============================================================
@@ -191,7 +191,7 @@ namespace SanarRuralUnan.Models
             // --------------------------------------------------------
 
             // Todo paciente nuevo comienza como Activo.
-            pacienteNuevo.Estado = "Activo";
+            pacienteNuevo.Estado = true;
 
 
             // --------------------------------------------------------
@@ -221,7 +221,7 @@ namespace SanarRuralUnan.Models
         {
             return db.Pacientes.FirstOrDefault(
                 p => p.IdUsuario == idUsuario &&
-                     p.Estado == "Activo"
+                     p.Estado == true
             );
         }
 
@@ -251,7 +251,7 @@ namespace SanarRuralUnan.Models
         {
             // Buscar el paciente mediante su IdPaciente.
             var paciente = db.Pacientes.FirstOrDefault(
-                p => p.IdPaciente == idPaciente
+                p => p.IdPaciente == idPaciente && p.Estado == true
             );
 
 
@@ -317,7 +317,7 @@ namespace SanarRuralUnan.Models
         {
             // Buscar el paciente.
             var paciente = db.Pacientes.FirstOrDefault(
-                p => p.IdPaciente == idPaciente
+                p => p.IdPaciente == idPaciente && p.Estado == true
             );
 
 
@@ -325,7 +325,7 @@ namespace SanarRuralUnan.Models
             if (paciente != null)
             {
                 // Marcar como inactivo.
-                paciente.Estado = "Inactivo";
+                paciente.Estado = false;
 
 
                 // Guardar cambios.

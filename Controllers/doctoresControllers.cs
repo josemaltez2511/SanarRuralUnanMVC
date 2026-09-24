@@ -40,7 +40,7 @@ namespace SanarRuralUnan.Controllers
             // --------------------------------------------------------
 
             // El modelo se encarga de establecer:
-            // Estado = "Activo"
+            // Estado = true
             // y guardar en la base de datos.
 
             objetoDoctor.guardarDoctor();
@@ -121,7 +121,7 @@ namespace SanarRuralUnan.Controllers
             //
             // Cambia:
             //
-            // Activo → Inactivo
+            // true → false
 
             objetoDoctor.eliminarDoctor(idDoctor);
         }
