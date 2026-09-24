@@ -42,6 +42,7 @@
           <Property Name="Especialidad" Type="varchar" MaxLength="100" Nullable="false" />
           <Property Name="NumeroLicencia" Type="varchar" MaxLength="50" Nullable="false" />
           <Property Name="IdHospital" Type="int" />
+          <Property Name="Estado" Type="bit" />
         </EntityType>
         <EntityType Name="Enfermedades">
           <Key>
@@ -66,7 +67,7 @@
           <Property Name="IdHospital" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Nombre" Type="varchar" MaxLength="150" Nullable="false" />
           <Property Name="Ubicacion" Type="varchar" MaxLength="255" Nullable="false" />
-          <Property Name="Estado" Type="varchar" MaxLength="10" />
+          <Property Name="Estado" Type="bit" Nullable="false" />
         </EntityType>
         <EntityType Name="Medicamentos">
           <Key>
@@ -87,6 +88,15 @@
           <Property Name="FechaNacimiento" Type="date" Nullable="false" />
           <Property Name="Genero" Type="varchar" MaxLength="20" />
           <Property Name="Telefono" Type="varchar" MaxLength="20" />
+          <Property Name="Estado" Type="bit" />
+          <Property Name="Departamento" Type="varchar" MaxLength="100" />
+          <Property Name="Municipio" Type="varchar" MaxLength="100" />
+          <Property Name="Comunidad" Type="varchar" MaxLength="100" />
+          <Property Name="Direccion" Type="varchar" MaxLength="250" />
+          <Property Name="ContactoEmergencia" Type="varchar" MaxLength="20" />
+          <Property Name="TipoSangre" Type="varchar" MaxLength="10" />
+          <Property Name="Alergias" Type="varchar" MaxLength="500" />
+          <Property Name="Antecedentes" Type="varchar" MaxLength="1000" />
         </EntityType>
         <EntityType Name="RecomendacionesMedicas">
           <Key>
@@ -121,7 +131,7 @@
           <Property Name="Correo" Type="varchar" MaxLength="100" Nullable="false" />
           <Property Name="Contrasena" Type="varchar" MaxLength="255" Nullable="false" />
           <Property Name="FechaRegistro" Type="datetime" />
-          <Property Name="Estado" Type="varchar" MaxLength="20" />
+          <Property Name="Estado" Type="bit" />
         </EntityType>
         <Association Name="FK__Citas__IdDoctor__60A75C0F">
           <End Role="Doctores" Type="Self.Doctores" Multiplicity="1" />
@@ -339,40 +349,17 @@
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="SanarRuralDBModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
-        <EntityType Name="Usuarios">
-          <Key>
-            <PropertyRef Name="IdUsuario" />
-          </Key>
-          <Property Name="IdUsuario" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Correo" Type="String" MaxLength="100" FixedLength="false" Unicode="false" Nullable="false" />
-          <Property Name="Contrasena" Type="String" MaxLength="255" FixedLength="false" Unicode="false" Nullable="false" />
-          <Property Name="FechaRegistro" Type="DateTime" Precision="3" />
-          <Property Name="Estado" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
-          <NavigationProperty Name="Doctores" Relationship="SanarRuralDBModel.FK__Doctores__IdUsua__5629CD9C" FromRole="Usuario" ToRole="Doctore" />
-          <NavigationProperty Name="Pacientes" Relationship="SanarRuralDBModel.FK__Pacientes__IdUsu__5165187F" FromRole="Usuario" ToRole="Paciente" />
-        </EntityType>
         <EntityContainer Name="SanarRuralDBEntities" annotation:LazyLoadingEnabled="true">
-          <EntitySet Name="Usuarios" EntityType="SanarRuralDBModel.Usuarios" />
           <EntitySet Name="Citas" EntityType="SanarRuralDBModel.Citas" />
           <EntitySet Name="Diagnosticos_Tratamientos" EntityType="SanarRuralDBModel.Diagnosticos_Tratamientos" />
-          <EntitySet Name="Doctores" EntityType="SanarRuralDBModel.Doctores" />
           <EntitySet Name="Enfermedades" EntityType="SanarRuralDBModel.Enfermedades" />
           <EntitySet Name="Hospitales" EntityType="SanarRuralDBModel.Hospitales" />
           <EntitySet Name="Medicamentos" EntityType="SanarRuralDBModel.Medicamentos" />
-          <EntitySet Name="Pacientes" EntityType="SanarRuralDBModel.Pacientes" />
           <EntitySet Name="RecomendacionesMedicas" EntityType="SanarRuralDBModel.RecomendacionesMedicas" />
           <EntitySet Name="Sintomas" EntityType="SanarRuralDBModel.Sintomas" />
           <EntitySet Name="sysdiagrams" EntityType="SanarRuralDBModel.sysdiagram" />
-          <AssociationSet Name="FK__Citas__IdDoctor__60A75C0F" Association="SanarRuralDBModel.FK__Citas__IdDoctor__60A75C0F">
-            <End Role="Doctore" EntitySet="Doctores" />
-            <End Role="Cita" EntitySet="Citas" />
-          </AssociationSet>
           <AssociationSet Name="FK__Citas__IdHospita__619B8048" Association="SanarRuralDBModel.FK__Citas__IdHospita__619B8048">
             <End Role="Hospitale" EntitySet="Hospitales" />
-            <End Role="Cita" EntitySet="Citas" />
-          </AssociationSet>
-          <AssociationSet Name="FK__Citas__IdPacient__5FB337D6" Association="SanarRuralDBModel.FK__Citas__IdPacient__5FB337D6">
-            <End Role="Paciente" EntitySet="Pacientes" />
             <End Role="Cita" EntitySet="Citas" />
           </AssociationSet>
           <AssociationSet Name="FK__Diagnosti__IdCit__656C112C" Association="SanarRuralDBModel.FK__Diagnosti__IdCit__656C112C">
@@ -387,25 +374,36 @@
             <End Role="Medicamento" EntitySet="Medicamentos" />
             <End Role="Diagnosticos_Tratamientos" EntitySet="Diagnosticos_Tratamientos" />
           </AssociationSet>
+          <AssociationSet Name="FK__Recomenda__IdEnf__6EF57B66" Association="SanarRuralDBModel.FK__Recomenda__IdEnf__6EF57B66">
+            <End Role="Enfermedade" EntitySet="Enfermedades" />
+            <End Role="RecomendacionesMedica" EntitySet="RecomendacionesMedicas" />
+          </AssociationSet>
+          <AssociationSet Name="Enfermedades_Sintomas" Association="SanarRuralDBModel.Enfermedades_Sintomas">
+            <End Role="Enfermedade" EntitySet="Enfermedades" />
+            <End Role="Sintoma" EntitySet="Sintomas" />
+          </AssociationSet>
+          <EntitySet Name="Doctores" EntityType="SanarRuralDBModel.Doctores" />
+          <EntitySet Name="Pacientes" EntityType="SanarRuralDBModel.Pacientes" />
+          <EntitySet Name="Usuarios" EntityType="SanarRuralDBModel.Usuarios" />
+          <AssociationSet Name="FK__Citas__IdDoctor__60A75C0F" Association="SanarRuralDBModel.FK__Citas__IdDoctor__60A75C0F">
+            <End Role="Doctore" EntitySet="Doctores" />
+            <End Role="Citas" EntitySet="Citas" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Citas__IdPacient__5FB337D6" Association="SanarRuralDBModel.FK__Citas__IdPacient__5FB337D6">
+            <End Role="Paciente" EntitySet="Pacientes" />
+            <End Role="Citas" EntitySet="Citas" />
+          </AssociationSet>
           <AssociationSet Name="FK__Doctores__IdUsua__5629CD9C" Association="SanarRuralDBModel.FK__Doctores__IdUsua__5629CD9C">
             <End Role="Usuario" EntitySet="Usuarios" />
             <End Role="Doctore" EntitySet="Doctores" />
           </AssociationSet>
           <AssociationSet Name="FK_Doctores_Hospitales" Association="SanarRuralDBModel.FK_Doctores_Hospitales">
-            <End Role="Hospitale" EntitySet="Hospitales" />
+            <End Role="Hospitales" EntitySet="Hospitales" />
             <End Role="Doctore" EntitySet="Doctores" />
-          </AssociationSet>
-          <AssociationSet Name="FK__Recomenda__IdEnf__6EF57B66" Association="SanarRuralDBModel.FK__Recomenda__IdEnf__6EF57B66">
-            <End Role="Enfermedade" EntitySet="Enfermedades" />
-            <End Role="RecomendacionesMedica" EntitySet="RecomendacionesMedicas" />
           </AssociationSet>
           <AssociationSet Name="FK__Pacientes__IdUsu__5165187F" Association="SanarRuralDBModel.FK__Pacientes__IdUsu__5165187F">
             <End Role="Usuario" EntitySet="Usuarios" />
             <End Role="Paciente" EntitySet="Pacientes" />
-          </AssociationSet>
-          <AssociationSet Name="Enfermedades_Sintomas" Association="SanarRuralDBModel.Enfermedades_Sintomas">
-            <End Role="Enfermedade" EntitySet="Enfermedades" />
-            <End Role="Sintoma" EntitySet="Sintomas" />
           </AssociationSet>
         </EntityContainer>
         <EntityType Name="Citas">
@@ -420,10 +418,10 @@
           <Property Name="Plataforma" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="Estado" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
           <Property Name="Motivo" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
-          <NavigationProperty Name="Doctore" Relationship="SanarRuralDBModel.FK__Citas__IdDoctor__60A75C0F" FromRole="Cita" ToRole="Doctore" />
           <NavigationProperty Name="Hospitale" Relationship="SanarRuralDBModel.FK__Citas__IdHospita__619B8048" FromRole="Cita" ToRole="Hospitale" />
-          <NavigationProperty Name="Paciente" Relationship="SanarRuralDBModel.FK__Citas__IdPacient__5FB337D6" FromRole="Cita" ToRole="Paciente" />
           <NavigationProperty Name="Diagnosticos_Tratamientos" Relationship="SanarRuralDBModel.FK__Diagnosti__IdCit__656C112C" FromRole="Cita" ToRole="Diagnosticos_Tratamientos" />
+          <NavigationProperty Name="Doctore" Relationship="SanarRuralDBModel.FK__Citas__IdDoctor__60A75C0F" FromRole="Citas" ToRole="Doctore" />
+          <NavigationProperty Name="Paciente" Relationship="SanarRuralDBModel.FK__Citas__IdPacient__5FB337D6" FromRole="Citas" ToRole="Paciente" />
         </EntityType>
         <EntityType Name="Diagnosticos_Tratamientos">
           <Key>
@@ -440,22 +438,6 @@
           <NavigationProperty Name="Cita" Relationship="SanarRuralDBModel.FK__Diagnosti__IdCit__656C112C" FromRole="Diagnosticos_Tratamientos" ToRole="Cita" />
           <NavigationProperty Name="Enfermedade" Relationship="SanarRuralDBModel.FK__Diagnosti__IdEnf__66603565" FromRole="Diagnosticos_Tratamientos" ToRole="Enfermedade" />
           <NavigationProperty Name="Medicamento" Relationship="SanarRuralDBModel.FK__Diagnosti__IdMed__6754599E" FromRole="Diagnosticos_Tratamientos" ToRole="Medicamento" />
-        </EntityType>
-        <EntityType Name="Doctores">
-          <Key>
-            <PropertyRef Name="IdDoctor" />
-          </Key>
-          <Property Name="IdDoctor" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="IdUsuario" Type="Int32" Nullable="false" />
-          <Property Name="Nombres" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="false" />
-          <Property Name="Apellidos" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="false" />
-          <Property Name="Especialidad" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="false" />
-          <Property Name="NumeroLicencia" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="IdHospital" Type="Int32" />
-          <NavigationProperty Name="Citas" Relationship="SanarRuralDBModel.FK__Citas__IdDoctor__60A75C0F" FromRole="Doctore" ToRole="Cita" />
-          <NavigationProperty Name="Usuario" Relationship="SanarRuralDBModel.FK__Doctores__IdUsua__5629CD9C" FromRole="Doctore" ToRole="Usuario" />
-          <NavigationProperty Name="Hospitale" Relationship="SanarRuralDBModel.FK_Doctores_Hospitales" FromRole="Doctore" ToRole="Hospitale" />
-          <Property Name="Estado" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="false" />
         </EntityType>
         <EntityType Name="Enfermedades">
           <Key>
@@ -475,9 +457,9 @@
           <Property Name="IdHospital" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="Nombre" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="false" />
           <Property Name="Ubicacion" Type="String" Nullable="false" MaxLength="255" FixedLength="false" Unicode="false" />
-          <Property Name="Estado" Type="Boolean" />
+          <Property Name="Estado" Type="Boolean" Nullable="false" />
           <NavigationProperty Name="Citas" Relationship="SanarRuralDBModel.FK__Citas__IdHospita__619B8048" FromRole="Hospitale" ToRole="Cita" />
-          <NavigationProperty Name="Doctores" Relationship="SanarRuralDBModel.FK_Doctores_Hospitales" FromRole="Hospitale" ToRole="Doctore" />
+          <NavigationProperty Name="Doctores" Relationship="SanarRuralDBModel.FK_Doctores_Hospitales" FromRole="Hospitales" ToRole="Doctore" />
         </EntityType>
         <EntityType Name="Medicamentos">
           <Key>
@@ -487,29 +469,6 @@
           <Property Name="NombreMedicamento" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="false" />
           <Property Name="Fabricante" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
           <NavigationProperty Name="Diagnosticos_Tratamientos" Relationship="SanarRuralDBModel.FK__Diagnosti__IdMed__6754599E" FromRole="Medicamento" ToRole="Diagnosticos_Tratamientos" />
-        </EntityType>
-        <EntityType Name="Pacientes">
-          <Key>
-            <PropertyRef Name="IdPaciente" />
-          </Key>
-          <Property Name="IdPaciente" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="IdUsuario" Type="Int32" Nullable="false" />
-          <Property Name="Nombres" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="false" />
-          <Property Name="Apellidos" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="false" />
-          <Property Name="FechaNacimiento" Type="DateTime" Nullable="false" Precision="0" />
-          <Property Name="Genero" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
-          <Property Name="Telefono" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
-          <NavigationProperty Name="Citas" Relationship="SanarRuralDBModel.FK__Citas__IdPacient__5FB337D6" FromRole="Paciente" ToRole="Cita" />
-          <NavigationProperty Name="Usuario" Relationship="SanarRuralDBModel.FK__Pacientes__IdUsu__5165187F" FromRole="Paciente" ToRole="Usuario" />
-          <Property Name="Estado" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="false" />
-          <Property Name="Departamento" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
-          <Property Name="Municipio" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
-          <Property Name="Comunidad" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
-          <Property Name="Direccion" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
-          <Property Name="ContactoEmergencia" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
-          <Property Name="TipoSangre" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
-          <Property Name="Alergias" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
-          <Property Name="Antecedentes" Type="String" MaxLength="1000" FixedLength="false" Unicode="false" />
         </EntityType>
         <EntityType Name="RecomendacionesMedicas">
           <Key>
@@ -538,18 +497,6 @@
           <Property Name="version" Type="Int32" />
           <Property Name="definition" Type="Binary" MaxLength="Max" FixedLength="false" />
         </EntityType>
-        <Association Name="FK__Citas__IdDoctor__60A75C0F">
-          <End Type="SanarRuralDBModel.Doctores" Role="Doctore" Multiplicity="1" />
-          <End Type="SanarRuralDBModel.Citas" Role="Cita" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Doctore">
-              <PropertyRef Name="IdDoctor" />
-            </Principal>
-            <Dependent Role="Cita">
-              <PropertyRef Name="IdDoctor" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <Association Name="FK__Citas__IdHospita__619B8048">
           <End Type="SanarRuralDBModel.Hospitales" Role="Hospitale" Multiplicity="0..1" />
           <End Type="SanarRuralDBModel.Citas" Role="Cita" Multiplicity="*" />
@@ -559,18 +506,6 @@
             </Principal>
             <Dependent Role="Cita">
               <PropertyRef Name="IdHospital" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK__Citas__IdPacient__5FB337D6">
-          <End Type="SanarRuralDBModel.Pacientes" Role="Paciente" Multiplicity="1" />
-          <End Type="SanarRuralDBModel.Citas" Role="Cita" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Paciente">
-              <PropertyRef Name="IdPaciente" />
-            </Principal>
-            <Dependent Role="Cita">
-              <PropertyRef Name="IdPaciente" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -610,6 +545,99 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK__Recomenda__IdEnf__6EF57B66">
+          <End Type="SanarRuralDBModel.Enfermedades" Role="Enfermedade" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="SanarRuralDBModel.RecomendacionesMedicas" Role="RecomendacionesMedica" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Enfermedade">
+              <PropertyRef Name="IdEnfermedad" />
+            </Principal>
+            <Dependent Role="RecomendacionesMedica">
+              <PropertyRef Name="IdEnfermedad" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="Enfermedades_Sintomas">
+          <End Type="SanarRuralDBModel.Enfermedades" Role="Enfermedade" Multiplicity="*" />
+          <End Type="SanarRuralDBModel.Sintomas" Role="Sintoma" Multiplicity="*" />
+        </Association>
+        <EntityType Name="Doctores">
+          <Key>
+            <PropertyRef Name="IdDoctor" />
+          </Key>
+          <Property Name="IdDoctor" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="IdUsuario" Type="Int32" Nullable="false" />
+          <Property Name="Nombres" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="Apellidos" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="Especialidad" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="NumeroLicencia" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="IdHospital" Type="Int32" />
+          <Property Name="Estado" Type="Boolean" />
+          <NavigationProperty Name="Citas" Relationship="SanarRuralDBModel.FK__Citas__IdDoctor__60A75C0F" FromRole="Doctore" ToRole="Citas" />
+          <NavigationProperty Name="Usuario" Relationship="SanarRuralDBModel.FK__Doctores__IdUsua__5629CD9C" FromRole="Doctore" ToRole="Usuario" />
+          <NavigationProperty Name="Hospitale" Relationship="SanarRuralDBModel.FK_Doctores_Hospitales" FromRole="Doctore" ToRole="Hospitales" />
+        </EntityType>
+        <EntityType Name="Pacientes">
+          <Key>
+            <PropertyRef Name="IdPaciente" />
+          </Key>
+          <Property Name="IdPaciente" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="IdUsuario" Type="Int32" Nullable="false" />
+          <Property Name="Nombres" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="Apellidos" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="FechaNacimiento" Type="DateTime" Nullable="false" Precision="0" />
+          <Property Name="Genero" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="Telefono" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="Estado" Type="Boolean" />
+          <Property Name="Departamento" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="Municipio" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="Comunidad" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="Direccion" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="ContactoEmergencia" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="TipoSangre" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="Alergias" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
+          <Property Name="Antecedentes" Type="String" MaxLength="1000" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="Citas" Relationship="SanarRuralDBModel.FK__Citas__IdPacient__5FB337D6" FromRole="Paciente" ToRole="Citas" />
+          <NavigationProperty Name="Usuario" Relationship="SanarRuralDBModel.FK__Pacientes__IdUsu__5165187F" FromRole="Paciente" ToRole="Usuario" />
+        </EntityType>
+        <EntityType Name="Usuarios">
+          <Key>
+            <PropertyRef Name="IdUsuario" />
+          </Key>
+          <Property Name="IdUsuario" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Correo" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="Contrasena" Type="String" Nullable="false" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Name="FechaRegistro" Type="DateTime" Precision="3" />
+          <Property Name="Estado" Type="Boolean" />
+          <NavigationProperty Name="Doctores" Relationship="SanarRuralDBModel.FK__Doctores__IdUsua__5629CD9C" FromRole="Usuario" ToRole="Doctore" />
+          <NavigationProperty Name="Pacientes" Relationship="SanarRuralDBModel.FK__Pacientes__IdUsu__5165187F" FromRole="Usuario" ToRole="Paciente" />
+        </EntityType>
+        <Association Name="FK__Citas__IdDoctor__60A75C0F">
+          <End Type="SanarRuralDBModel.Doctores" Role="Doctore" Multiplicity="1" />
+          <End Type="SanarRuralDBModel.Citas" Role="Citas" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Doctore">
+              <PropertyRef Name="IdDoctor" />
+            </Principal>
+            <Dependent Role="Citas">
+              <PropertyRef Name="IdDoctor" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Citas__IdPacient__5FB337D6">
+          <End Type="SanarRuralDBModel.Pacientes" Role="Paciente" Multiplicity="1" />
+          <End Type="SanarRuralDBModel.Citas" Role="Citas" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Paciente">
+              <PropertyRef Name="IdPaciente" />
+            </Principal>
+            <Dependent Role="Citas">
+              <PropertyRef Name="IdPaciente" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK__Doctores__IdUsua__5629CD9C">
           <End Type="SanarRuralDBModel.Usuarios" Role="Usuario" Multiplicity="1" />
           <End Type="SanarRuralDBModel.Doctores" Role="Doctore" Multiplicity="*" />
@@ -623,28 +651,14 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_Doctores_Hospitales">
-          <End Type="SanarRuralDBModel.Hospitales" Role="Hospitale" Multiplicity="0..1" />
+          <End Type="SanarRuralDBModel.Hospitales" Role="Hospitales" Multiplicity="0..1" />
           <End Type="SanarRuralDBModel.Doctores" Role="Doctore" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="Hospitale">
+            <Principal Role="Hospitales">
               <PropertyRef Name="IdHospital" />
             </Principal>
             <Dependent Role="Doctore">
               <PropertyRef Name="IdHospital" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK__Recomenda__IdEnf__6EF57B66">
-          <End Type="SanarRuralDBModel.Enfermedades" Role="Enfermedade" Multiplicity="1">
-            <OnDelete Action="Cascade" />
-          </End>
-          <End Type="SanarRuralDBModel.RecomendacionesMedicas" Role="RecomendacionesMedica" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Enfermedade">
-              <PropertyRef Name="IdEnfermedad" />
-            </Principal>
-            <Dependent Role="RecomendacionesMedica">
-              <PropertyRef Name="IdEnfermedad" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -660,27 +674,12 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="Enfermedades_Sintomas">
-          <End Type="SanarRuralDBModel.Enfermedades" Role="Enfermedade" Multiplicity="*" />
-          <End Type="SanarRuralDBModel.Sintomas" Role="Sintoma" Multiplicity="*" />
-        </Association>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
     <edmx:Mappings>
       <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
         <EntityContainerMapping StorageEntityContainer="SanarRuralDBModelStoreContainer" CdmEntityContainer="SanarRuralDBEntities">
-          <EntitySetMapping Name="Usuarios">
-            <EntityTypeMapping TypeName="SanarRuralDBModel.Usuarios">
-              <MappingFragment StoreEntitySet="Usuarios">
-                <ScalarProperty Name="IdUsuario" ColumnName="IdUsuario" />
-                <ScalarProperty Name="Correo" ColumnName="Correo" />
-                <ScalarProperty Name="Contrasena" ColumnName="Contrasena" />
-                <ScalarProperty Name="FechaRegistro" ColumnName="FechaRegistro" />
-                <ScalarProperty Name="Estado" ColumnName="Estado" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <EntitySetMapping Name="Citas">
             <EntityTypeMapping TypeName="SanarRuralDBModel.Citas">
               <MappingFragment StoreEntitySet="Citas">
@@ -709,19 +708,6 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="Doctores">
-            <EntityTypeMapping TypeName="SanarRuralDBModel.Doctores">
-              <MappingFragment StoreEntitySet="Doctores">
-                <ScalarProperty Name="IdHospital" ColumnName="IdHospital" />
-                <ScalarProperty Name="NumeroLicencia" ColumnName="NumeroLicencia" />
-                <ScalarProperty Name="Especialidad" ColumnName="Especialidad" />
-                <ScalarProperty Name="Apellidos" ColumnName="Apellidos" />
-                <ScalarProperty Name="Nombres" ColumnName="Nombres" />
-                <ScalarProperty Name="IdUsuario" ColumnName="IdUsuario" />
-                <ScalarProperty Name="IdDoctor" ColumnName="IdDoctor" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <EntitySetMapping Name="Enfermedades">
             <EntityTypeMapping TypeName="SanarRuralDBModel.Enfermedades">
               <MappingFragment StoreEntitySet="Enfermedades">
@@ -747,19 +733,6 @@
                 <ScalarProperty Name="Fabricante" ColumnName="Fabricante" />
                 <ScalarProperty Name="NombreMedicamento" ColumnName="NombreMedicamento" />
                 <ScalarProperty Name="IdMedicamento" ColumnName="IdMedicamento" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="Pacientes">
-            <EntityTypeMapping TypeName="SanarRuralDBModel.Pacientes">
-              <MappingFragment StoreEntitySet="Pacientes">
-                <ScalarProperty Name="Telefono" ColumnName="Telefono" />
-                <ScalarProperty Name="Genero" ColumnName="Genero" />
-                <ScalarProperty Name="FechaNacimiento" ColumnName="FechaNacimiento" />
-                <ScalarProperty Name="Apellidos" ColumnName="Apellidos" />
-                <ScalarProperty Name="Nombres" ColumnName="Nombres" />
-                <ScalarProperty Name="IdUsuario" ColumnName="IdUsuario" />
-                <ScalarProperty Name="IdPaciente" ColumnName="IdPaciente" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -799,6 +772,53 @@
               <ScalarProperty Name="IdEnfermedad" ColumnName="IdEnfermedad" />
             </EndProperty>
           </AssociationSetMapping>
+          <EntitySetMapping Name="Doctores">
+            <EntityTypeMapping TypeName="SanarRuralDBModel.Doctores">
+              <MappingFragment StoreEntitySet="Doctores">
+                <ScalarProperty Name="Estado" ColumnName="Estado" />
+                <ScalarProperty Name="IdHospital" ColumnName="IdHospital" />
+                <ScalarProperty Name="NumeroLicencia" ColumnName="NumeroLicencia" />
+                <ScalarProperty Name="Especialidad" ColumnName="Especialidad" />
+                <ScalarProperty Name="Apellidos" ColumnName="Apellidos" />
+                <ScalarProperty Name="Nombres" ColumnName="Nombres" />
+                <ScalarProperty Name="IdUsuario" ColumnName="IdUsuario" />
+                <ScalarProperty Name="IdDoctor" ColumnName="IdDoctor" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Pacientes">
+            <EntityTypeMapping TypeName="SanarRuralDBModel.Pacientes">
+              <MappingFragment StoreEntitySet="Pacientes">
+                <ScalarProperty Name="Antecedentes" ColumnName="Antecedentes" />
+                <ScalarProperty Name="Alergias" ColumnName="Alergias" />
+                <ScalarProperty Name="TipoSangre" ColumnName="TipoSangre" />
+                <ScalarProperty Name="ContactoEmergencia" ColumnName="ContactoEmergencia" />
+                <ScalarProperty Name="Direccion" ColumnName="Direccion" />
+                <ScalarProperty Name="Comunidad" ColumnName="Comunidad" />
+                <ScalarProperty Name="Municipio" ColumnName="Municipio" />
+                <ScalarProperty Name="Departamento" ColumnName="Departamento" />
+                <ScalarProperty Name="Estado" ColumnName="Estado" />
+                <ScalarProperty Name="Telefono" ColumnName="Telefono" />
+                <ScalarProperty Name="Genero" ColumnName="Genero" />
+                <ScalarProperty Name="FechaNacimiento" ColumnName="FechaNacimiento" />
+                <ScalarProperty Name="Apellidos" ColumnName="Apellidos" />
+                <ScalarProperty Name="Nombres" ColumnName="Nombres" />
+                <ScalarProperty Name="IdUsuario" ColumnName="IdUsuario" />
+                <ScalarProperty Name="IdPaciente" ColumnName="IdPaciente" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Usuarios">
+            <EntityTypeMapping TypeName="SanarRuralDBModel.Usuarios">
+              <MappingFragment StoreEntitySet="Usuarios">
+                <ScalarProperty Name="Estado" ColumnName="Estado" />
+                <ScalarProperty Name="FechaRegistro" ColumnName="FechaRegistro" />
+                <ScalarProperty Name="Contrasena" ColumnName="Contrasena" />
+                <ScalarProperty Name="Correo" ColumnName="Correo" />
+                <ScalarProperty Name="IdUsuario" ColumnName="IdUsuario" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

@@ -24,7 +24,7 @@ namespace SanarRuralUnan.Controllers
             // Instanciamos el objeto del modelo usuarios
             // o sea que estamos creando un objeto de la clase usuarios
             // que se encuentra en el modelo, para poder utilizar sus métodos y propiedades
-            usuariosModel objetoUsuario = new usuariosModel();
+            usuariosModels objetoUsuario = new usuariosModels();
             // Retornamos el resultado del método IniciarSesion del modelo
             // que verifica si el correo y la contraseña son correctos
             return objetoUsuario.IniciarSesion(correo, contrasena);
@@ -40,7 +40,7 @@ namespace SanarRuralUnan.Controllers
             // Instanciamos el objeto del modelo usuarios
             // o sea que estamos creando un objeto de la clase usuarios 
             // que se encuentra en el modelo, para poder utilizar sus métodos y propiedades
-            usuariosModel objetoUsuario = new usuariosModel();
+            usuariosModels objetoUsuario = new usuariosModels();
 
             // Ejecutamos el método CerrarSesion del modelo
             // que elimina la información de la sesión del usuario
@@ -52,7 +52,7 @@ namespace SanarRuralUnan.Controllers
         public bool CorreoYaExiste(string correo)
         {
             // creamos nuevo objeto de la clase usuario para acceder a la tabla Usuarios de la base de datos
-            usuariosModel objetoUsuario = new usuariosModel();
+            usuariosModels objetoUsuario = new usuariosModels();
 
             // mandamos a llamar a la clase ExisteCorreo del modelo usuarios
             // la cual cumple con la funcion de validar si existe el correo
@@ -76,7 +76,7 @@ namespace SanarRuralUnan.Controllers
         public int CrearUsuario(string correo, string contrasena)
         {
             // creamos nuevo objeto de la clase usuario para acceder a la tabla Usuarios de la base de datos
-            usuariosModel objetoUsuario = new usuariosModel();
+            usuariosModels objetoUsuario = new usuariosModels();
 
             // Verificamos primero que el correo no esté repetido
             if (objetoUsuario.ExisteCorreo(correo))
@@ -90,7 +90,7 @@ namespace SanarRuralUnan.Controllers
             objetoUsuario.Correo = correo;
             objetoUsuario.Contrasena = contrasena;
             objetoUsuario.FechaRegistro = DateTime.Now;
-            objetoUsuario.Estado = "Activo";
+            objetoUsuario.Estado = true;
 
             // Le pedimos al Modelo que lo guarde en la base de datos.
             // Ahora Guardar() ya no es "void", nos devuelve el IdUsuario que se generó,

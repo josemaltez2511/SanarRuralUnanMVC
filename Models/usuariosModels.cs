@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 // como guardar un nuevo usuario en la base de datos
 namespace SanarRuralUnan.Models
 {
-    public class usuariosModel
+    public class usuariosModels
     {
         // ESTE COMENTARIO LO HIZO ETHER 
         // El modelo de usuario es una clase que representa un usuario en la aplicación
@@ -27,15 +27,15 @@ namespace SanarRuralUnan.Models
 
         public string Correo { get; set; }
         public string Contrasena { get; set; }
-        public string Estado { get; set; }
+        public bool Estado { get; set; }
         public DateTime FechaRegistro { get; set; }
         public string usuarioActual { get; private set; }
 
         // CONSTRUCTOR VACÍO
-        public usuariosModel() { }
+        public usuariosModels() { }
 
         // CONSTRUCTOR CON PARÁMETROS
-        public usuariosModel(string correo, string contrasena, DateTime fechaRegistro, string estado)
+        public usuariosModels(string correo, string contrasena, DateTime fechaRegistro, bool estado)
         {
             this.Correo = correo;
             this.Contrasena = contrasena;
@@ -105,7 +105,7 @@ namespace SanarRuralUnan.Models
             // BUSCAR EL USUARIO EN LA BD CON EL CORREO Y CONTRASEÑA PROPORCIONADOS
             // USAMOS CONSULTA DE LINQ PARA OBTENER EL PRIMER USUARIO QUE COINCIDA CON LOS DATOS INGRESADOS
 
-            var consultarUsuario = db.Usuarios.FirstOrDefault(u => u.Correo == correo && u.Contrasena == contrasena);
+            var consultarUsuario = db.Usuarios.FirstOrDefault(u => u.Correo == correo && u.Contrasena == contrasena && u.Estado == true);
 
             //FirstOrDefault es una consulta de LINQ, significa que si no encuentra ningún usuario
             //que coincida con los datos ingresados, devolverá null.
