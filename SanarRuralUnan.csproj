@@ -96,6 +96,7 @@
       <DependentUpon>ModelSanarRural.edmx</DependentUpon>
     </Compile>
     <Compile Include="Models\doctoresModels.cs" />
+    <Compile Include="Models\hospitalesModels.cs" />
     <Compile Include="Models\pacientesModels.cs" />
     <Compile Include="Models\usuariosModel.cs" />
     <Compile Include="obj\Debug\.NETFramework,Version=v4.7.2.AssemblyAttributes.cs" />
