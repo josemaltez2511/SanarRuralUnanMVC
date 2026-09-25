@@ -63,6 +63,7 @@
       <DependentUpon>ModelSanarRural.tt</DependentUpon>
     </Compile>
     <Compile Include="Controllers\doctoresControllers.cs" />
+    <Compile Include="Controllers\hospitalesController.cs" />
     <Compile Include="Controllers\pacientesController.cs" />
     <Compile Include="Controllers\usuariosController.cs" />
     <Compile Include="Diagnosticos_Tratamientos.cs">
