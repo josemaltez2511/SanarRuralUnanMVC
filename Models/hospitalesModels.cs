@@ -10,7 +10,7 @@ using System.Linq;
 
 namespace SanarRuralUnan.Models
 {
-    public class hospitalesModel
+    public class hospitalesModels
     {
         // ============================================================
         // CONEXIÓN A LA BASE DE DATOS
@@ -52,7 +52,7 @@ namespace SanarRuralUnan.Models
         // Permite crear un objeto y llenar sus propiedades
         // individualmente.
 
-        public hospitalesModel()
+        public hospitalesModels()
         {
         }
 
@@ -69,7 +69,7 @@ namespace SanarRuralUnan.Models
         // La asignación del estado inicial (true) se realiza automáticamente dentro de
         // la lógica de negocio en el método guardarHospital().
 
-        public hospitalesModel(string nombre, string ubicacion)
+        public hospitalesModels(string nombre, string ubicacion)
         {
             this.Nombre = nombre;
             this.Ubicacion = ubicacion;
