@@ -7,7 +7,7 @@ using SanarRuralUnan.Models;
 
 namespace SanarRuralUnan.Controllers
 {
-    public class pacientesController
+    public class pacientesControllers
     {
         // ============================================================
         // CREAR PACIENTE

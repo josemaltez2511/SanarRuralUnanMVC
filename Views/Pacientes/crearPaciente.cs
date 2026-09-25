@@ -12,7 +12,7 @@ namespace SanarRuralUnan.Views
         // La Vista utiliza el Controller para comunicarse con el Modelo.
         // La Vista nunca accede directamente a la base de datos.
 
-        private pacientesController controlador = new pacientesController();
+        private pacientesControllers controlador = new pacientesControllers();
 
 
         // ============================================================
