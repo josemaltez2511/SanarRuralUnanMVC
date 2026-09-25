@@ -329,21 +329,14 @@ namespace SanarRuralUnan.Views
                 }
                 else if (rbMedico.Checked)
                 {
-                    // Cuando crearMedico.cs esté listo,
-                    // aquí se abrirá ese formulario.
+                    // Abrimos el formulario recién terminado para completar
+                    // el perfil del Doctor y le pasamos el Id del usuario
 
-                    // crearMedico formMedico =
-                    //     new crearMedico(idUsuarioCreado);
-                    //
-                    // formMedico.Show();
-                    // this.Hide();
+                    crearDoctor formDoctor = new crearDoctor(idUsuarioCreado);
 
-                    MessageBox.Show(
-                        "El formulario de registro de médico aún está en construcción.",
-                        "Pendiente",
-                        MessageBoxButtons.OK,
-                        MessageBoxIcon.Information
-                    );
+                    formDoctor.Show();
+
+                    this.Hide();
                 }
             }
             catch (Exception ex)

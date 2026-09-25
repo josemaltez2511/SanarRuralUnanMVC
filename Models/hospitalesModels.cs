@@ -124,7 +124,7 @@ namespace SanarRuralUnan.Models
         //    - Retorna una COLECCIÓN O LISTA COMPLETA (List<Hospitales>) de múltiples registros.
         //    - Sirve para llenar controles colectivos como Tablas de administración 
         //      o la Lista Desplegable (DropDownList / Select) del módulo de Doctores.
-        //    - ¿Para qué lo necesitamos?: Abraham usará este método en su pantalla para que
+        //    - ¿Para qué lo necesitamos?:  usaremos este método en la pantalla para que
         //      el usuario elija a qué hospital pertenece el doctor que está registrando.
 
         public List<Hospitales> listarHospitales()
