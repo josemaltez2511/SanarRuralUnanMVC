@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Text.RegularExpressions;
 using SanarRuralUnan.Controllers;
+using SanarRuralUnan.Helpers;
 
 namespace SanarRuralUnan.Views
 {
@@ -47,8 +48,7 @@ namespace SanarRuralUnan.Views
             lblErrorContrasena.Text =
                 "La contraseña debe ser al menos 5 caracteres";
 
-            lblErrorContrasena.ForeColor =
-                Color.FromArgb(100, 110, 120);
+            lblErrorContrasena.ForeColor = Tema.TextoAyuda;
 
             lblErrorConfirmar.Text = "";
 
@@ -58,6 +58,52 @@ namespace SanarRuralUnan.Views
             // Estado inicial de los botones para mostrar/ocultar contraseña
             btnVerContrasena.Text = "👁";
             btnVerConfirmarContrasena.Text = "👁";
+
+            // NUEVO: convertimos los radio buttons (ocultos) en tarjetas clicables.
+            // rbPaciente y rbMedico siguen siendo el valor real que se guarda;
+            // los paneles solo son la representación visual que el usuario ve y toca.
+            ConfigurarTarjetaTipoUsuario(panelTarjetaPaciente, rbPaciente, "🧑‍⚕️", "Paciente");
+            ConfigurarTarjetaTipoUsuario(panelTarjetaMedico, rbMedico, "👨‍⚕️", "Médico/Personal de salud");
+        }
+
+        // NUEVO: arma visualmente un panel como "tarjeta seleccionable" ligada a un RadioButton.
+        // Al hacer clic en cualquier parte del panel, se marca el radio button asociado,
+        // y el panel cambia de color/borde para mostrar que quedó seleccionado.
+        private void ConfigurarTarjetaTipoUsuario(Panel panel, RadioButton radioAsociado, string emoji, string texto)
+        {
+            panel.BorderStyle = BorderStyle.FixedSingle;
+            panel.BackColor = Tema.FondoTarjeta;
+            panel.Cursor = Cursors.Hand;
+            panel.Controls.Clear();
+
+            var lbl = new Label
+            {
+                Text = $"{emoji}  {texto}",
+                Font = Tema.FuenteLabelCampo,
+                ForeColor = Tema.TextoPrincipal,
+                AutoSize = false,
+                Dock = DockStyle.Fill,
+                TextAlign = ContentAlignment.MiddleCenter,
+                Cursor = Cursors.Hand
+            };
+            panel.Controls.Add(lbl);
+
+            panel.Click += (s, ev) => radioAsociado.Checked = true;
+            lbl.Click += (s, ev) => radioAsociado.Checked = true;
+
+            radioAsociado.CheckedChanged += (s, ev) =>
+            {
+                if (radioAsociado.Checked)
+                {
+                    panel.BackColor = Tema.FondoTarjetaSeleccionada;
+                    panel.BorderStyle = BorderStyle.Fixed3D;
+                }
+                else
+                {
+                    panel.BackColor = Tema.FondoTarjeta;
+                    panel.BorderStyle = BorderStyle.FixedSingle;
+                }
+            };
         }
 
         private void crearUsuario_Resize(object sender, EventArgs e)
@@ -66,7 +112,6 @@ namespace SanarRuralUnan.Views
         }
 
         // MOSTRAR / OCULTAR CONTRASEÑA
-        
 
         private void btnVerContrasena_Click(object sender, EventArgs e)
         {
@@ -122,7 +167,6 @@ namespace SanarRuralUnan.Views
                 txtConfirmarContrasena.Text.Length;
         }
 
-        
         // VALIDACIÓN DEL CORREO
 
         private void txtCorreo_TextChanged(object sender, EventArgs e)
@@ -134,8 +178,7 @@ namespace SanarRuralUnan.Views
                 lblErrorCorreo.Text =
                     "El correo no puede estar vacío.";
 
-                lblErrorCorreo.ForeColor =
-                    Color.Red;
+                lblErrorCorreo.ForeColor = Tema.ColorError;
 
                 return;
             }
@@ -149,8 +192,7 @@ namespace SanarRuralUnan.Views
                 lblErrorCorreo.Text =
                     "Formato de correo inválido.";
 
-                lblErrorCorreo.ForeColor =
-                    Color.Red;
+                lblErrorCorreo.ForeColor = Tema.ColorError;
 
                 return;
             }
@@ -162,16 +204,14 @@ namespace SanarRuralUnan.Views
                 lblErrorCorreo.Text =
                     "Este correo ya está registrado en la base de datos.";
 
-                lblErrorCorreo.ForeColor =
-                    Color.Red;
+                lblErrorCorreo.ForeColor = Tema.ColorError;
             }
             else
             {
                 lblErrorCorreo.Text =
                     "Correo disponible.";
 
-                lblErrorCorreo.ForeColor =
-                    Color.FromArgb(120, 190, 32);
+                lblErrorCorreo.ForeColor = Tema.ColorExito;
             }
         }
 
@@ -184,16 +224,14 @@ namespace SanarRuralUnan.Views
                 lblErrorConfirmar.Text =
                     "Las contraseñas no coinciden";
 
-                lblErrorConfirmar.ForeColor =
-                    Color.Red;
+                lblErrorConfirmar.ForeColor = Tema.ColorError;
             }
             else
             {
                 lblErrorConfirmar.Text =
                     "Las contraseñas coinciden";
 
-                lblErrorConfirmar.ForeColor =
-                    Color.FromArgb(120, 190, 32);
+                lblErrorConfirmar.ForeColor = Tema.ColorExito;
             }
         }
 
@@ -208,22 +246,20 @@ namespace SanarRuralUnan.Views
                 lblErrorContrasena.Text =
                     "La contraseña debe ser al menos 5 caracteres";
 
-                lblErrorContrasena.ForeColor =
-                    Color.Red;
+                lblErrorContrasena.ForeColor = Tema.ColorError;
             }
             else
             {
                 lblErrorContrasena.Text =
                     "Contraseña válida";
 
-                lblErrorContrasena.ForeColor =
-                    Color.FromArgb(120, 190, 32);
+                lblErrorContrasena.ForeColor = Tema.ColorExito;
             }
 
             ValidarCoincidenciaContrasenas();
         }
 
-       // VALIDACIÓN DE CONFIRMACIÓN DE CONTRASEÑA
+        // VALIDACIÓN DE CONFIRMACIÓN DE CONTRASEÑA
 
         private void txtConfirmarContrasena_TextChanged(
             object sender,
@@ -350,9 +386,7 @@ namespace SanarRuralUnan.Views
             }
         }
 
-        
         // VOLVER AL LOGIN
-        
 
         private void lnkVolver_LinkClicked(
             object sender,

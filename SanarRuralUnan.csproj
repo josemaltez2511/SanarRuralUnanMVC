@@ -75,6 +75,7 @@
     <Compile Include="Enfermedades.cs">
       <DependentUpon>ModelSanarRural.tt</DependentUpon>
     </Compile>
+    <Compile Include="Helpers\Tema.cs" />
     <Compile Include="Hospitales.cs">
       <DependentUpon>ModelSanarRural.tt</DependentUpon>
     </Compile>
