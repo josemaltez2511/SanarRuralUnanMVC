@@ -35,7 +35,7 @@ namespace SanarRuralUnan.Controllers
         // ============================================================
         // Obtiene la lista completa de todos los hospitales activos.
         // Sirve para cargar la tabla principal o llenar el combo desplegable
-        // que Abraham necesita en el módulo de Doctores.
+        // que necesitamos en el módulo de Doctores.
 
         public List<Hospitales> listarHospitales()
         {

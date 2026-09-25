@@ -7,13 +7,17 @@ namespace SanarRuralUnan.Views
     public partial class crearDoctor : Form
     {
         // ============================================================
-        // CONTROLLER
+        // CONTROLLERS
         // ============================================================
 
-        // La Vista se comunica con el Controller.
         // La Vista nunca accede directamente a la base de datos.
-        private doctoresControllers controlador =
-            new doctoresControllers();
+        // Instanciamos el controlador de doctores (para guardar el doctor)
+        // y obtener el IdUsuario que se acaba de crear en la Vista de crearUsuario.
+        private doctoresControllers controladorDoctores = new doctoresControllers();
+
+        // Instanciamos el controlador de hospitales (para llenar el ComboBox) y obtener el IdHospital seleccionado
+        // por medio del controller que se comunica con el modelo.
+        private hospitalesController controladorHospitales = new hospitalesController();
 
 
         // ============================================================
@@ -93,11 +97,18 @@ namespace SanarRuralUnan.Views
         {
             try
             {
-                cmbHospital.DataSource =
-                    controlador.obtenerHospitales();
+                // 1. Obtener la lista usando el controller de hospitales.
+                var listaHospitales = controladorHospitales.listarHospitales();
 
+                // 2. Llenar el ComboBox
+                cmbHospital.DataSource = listaHospitales;
                 cmbHospital.DisplayMember = "Nombre";
                 cmbHospital.ValueMember = "IdHospital";
+
+                // 3. Configurar la barra de búsqueda y scroll (Autocompletado)
+                cmbHospital.DropDownStyle = ComboBoxStyle.DropDown;
+                cmbHospital.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
+                cmbHospital.AutoCompleteSource = AutoCompleteSource.ListItems;
 
                 if (cmbHospital.Items.Count > 0)
                 {
@@ -297,7 +308,8 @@ namespace SanarRuralUnan.Views
 
             try
             {
-                controlador.crearDoctor(
+                // Usamos el controlador de DOCTORES para crear al doctor
+                controladorDoctores.crearDoctor(
                     idUsuario,
                     nombres,
                     apellidos,
@@ -313,7 +325,6 @@ namespace SanarRuralUnan.Views
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Information
                 );
-
 
                 // Cerramos el formulario.
                 this.Close();
