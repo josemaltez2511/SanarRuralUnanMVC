@@ -7,3 +7,6 @@ obj/
 *.user
 *.suo
 *.cache
+
+# Ignorar la configuracion local de la base de datos
+App.config
