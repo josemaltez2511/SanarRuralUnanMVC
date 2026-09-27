@@ -335,7 +335,11 @@ namespace SanarRuralUnan.Views
                 );
 
 
-                // Cerrar formulario.
+                // Enviar al Menú Principal tras completar el perfil
+                menuPrincipalMedicos menuPaciente = new menuPrincipalMedicos();
+                menuPaciente.Show();
+
+                // Cerramos el formulario de registro actual
                 this.Close();
             }
             catch (Exception ex)
@@ -357,10 +361,12 @@ namespace SanarRuralUnan.Views
         // Permite cerrar el formulario sin completar información
         // adicional del paciente.
 
-        private void lnkVolver_LinkClicked(
-            object sender,
-            LinkLabelLinkClickedEventArgs e)
+        private void lnkVolver_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
+            // Volver al menú principal en lugar de apagar el sistema
+            menuPrincipalMedicos menu = new menuPrincipalMedicos();
+            menu.Show();
+
             this.Close();
         }
 
@@ -380,6 +386,11 @@ namespace SanarRuralUnan.Views
             object sender,
             PaintEventArgs e)
         {
+        }
+
+        private void panelDatosPersonales_Paint(object sender, PaintEventArgs e)
+        {
+
         }
     }
 }

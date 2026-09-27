@@ -123,6 +123,18 @@
     <Compile Include="Views\Doctores\crearDoctor.Designer.cs">
       <DependentUpon>crearDoctor.cs</DependentUpon>
     </Compile>
+    <Compile Include="Views\Hospitales\crearHospital.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Views\Hospitales\crearHospital.Designer.cs">
+      <DependentUpon>crearHospital.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Menu\menuPrincipalMedicos.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Views\Menu\menuPrincipalMedicos.Designer.cs">
+      <DependentUpon>menuPrincipalMedicos.cs</DependentUpon>
+    </Compile>
     <Compile Include="Views\Pacientes\crearPaciente.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -157,6 +169,12 @@
     </Compile>
     <EmbeddedResource Include="Views\Doctores\crearDoctor.resx">
       <DependentUpon>crearDoctor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\Hospitales\crearHospital.resx">
+      <DependentUpon>crearHospital.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\Menu\menuPrincipalMedicos.resx">
+      <DependentUpon>menuPrincipalMedicos.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Views\Pacientes\crearPaciente.resx">
       <DependentUpon>crearPaciente.cs</DependentUpon>

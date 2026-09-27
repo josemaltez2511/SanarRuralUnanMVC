@@ -353,25 +353,20 @@ namespace SanarRuralUnan.Views
 
                 if (rbPaciente.Checked)
                 {
-                    // Abrimos el formulario para completar
-                    // el perfil del Paciente
-
-                    crearPaciente formPaciente =
-                        new crearPaciente(idUsuarioCreado);
-
+                    // Se completa primero el perfil de Paciente, y desde ahí,
+                    // al terminar (o al presionar "Cerrar / Cancelar"), el usuario
+                    // vuelve al flujo normal del sistema.
+                    crearPaciente formPaciente = new crearPaciente(idUsuarioCreado);
                     formPaciente.Show();
-
                     this.Hide();
                 }
                 else if (rbMedico.Checked)
                 {
-                    // Abrimos el formulario recién terminado para completar
-                    // el perfil del Doctor y le pasamos el Id del usuario
-
+                    // Se completa primero el perfil de Doctor, y desde ahi,
+                    // al terminar (o al presionar "Cerrar / Cancelar"), el usuario
+                    // vuelve al flujo normal del sistema.
                     crearDoctor formDoctor = new crearDoctor(idUsuarioCreado);
-
                     formDoctor.Show();
-
                     this.Hide();
                 }
             }
@@ -388,16 +383,12 @@ namespace SanarRuralUnan.Views
 
         // VOLVER AL LOGIN
 
-        private void lnkVolver_LinkClicked(
-            object sender,
-            LinkLabelLinkClickedEventArgs e)
+        private void lnkVolver_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            iniciarSesion login =
-                new iniciarSesion();
-
-            login.Show();
-
-            this.Hide();
+            // Volvemos al Menú Principal en vez de solo cerrar el formulario
+            menuPrincipalMedicos menu = new menuPrincipalMedicos();
+            menu.Show();
+            this.Close();
         }
 
         // EVENTOS DEL FORMULARIO

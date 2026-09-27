@@ -33,6 +33,7 @@ namespace SanarRuralUnan
             txtCorreo.Focus();
             CentrarPanelCard();
 
+            btnVerContrasena.Text = "👁";
             // Textos de advertencia iniciales
             lblErrorCorreo.Text = "";
             lblErrorContrasena.Text = "La contraseña debe ser al menos 5 caracteres";
@@ -92,6 +93,27 @@ namespace SanarRuralUnan
             }
         }
 
+        // MOSTRAR / OCULTAR CONTRASEÑA
+        private void btnVerContrasena_Click(object sender, EventArgs e)
+        {
+            if (txtContrasena.PasswordChar == '●')
+            {
+                // Mostrar texto plano
+                txtContrasena.PasswordChar = '\0';
+                btnVerContrasena.Text = "🙈";
+            }
+            else
+            {
+                // Ocultar con viñeta
+                txtContrasena.PasswordChar = '●';
+                btnVerContrasena.Text = "👁";
+            }
+
+            // Mantener el foco y cursor al final del campo
+            txtContrasena.Focus();
+            txtContrasena.SelectionStart = txtContrasena.Text.Length;
+        }
+
         private void btnIniciarSesion_Click(object sender, EventArgs e)
         {
             string correo = txtCorreo.Text.Trim();
@@ -113,18 +135,30 @@ namespace SanarRuralUnan
             }
 
             usuariosControllers controlador = new usuariosControllers();
-            bool accesoValido = controlador.IniciarSesion(correo, contrasena);
+            int tipoUsuario = controlador.IniciarSesion(correo, contrasena);
 
-            if (accesoValido)
+            if (tipoUsuario != -1)
             {
                 MessageBox.Show("¡Bienvenido al sistema Sanar Rural!",
                                 "Inicio de Sesión Exitoso",
                                 MessageBoxButtons.OK,
                                 MessageBoxIcon.Information);
 
-                // FrmPrincipal principal = new FrmPrincipal();
-                // principal.Show();
-                // this.Hide();
+                // Enrutamiento según el rol
+                if (tipoUsuario == 1)
+                {
+                    // Es Doctor
+                    menuPrincipalMedicos menuMedico = new menuPrincipalMedicos();
+                    menuMedico.Show();
+                }
+                else
+                {
+                    // Es Paciente
+                
+                    MessageBox.Show("Aún no se ha creado el menú principal para Pacientes.", "Aviso");
+                }
+
+                this.Hide();
             }
             else
             {
@@ -147,5 +181,10 @@ namespace SanarRuralUnan
 
         private void lblSubtitulo_Click(object sender, EventArgs e) { }
         private void panelCard_Paint(object sender, PaintEventArgs e) { }
+
+        private void iniciarSesion_Load_1(object sender, EventArgs e)
+        {
+
+        }
     }
 }

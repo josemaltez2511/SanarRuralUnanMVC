@@ -326,7 +326,11 @@ namespace SanarRuralUnan.Views
                     MessageBoxIcon.Information
                 );
 
-                // Cerramos el formulario.
+                // Enviar al Menú Principal de Médicos tras completar el perfil
+                menuPrincipalMedicos menuDoctor = new menuPrincipalMedicos();
+                menuDoctor.Show();
+
+                // Cerramos el formulario de registro actual
                 this.Close();
             }
             catch (Exception ex)
@@ -346,10 +350,10 @@ namespace SanarRuralUnan.Views
         // VOLVER
         // ============================================================
 
-        private void lnkVolver_LinkClicked(
-            object sender,
-            LinkLabelLinkClickedEventArgs e)
+        private void lnkVolver_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
+            menuPrincipalMedicos menu = new menuPrincipalMedicos();
+            menu.Show();
             this.Close();
         }
 
