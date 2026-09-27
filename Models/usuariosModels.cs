@@ -100,37 +100,38 @@ namespace SanarRuralUnan.Models
         // este metodo (funcion) es de tipo Bool (verdadero o falso)
         // porque solo necesitamos verificar si es verdadero que el usuario ya existe en la base de datos
         // o si es falso y no tenemos registros
-        public bool IniciarSesion(string correo, string contrasena)
+        // Retorna:
+        // -1 = Credenciales incorrectas
+        //  0 = Es Paciente
+        //  1 = Es Doctor
+        public int IniciarSesion(string correo, string contrasena)
         {
-            // BUSCAR EL USUARIO EN LA BD CON EL CORREO Y CONTRASEÑA PROPORCIONADOS
-            // USAMOS CONSULTA DE LINQ PARA OBTENER EL PRIMER USUARIO QUE COINCIDA CON LOS DATOS INGRESADOS
-
-            var consultarUsuario = db.Usuarios.FirstOrDefault(u => u.Correo == correo && u.Contrasena == contrasena && u.Estado == true);
-
-            //FirstOrDefault es una consulta de LINQ, significa que si no encuentra ningún usuario
-            //que coincida con los datos ingresados, devolverá null.
-
-            //Por lo tanto, si la variable "consultarUsuario" es null, significa que no se encontró
-            //ningún usuario con esos datos y la función devuelve false.
-
-            //Si se encuentra un usuario, se asigna el correo del usuario actual y se devuelve true.
-            // Verificamos el resultado de la consulta 
-            // Si no se encuentra ningún usuario, retornamos false
+            var consultarUsuario = db.Usuarios.FirstOrDefault(
+                u => u.Correo == correo &&
+                     u.Contrasena == contrasena &&
+                     u.Estado == true
+            );
 
             if (consultarUsuario == null)
-                return false;
-
-            // Si se encuentra un usuario,
-            // asignamos el correo del usuario actual
-            // y retornamos true
+            {
+                return -1;
+            }
 
             usuarioActual = correo;
 
-            //  O sea que si el usuario existe,
-            //  se asigna el correo del usuario a la sesion actual
-            //  y se devuelve true.
+            // Verificar si el usuario tiene un registro en Doctores
+            bool esDoctor = db.Doctores.Any(
+                d => d.IdUsuario == consultarUsuario.IdUsuario
+            );
 
-            return true;
+            if (esDoctor)
+            {
+                return 1; // Doctor
+            }
+            else
+            {
+                return 0; // Paciente
+            }
         }
 
         // MÉTODO CERRAR SESIÓN

@@ -16,15 +16,16 @@ namespace SanarRuralUnan.Controllers
         // Método para iniciar sesión con sus parámetros de correo y contraseña
         // para verificar si el usuario existe y si la contraseña es correcta
         // Este método llama al método IniciarSesion del modelo usuarios
-        // y retorna un valor booleano indicando si el inicio de sesión fue exitoso o no
+        // y retorna un valor entero indicando si el inicio de sesión fue exitoso y su rol
         // Dependiendo del resultado, la vista puede mostrar un mensaje de error
         // o redirigir al usuario a la página principal
-        public bool IniciarSesion(string correo, string contrasena)
+        public int IniciarSesion(string correo, string contrasena)
         {
             // Instanciamos el objeto del modelo usuarios
             // o sea que estamos creando un objeto de la clase usuarios
             // que se encuentra en el modelo, para poder utilizar sus métodos y propiedades
             usuariosModels objetoUsuario = new usuariosModels();
+
             // Retornamos el resultado del método IniciarSesion del modelo
             // que verifica si el correo y la contraseña son correctos
             return objetoUsuario.IniciarSesion(correo, contrasena);

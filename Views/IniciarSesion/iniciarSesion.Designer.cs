@@ -23,6 +23,7 @@
             this.lblTitulo = new System.Windows.Forms.Label();
             this.btnIniciarSesion = new System.Windows.Forms.Button();
             this.txtContrasena = new System.Windows.Forms.TextBox();
+            this.btnVerContrasena = new System.Windows.Forms.Button();
             this.lblContrasena = new System.Windows.Forms.Label();
             this.txtCorreo = new System.Windows.Forms.TextBox();
             this.lblCorreo = new System.Windows.Forms.Label();
@@ -40,6 +41,7 @@
             this.panelCard.Controls.Add(this.lblTitulo);
             this.panelCard.Controls.Add(this.btnIniciarSesion);
             this.panelCard.Controls.Add(this.txtContrasena);
+            this.panelCard.Controls.Add(this.btnVerContrasena);
             this.panelCard.Controls.Add(this.lblContrasena);
             this.panelCard.Controls.Add(this.txtCorreo);
             this.panelCard.Controls.Add(this.lblCorreo);
@@ -105,9 +107,24 @@
             this.txtContrasena.Location = new System.Drawing.Point(40, 240);
             this.txtContrasena.Name = "txtContrasena";
             this.txtContrasena.PasswordChar = '●';
-            this.txtContrasena.Size = new System.Drawing.Size(420, 27);
-            this.txtContrasena.TabIndex = 3;
+            this.txtContrasena.Size = new System.Drawing.Size(375, 27);
+            this.txtContrasena.TabIndex = 2;
             this.txtContrasena.TextChanged += new System.EventHandler(this.txtContrasena_TextChanged);
+            // 
+            // btnVerContrasena
+            // 
+            this.btnVerContrasena.BackColor = System.Drawing.Color.White;
+            this.btnVerContrasena.FlatAppearance.BorderColor = System.Drawing.Color.LightGray;
+            this.btnVerContrasena.FlatAppearance.BorderSize = 1;
+            this.btnVerContrasena.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnVerContrasena.Font = new System.Drawing.Font("Segoe UI", 10F);
+            this.btnVerContrasena.Location = new System.Drawing.Point(420, 240);
+            this.btnVerContrasena.Name = "btnVerContrasena";
+            this.btnVerContrasena.Size = new System.Drawing.Size(40, 27);
+            this.btnVerContrasena.TabIndex = 3;
+            this.btnVerContrasena.Text = "👁";
+            this.btnVerContrasena.UseVisualStyleBackColor = false;
+            this.btnVerContrasena.Click += new System.EventHandler(this.btnVerContrasena_Click);
             // 
             // lblContrasena
             // 
@@ -189,7 +206,6 @@
             this.panelCard.ResumeLayout(false);
             this.panelCard.PerformLayout();
             this.ResumeLayout(false);
-
         }
 
         #endregion
@@ -200,6 +216,7 @@
         private System.Windows.Forms.Label lblTitulo;
         private System.Windows.Forms.Button btnIniciarSesion;
         private System.Windows.Forms.TextBox txtContrasena;
+        private System.Windows.Forms.Button btnVerContrasena;
         private System.Windows.Forms.Label lblContrasena;
         private System.Windows.Forms.TextBox txtCorreo;
         private System.Windows.Forms.Label lblCorreo;
