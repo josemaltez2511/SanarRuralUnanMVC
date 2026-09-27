@@ -130,17 +130,57 @@ namespace SanarRuralUnan.Models
         // RF-09
         // ============================================================
 
-        // Busca un doctor utilizando el IdUsuario.
-        //
-        // Solo devuelve doctores que estén activos.
-        // Los doctores eliminados lógicamente no aparecerán
-        // en las consultas normales.
-
-        public Doctores buscarDoctor(int idUsuario)
+        // ============================================================
+        // LISTAR DOCTORES CON BÚSQUEDA
+        // ============================================================
+        // Devuelve una proyección con los datos del doctor y su hospital.
+        // Se usa LEFT JOIN explícito para no depender de propiedades de navegación en EF.
+        public object listarDoctores(string busqueda = "")
         {
-            return db.Doctores.FirstOrDefault(
-                d => d.IdUsuario == idUsuario && d.Estado == true
-            );
+            var consulta = from d in db.Doctores
+                           join h in db.Hospitales on d.IdHospital equals h.IdHospital into grupoHospital
+                           from h in grupoHospital.DefaultIfEmpty()
+                           where d.Estado == true
+                           select new
+                           {
+                               d.IdDoctor,
+                               d.Nombres,
+                               d.Apellidos,
+                               d.Especialidad,
+                               d.NumeroLicencia,
+                               HospitalNombre = h != null ? h.Nombre : "Sin asignar",
+                               d.Estado
+                           };
+
+            if (!string.IsNullOrWhiteSpace(busqueda))
+            {
+                busqueda = busqueda.Trim().ToLower();
+                consulta = consulta.Where(d =>
+                    d.Nombres.ToLower().Contains(busqueda) ||
+                    d.Apellidos.ToLower().Contains(busqueda) ||
+                    d.Especialidad.ToLower().Contains(busqueda) ||
+                    d.NumeroLicencia.ToLower().Contains(busqueda)
+                );
+            }
+
+            return consulta.Select(d => new
+            {
+                d.IdDoctor,
+                Nombre = d.Nombres + " " + d.Apellidos,
+                d.Especialidad,
+                Licencia = d.NumeroLicencia,
+                Hospital = d.HospitalNombre,
+                Estado = (d.Estado == true) ? "Activo" : "Inactivo"
+            }).ToList();
+        }
+
+        // ============================================================
+        // BUSCAR DOCTOR POR ID DOCTOR
+        // ============================================================
+        // Permite recuperar la entidad de un doctor específico para edición.
+        public Doctores buscarDoctorPorId(int idDoctor)
+        {
+            return db.Doctores.FirstOrDefault(d => d.IdDoctor == idDoctor && d.Estado == true);
         }
 
 
