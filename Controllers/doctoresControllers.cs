@@ -52,16 +52,22 @@ namespace SanarRuralUnan.Controllers
         // RF-09
         // ============================================================
 
-        public Doctores consultarDoctor(int idUsuario)
+        // ============================================================
+        // LISTAR DOCTORES
+        // ============================================================
+        public object listarDoctores(string busqueda = "")
         {
-            // Crear objeto del modelo.
-            doctoresModels objetoDoctor =
-                new doctoresModels();
+            doctoresModels objetoDoctor = new doctoresModels();
+            return objetoDoctor.listarDoctores(busqueda);
+        }
 
-
-            // El modelo buscará el doctor por IdUsuario
-            // y únicamente devolverá doctores activos.
-            return objetoDoctor.buscarDoctor(idUsuario);
+        // ============================================================
+        // CONSULTAR DOCTOR POR ID
+        // ============================================================
+        public Doctores consultarDoctorPorId(int idDoctor)
+        {
+            doctoresModels objetoDoctor = new doctoresModels();
+            return objetoDoctor.buscarDoctorPorId(idDoctor);
         }
 
 

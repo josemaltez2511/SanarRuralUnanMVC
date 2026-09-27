@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Windows.Forms;
 using SanarRuralUnan.Controllers;
+using SanarRuralUnan.Models;
+using SanarRuralUnan.Views.Doctores;
 
 namespace SanarRuralUnan.Views
 {
@@ -11,33 +13,38 @@ namespace SanarRuralUnan.Views
         // ============================================================
 
         // La Vista nunca accede directamente a la base de datos.
-        // Instanciamos el controlador de doctores (para guardar el doctor)
-        // y obtener el IdUsuario que se acaba de crear en la Vista de crearUsuario.
+        // Instanciamos los controladores para comunicar con el modelo.
         private doctoresControllers controladorDoctores = new doctoresControllers();
-
-        // Instanciamos el controlador de hospitales (para llenar el ComboBox) y obtener el IdHospital seleccionado
-        // por medio del controller que se comunica con el modelo.
         private hospitalesController controladorHospitales = new hospitalesController();
 
 
         // ============================================================
-        // ID DEL USUARIO
+        // PROPIEDADES DE ESTADO
         // ============================================================
 
-        // Guardamos el IdUsuario de la cuenta que se acaba de crear.
-        // Este usuario quedará relacionado con el doctor.
         private int idUsuario;
+        private int idDoctorEdicion = 0;
+        private bool esModoEdicion = false;
 
 
         // ============================================================
-        // CONSTRUCTOR
+        // CONSTRUCTORES
         // ============================================================
 
+        // Constructor para registro nuevo (recibe el IdUsuario recién creado)
         public crearDoctor(int idUsuarioRecibido)
         {
             InitializeComponent();
-
             idUsuario = idUsuarioRecibido;
+            esModoEdicion = false;
+        }
+
+        // Constructor para edición (recibe el IdDoctor a editar)
+        public crearDoctor(int idDoctor, bool modoEdicion)
+        {
+            InitializeComponent();
+            idDoctorEdicion = idDoctor;
+            esModoEdicion = modoEdicion;
         }
 
 
@@ -45,8 +52,6 @@ namespace SanarRuralUnan.Views
         // CENTRAR TARJETA
         // ============================================================
 
-        // Centra la tarjeta principal cuando cambia el tamaño
-        // de la ventana.
         private void CentrarPanelCard()
         {
             int x = (this.ClientSize.Width - panelCard.Width) / 2;
@@ -66,16 +71,32 @@ namespace SanarRuralUnan.Views
         private void crearDoctor_Load(object sender, EventArgs e)
         {
             txtNombres.Focus();
-
             CentrarPanelCard();
 
-            // Cargar hospitales disponibles.
+            // Cargar hospitales disponibles en el ComboBox
             CargarHospitales();
 
-            // Limpiar mensajes de error.
+            // Limpiar advertencias
             lblErrorNombres.Text = "";
             lblErrorApellidos.Text = "";
             lblErrorLicencia.Text = "";
+
+            // Si entramos en modo edición, cargamos los datos existentes del médico
+            if (esModoEdicion)
+            {
+                lblSubtitulo.Text = "Modificar Datos del Doctor";
+                btnGuardar.Text = "Guardar Cambios";
+
+                var doctor = controladorDoctores.consultarDoctorPorId(idDoctorEdicion);
+                if (doctor != null)
+                {
+                    txtNombres.Text = doctor.Nombres;
+                    txtApellidos.Text = doctor.Apellidos;
+                    txtEspecialidad.Text = doctor.Especialidad;
+                    txtNumeroLicencia.Text = doctor.NumeroLicencia;
+                    cmbHospital.SelectedValue = doctor.IdHospital;
+                }
+            }
         }
 
 
@@ -97,15 +118,12 @@ namespace SanarRuralUnan.Views
         {
             try
             {
-                // 1. Obtener la lista usando el controller de hospitales.
                 var listaHospitales = controladorHospitales.listarHospitales();
 
-                // 2. Llenar el ComboBox
                 cmbHospital.DataSource = listaHospitales;
                 cmbHospital.DisplayMember = "Nombre";
                 cmbHospital.ValueMember = "IdHospital";
 
-                // 3. Configurar la barra de búsqueda y scroll (Autocompletado)
                 cmbHospital.DropDownStyle = ComboBoxStyle.DropDown;
                 cmbHospital.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
                 cmbHospital.AutoCompleteSource = AutoCompleteSource.ListItems;
@@ -118,8 +136,7 @@ namespace SanarRuralUnan.Views
             catch (Exception ex)
             {
                 MessageBox.Show(
-                    "No fue posible cargar los hospitales.\n\n" +
-                    ex.Message,
+                    "No fue posible cargar los hospitales.\n\n" + ex.Message,
                     "Error",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Error
@@ -132,17 +149,12 @@ namespace SanarRuralUnan.Views
         // VALIDACIÓN DE NOMBRES
         // ============================================================
 
-        private void txtNombres_TextChanged(
-            object sender,
-            EventArgs e)
+        private void txtNombres_TextChanged(object sender, EventArgs e)
         {
             if (string.IsNullOrWhiteSpace(txtNombres.Text))
             {
-                lblErrorNombres.Text =
-                    "El nombre no puede estar vacío.";
-
-                lblErrorNombres.ForeColor =
-                    System.Drawing.Color.Red;
+                lblErrorNombres.Text = "El nombre no puede estar vacío.";
+                lblErrorNombres.ForeColor = System.Drawing.Color.Red;
             }
             else
             {
@@ -155,17 +167,12 @@ namespace SanarRuralUnan.Views
         // VALIDACIÓN DE APELLIDOS
         // ============================================================
 
-        private void txtApellidos_TextChanged(
-            object sender,
-            EventArgs e)
+        private void txtApellidos_TextChanged(object sender, EventArgs e)
         {
             if (string.IsNullOrWhiteSpace(txtApellidos.Text))
             {
-                lblErrorApellidos.Text =
-                    "Los apellidos no pueden estar vacíos.";
-
-                lblErrorApellidos.ForeColor =
-                    System.Drawing.Color.Red;
+                lblErrorApellidos.Text = "Los apellidos no pueden estar vacíos.";
+                lblErrorApellidos.ForeColor = System.Drawing.Color.Red;
             }
             else
             {
@@ -178,18 +185,12 @@ namespace SanarRuralUnan.Views
         // VALIDACIÓN DE LICENCIA
         // ============================================================
 
-        private void txtNumeroLicencia_TextChanged(
-            object sender,
-            EventArgs e)
+        private void txtNumeroLicencia_TextChanged(object sender, EventArgs e)
         {
-            if (string.IsNullOrWhiteSpace(
-                txtNumeroLicencia.Text))
+            if (string.IsNullOrWhiteSpace(txtNumeroLicencia.Text))
             {
-                lblErrorLicencia.Text =
-                    "La licencia no puede estar vacía.";
-
-                lblErrorLicencia.ForeColor =
-                    System.Drawing.Color.Red;
+                lblErrorLicencia.Text = "La licencia no puede estar vacía.";
+                lblErrorLicencia.ForeColor = System.Drawing.Color.Red;
             }
             else
             {
@@ -199,116 +200,92 @@ namespace SanarRuralUnan.Views
 
 
         // ============================================================
-        // GUARDAR DOCTOR
-        // RF-07
+        // GUARDAR / EDITAR DOCTOR
         // ============================================================
 
-        private void btnGuardar_Click(
-            object sender,
-            EventArgs e)
+        private void btnGuardar_Click(object sender, EventArgs e)
         {
-            string nombres =
-                txtNombres.Text.Trim();
+            string nombres = txtNombres.Text.Trim();
+            string apellidos = txtApellidos.Text.Trim();
+            string especialidad = txtEspecialidad.Text.Trim();
+            string numeroLicencia = txtNumeroLicencia.Text.Trim();
 
-            string apellidos =
-                txtApellidos.Text.Trim();
-
-            string especialidad =
-                txtEspecialidad.Text.Trim();
-
-            string numeroLicencia =
-                txtNumeroLicencia.Text.Trim();
-
-
-            // --------------------------------------------------------
-            // VALIDACIONES
-            // --------------------------------------------------------
-
+            // Validaciones de campos obligatorios
             if (string.IsNullOrWhiteSpace(nombres))
             {
-                MessageBox.Show(
-                    "Por favor, ingrese los nombres del doctor.",
-                    "Campo requerido",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Warning
-                );
-
+                MessageBox.Show("Por favor, ingrese los nombres del doctor.", "Campo requerido", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 txtNombres.Focus();
                 return;
             }
 
-
             if (string.IsNullOrWhiteSpace(apellidos))
             {
-                MessageBox.Show(
-                    "Por favor, ingrese los apellidos del doctor.",
-                    "Campo requerido",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Warning
-                );
-
+                MessageBox.Show("Por favor, ingrese los apellidos del doctor.", "Campo requerido", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 txtApellidos.Focus();
                 return;
             }
 
-
             if (string.IsNullOrWhiteSpace(especialidad))
             {
-                MessageBox.Show(
-                    "Por favor, ingrese la especialidad.",
-                    "Campo requerido",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Warning
-                );
-
+                MessageBox.Show("Por favor, ingrese la especialidad.", "Campo requerido", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 txtEspecialidad.Focus();
                 return;
             }
 
-
             if (string.IsNullOrWhiteSpace(numeroLicencia))
             {
-                MessageBox.Show(
-                    "Por favor, ingrese el número de licencia.",
-                    "Campo requerido",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Warning
-                );
-
+                MessageBox.Show("Por favor, ingrese el número de licencia.", "Campo requerido", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 txtNumeroLicencia.Focus();
                 return;
             }
 
-
             if (cmbHospital.SelectedValue == null)
             {
-                MessageBox.Show(
-                    "Por favor, seleccione un hospital o centro de salud.",
-                    "Campo requerido",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Warning
-                );
-
+                MessageBox.Show("Por favor, seleccione un hospital o centro de salud.", "Campo requerido", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 cmbHospital.Focus();
                 return;
             }
 
+            int idHospital = Convert.ToInt32(cmbHospital.SelectedValue);
 
             // --------------------------------------------------------
-            // OBTENER HOSPITAL
+            // MODO EDICIÓN
             // --------------------------------------------------------
+            if (esModoEdicion)
+            {
+                try
+                {
+                    controladorDoctores.editarDoctor(
+                        idDoctorEdicion,
+                        nombres,
+                        apellidos,
+                        especialidad,
+                        numeroLicencia,
+                        idHospital
+                    );
 
-            int idHospital =
-                Convert.ToInt32(cmbHospital.SelectedValue);
+                    MessageBox.Show(
+                        "¡Doctor modificado con éxito!",
+                        "Registro Actualizado",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Information
+                    );
 
+                    RegresarAMenuDoctores();
+                    return;
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Ocurrió un error al actualizar el doctor:\n\n" + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+            }
 
             // --------------------------------------------------------
-            // GUARDAR
+            // MODO CREACIÓN
             // --------------------------------------------------------
-
             try
             {
-                // Usamos el controlador de DOCTORES para crear al doctor
                 controladorDoctores.crearDoctor(
                     idUsuario,
                     nombres,
@@ -318,7 +295,6 @@ namespace SanarRuralUnan.Views
                     idHospital
                 );
 
-
                 MessageBox.Show(
                     "¡Doctor registrado con éxito!",
                     "Registro Exitoso",
@@ -326,18 +302,12 @@ namespace SanarRuralUnan.Views
                     MessageBoxIcon.Information
                 );
 
-                // Enviar al Menú Principal de Médicos tras completar el perfil
-                menuPrincipalMedicos menuDoctor = new menuPrincipalMedicos();
-                menuDoctor.Show();
-
-                // Cerramos el formulario de registro actual
-                this.Close();
+                RegresarAMenuDoctores();
             }
             catch (Exception ex)
             {
                 MessageBox.Show(
-                    "Ocurrió un error al guardar el doctor:\n\n" +
-                    ex.Message,
+                    "Ocurrió un error al guardar el doctor:\n\n" + ex.Message,
                     "Error",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Error
@@ -347,13 +317,35 @@ namespace SanarRuralUnan.Views
 
 
         // ============================================================
-        // VOLVER
+        // VOLVER / CANCELAR
         // ============================================================
 
         private void lnkVolver_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            menuPrincipalMedicos menu = new menuPrincipalMedicos();
-            menu.Show();
+            RegresarAMenuDoctores();
+        }
+
+
+        // ============================================================
+        // NAVEGACIÓN HACIA LA PANTALLA PRINCIPAL DE DOCTORES
+        // ============================================================
+        private void RegresarAMenuDoctores()
+        {
+            // Verificamos si la ventana de doctores ya estaba abierta en segundo plano
+            paginaPrincipalDoctores ventanaAbierta = Application.OpenForms["paginaPrincipalDoctores"] as paginaPrincipalDoctores;
+
+            if (ventanaAbierta != null)
+            {
+                ventanaAbierta.Show();
+                ventanaAbierta.BringToFront();
+            }
+            else
+            {
+                // Si venía desde el registro de usuario, creamos la ventana del catálogo
+                paginaPrincipalDoctores formDoctores = new paginaPrincipalDoctores();
+                formDoctores.Show();
+            }
+
             this.Close();
         }
 
@@ -362,9 +354,7 @@ namespace SanarRuralUnan.Views
         // PANEL PAINT
         // ============================================================
 
-        private void panelCard_Paint(
-            object sender,
-            PaintEventArgs e)
+        private void panelCard_Paint(object sender, PaintEventArgs e)
         {
         }
     }
