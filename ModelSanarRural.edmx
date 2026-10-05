@@ -12,45 +12,40 @@
           <Property Name="IdCita" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="IdPaciente" Type="int" Nullable="false" />
           <Property Name="IdDoctor" Type="int" Nullable="false" />
-          <Property Name="IdHospital" Type="int" />
-          <Property Name="FechaHora" Type="datetime" Nullable="false" />
-          <Property Name="Plataforma" Type="varchar" MaxLength="50" />
-          <Property Name="Estado" Type="varchar" MaxLength="30" />
-          <Property Name="Motivo" Type="varchar" MaxLength="200" />
-        </EntityType>
-        <EntityType Name="Diagnosticos_Tratamientos">
-          <Key>
-            <PropertyRef Name="IdDiagnostico" />
-          </Key>
-          <Property Name="IdDiagnostico" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="IdCita" Type="int" Nullable="false" />
-          <Property Name="IdEnfermedad" Type="int" Nullable="false" />
-          <Property Name="IdMedicamento" Type="int" Nullable="false" />
-          <Property Name="PlanTratamiento" Type="varchar" MaxLength="500" Nullable="false" />
-          <Property Name="Dosis" Type="varchar" MaxLength="100" Nullable="false" />
-          <Property Name="FechaInicio" Type="date" Nullable="false" />
-          <Property Name="FechaFin" Type="date" />
+          <Property Name="IdHospital" Type="int" Nullable="false" />
+          <Property Name="IdEspecialidad" Type="int" Nullable="false" />
+          <Property Name="FechaHoraProgramada" Type="datetime2" Precision="7" Nullable="false" />
+          <Property Name="Estado" Type="nvarchar" MaxLength="30" Nullable="false" />
+          <Property Name="Motivo" Type="nvarchar" MaxLength="500" Nullable="false" />
+          <Property Name="FechaCreacion" Type="datetime2" Precision="7" Nullable="false" />
         </EntityType>
         <EntityType Name="Doctores">
           <Key>
             <PropertyRef Name="IdDoctor" />
           </Key>
           <Property Name="IdDoctor" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="IdUsuario" Type="int" Nullable="false" />
-          <Property Name="Nombres" Type="varchar" MaxLength="100" Nullable="false" />
-          <Property Name="Apellidos" Type="varchar" MaxLength="100" Nullable="false" />
-          <Property Name="Especialidad" Type="varchar" MaxLength="100" Nullable="false" />
-          <Property Name="NumeroLicencia" Type="varchar" MaxLength="50" Nullable="false" />
-          <Property Name="IdHospital" Type="int" />
-          <Property Name="Estado" Type="bit" />
+          <Property Name="IdUsuario" Type="int" />
+          <Property Name="PrimerNombre" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="SegundoNombre" Type="nvarchar" MaxLength="50" />
+          <Property Name="PrimerApellido" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="SegundoApellido" Type="nvarchar" MaxLength="50" />
+          <Property Name="Cedula" Type="nvarchar" MaxLength="20" Nullable="false" />
+          <Property Name="NumeroLicencia" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="Telefono" Type="nvarchar" MaxLength="30" />
+          <Property Name="Foto" Type="varbinary(max)" />
+          <Property Name="FotoNombre" Type="nvarchar" MaxLength="255" />
+          <Property Name="FotoMimeType" Type="nvarchar" MaxLength="100" />
+          <Property Name="Estado" Type="bit" Nullable="false" />
         </EntityType>
         <EntityType Name="Enfermedades">
           <Key>
             <PropertyRef Name="IdEnfermedad" />
           </Key>
           <Property Name="IdEnfermedad" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="NombreEnfermedad" Type="varchar" MaxLength="150" Nullable="false" />
-          <Property Name="Categoria" Type="varchar" MaxLength="100" />
+          <Property Name="NombreEnfermedad" Type="nvarchar" MaxLength="150" Nullable="false" />
+          <Property Name="Categoria" Type="nvarchar" MaxLength="100" />
+          <Property Name="Descripcion" Type="nvarchar" MaxLength="2000" />
+          <Property Name="Estado" Type="bit" Nullable="false" />
         </EntityType>
         <EntityType Name="Enfermedades_Sintomas">
           <Key>
@@ -65,8 +60,10 @@
             <PropertyRef Name="IdHospital" />
           </Key>
           <Property Name="IdHospital" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="Nombre" Type="varchar" MaxLength="150" Nullable="false" />
-          <Property Name="Ubicacion" Type="varchar" MaxLength="255" Nullable="false" />
+          <Property Name="IdMunicipio" Type="int" Nullable="false" />
+          <Property Name="Nombre" Type="nvarchar" MaxLength="150" Nullable="false" />
+          <Property Name="Direccion" Type="nvarchar" MaxLength="300" />
+          <Property Name="Telefono" Type="nvarchar" MaxLength="30" />
           <Property Name="Estado" Type="bit" Nullable="false" />
         </EntityType>
         <EntityType Name="Medicamentos">
@@ -74,29 +71,34 @@
             <PropertyRef Name="IdMedicamento" />
           </Key>
           <Property Name="IdMedicamento" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="NombreMedicamento" Type="varchar" MaxLength="150" Nullable="false" />
-          <Property Name="Fabricante" Type="varchar" MaxLength="100" />
+          <Property Name="NombreMedicamento" Type="nvarchar" MaxLength="150" Nullable="false" />
+          <Property Name="PrincipioActivo" Type="nvarchar" MaxLength="150" />
+          <Property Name="Concentracion" Type="nvarchar" MaxLength="100" />
+          <Property Name="FormaFarmaceutica" Type="nvarchar" MaxLength="100" />
+          <Property Name="Fabricante" Type="nvarchar" MaxLength="150" />
+          <Property Name="Estado" Type="bit" Nullable="false" />
         </EntityType>
         <EntityType Name="Pacientes">
           <Key>
             <PropertyRef Name="IdPaciente" />
           </Key>
           <Property Name="IdPaciente" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="IdUsuario" Type="int" Nullable="false" />
-          <Property Name="Nombres" Type="varchar" MaxLength="100" Nullable="false" />
-          <Property Name="Apellidos" Type="varchar" MaxLength="100" Nullable="false" />
+          <Property Name="IdUsuario" Type="int" />
+          <Property Name="PrimerNombre" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="SegundoNombre" Type="nvarchar" MaxLength="50" />
+          <Property Name="PrimerApellido" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="SegundoApellido" Type="nvarchar" MaxLength="50" />
+          <Property Name="Cedula" Type="nvarchar" MaxLength="20" />
+          <Property Name="NumeroINSS" Type="nvarchar" MaxLength="30" />
           <Property Name="FechaNacimiento" Type="date" Nullable="false" />
-          <Property Name="Genero" Type="varchar" MaxLength="20" />
-          <Property Name="Telefono" Type="varchar" MaxLength="20" />
-          <Property Name="Estado" Type="bit" />
-          <Property Name="Departamento" Type="varchar" MaxLength="100" />
-          <Property Name="Municipio" Type="varchar" MaxLength="100" />
-          <Property Name="Comunidad" Type="varchar" MaxLength="100" />
-          <Property Name="Direccion" Type="varchar" MaxLength="250" />
-          <Property Name="ContactoEmergencia" Type="varchar" MaxLength="20" />
-          <Property Name="TipoSangre" Type="varchar" MaxLength="10" />
-          <Property Name="Alergias" Type="varchar" MaxLength="500" />
-          <Property Name="Antecedentes" Type="varchar" MaxLength="1000" />
+          <Property Name="Genero" Type="nvarchar" MaxLength="30" />
+          <Property Name="Telefono" Type="nvarchar" MaxLength="30" />
+          <Property Name="IdComunidad" Type="int" Nullable="false" />
+          <Property Name="Direccion" Type="nvarchar" MaxLength="300" />
+          <Property Name="TipoSangre" Type="nvarchar" MaxLength="5" />
+          <Property Name="Alergias" Type="nvarchar" MaxLength="1000" />
+          <Property Name="Antecedentes" Type="nvarchar" MaxLength="2000" />
+          <Property Name="Estado" Type="bit" Nullable="false" />
         </EntityType>
         <EntityType Name="RecomendacionesMedicas">
           <Key>
@@ -104,60 +106,30 @@
           </Key>
           <Property Name="IdRecomendacion" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="IdEnfermedad" Type="int" Nullable="false" />
-          <Property Name="Descripcion" Type="varchar" MaxLength="500" Nullable="false" />
+          <Property Name="Descripcion" Type="nvarchar" MaxLength="1000" Nullable="false" />
+          <Property Name="Estado" Type="bit" Nullable="false" />
         </EntityType>
         <EntityType Name="Sintomas">
           <Key>
             <PropertyRef Name="IdSintoma" />
           </Key>
           <Property Name="IdSintoma" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="Descripcion" Type="varchar" MaxLength="150" Nullable="false" />
-        </EntityType>
-        <EntityType Name="sysdiagrams">
-          <Key>
-            <PropertyRef Name="diagram_id" />
-          </Key>
-          <Property Name="name" Type="nvarchar" MaxLength="128" Nullable="false" />
-          <Property Name="principal_id" Type="int" Nullable="false" />
-          <Property Name="diagram_id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="version" Type="int" />
-          <Property Name="definition" Type="varbinary(max)" />
+          <Property Name="NombreSintoma" Type="nvarchar" MaxLength="150" Nullable="false" />
+          <Property Name="Descripcion" Type="nvarchar" MaxLength="500" />
+          <Property Name="Estado" Type="bit" Nullable="false" />
         </EntityType>
         <EntityType Name="Usuarios">
           <Key>
             <PropertyRef Name="IdUsuario" />
           </Key>
           <Property Name="IdUsuario" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="Correo" Type="varchar" MaxLength="100" Nullable="false" />
-          <Property Name="Contrasena" Type="varchar" MaxLength="255" Nullable="false" />
-          <Property Name="FechaRegistro" Type="datetime" />
-          <Property Name="Estado" Type="bit" />
+          <Property Name="IdRol" Type="int" Nullable="false" />
+          <Property Name="Correo" Type="nvarchar" MaxLength="150" Nullable="false" />
+          <Property Name="ContrasenaHash" Type="nvarchar" MaxLength="255" Nullable="false" />
+          <Property Name="FechaRegistro" Type="datetime2" Precision="7" Nullable="false" />
+          <Property Name="Estado" Type="bit" Nullable="false" />
         </EntityType>
-        <Association Name="FK__Citas__IdDoctor__60A75C0F">
-          <End Role="Doctores" Type="Self.Doctores" Multiplicity="1" />
-          <End Role="Citas" Type="Self.Citas" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Doctores">
-              <PropertyRef Name="IdDoctor" />
-            </Principal>
-            <Dependent Role="Citas">
-              <PropertyRef Name="IdDoctor" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK__Citas__IdHospita__619B8048">
-          <End Role="Hospitales" Type="Self.Hospitales" Multiplicity="0..1" />
-          <End Role="Citas" Type="Self.Citas" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Hospitales">
-              <PropertyRef Name="IdHospital" />
-            </Principal>
-            <Dependent Role="Citas">
-              <PropertyRef Name="IdHospital" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK__Citas__IdPacient__5FB337D6">
+        <Association Name="FK_Citas_Paciente">
           <End Role="Pacientes" Type="Self.Pacientes" Multiplicity="1" />
           <End Role="Citas" Type="Self.Citas" Multiplicity="*" />
           <ReferentialConstraint>
@@ -169,44 +141,8 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__Diagnosti__IdCit__656C112C">
-          <End Role="Citas" Type="Self.Citas" Multiplicity="1" />
-          <End Role="Diagnosticos_Tratamientos" Type="Self.Diagnosticos_Tratamientos" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Citas">
-              <PropertyRef Name="IdCita" />
-            </Principal>
-            <Dependent Role="Diagnosticos_Tratamientos">
-              <PropertyRef Name="IdCita" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK__Diagnosti__IdEnf__66603565">
-          <End Role="Enfermedades" Type="Self.Enfermedades" Multiplicity="1" />
-          <End Role="Diagnosticos_Tratamientos" Type="Self.Diagnosticos_Tratamientos" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Enfermedades">
-              <PropertyRef Name="IdEnfermedad" />
-            </Principal>
-            <Dependent Role="Diagnosticos_Tratamientos">
-              <PropertyRef Name="IdEnfermedad" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK__Diagnosti__IdMed__6754599E">
-          <End Role="Medicamentos" Type="Self.Medicamentos" Multiplicity="1" />
-          <End Role="Diagnosticos_Tratamientos" Type="Self.Diagnosticos_Tratamientos" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Medicamentos">
-              <PropertyRef Name="IdMedicamento" />
-            </Principal>
-            <Dependent Role="Diagnosticos_Tratamientos">
-              <PropertyRef Name="IdMedicamento" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK__Doctores__IdUsua__5629CD9C">
-          <End Role="Usuarios" Type="Self.Usuarios" Multiplicity="1" />
+        <Association Name="FK_Doctores_Usuarios">
+          <End Role="Usuarios" Type="Self.Usuarios" Multiplicity="0..1" />
           <End Role="Doctores" Type="Self.Doctores" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Usuarios">
@@ -217,7 +153,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__Enfermeda__IdEnf__6A30C649">
+        <Association Name="FK_ES_Enfermedad">
           <End Role="Enfermedades" Type="Self.Enfermedades" Multiplicity="1">
             <OnDelete Action="Cascade" />
           </End>
@@ -231,7 +167,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__Enfermeda__IdSin__6B24EA82">
+        <Association Name="FK_ES_Sintoma">
           <End Role="Sintomas" Type="Self.Sintomas" Multiplicity="1">
             <OnDelete Action="Cascade" />
           </End>
@@ -245,8 +181,8 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__Pacientes__IdUsu__5165187F">
-          <End Role="Usuarios" Type="Self.Usuarios" Multiplicity="1" />
+        <Association Name="FK_Pacientes_Usuarios">
+          <End Role="Usuarios" Type="Self.Usuarios" Multiplicity="0..1" />
           <End Role="Pacientes" Type="Self.Pacientes" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Usuarios">
@@ -257,7 +193,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__Recomenda__IdEnf__6EF57B66">
+        <Association Name="FK_RecomendacionesMedicas_Enfermedades">
           <End Role="Enfermedades" Type="Self.Enfermedades" Multiplicity="1">
             <OnDelete Action="Cascade" />
           </End>
@@ -271,21 +207,8 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_Doctores_Hospitales">
-          <End Role="Hospitales" Type="Self.Hospitales" Multiplicity="0..1" />
-          <End Role="Doctores" Type="Self.Doctores" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Hospitales">
-              <PropertyRef Name="IdHospital" />
-            </Principal>
-            <Dependent Role="Doctores">
-              <PropertyRef Name="IdHospital" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <EntityContainer Name="SanarRuralDBModelStoreContainer">
           <EntitySet Name="Citas" EntityType="Self.Citas" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="Diagnosticos_Tratamientos" EntityType="Self.Diagnosticos_Tratamientos" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Doctores" EntityType="Self.Doctores" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Enfermedades" EntityType="Self.Enfermedades" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Enfermedades_Sintomas" EntityType="Self.Enfermedades_Sintomas" Schema="dbo" store:Type="Tables" />
@@ -294,55 +217,30 @@
           <EntitySet Name="Pacientes" EntityType="Self.Pacientes" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="RecomendacionesMedicas" EntityType="Self.RecomendacionesMedicas" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Sintomas" EntityType="Self.Sintomas" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagrams" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Usuarios" EntityType="Self.Usuarios" Schema="dbo" store:Type="Tables" />
-          <AssociationSet Name="FK__Citas__IdDoctor__60A75C0F" Association="Self.FK__Citas__IdDoctor__60A75C0F">
-            <End Role="Doctores" EntitySet="Doctores" />
-            <End Role="Citas" EntitySet="Citas" />
-          </AssociationSet>
-          <AssociationSet Name="FK__Citas__IdHospita__619B8048" Association="Self.FK__Citas__IdHospita__619B8048">
-            <End Role="Hospitales" EntitySet="Hospitales" />
-            <End Role="Citas" EntitySet="Citas" />
-          </AssociationSet>
-          <AssociationSet Name="FK__Citas__IdPacient__5FB337D6" Association="Self.FK__Citas__IdPacient__5FB337D6">
+          <AssociationSet Name="FK_Citas_Paciente" Association="Self.FK_Citas_Paciente">
             <End Role="Pacientes" EntitySet="Pacientes" />
             <End Role="Citas" EntitySet="Citas" />
           </AssociationSet>
-          <AssociationSet Name="FK__Diagnosti__IdCit__656C112C" Association="Self.FK__Diagnosti__IdCit__656C112C">
-            <End Role="Citas" EntitySet="Citas" />
-            <End Role="Diagnosticos_Tratamientos" EntitySet="Diagnosticos_Tratamientos" />
-          </AssociationSet>
-          <AssociationSet Name="FK__Diagnosti__IdEnf__66603565" Association="Self.FK__Diagnosti__IdEnf__66603565">
-            <End Role="Enfermedades" EntitySet="Enfermedades" />
-            <End Role="Diagnosticos_Tratamientos" EntitySet="Diagnosticos_Tratamientos" />
-          </AssociationSet>
-          <AssociationSet Name="FK__Diagnosti__IdMed__6754599E" Association="Self.FK__Diagnosti__IdMed__6754599E">
-            <End Role="Medicamentos" EntitySet="Medicamentos" />
-            <End Role="Diagnosticos_Tratamientos" EntitySet="Diagnosticos_Tratamientos" />
-          </AssociationSet>
-          <AssociationSet Name="FK__Doctores__IdUsua__5629CD9C" Association="Self.FK__Doctores__IdUsua__5629CD9C">
+          <AssociationSet Name="FK_Doctores_Usuarios" Association="Self.FK_Doctores_Usuarios">
             <End Role="Usuarios" EntitySet="Usuarios" />
             <End Role="Doctores" EntitySet="Doctores" />
           </AssociationSet>
-          <AssociationSet Name="FK__Enfermeda__IdEnf__6A30C649" Association="Self.FK__Enfermeda__IdEnf__6A30C649">
+          <AssociationSet Name="FK_ES_Enfermedad" Association="Self.FK_ES_Enfermedad">
             <End Role="Enfermedades" EntitySet="Enfermedades" />
             <End Role="Enfermedades_Sintomas" EntitySet="Enfermedades_Sintomas" />
           </AssociationSet>
-          <AssociationSet Name="FK__Enfermeda__IdSin__6B24EA82" Association="Self.FK__Enfermeda__IdSin__6B24EA82">
+          <AssociationSet Name="FK_ES_Sintoma" Association="Self.FK_ES_Sintoma">
             <End Role="Sintomas" EntitySet="Sintomas" />
             <End Role="Enfermedades_Sintomas" EntitySet="Enfermedades_Sintomas" />
           </AssociationSet>
-          <AssociationSet Name="FK__Pacientes__IdUsu__5165187F" Association="Self.FK__Pacientes__IdUsu__5165187F">
+          <AssociationSet Name="FK_Pacientes_Usuarios" Association="Self.FK_Pacientes_Usuarios">
             <End Role="Usuarios" EntitySet="Usuarios" />
             <End Role="Pacientes" EntitySet="Pacientes" />
           </AssociationSet>
-          <AssociationSet Name="FK__Recomenda__IdEnf__6EF57B66" Association="Self.FK__Recomenda__IdEnf__6EF57B66">
+          <AssociationSet Name="FK_RecomendacionesMedicas_Enfermedades" Association="Self.FK_RecomendacionesMedicas_Enfermedades">
             <End Role="Enfermedades" EntitySet="Enfermedades" />
             <End Role="RecomendacionesMedicas" EntitySet="RecomendacionesMedicas" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Doctores_Hospitales" Association="Self.FK_Doctores_Hospitales">
-            <End Role="Hospitales" EntitySet="Hospitales" />
-            <End Role="Doctores" EntitySet="Doctores" />
           </AssociationSet>
         </EntityContainer>
       </Schema></edmx:StorageModels>
@@ -413,15 +311,18 @@
           <Property Name="IdCita" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="IdPaciente" Type="Int32" Nullable="false" />
           <Property Name="IdDoctor" Type="Int32" Nullable="false" />
-          <Property Name="IdHospital" Type="Int32" />
+          <Property Name="IdHospital" Type="Int32" Nullable="false" />
           <Property Name="FechaHora" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="Plataforma" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="Estado" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
-          <Property Name="Motivo" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Name="Estado" Type="String" MaxLength="30" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Motivo" Type="String" MaxLength="500" FixedLength="false" Unicode="true" Nullable="false" />
           <NavigationProperty Name="Hospitale" Relationship="SanarRuralDBModel.FK__Citas__IdHospita__619B8048" FromRole="Cita" ToRole="Hospitale" />
           <NavigationProperty Name="Diagnosticos_Tratamientos" Relationship="SanarRuralDBModel.FK__Diagnosti__IdCit__656C112C" FromRole="Cita" ToRole="Diagnosticos_Tratamientos" />
           <NavigationProperty Name="Doctore" Relationship="SanarRuralDBModel.FK__Citas__IdDoctor__60A75C0F" FromRole="Citas" ToRole="Doctore" />
           <NavigationProperty Name="Paciente" Relationship="SanarRuralDBModel.FK__Citas__IdPacient__5FB337D6" FromRole="Citas" ToRole="Paciente" />
+          <Property Name="IdEspecialidad" Type="Int32" Nullable="false" />
+          <Property Name="FechaHoraProgramada" Type="DateTime" Nullable="false" Precision="7" />
+          <Property Name="FechaCreacion" Type="DateTime" Nullable="false" Precision="7" />
         </EntityType>
         <EntityType Name="Diagnosticos_Tratamientos">
           <Key>
@@ -444,31 +345,40 @@
             <PropertyRef Name="IdEnfermedad" />
           </Key>
           <Property Name="IdEnfermedad" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="NombreEnfermedad" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="false" />
-          <Property Name="Categoria" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="NombreEnfermedad" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="true" />
+          <Property Name="Categoria" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="Diagnosticos_Tratamientos" Relationship="SanarRuralDBModel.FK__Diagnosti__IdEnf__66603565" FromRole="Enfermedade" ToRole="Diagnosticos_Tratamientos" />
           <NavigationProperty Name="RecomendacionesMedicas" Relationship="SanarRuralDBModel.FK__Recomenda__IdEnf__6EF57B66" FromRole="Enfermedade" ToRole="RecomendacionesMedica" />
           <NavigationProperty Name="Sintomas" Relationship="SanarRuralDBModel.Enfermedades_Sintomas" FromRole="Enfermedade" ToRole="Sintoma" />
+          <Property Name="Descripcion" Type="String" MaxLength="2000" FixedLength="false" Unicode="true" />
+          <Property Name="Estado" Type="Boolean" Nullable="false" />
         </EntityType>
         <EntityType Name="Hospitales">
           <Key>
             <PropertyRef Name="IdHospital" />
           </Key>
           <Property Name="IdHospital" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Nombre" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="false" />
+          <Property Name="Nombre" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="true" />
           <Property Name="Ubicacion" Type="String" Nullable="false" MaxLength="255" FixedLength="false" Unicode="false" />
           <Property Name="Estado" Type="Boolean" Nullable="false" />
           <NavigationProperty Name="Citas" Relationship="SanarRuralDBModel.FK__Citas__IdHospita__619B8048" FromRole="Hospitale" ToRole="Cita" />
           <NavigationProperty Name="Doctores" Relationship="SanarRuralDBModel.FK_Doctores_Hospitales" FromRole="Hospitales" ToRole="Doctore" />
+          <Property Name="IdMunicipio" Type="Int32" Nullable="false" />
+          <Property Name="Direccion" Type="String" MaxLength="300" FixedLength="false" Unicode="true" />
+          <Property Name="Telefono" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="Medicamentos">
           <Key>
             <PropertyRef Name="IdMedicamento" />
           </Key>
           <Property Name="IdMedicamento" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="NombreMedicamento" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="false" />
-          <Property Name="Fabricante" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="NombreMedicamento" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="true" />
+          <Property Name="Fabricante" Type="String" MaxLength="150" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="Diagnosticos_Tratamientos" Relationship="SanarRuralDBModel.FK__Diagnosti__IdMed__6754599E" FromRole="Medicamento" ToRole="Diagnosticos_Tratamientos" />
+          <Property Name="PrincipioActivo" Type="String" MaxLength="150" FixedLength="false" Unicode="true" />
+          <Property Name="Concentracion" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="FormaFarmaceutica" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="Estado" Type="Boolean" Nullable="false" />
         </EntityType>
         <EntityType Name="RecomendacionesMedicas">
           <Key>
@@ -476,16 +386,19 @@
           </Key>
           <Property Name="IdRecomendacion" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="IdEnfermedad" Type="Int32" Nullable="false" />
-          <Property Name="Descripcion" Type="String" Nullable="false" MaxLength="500" FixedLength="false" Unicode="false" />
+          <Property Name="Descripcion" Type="String" Nullable="false" MaxLength="1000" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="Enfermedade" Relationship="SanarRuralDBModel.FK__Recomenda__IdEnf__6EF57B66" FromRole="RecomendacionesMedica" ToRole="Enfermedade" />
+          <Property Name="Estado" Type="Boolean" Nullable="false" />
         </EntityType>
         <EntityType Name="Sintomas">
           <Key>
             <PropertyRef Name="IdSintoma" />
           </Key>
           <Property Name="IdSintoma" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Descripcion" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="false" />
+          <Property Name="Descripcion" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="Enfermedades" Relationship="SanarRuralDBModel.Enfermedades_Sintomas" FromRole="Sintoma" ToRole="Enfermedade" />
+          <Property Name="NombreSintoma" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="true" />
+          <Property Name="Estado" Type="Boolean" Nullable="false" />
         </EntityType>
         <EntityType Name="sysdiagram">
           <Key>
@@ -568,51 +481,69 @@
             <PropertyRef Name="IdDoctor" />
           </Key>
           <Property Name="IdDoctor" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="IdUsuario" Type="Int32" Nullable="false" />
+          <Property Name="IdUsuario" Type="Int32" />
           <Property Name="Nombres" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="false" />
           <Property Name="Apellidos" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="false" />
           <Property Name="Especialidad" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="false" />
-          <Property Name="NumeroLicencia" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="NumeroLicencia" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="IdHospital" Type="Int32" />
-          <Property Name="Estado" Type="Boolean" />
+          <Property Name="Estado" Type="Boolean" Nullable="false" />
           <NavigationProperty Name="Citas" Relationship="SanarRuralDBModel.FK__Citas__IdDoctor__60A75C0F" FromRole="Doctore" ToRole="Citas" />
           <NavigationProperty Name="Usuario" Relationship="SanarRuralDBModel.FK__Doctores__IdUsua__5629CD9C" FromRole="Doctore" ToRole="Usuario" />
           <NavigationProperty Name="Hospitale" Relationship="SanarRuralDBModel.FK_Doctores_Hospitales" FromRole="Doctore" ToRole="Hospitales" />
+          <Property Name="PrimerNombre" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="SegundoNombre" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="PrimerApellido" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="SegundoApellido" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Cedula" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="Telefono" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
+          <Property Name="Foto" Type="Binary" MaxLength="Max" FixedLength="false" />
+          <Property Name="FotoNombre" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="FotoMimeType" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="Pacientes">
           <Key>
             <PropertyRef Name="IdPaciente" />
           </Key>
           <Property Name="IdPaciente" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="IdUsuario" Type="Int32" Nullable="false" />
+          <Property Name="IdUsuario" Type="Int32" />
           <Property Name="Nombres" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="false" />
           <Property Name="Apellidos" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="false" />
           <Property Name="FechaNacimiento" Type="DateTime" Nullable="false" Precision="0" />
-          <Property Name="Genero" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
-          <Property Name="Telefono" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
-          <Property Name="Estado" Type="Boolean" />
+          <Property Name="Genero" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
+          <Property Name="Telefono" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
+          <Property Name="Estado" Type="Boolean" Nullable="false" />
           <Property Name="Departamento" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
           <Property Name="Municipio" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
           <Property Name="Comunidad" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
-          <Property Name="Direccion" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="Direccion" Type="String" MaxLength="300" FixedLength="false" Unicode="true" />
           <Property Name="ContactoEmergencia" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
-          <Property Name="TipoSangre" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
-          <Property Name="Alergias" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
-          <Property Name="Antecedentes" Type="String" MaxLength="1000" FixedLength="false" Unicode="false" />
+          <Property Name="TipoSangre" Type="String" MaxLength="5" FixedLength="false" Unicode="true" />
+          <Property Name="Alergias" Type="String" MaxLength="1000" FixedLength="false" Unicode="true" />
+          <Property Name="Antecedentes" Type="String" MaxLength="2000" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="Citas" Relationship="SanarRuralDBModel.FK__Citas__IdPacient__5FB337D6" FromRole="Paciente" ToRole="Citas" />
           <NavigationProperty Name="Usuario" Relationship="SanarRuralDBModel.FK__Pacientes__IdUsu__5165187F" FromRole="Paciente" ToRole="Usuario" />
+          <Property Name="PrimerNombre" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="SegundoNombre" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="PrimerApellido" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="SegundoApellido" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Cedula" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="NumeroINSS" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
+          <Property Name="IdComunidad" Type="Int32" Nullable="false" />
         </EntityType>
         <EntityType Name="Usuarios">
           <Key>
             <PropertyRef Name="IdUsuario" />
           </Key>
           <Property Name="IdUsuario" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Correo" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="Correo" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="true" />
           <Property Name="Contrasena" Type="String" Nullable="false" MaxLength="255" FixedLength="false" Unicode="false" />
-          <Property Name="FechaRegistro" Type="DateTime" Precision="3" />
-          <Property Name="Estado" Type="Boolean" />
+          <Property Name="FechaRegistro" Type="DateTime" Precision="7" Nullable="false" />
+          <Property Name="Estado" Type="Boolean" Nullable="false" />
           <NavigationProperty Name="Doctores" Relationship="SanarRuralDBModel.FK__Doctores__IdUsua__5629CD9C" FromRole="Usuario" ToRole="Doctore" />
           <NavigationProperty Name="Pacientes" Relationship="SanarRuralDBModel.FK__Pacientes__IdUsu__5165187F" FromRole="Usuario" ToRole="Paciente" />
+          <Property Name="IdRol" Type="Int32" Nullable="false" />
+          <Property Name="ContrasenaHash" Type="String" Nullable="false" MaxLength="255" FixedLength="false" Unicode="true" />
         </EntityType>
         <Association Name="FK__Citas__IdDoctor__60A75C0F">
           <End Type="SanarRuralDBModel.Doctores" Role="Doctore" Multiplicity="1" />
@@ -683,10 +614,11 @@
           <EntitySetMapping Name="Citas">
             <EntityTypeMapping TypeName="SanarRuralDBModel.Citas">
               <MappingFragment StoreEntitySet="Citas">
+                <ScalarProperty Name="FechaCreacion" ColumnName="FechaCreacion" />
+                <ScalarProperty Name="FechaHoraProgramada" ColumnName="FechaHoraProgramada" />
+                <ScalarProperty Name="IdEspecialidad" ColumnName="IdEspecialidad" />
                 <ScalarProperty Name="Motivo" ColumnName="Motivo" />
                 <ScalarProperty Name="Estado" ColumnName="Estado" />
-                <ScalarProperty Name="Plataforma" ColumnName="Plataforma" />
-                <ScalarProperty Name="FechaHora" ColumnName="FechaHora" />
                 <ScalarProperty Name="IdHospital" ColumnName="IdHospital" />
                 <ScalarProperty Name="IdDoctor" ColumnName="IdDoctor" />
                 <ScalarProperty Name="IdPaciente" ColumnName="IdPaciente" />
@@ -694,23 +626,11 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="Diagnosticos_Tratamientos">
-            <EntityTypeMapping TypeName="SanarRuralDBModel.Diagnosticos_Tratamientos">
-              <MappingFragment StoreEntitySet="Diagnosticos_Tratamientos">
-                <ScalarProperty Name="FechaFin" ColumnName="FechaFin" />
-                <ScalarProperty Name="FechaInicio" ColumnName="FechaInicio" />
-                <ScalarProperty Name="Dosis" ColumnName="Dosis" />
-                <ScalarProperty Name="PlanTratamiento" ColumnName="PlanTratamiento" />
-                <ScalarProperty Name="IdMedicamento" ColumnName="IdMedicamento" />
-                <ScalarProperty Name="IdEnfermedad" ColumnName="IdEnfermedad" />
-                <ScalarProperty Name="IdCita" ColumnName="IdCita" />
-                <ScalarProperty Name="IdDiagnostico" ColumnName="IdDiagnostico" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <EntitySetMapping Name="Enfermedades">
             <EntityTypeMapping TypeName="SanarRuralDBModel.Enfermedades">
               <MappingFragment StoreEntitySet="Enfermedades">
+                <ScalarProperty Name="Estado" ColumnName="Estado" />
+                <ScalarProperty Name="Descripcion" ColumnName="Descripcion" />
                 <ScalarProperty Name="Categoria" ColumnName="Categoria" />
                 <ScalarProperty Name="NombreEnfermedad" ColumnName="NombreEnfermedad" />
                 <ScalarProperty Name="IdEnfermedad" ColumnName="IdEnfermedad" />
@@ -720,8 +640,10 @@
           <EntitySetMapping Name="Hospitales">
             <EntityTypeMapping TypeName="SanarRuralDBModel.Hospitales">
               <MappingFragment StoreEntitySet="Hospitales">
+                <ScalarProperty Name="Telefono" ColumnName="Telefono" />
+                <ScalarProperty Name="Direccion" ColumnName="Direccion" />
+                <ScalarProperty Name="IdMunicipio" ColumnName="IdMunicipio" />
                 <ScalarProperty Name="Estado" ColumnName="Estado" />
-                <ScalarProperty Name="Ubicacion" ColumnName="Ubicacion" />
                 <ScalarProperty Name="Nombre" ColumnName="Nombre" />
                 <ScalarProperty Name="IdHospital" ColumnName="IdHospital" />
               </MappingFragment>
@@ -730,6 +652,10 @@
           <EntitySetMapping Name="Medicamentos">
             <EntityTypeMapping TypeName="SanarRuralDBModel.Medicamentos">
               <MappingFragment StoreEntitySet="Medicamentos">
+                <ScalarProperty Name="Estado" ColumnName="Estado" />
+                <ScalarProperty Name="FormaFarmaceutica" ColumnName="FormaFarmaceutica" />
+                <ScalarProperty Name="Concentracion" ColumnName="Concentracion" />
+                <ScalarProperty Name="PrincipioActivo" ColumnName="PrincipioActivo" />
                 <ScalarProperty Name="Fabricante" ColumnName="Fabricante" />
                 <ScalarProperty Name="NombreMedicamento" ColumnName="NombreMedicamento" />
                 <ScalarProperty Name="IdMedicamento" ColumnName="IdMedicamento" />
@@ -739,6 +665,7 @@
           <EntitySetMapping Name="RecomendacionesMedicas">
             <EntityTypeMapping TypeName="SanarRuralDBModel.RecomendacionesMedicas">
               <MappingFragment StoreEntitySet="RecomendacionesMedicas">
+                <ScalarProperty Name="Estado" ColumnName="Estado" />
                 <ScalarProperty Name="Descripcion" ColumnName="Descripcion" />
                 <ScalarProperty Name="IdEnfermedad" ColumnName="IdEnfermedad" />
                 <ScalarProperty Name="IdRecomendacion" ColumnName="IdRecomendacion" />
@@ -748,19 +675,10 @@
           <EntitySetMapping Name="Sintomas">
             <EntityTypeMapping TypeName="SanarRuralDBModel.Sintomas">
               <MappingFragment StoreEntitySet="Sintomas">
+                <ScalarProperty Name="Estado" ColumnName="Estado" />
+                <ScalarProperty Name="NombreSintoma" ColumnName="NombreSintoma" />
                 <ScalarProperty Name="Descripcion" ColumnName="Descripcion" />
                 <ScalarProperty Name="IdSintoma" ColumnName="IdSintoma" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="sysdiagrams">
-            <EntityTypeMapping TypeName="SanarRuralDBModel.sysdiagram">
-              <MappingFragment StoreEntitySet="sysdiagrams">
-                <ScalarProperty Name="definition" ColumnName="definition" />
-                <ScalarProperty Name="version" ColumnName="version" />
-                <ScalarProperty Name="diagram_id" ColumnName="diagram_id" />
-                <ScalarProperty Name="principal_id" ColumnName="principal_id" />
-                <ScalarProperty Name="name" ColumnName="name" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -775,12 +693,17 @@
           <EntitySetMapping Name="Doctores">
             <EntityTypeMapping TypeName="SanarRuralDBModel.Doctores">
               <MappingFragment StoreEntitySet="Doctores">
+                <ScalarProperty Name="FotoMimeType" ColumnName="FotoMimeType" />
+                <ScalarProperty Name="FotoNombre" ColumnName="FotoNombre" />
+                <ScalarProperty Name="Foto" ColumnName="Foto" />
+                <ScalarProperty Name="Telefono" ColumnName="Telefono" />
+                <ScalarProperty Name="Cedula" ColumnName="Cedula" />
+                <ScalarProperty Name="SegundoApellido" ColumnName="SegundoApellido" />
+                <ScalarProperty Name="PrimerApellido" ColumnName="PrimerApellido" />
+                <ScalarProperty Name="SegundoNombre" ColumnName="SegundoNombre" />
+                <ScalarProperty Name="PrimerNombre" ColumnName="PrimerNombre" />
                 <ScalarProperty Name="Estado" ColumnName="Estado" />
-                <ScalarProperty Name="IdHospital" ColumnName="IdHospital" />
                 <ScalarProperty Name="NumeroLicencia" ColumnName="NumeroLicencia" />
-                <ScalarProperty Name="Especialidad" ColumnName="Especialidad" />
-                <ScalarProperty Name="Apellidos" ColumnName="Apellidos" />
-                <ScalarProperty Name="Nombres" ColumnName="Nombres" />
                 <ScalarProperty Name="IdUsuario" ColumnName="IdUsuario" />
                 <ScalarProperty Name="IdDoctor" ColumnName="IdDoctor" />
               </MappingFragment>
@@ -789,20 +712,21 @@
           <EntitySetMapping Name="Pacientes">
             <EntityTypeMapping TypeName="SanarRuralDBModel.Pacientes">
               <MappingFragment StoreEntitySet="Pacientes">
+                <ScalarProperty Name="IdComunidad" ColumnName="IdComunidad" />
+                <ScalarProperty Name="NumeroINSS" ColumnName="NumeroINSS" />
+                <ScalarProperty Name="Cedula" ColumnName="Cedula" />
+                <ScalarProperty Name="SegundoApellido" ColumnName="SegundoApellido" />
+                <ScalarProperty Name="PrimerApellido" ColumnName="PrimerApellido" />
+                <ScalarProperty Name="SegundoNombre" ColumnName="SegundoNombre" />
+                <ScalarProperty Name="PrimerNombre" ColumnName="PrimerNombre" />
                 <ScalarProperty Name="Antecedentes" ColumnName="Antecedentes" />
                 <ScalarProperty Name="Alergias" ColumnName="Alergias" />
                 <ScalarProperty Name="TipoSangre" ColumnName="TipoSangre" />
-                <ScalarProperty Name="ContactoEmergencia" ColumnName="ContactoEmergencia" />
                 <ScalarProperty Name="Direccion" ColumnName="Direccion" />
-                <ScalarProperty Name="Comunidad" ColumnName="Comunidad" />
-                <ScalarProperty Name="Municipio" ColumnName="Municipio" />
-                <ScalarProperty Name="Departamento" ColumnName="Departamento" />
                 <ScalarProperty Name="Estado" ColumnName="Estado" />
                 <ScalarProperty Name="Telefono" ColumnName="Telefono" />
                 <ScalarProperty Name="Genero" ColumnName="Genero" />
                 <ScalarProperty Name="FechaNacimiento" ColumnName="FechaNacimiento" />
-                <ScalarProperty Name="Apellidos" ColumnName="Apellidos" />
-                <ScalarProperty Name="Nombres" ColumnName="Nombres" />
                 <ScalarProperty Name="IdUsuario" ColumnName="IdUsuario" />
                 <ScalarProperty Name="IdPaciente" ColumnName="IdPaciente" />
               </MappingFragment>
@@ -811,9 +735,10 @@
           <EntitySetMapping Name="Usuarios">
             <EntityTypeMapping TypeName="SanarRuralDBModel.Usuarios">
               <MappingFragment StoreEntitySet="Usuarios">
+                <ScalarProperty Name="ContrasenaHash" ColumnName="ContrasenaHash" />
+                <ScalarProperty Name="IdRol" ColumnName="IdRol" />
                 <ScalarProperty Name="Estado" ColumnName="Estado" />
                 <ScalarProperty Name="FechaRegistro" ColumnName="FechaRegistro" />
-                <ScalarProperty Name="Contrasena" ColumnName="Contrasena" />
                 <ScalarProperty Name="Correo" ColumnName="Correo" />
                 <ScalarProperty Name="IdUsuario" ColumnName="IdUsuario" />
               </MappingFragment>

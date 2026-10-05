@@ -59,29 +59,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Citas.cs">
-      <DependentUpon>ModelSanarRural.tt</DependentUpon>
-    </Compile>
     <Compile Include="Controllers\doctoresControllers.cs" />
     <Compile Include="Controllers\hospitalesController.cs" />
     <Compile Include="Controllers\pacientesControllers.cs" />
     <Compile Include="Controllers\usuariosController.cs" />
-    <Compile Include="Diagnosticos_Tratamientos.cs">
-      <DependentUpon>ModelSanarRural.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Doctores.cs">
-      <DependentUpon>ModelSanarRural.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Enfermedades.cs">
-      <DependentUpon>ModelSanarRural.tt</DependentUpon>
-    </Compile>
     <Compile Include="Helpers\Tema.cs" />
-    <Compile Include="Hospitales.cs">
-      <DependentUpon>ModelSanarRural.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Medicamentos.cs">
-      <DependentUpon>ModelSanarRural.tt</DependentUpon>
-    </Compile>
     <Compile Include="ModelSanarRural.Context.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -102,21 +84,6 @@
     <Compile Include="Models\pacientesModels.cs" />
     <Compile Include="Models\usuariosModels.cs" />
     <Compile Include="obj\Debug\.NETFramework,Version=v4.7.2.AssemblyAttributes.cs" />
-    <Compile Include="Pacientes.cs">
-      <DependentUpon>ModelSanarRural.tt</DependentUpon>
-    </Compile>
-    <Compile Include="RecomendacionesMedicas.cs">
-      <DependentUpon>ModelSanarRural.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Sintomas.cs">
-      <DependentUpon>ModelSanarRural.tt</DependentUpon>
-    </Compile>
-    <Compile Include="sysdiagram.cs">
-      <DependentUpon>ModelSanarRural.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Usuarios.cs">
-      <DependentUpon>ModelSanarRural.tt</DependentUpon>
-    </Compile>
     <Compile Include="Views\Doctores\crearDoctor.cs">
       <SubType>Form</SubType>
     </Compile>
