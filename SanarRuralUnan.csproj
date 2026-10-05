@@ -59,11 +59,50 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Citas.cs">
+      <DependentUpon>ModelSanarRural.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Comunidades.cs">
+      <DependentUpon>ModelSanarRural.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Consultas.cs">
+      <DependentUpon>ModelSanarRural.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ContactosEmergencia.cs">
+      <DependentUpon>ModelSanarRural.tt</DependentUpon>
+    </Compile>
     <Compile Include="Controllers\doctoresControllers.cs" />
     <Compile Include="Controllers\hospitalesController.cs" />
     <Compile Include="Controllers\pacientesControllers.cs" />
     <Compile Include="Controllers\usuariosController.cs" />
+    <Compile Include="Departamentos.cs">
+      <DependentUpon>ModelSanarRural.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Diagnosticos.cs">
+      <DependentUpon>ModelSanarRural.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Doctores.cs">
+      <DependentUpon>ModelSanarRural.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DoctorEspecialidad.cs">
+      <DependentUpon>ModelSanarRural.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DoctorHospitalEspecialidad.cs">
+      <DependentUpon>ModelSanarRural.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Enfermedades.cs">
+      <DependentUpon>ModelSanarRural.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Especialidades.cs">
+      <DependentUpon>ModelSanarRural.tt</DependentUpon>
+    </Compile>
     <Compile Include="Helpers\Tema.cs" />
+    <Compile Include="Hospitales.cs">
+      <DependentUpon>ModelSanarRural.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Medicamentos.cs">
+      <DependentUpon>ModelSanarRural.tt</DependentUpon>
+    </Compile>
     <Compile Include="ModelSanarRural.Context.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -83,7 +122,31 @@
     <Compile Include="Models\hospitalesModels.cs" />
     <Compile Include="Models\pacientesModels.cs" />
     <Compile Include="Models\usuariosModels.cs" />
+    <Compile Include="Municipios.cs">
+      <DependentUpon>ModelSanarRural.tt</DependentUpon>
+    </Compile>
     <Compile Include="obj\Debug\.NETFramework,Version=v4.7.2.AssemblyAttributes.cs" />
+    <Compile Include="Pacientes.cs">
+      <DependentUpon>ModelSanarRural.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Prescripciones.cs">
+      <DependentUpon>ModelSanarRural.tt</DependentUpon>
+    </Compile>
+    <Compile Include="RecomendacionesMedicas.cs">
+      <DependentUpon>ModelSanarRural.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Roles.cs">
+      <DependentUpon>ModelSanarRural.tt</DependentUpon>
+    </Compile>
+    <Compile Include="SignosVitales.cs">
+      <DependentUpon>ModelSanarRural.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Sintomas.cs">
+      <DependentUpon>ModelSanarRural.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Usuarios.cs">
+      <DependentUpon>ModelSanarRural.tt</DependentUpon>
+    </Compile>
     <Compile Include="Views\Doctores\crearDoctor.cs">
       <SubType>Form</SubType>
     </Compile>

@@ -240,7 +240,7 @@ public void WriteHeader(CodeStringGenerator codeStringGenerator, EntityFramework
 
 public void BeginNamespace(CodeGenerationTools code)
 {
-    var codeNamespace = code.VsNamespaceSuggestion();
+    var codeNamespace = "SanarRuralUnan";
     if (!String.IsNullOrEmpty(codeNamespace))
     {
 #>
@@ -253,7 +253,8 @@ namespace <#=code.EscapeNamespace(codeNamespace)#>
 
 public void EndNamespace(CodeGenerationTools code)
 {
-    if (!String.IsNullOrEmpty(code.VsNamespaceSuggestion()))
+    var codeNamespace = "SanarRuralUnan";
+    if (!String.IsNullOrEmpty(codeNamespace))
     {
         PopIndent();
 #>
