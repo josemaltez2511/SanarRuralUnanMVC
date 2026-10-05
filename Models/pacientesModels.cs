@@ -1,4 +1,5 @@
-﻿using System;
+using System;
+using System.Collections.Generic;
 using System.Linq;
 
 // Modelo de paciente para la aplicación SanarRuralUnan
@@ -16,8 +17,7 @@ namespace SanarRuralUnan.Models
         // ============================================================
 
         // La conexión a la BD solo existe en el Modelo.
-        SanarRuralDBEntities db = new SanarRuralDBEntities();
-
+        private readonly SanarRuralDBEntities db = new SanarRuralDBEntities();
 
         // ============================================================
         // PROPIEDADES DEL PACIENTE
@@ -27,182 +27,148 @@ namespace SanarRuralUnan.Models
         // Se genera automáticamente en la base de datos.
         public int IdPaciente { get; set; }
 
-        // Identificador del usuario relacionado con este paciente.
-        public int IdUsuario { get; set; }
-
+        // Identificador opcional del usuario relacionado con este paciente.
+        public int? IdUsuario { get; set; }
 
         // ============================================================
         // DATOS PERSONALES
         // ============================================================
 
-        public string Nombres { get; set; }
-
-        public string Apellidos { get; set; }
-
+        public string PrimerNombre { get; set; }
+        public string SegundoNombre { get; set; }
+        public string PrimerApellido { get; set; }
+        public string SegundoApellido { get; set; }
+        public string Cedula { get; set; }
+        public string NumeroINSS { get; set; }
         public DateTime FechaNacimiento { get; set; }
-
         public string Genero { get; set; }
-
         public string Telefono { get; set; }
-
 
         // ============================================================
         // DATOS DE UBICACIÓN
         // ============================================================
 
-        public string Departamento { get; set; }
-
-        public string Municipio { get; set; }
-
-        public string Comunidad { get; set; }
-
+        public int IdComunidad { get; set; }
         public string Direccion { get; set; }
-
 
         // ============================================================
         // INFORMACIÓN DE SALUD
         // ============================================================
 
-        public string ContactoEmergencia { get; set; }
-
         public string TipoSangre { get; set; }
-
         public string Alergias { get; set; }
-
         public string Antecedentes { get; set; }
-
 
         // ============================================================
         // ESTADO DEL PACIENTE
         // ============================================================
 
-        // Ejemplo:
         // true  -> Activo
         // false -> Inactivo
-        //
         // Se utiliza para realizar el soft delete.
         public bool Estado { get; set; }
 
-
         // ============================================================
-        // CONSTRUCTOR VACÍO
+        // CONSULTAS DE UBICACIÓN
         // ============================================================
 
-        // Permite crear un objeto y llenar sus propiedades
-        // individualmente.
-
-        public pacientesModel()
+        // Devuelve las ubicaciones disponibles para los ComboBox del formulario.
+        public List<Departamentos> listarDepartamentos()
         {
+            return db.Departamentos.OrderBy(d => d.Nombre).ToList();
         }
 
-
-        // ============================================================
-        // CONSTRUCTOR CON PARÁMETROS
-        // ============================================================
-
-        // Permite crear un paciente con todos sus datos.
-
-        public pacientesModel(
-            int idUsuario,
-            string nombres,
-            string apellidos,
-            DateTime fechaNacimiento,
-            string genero,
-            string telefono,
-            string departamento,
-            string municipio,
-            string comunidad,
-            string direccion,
-            string contactoEmergencia,
-            string tipoSangre,
-            string alergias,
-            string antecedentes)
+        public List<Municipios> listarMunicipios(int idDepartamento)
         {
-            this.IdUsuario = idUsuario;
-
-            // Datos personales
-            this.Nombres = nombres;
-            this.Apellidos = apellidos;
-            this.FechaNacimiento = fechaNacimiento;
-            this.Genero = genero;
-            this.Telefono = telefono;
-
-            // Ubicación
-            this.Departamento = departamento;
-            this.Municipio = municipio;
-            this.Comunidad = comunidad;
-            this.Direccion = direccion;
-
-            // Información de salud
-            this.ContactoEmergencia = contactoEmergencia;
-            this.TipoSangre = tipoSangre;
-            this.Alergias = alergias;
-            this.Antecedentes = antecedentes;
+            return db.Municipios
+                .Where(m => m.IdDepartamento == idDepartamento)
+                .OrderBy(m => m.Nombre)
+                .ToList();
         }
 
+        public List<Comunidades> listarComunidades(int idMunicipio)
+        {
+            return db.Comunidades
+                .Where(c => c.IdMunicipio == idMunicipio)
+                .OrderBy(c => c.Nombre)
+                .ToList();
+        }
 
         // ============================================================
         // CREAR / GUARDAR PACIENTE
         // RF-03
         // ============================================================
 
-        // Crea un nuevo paciente y lo guarda en la base de datos.
-
-        public void guardarPaciente()
+        // Crea un paciente y agrega el contacto opcional mediante su relación.
+        public void guardarPaciente(
+            int? idUsuario,
+            string primerNombre,
+            string segundoNombre,
+            string primerApellido,
+            string segundoApellido,
+            string cedula,
+            string numeroINSS,
+            DateTime fechaNacimiento,
+            string genero,
+            string telefono,
+            int idComunidad,
+            string direccion,
+            string tipoSangre,
+            string alergias,
+            string antecedentes,
+            string contactoPrimerNombre,
+            string contactoSegundoNombre,
+            string contactoPrimerApellido,
+            string contactoSegundoApellido,
+            string contactoParentesco,
+            string contactoTelefono,
+            string contactoCedula)
         {
             // Crear una nueva entidad Pacientes.
-            Pacientes pacienteNuevo = new Pacientes();
+            Pacientes paciente = new Pacientes
+            {
+                // Datos personales.
+                IdUsuario = idUsuario,
+                PrimerNombre = primerNombre,
+                SegundoNombre = segundoNombre,
+                PrimerApellido = primerApellido,
+                SegundoApellido = segundoApellido,
+                Cedula = cedula,
+                NumeroINSS = numeroINSS,
+                FechaNacimiento = fechaNacimiento,
+                Genero = genero,
+                Telefono = telefono,
+                // Datos de ubicación.
+                IdComunidad = idComunidad,
+                Direccion = direccion,
+                // Información de salud.
+                TipoSangre = tipoSangre,
+                Alergias = alergias,
+                Antecedentes = antecedentes,
+                Estado = true
+            };
 
+            if (!string.IsNullOrWhiteSpace(contactoPrimerNombre))
+            {
+                ContactosEmergencia contacto = new ContactosEmergencia
+                {
+                    PrimerNombre = contactoPrimerNombre,
+                    SegundoNombre = contactoSegundoNombre,
+                    PrimerApellido = contactoPrimerApellido,
+                    SegundoApellido = contactoSegundoApellido,
+                    Parentesco = contactoParentesco,
+                    Telefono = contactoTelefono,
+                    Cedula = contactoCedula,
+                    Pacientes = paciente
+                };
 
-            // --------------------------------------------------------
-            // DATOS PERSONALES
-            // --------------------------------------------------------
+                paciente.ContactosEmergencia.Add(contacto);
+            }
 
-            pacienteNuevo.IdUsuario = IdUsuario;
-            pacienteNuevo.Nombres = Nombres;
-            pacienteNuevo.Apellidos = Apellidos;
-            pacienteNuevo.FechaNacimiento = FechaNacimiento;
-            pacienteNuevo.Genero = Genero;
-            pacienteNuevo.Telefono = Telefono;
-
-
-            // --------------------------------------------------------
-            // DATOS DE UBICACIÓN
-            // --------------------------------------------------------
-
-            pacienteNuevo.Departamento = Departamento;
-            pacienteNuevo.Municipio = Municipio;
-            pacienteNuevo.Comunidad = Comunidad;
-            pacienteNuevo.Direccion = Direccion;
-
-
-            // --------------------------------------------------------
-            // INFORMACIÓN DE SALUD
-            // --------------------------------------------------------
-
-            pacienteNuevo.ContactoEmergencia = ContactoEmergencia;
-            pacienteNuevo.TipoSangre = TipoSangre;
-            pacienteNuevo.Alergias = Alergias;
-            pacienteNuevo.Antecedentes = Antecedentes;
-
-
-            // --------------------------------------------------------
-            // ESTADO INICIAL
-            // --------------------------------------------------------
-
-            // Todo paciente nuevo comienza como Activo.
-            pacienteNuevo.Estado = true;
-
-
-            // --------------------------------------------------------
-            // GUARDAR EN LA BASE DE DATOS
-            // --------------------------------------------------------
-
-            db.Pacientes.Add(pacienteNuevo);
-
+            // Guardar paciente y contacto relacionado en una sola operación.
+            db.Pacientes.Add(paciente);
             db.SaveChanges();
         }
-
 
         // ============================================================
         // CONSULTAR PACIENTE
@@ -210,93 +176,64 @@ namespace SanarRuralUnan.Models
         // ============================================================
 
         // Busca un paciente mediante el IdUsuario.
-        //
         // Solo devuelve pacientes activos.
-        //
-        // Los pacientes eliminados lógicamente permanecen
-        // en la base de datos, pero no aparecen en las
-        // consultas normales.
-
+        // Los pacientes eliminados lógicamente permanecen en la base de datos,
+        // pero no aparecen en las consultas normales.
         public Pacientes buscarPaciente(int idUsuario)
         {
             return db.Pacientes.FirstOrDefault(
-                p => p.IdUsuario == idUsuario &&
-                     p.Estado == true
-            );
+                p => p.IdUsuario == idUsuario && p.Estado);
         }
-
 
         // ============================================================
         // EDITAR PACIENTE
         // RF-04
         // ============================================================
 
-        // Actualiza todos los datos del paciente.
-
+        // Actualiza los datos editables del paciente.
         public void actualizarPaciente(
             int idPaciente,
-            string nombres,
-            string apellidos,
+            string primerNombre,
+            string segundoNombre,
+            string primerApellido,
+            string segundoApellido,
+            string cedula,
+            string numeroINSS,
             DateTime fechaNacimiento,
             string genero,
             string telefono,
-            string departamento,
-            string municipio,
-            string comunidad,
+            int idComunidad,
             string direccion,
-            string contactoEmergencia,
             string tipoSangre,
             string alergias,
             string antecedentes)
         {
-            // Buscar el paciente mediante su IdPaciente.
-            var paciente = db.Pacientes.FirstOrDefault(
-                p => p.IdPaciente == idPaciente && p.Estado == true
-            );
+            Pacientes paciente = db.Pacientes.FirstOrDefault(
+                p => p.IdPaciente == idPaciente && p.Estado);
 
-
-            // Si el paciente existe, actualizar sus datos.
-            if (paciente != null)
+            // Si el paciente no existe o está inactivo, no hay cambios que guardar.
+            if (paciente == null)
             {
-                // ----------------------------------------------------
-                // DATOS PERSONALES
-                // ----------------------------------------------------
-
-                paciente.Nombres = nombres;
-                paciente.Apellidos = apellidos;
-                paciente.FechaNacimiento = fechaNacimiento;
-                paciente.Genero = genero;
-                paciente.Telefono = telefono;
-
-
-                // ----------------------------------------------------
-                // DATOS DE UBICACIÓN
-                // ----------------------------------------------------
-
-                paciente.Departamento = departamento;
-                paciente.Municipio = municipio;
-                paciente.Comunidad = comunidad;
-                paciente.Direccion = direccion;
-
-
-                // ----------------------------------------------------
-                // INFORMACIÓN DE SALUD
-                // ----------------------------------------------------
-
-                paciente.ContactoEmergencia = contactoEmergencia;
-                paciente.TipoSangre = tipoSangre;
-                paciente.Alergias = alergias;
-                paciente.Antecedentes = antecedentes;
-
-
-                // ----------------------------------------------------
-                // GUARDAR CAMBIOS
-                // ----------------------------------------------------
-
-                db.SaveChanges();
+                return;
             }
-        }
 
+            paciente.PrimerNombre = primerNombre;
+            paciente.SegundoNombre = segundoNombre;
+            paciente.PrimerApellido = primerApellido;
+            paciente.SegundoApellido = segundoApellido;
+            paciente.Cedula = cedula;
+            paciente.NumeroINSS = numeroINSS;
+            paciente.FechaNacimiento = fechaNacimiento;
+            paciente.Genero = genero;
+            paciente.Telefono = telefono;
+            paciente.IdComunidad = idComunidad;
+            paciente.Direccion = direccion;
+            paciente.TipoSangre = tipoSangre;
+            paciente.Alergias = alergias;
+            paciente.Antecedentes = antecedentes;
+
+            db.SaveChanges();
+        }
 
         // ============================================================
         // ELIMINAR PACIENTE
@@ -304,31 +241,17 @@ namespace SanarRuralUnan.Models
         // ============================================================
 
         // Soft delete.
-        //
-        // NO elimina físicamente el paciente de la base de datos.
-        //
-        // Solamente cambia:
-        //
+        // No elimina físicamente el paciente de la base de datos.
         // Activo → Inactivo
-        //
         // De esta manera se conserva el historial del paciente.
-
         public void eliminarPaciente(int idPaciente)
         {
-            // Buscar el paciente.
-            var paciente = db.Pacientes.FirstOrDefault(
-                p => p.IdPaciente == idPaciente && p.Estado == true
-            );
+            Pacientes paciente = db.Pacientes.FirstOrDefault(
+                p => p.IdPaciente == idPaciente && p.Estado);
 
-
-            // Si el paciente existe...
             if (paciente != null)
             {
-                // Marcar como inactivo.
                 paciente.Estado = false;
-
-
-                // Guardar cambios.
                 db.SaveChanges();
             }
         }

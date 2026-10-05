@@ -1,4 +1,5 @@
-﻿using System;
+using System;
+using System.Collections.Generic;
 using SanarRuralUnan.Models;
 
 // Controller de pacientes para la aplicación SanarRuralUnan
@@ -10,128 +11,137 @@ namespace SanarRuralUnan.Controllers
     public class pacientesControllers
     {
         // ============================================================
+        // CONSULTAS DE UBICACIÓN
+        // ============================================================
+
+        // Carga las listas dependientes del formulario de paciente.
+        public List<Departamentos> listarDepartamentos()
+        {
+            return new pacientesModel().listarDepartamentos();
+        }
+
+        public List<Municipios> listarMunicipios(int idDepartamento)
+        {
+            return new pacientesModel().listarMunicipios(idDepartamento);
+        }
+
+        public List<Comunidades> listarComunidades(int idMunicipio)
+        {
+            return new pacientesModel().listarComunidades(idMunicipio);
+        }
+
+        // ============================================================
         // CREAR PACIENTE
         // RF-03
         // ============================================================
-        // Recibe todos los datos enviados desde la Vista
-        // y los pasa al Modelo.
-
+        // Recibe los datos enviados desde la Vista y los pasa al Modelo.
         public void crearPaciente(
-            int idUsuario,
-            string nombres,
-            string apellidos,
+            int? idUsuario,
+            string primerNombre,
+            string segundoNombre,
+            string primerApellido,
+            string segundoApellido,
+            string cedula,
+            string numeroINSS,
             DateTime fechaNacimiento,
             string genero,
             string telefono,
-            string departamento,
-            string municipio,
-            string comunidad,
+            int idComunidad,
             string direccion,
-            string contactoEmergencia,
             string tipoSangre,
             string alergias,
-            string antecedentes)
+            string antecedentes,
+            string contactoPrimerNombre,
+            string contactoSegundoNombre,
+            string contactoPrimerApellido,
+            string contactoSegundoApellido,
+            string contactoParentesco,
+            string contactoTelefono,
+            string contactoCedula)
         {
-            // Crear objeto del modelo.
-            pacientesModel objetoPaciente = new pacientesModel();
-
-            // Datos personales
-            objetoPaciente.IdUsuario = idUsuario;
-            objetoPaciente.Nombres = nombres;
-            objetoPaciente.Apellidos = apellidos;
-            objetoPaciente.FechaNacimiento = fechaNacimiento;
-            objetoPaciente.Genero = genero;
-            objetoPaciente.Telefono = telefono;
-
-            // Datos de ubicación
-            objetoPaciente.Departamento = departamento;
-            objetoPaciente.Municipio = municipio;
-            objetoPaciente.Comunidad = comunidad;
-            objetoPaciente.Direccion = direccion;
-
-            // Información de salud
-            objetoPaciente.ContactoEmergencia = contactoEmergencia;
-            objetoPaciente.TipoSangre = tipoSangre;
-            objetoPaciente.Alergias = alergias;
-            objetoPaciente.Antecedentes = antecedentes;
-
-            // Pedir al Modelo que guarde el paciente.
-            objetoPaciente.guardarPaciente();
+            new pacientesModel().guardarPaciente(
+                idUsuario,
+                primerNombre,
+                segundoNombre,
+                primerApellido,
+                segundoApellido,
+                cedula,
+                numeroINSS,
+                fechaNacimiento,
+                genero,
+                telefono,
+                idComunidad,
+                direccion,
+                tipoSangre,
+                alergias,
+                antecedentes,
+                contactoPrimerNombre,
+                contactoSegundoNombre,
+                contactoPrimerApellido,
+                contactoSegundoApellido,
+                contactoParentesco,
+                contactoTelefono,
+                contactoCedula);
         }
-
 
         // ============================================================
         // CONSULTAR PACIENTE
         // RF-05
         // ============================================================
         // Busca un paciente utilizando el IdUsuario.
-
         public Pacientes consultarPaciente(int idUsuario)
         {
-            pacientesModel objetoPaciente = new pacientesModel();
-
-            return objetoPaciente.buscarPaciente(idUsuario);
+            return new pacientesModel().buscarPaciente(idUsuario);
         }
-
 
         // ============================================================
         // EDITAR PACIENTE
         // RF-04
         // ============================================================
-        // Recibe todos los datos que pueden modificarse
-        // y los envía al Modelo.
-
+        // Recibe los datos editables y los envía al Modelo.
         public void editarPaciente(
             int idPaciente,
-            string nombres,
-            string apellidos,
+            string primerNombre,
+            string segundoNombre,
+            string primerApellido,
+            string segundoApellido,
+            string cedula,
+            string numeroINSS,
             DateTime fechaNacimiento,
             string genero,
             string telefono,
-            string departamento,
-            string municipio,
-            string comunidad,
+            int idComunidad,
             string direccion,
-            string contactoEmergencia,
             string tipoSangre,
             string alergias,
             string antecedentes)
         {
-            // Crear objeto del modelo.
-            pacientesModel objetoPaciente = new pacientesModel();
-
-            // Enviar todos los datos al Modelo.
-            objetoPaciente.actualizarPaciente(
+            new pacientesModel().actualizarPaciente(
                 idPaciente,
-                nombres,
-                apellidos,
+                primerNombre,
+                segundoNombre,
+                primerApellido,
+                segundoApellido,
+                cedula,
+                numeroINSS,
                 fechaNacimiento,
                 genero,
                 telefono,
-                departamento,
-                municipio,
-                comunidad,
+                idComunidad,
                 direccion,
-                contactoEmergencia,
                 tipoSangre,
                 alergias,
-                antecedentes
-            );
+                antecedentes);
         }
-
 
         // ============================================================
         // ELIMINAR PACIENTE
         // RF-06
         // ============================================================
-        // Realiza un soft delete.
-        // El registro NO se elimina físicamente de la BD.
-
+        // Realiza una baja lógica y conserva el registro en la BD.
         public void eliminarPaciente(int idPaciente)
         {
-            pacientesModel objetoPaciente = new pacientesModel();
-
-            objetoPaciente.eliminarPaciente(idPaciente);
+            new pacientesModel().eliminarPaciente(idPaciente);
         }
     }
 }
