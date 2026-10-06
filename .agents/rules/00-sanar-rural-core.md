@@ -100,9 +100,14 @@ La calidad visual y de usabilidad es prioridad de primer nivel:
 ---
 
 ## 7. Protocolo de Calidad y Control de Versiones
-1. **Antes de editar:** Inspeccionar `git status --short --branch` y `git log -1 --oneline`.
-2. **Durante la edición:** Aplicar cambios quirúrgicos enfocados en la tarea solicitada.
-3. **Validación post-edición:**
+1. **Lectura previa obligatoria en orden estricto antes de modificar cualquier archivo del proyecto:**
+   - **1.** `AGENTS.md` (contrato general de desarrollo).
+   - **2.** `.agents/rules/00-sanar-rural-core.md` (reglas permanentes de stack, arquitectura y UI/UX).
+   - **3.** `docs/AI/PROJECT_CONTEXT.md` (contexto estable de roles, módulos y negocio).
+   - **4.** La skill correspondiente al dominio de la tarea (`sanar-rural-ui-ux`, `sanar-rural-architecture`, `sanar-rural-database`, `sanar-rural-clinical` o `sanar-rural-git-quality`).
+2. **Inspección de Git:** Ejecutar `git status --short --branch` y `git log -1 --oneline`.
+3. **Durante la edición:** Aplicar cambios quirúrgicos enfocados en la tarea solicitada.
+4. **Validación post-edición:**
    - Ejecutar `git diff --check` (cero errores de formato/espaciado).
    - Compilar el proyecto con MSBuild y verificar **cero errores de compilación**.
-4. **Restricción de Git:** No realizar `commit`, `push` ni cambio de rama a menos que el usuario lo solicite de manera explícita en su instrucción.
+5. **Restricción de Git:** No realizar `commit`, `push` ni cambio de rama a menos que el usuario lo solicite de manera explícita en su instrucción.

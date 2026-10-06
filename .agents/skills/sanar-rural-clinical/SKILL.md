@@ -16,7 +16,7 @@ En Sanar Rural, **Cita y Consulta son dos entidades conceptual y técnicamente d
 |---|---|---|
 | **Propósito** | Planificación temporal y logística del encuentro médico. | Registro del acto médico presencial y evolución clínica. |
 | **Momento** | Se crea días o semanas antes de la atención. | Se crea en el instante en que el médico atiende al paciente. |
-| **Campos clave** | `FechaHoraProgramada`, `Estado` (Pendiente, Confirmada, Atendida, Cancelada), `Motivo`. | `FechaHoraInicio`, `FechaHoraFin`, `PadecimientoActual`, `ExamenFisico`, `Observaciones`, `PlanSeguimiento`. |
+| **Campos clave** | `FechaHoraProgramada`, `Estado` (Pendiente, Confirmada, Atendida, Cancelada, NoAsistio), `Motivo`. | `FechaHoraInicio`, `FechaHoraFin`, `PadecimientoActual`, `ExamenFisico`, `Observaciones`, `PlanSeguimiento`. |
 | **Cardinalidad** | 1 Cita puede generar 1 Consulta médica. | 1 Consulta pertenece estrictamente a 1 Cita (`IdCita`). |
 
 > ⚠️ **REGLA ESTRICTA:**  
@@ -29,12 +29,13 @@ Una consulta formal en Sanar Rural actúa como el nodo contenedor de tres compon
 
 ```
 [ Consultas ]
-    ├── 1:N ──> [ SignosVitales ]     (Presión sistólica/diastólica, FC, FR, Temp, SpO2, Peso, Talla)
-    ├── 1:N ──> [ Diagnosticos ]      (Tipo: Presuntivo/Definitivo, IdEnfermedad, Descripción)
-    └── 1:N ──> [ Prescripciones ]    (IdMedicamento, Dosis, Frecuencia, Duración, Vía)
+    ├── 0..1 ──> [ SignosVitales ]    (Presión sistólica/diastólica, FC, FR, Temp, SpO2, Peso, Talla)
+    ├── 1:N  ──> [ Diagnosticos ]     (Tipo: Principal, Secundario, Presuntivo, Diferencial)
+    └── 1:N  ──> [ Prescripciones ]   (IdMedicamento, Dosis, Frecuencia, Duración, Vía)
 ```
 
 1. **Signos Vitales (`SignosVitales.cs`):**
+   - Cardinalidad 0..1: Cada consulta clínica registra a lo sumo una toma de signos vitales asociada al encuentro.
    - Rango numérico y unidades clínicas estándar:
      - Presión arterial: Sistólica / Diastólica (mmHg).
      - Frecuencia Cardíaca: lpm.
@@ -44,7 +45,7 @@ Una consulta formal en Sanar Rural actúa como el nodo contenedor de tres compon
      - Peso (Kg) y Talla (cm).
    - Validar coherencia física en la UI antes del guardado.
 2. **Diagnósticos (`Diagnosticos.cs`):**
-   - Todo diagnóstico se relaciona opcionalmente con un catálogo de `Enfermedades` y clasifica el `TipoDiagnostico` (ej. Presuntivo, Confirmado).
+   - Todo diagnóstico se relaciona opcionalmente con un catálogo de `Enfermedades` y clasifica el `TipoDiagnostico` con uno de los valores oficiales: `Principal`, `Secundario`, `Presuntivo` o `Diferencial`.
    - **Regla Ética:** El sistema **NO genera diagnósticos automáticos**. Registra fidedignamente la conclusión del médico responsable.
 3. **Prescripciones (`Prescripciones.cs`):**
    - Requiere medicamento (`IdMedicamento`), posología (`Dosis`, `Frecuencia`, `Duración`, `ViaAdministracion`) y flag de sustitución (`PermiteSustitucion`).

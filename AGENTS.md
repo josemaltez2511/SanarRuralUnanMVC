@@ -4,19 +4,22 @@ Bienvenido al repositorio **SanarRuralUnan**. Este documento es el contrato gene
 
 ---
 
-## 1. Protocolo Obligatorio Antes de Modificar Código
-Cualquier agente que participe en este repositorio debe seguir estrictamente este orden antes de realizar la primera modificación:
+## 1. Protocolo Obligatorio Antes de Modificar Cualquier Archivo del Proyecto
+Cualquier agente (Codex, Antigravity u otro) que participe en este repositorio debe seguir estrictamente este protocolo **ANTES DE MODIFICAR CUALQUIER ARCHIVO DEL PROYECTO**:
 
 1. **Inspeccionar el estado de Git:**
    Ejecutar `git status --short --branch` y `git log -1 --oneline` para conocer la rama de trabajo y los archivos en el worktree.
-2. **Leer `AGENTS.md` completo:**
-   Interiorizar este contrato general de colaboración.
-3. **Leer `.agents/rules/00-sanar-rural-core.md` completo:**
-   Conocer las reglas de stack, restricciones de no-ASP.NET y directrices técnicas permanentes.
-4. **Leer `docs/AI/PROJECT_CONTEXT.md`:**
-   Obligatorio cuando la tarea requiera comprender la arquitectura global, roles de usuario, módulos existentes o flujo clínico.
-5. **Identificar y cargar la habilidad especializada (Skill):**
-   Determinar cuál de las skills del repositorio aplica a la tarea y leer el archivo `SKILL.md` correspondiente antes de escribir una sola línea de código.
+2. **Leer obligatoriamente los documentos base en este orden estricto:**
+   1. `AGENTS.md` (interiorizar este contrato general de colaboración).
+   2. `.agents/rules/00-sanar-rural-core.md` (reglas técnicas permanentes, stack, UI/UX, arquitectura y restricciones).
+   3. `docs/AI/PROJECT_CONTEXT.md` (contexto estable del proyecto, roles, arquitectura, módulos y reglas de negocio).
+3. **Identificar y leer la skill correspondiente a la tarea:**
+   Determinar cuál de las skills del repositorio aplica a la tarea y leer el archivo `SKILL.md` correspondiente antes de escribir o modificar una sola línea de código:
+   - **UI/UX** ──> `sanar-rural-ui-ux` (`.agents/skills/sanar-rural-ui-ux/SKILL.md`)
+   - **Arquitectura / C#** ──> `sanar-rural-architecture` (`.agents/skills/sanar-rural-architecture/SKILL.md`)
+   - **BD / SQL / EF / EDMX** ──> `sanar-rural-database` (`.agents/skills/sanar-rural-database/SKILL.md`)
+   - **Citas / Consultas / Historial** ──> `sanar-rural-clinical` (`.agents/skills/sanar-rural-clinical/SKILL.md`)
+   - **Git / calidad / diffs / build** ──> `sanar-rural-git-quality` (`.agents/skills/sanar-rural-git-quality/SKILL.md`)
 
 ---
 
@@ -25,11 +28,11 @@ Las skills alojadas en `.agents/skills/` **no son opcionales** cuando la tarea i
 
 | Tipo de Tarea | Skill Obligatoria | Ruta del Archivo |
 |---|---|---|
-| Modificación o creación de pantallas, controles, colores, responsive, accesibilidad | `sanar-rural-ui-ux` | `.agents/skills/sanar-rural-ui-ux/SKILL.md` |
-| Organización de clases, flujo View-Controller-Model, ciclo de vida o nuevas pantallas | `sanar-rural-architecture` | `.agents/skills/sanar-rural-architecture/SKILL.md` |
-| Consultas LINQ, transacciones, Entity Framework 6, tablas, EDMX o scripts SQL | `sanar-rural-database` | `.agents/skills/sanar-rural-database/SKILL.md` |
-| Citas, Consultas médicas, Signos Vitales, Diagnósticos, Prescripciones o Historial | `sanar-rural-clinical` | `.agents/skills/sanar-rural-clinical/SKILL.md` |
-| Formateo, verificación con `git diff --check`, compilación MSBuild, commits o diffs | `sanar-rural-git-quality` | `.agents/skills/sanar-rural-git-quality/SKILL.md` |
+| UI/UX (pantallas, controles, colores, responsive, accesibilidad) | `sanar-rural-ui-ux` | `.agents/skills/sanar-rural-ui-ux/SKILL.md` |
+| Arquitectura / C# (organización de clases, flujo View-Controller-Model, ciclo de vida) | `sanar-rural-architecture` | `.agents/skills/sanar-rural-architecture/SKILL.md` |
+| BD / SQL / EF / EDMX (consultas LINQ, transacciones, Entity Framework 6, tablas, EDMX) | `sanar-rural-database` | `.agents/skills/sanar-rural-database/SKILL.md` |
+| Citas / Consultas / Historial (dominio clínico, signos vitales, diagnósticos, prescripciones) | `sanar-rural-clinical` | `.agents/skills/sanar-rural-clinical/SKILL.md` |
+| Git / calidad / diffs / build (verificación con `git diff --check`, compilación MSBuild, diffs) | `sanar-rural-git-quality` | `.agents/skills/sanar-rural-git-quality/SKILL.md` |
 
 ---
 
