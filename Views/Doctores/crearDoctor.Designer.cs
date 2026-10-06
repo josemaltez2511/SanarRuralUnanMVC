@@ -8,9 +8,17 @@ namespace SanarRuralUnan.Views
 
         protected override void Dispose(bool disposing)
         {
-            if (disposing && (components != null))
+            if (disposing)
             {
-                components.Dispose();
+                // Liberar la imagen de vista previa antes de desechar los controles.
+                if (picPreview != null && picPreview.Image != null)
+                {
+                    var img = picPreview.Image;
+                    picPreview.Image = null;
+                    img.Dispose();
+                }
+
+                components?.Dispose();
             }
 
             base.Dispose(disposing);

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
@@ -179,6 +179,7 @@ namespace SanarRuralUnan.Models
             byte[] foto,
             string fotoNombre,
             string fotoMimeType,
+            bool fotoEliminada,
             IList<int> idEspecialidades,
             IList<Tuple<int, int>> asignaciones)
         {
@@ -207,9 +208,17 @@ namespace SanarRuralUnan.Models
             doctor.Telefono = telefono;
             if (foto != null)
             {
+                // Si se seleccionó una nueva foto, se actualizan los datos de imagen.
                 doctor.Foto = foto;
                 doctor.FotoNombre = fotoNombre;
                 doctor.FotoMimeType = fotoMimeType;
+            }
+            else if (fotoEliminada)
+            {
+                // Si el usuario quitó la foto explícitamente, se limpian los campos.
+                doctor.Foto = null;
+                doctor.FotoNombre = null;
+                doctor.FotoMimeType = null;
             }
 
             foreach (var existente in doctor.DoctorEspecialidad.ToList())
@@ -274,7 +283,7 @@ namespace SanarRuralUnan.Models
         // RF-10
         // ============================================================
         // Este método realiza una eliminación lógica para conservar
-        // el historial del doctor.
+        // el historial del doctor únicamente si nunca ha tenido citas.
         public void eliminarDoctor(int idDoctor)
         {
             // Buscar únicamente un doctor que esté activo.
@@ -282,11 +291,19 @@ namespace SanarRuralUnan.Models
                 d => d.IdDoctor == idDoctor && d.Estado
             );
 
-            if (doctor != null)
+            if (doctor == null)
             {
-                doctor.Estado = false;
-                db.SaveChanges();
+                return;
             }
+
+            // Regla de negocio: Un doctor solo puede darse de baja si NUNCA ha tenido registros clínicos en Citas.
+            if (db.Citas.Any(c => c.IdDoctor == idDoctor))
+            {
+                throw new InvalidOperationException("No se puede dar de baja al doctor porque posee historial de citas.");
+            }
+
+            doctor.Estado = false;
+            db.SaveChanges();
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Drawing;
 using System.Windows.Forms;
 using SanarRuralUnan.Controllers;
@@ -216,15 +216,10 @@ namespace SanarRuralUnan.Views.Doctores
 
                 if (confirmacion == DialogResult.Yes)
                 {
-                    try
+                    // La vista inicia la acción y refleja el resultado si la operación fue exitosa.
+                    if (controlador.eliminarDoctor(idDoctor))
                     {
-                        controlador.eliminarDoctor(idDoctor);
-                        MessageBox.Show("El doctor ha sido dado de baja correctamente.", "Operación Exitosa", MessageBoxButtons.OK, MessageBoxIcon.Information);
                         CargarDoctores(txtBuscar.Text.Trim());
-                    }
-                    catch (Exception ex)
-                    {
-                        MessageBox.Show("Error al dar de baja: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
                 }
             }

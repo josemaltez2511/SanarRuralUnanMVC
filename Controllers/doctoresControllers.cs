@@ -1,5 +1,6 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
+using System.Windows.Forms;
 using SanarRuralUnan.Models;
 
 namespace SanarRuralUnan.Controllers
@@ -88,6 +89,7 @@ namespace SanarRuralUnan.Controllers
             byte[] foto,
             string fotoNombre,
             string fotoMimeType,
+            bool fotoEliminada,
             IList<int> idEspecialidades,
             IList<Tuple<int, int>> asignaciones)
         {
@@ -104,6 +106,7 @@ namespace SanarRuralUnan.Controllers
                 foto,
                 fotoNombre,
                 fotoMimeType,
+                fotoEliminada,
                 idEspecialidades,
                 asignaciones
             );
@@ -113,10 +116,40 @@ namespace SanarRuralUnan.Controllers
         // ELIMINAR DOCTOR
         // RF-10
         // ============================================================
-        public void eliminarDoctor(int idDoctor)
+        // Maneja el resultado de la baja lógica del doctor y presenta el mensaje correspondiente.
+        public bool eliminarDoctor(int idDoctor)
         {
-            // El modelo cambia el estado sin eliminar el registro.
-            new doctoresModels().eliminarDoctor(idDoctor);
+            try
+            {
+                new doctoresModels().eliminarDoctor(idDoctor);
+                MessageBox.Show(
+                    "El doctor ha sido dado de baja correctamente.",
+                    "Operación Exitosa",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Information
+                );
+                return true;
+            }
+            catch (InvalidOperationException ex)
+            {
+                MessageBox.Show(
+                    ex.Message,
+                    "Operación no permitida",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning
+                );
+                return false;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(
+                    "Error al dar de baja: " + ex.Message,
+                    "Error",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error
+                );
+                return false;
+            }
         }
     }
 }
