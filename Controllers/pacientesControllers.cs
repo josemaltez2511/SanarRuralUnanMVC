@@ -30,6 +30,16 @@ namespace SanarRuralUnan.Controllers
             return new pacientesModel().listarComunidades(idMunicipio);
         }
 
+        public List<Pacientes> listarPacientes(string busqueda = "")
+        {
+            return new pacientesModel().listarPacientes(busqueda);
+        }
+
+        public Pacientes consultarPacientePorId(int idPaciente)
+        {
+            return new pacientesModel().buscarPacientePorId(idPaciente);
+        }
+
         // ============================================================
         // CREAR PACIENTE
         // RF-03

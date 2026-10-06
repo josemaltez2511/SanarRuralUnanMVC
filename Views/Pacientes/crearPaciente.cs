@@ -1,7 +1,9 @@
 using System;
 using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
 using SanarRuralUnan.Controllers;
+using SanarRuralUnan.Helpers;
 using SanarRuralUnan.Models;
 
 namespace SanarRuralUnan.Views
@@ -14,6 +16,7 @@ namespace SanarRuralUnan.Views
 
         // El paciente puede asociarse a una cuenta existente o guardarse sin usuario.
         private int? idUsuario;
+        private int? idPacienteEditar;
 
 
         // ============================================================
@@ -51,9 +54,15 @@ namespace SanarRuralUnan.Views
             idUsuario = idUsuarioRecibido > 0 ? idUsuarioRecibido : (int?)null;
         }
 
+        public crearPaciente(int idPaciente, bool modoEdicion) : this()
+        {
+            if (modoEdicion)
+                idPacienteEditar = idPaciente;
+        }
+
         private void PrepararCampos()
         {
-            panelCard.Size = new Size(panelCard.Width, 850);
+            panelCard.AutoScrollMinSize = Size.Empty;
             panelDatosPersonales.Size = new Size(panelDatosPersonales.Width, 660);
             panelRegistroSalud.Size = new Size(panelRegistroSalud.Width, 660);
             btnGuardar.Location = new Point(btnGuardar.Left, 780);
@@ -120,6 +129,9 @@ namespace SanarRuralUnan.Views
             txtContactoParentesco = AgregarTexto(panelRegistroSalud, "Parentesco *", 20, 265, 210, 284);
             txtContactoTelefono = AgregarTexto(panelRegistroSalud, "Teléfono *", 260, 265, 210, 284);
             txtContactoCedula = AgregarTexto(panelRegistroSalud, "Cédula", 20, 325, 210, 344);
+
+            panelCard.Resize += panelCard_Resize;
+            AjustarLayoutPaciente();
         }
 
         private TextBox AgregarTexto(Control contenedor, string etiqueta, int x, int yEtiqueta, int ancho, int yTexto)
@@ -127,17 +139,19 @@ namespace SanarRuralUnan.Views
             Label label = new Label
             {
                 AutoSize = true,
-                Font = new Font("Segoe UI", 9F, FontStyle.Bold),
-                ForeColor = Color.FromArgb(50, 60, 70),
+                Font = Tema.FuenteLabelCampo,
+                ForeColor = Tema.TextoPrincipal,
                 Location = new Point(x, yEtiqueta),
+                Tag = new Point(x, ancho),
                 Text = etiqueta
             };
             TextBox texto = new TextBox
             {
-                Font = new Font("Segoe UI", 10F),
+                Font = Tema.FuenteInput,
                 Location = new Point(x, yTexto),
                 Size = new Size(ancho, 25)
             };
+            texto.Tag = new Point(x, ancho);
             contenedor.Controls.Add(label);
             contenedor.Controls.Add(texto);
             return texto;
@@ -148,18 +162,20 @@ namespace SanarRuralUnan.Views
             Label label = new Label
             {
                 AutoSize = true,
-                Font = new Font("Segoe UI", 9F, FontStyle.Bold),
-                ForeColor = Color.FromArgb(50, 60, 70),
+                Font = Tema.FuenteLabelCampo,
+                ForeColor = Tema.TextoPrincipal,
                 Location = new Point(x, yEtiqueta),
+                Tag = new Point(x, ancho),
                 Text = etiqueta
             };
             ComboBox combo = new ComboBox
             {
                 DropDownStyle = ComboBoxStyle.DropDownList,
-                Font = new Font("Segoe UI", 10F),
+                Font = Tema.FuenteInput,
                 Location = new Point(x, yCombo),
                 Size = new Size(ancho, 25)
             };
+            combo.Tag = new Point(x, ancho);
             contenedor.Controls.Add(label);
             contenedor.Controls.Add(combo);
             return combo;
@@ -170,21 +186,58 @@ namespace SanarRuralUnan.Views
             control.Visible = false;
         }
 
-        // Mantiene la tarjeta centrada cuando cambia el tamaño de la ventana.
-        private void CentrarPanelCard()
+        private void panelCard_Resize(object sender, EventArgs e)
         {
-            int x = (ClientSize.Width - panelCard.Width) / 2;
-            int y = (ClientSize.Height - panelCard.Height) / 2;
-            panelCard.Location = new Point(Math.Max(10, x), Math.Max(10, y));
+            AjustarLayoutPaciente();
+        }
+
+        private void AjustarLayoutPaciente()
+        {
+            int anchoColumna = Math.Max(0, (panelCard.ClientSize.Width - 80) / 2);
+            int anchoCompleto = Math.Max(0, panelCard.ClientSize.Width - 80);
+
+            panelDatosPersonales.Width = anchoColumna;
+            panelRegistroSalud.Width = anchoColumna;
+            panelDatosPersonales.Location = new Point(20, 90);
+            panelRegistroSalud.Location = new Point(anchoColumna + 40, 90);
+
+            AjustarCampos(panelDatosPersonales);
+            AjustarCampos(panelRegistroSalud);
+
+            btnGuardar.Location = new Point(40, btnGuardar.Top);
+            btnGuardar.Width = anchoCompleto;
+            lnkVolver.Location = new Point((panelCard.ClientSize.Width - lnkVolver.Width) / 2, lnkVolver.Top);
+        }
+
+        private static void AjustarCampos(Panel panel)
+        {
+            int anchoColumna = Math.Max(0, (panel.ClientSize.Width - 50) / 2);
+            int xDerecha = anchoColumna + 30;
+
+            foreach (Control control in panel.Controls)
+            {
+                Point dimensiones = control.Tag is Point
+                    ? (Point)control.Tag
+                    : new Point(control.Left, control.Width);
+                control.Tag = dimensiones;
+
+                bool esColumnaDerecha = dimensiones.X >= 240 && dimensiones.X < 400;
+                int x = esColumnaDerecha ? xDerecha : 20;
+                control.Left = x;
+
+                if (!(control is Label))
+                {
+                    control.Width = dimensiones.Y >= 400
+                        ? Math.Max(0, panel.ClientSize.Width - 40)
+                        : anchoColumna;
+                }
+            }
         }
 
         private void crearPaciente_Load(object sender, EventArgs e)
         {
             // Colocar el cursor inicialmente en el primer nombre.
             txtNombres.Focus();
-
-            // Centrar la tarjeta al abrir el formulario.
-            CentrarPanelCard();
 
             // Si el ComboBox tiene opciones, seleccionar la primera.
             if (cmbGenero.Items.Count > 0) cmbGenero.SelectedIndex = 0;
@@ -196,6 +249,71 @@ namespace SanarRuralUnan.Views
             lblErrorNombres.Text = string.Empty;
             lblErrorTelefono.Text = string.Empty;
             CargarDepartamentos();
+
+            if (idPacienteEditar.HasValue)
+                CargarPacienteParaEditar();
+        }
+
+        private void CargarPacienteParaEditar()
+        {
+            SanarRuralUnan.Pacientes paciente = controlador.consultarPacientePorId(idPacienteEditar.Value);
+            if (paciente == null)
+            {
+                MessageBox.Show("El paciente ya no está disponible.", "Paciente no encontrado", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                DialogResult = DialogResult.Cancel;
+                Close();
+                return;
+            }
+
+            Text = "Sanar Rural - Editar Paciente";
+            lblSubtitulo.Text = "Editar datos del paciente";
+            btnGuardar.Text = "Guardar cambios";
+            lnkVolver.Text = "Cancelar";
+            txtNombres.Text = paciente.PrimerNombre;
+            txtSegundoNombre.Text = paciente.SegundoNombre;
+            txtApellidos.Text = paciente.PrimerApellido;
+            txtSegundoApellido.Text = paciente.SegundoApellido;
+            txtCedula.Text = paciente.Cedula;
+            txtNumeroINSS.Text = paciente.NumeroINSS;
+            dtpFechaNacimiento.Value = paciente.FechaNacimiento;
+            cmbGenero.SelectedItem = paciente.Genero;
+            txtTelefono.Text = paciente.Telefono;
+            txtDireccion.Text = paciente.Direccion;
+            cmbTipoSangre.SelectedItem = paciente.TipoSangre;
+            txtAlergias.Text = paciente.Alergias;
+            txtAntecedentes.Text = paciente.Antecedentes;
+
+            cargandoUbicacion = true;
+            cmbDepartamento.SelectedValue = paciente.Comunidades.Municipios.IdDepartamento;
+            cmbMunicipio.DataSource = controlador.listarMunicipios(paciente.Comunidades.Municipios.IdDepartamento);
+            cmbMunicipio.DisplayMember = "Nombre";
+            cmbMunicipio.ValueMember = "IdMunicipio";
+            cmbMunicipio.SelectedValue = paciente.Comunidades.IdMunicipio;
+            cmbComunidad.DataSource = controlador.listarComunidades(paciente.Comunidades.IdMunicipio);
+            cmbComunidad.DisplayMember = "Nombre";
+            cmbComunidad.ValueMember = "IdComunidad";
+            cmbComunidad.SelectedValue = paciente.IdComunidad;
+            cargandoUbicacion = false;
+
+            ContactosEmergencia contacto = paciente.ContactosEmergencia.FirstOrDefault();
+            if (contacto != null)
+            {
+                txtContactoPrimerNombre.Text = contacto.PrimerNombre;
+                txtContactoSegundoNombre.Text = contacto.SegundoNombre;
+                txtContactoPrimerApellido.Text = contacto.PrimerApellido;
+                txtContactoSegundoApellido.Text = contacto.SegundoApellido;
+                txtContactoParentesco.Text = contacto.Parentesco;
+                txtContactoTelefono.Text = contacto.Telefono;
+                txtContactoCedula.Text = contacto.Cedula;
+            }
+
+            txtContactoPrimerNombre.ReadOnly = true;
+            txtContactoSegundoNombre.ReadOnly = true;
+            txtContactoPrimerApellido.ReadOnly = true;
+            txtContactoSegundoApellido.ReadOnly = true;
+            txtContactoParentesco.ReadOnly = true;
+            txtContactoTelefono.ReadOnly = true;
+            txtContactoCedula.ReadOnly = true;
         }
 
         // ============================================================
@@ -243,15 +361,6 @@ namespace SanarRuralUnan.Views
             cmbComunidad.ValueMember = "IdComunidad";
             cmbComunidad.SelectedIndex = -1;
             cargandoUbicacion = false;
-        }
-
-        // ============================================================
-        // RESPONSIVE
-        // ============================================================
-
-        private void crearPaciente_Resize(object sender, EventArgs e)
-        {
-            CentrarPanelCard();
         }
 
         // ============================================================
@@ -352,35 +461,55 @@ namespace SanarRuralUnan.Views
 
             try
             {
-                // Enviar los datos del paciente y su contacto opcional al Controller.
-                controlador.crearPaciente(
-                    idUsuario,
-                    txtNombres.Text.Trim(),
-                    txtSegundoNombre.Text.Trim(),
-                    txtApellidos.Text.Trim(),
-                    txtSegundoApellido.Text.Trim(),
-                    txtCedula.Text.Trim(),
-                    txtNumeroINSS.Text.Trim(),
-                    dtpFechaNacimiento.Value,
-                    cmbGenero.SelectedItem == null ? null : cmbGenero.SelectedItem.ToString(),
-                    telefono,
-                    ((Comunidades)cmbComunidad.SelectedItem).IdComunidad,
-                    txtDireccion.Text.Trim(),
-                    cmbTipoSangre.SelectedItem == null ? null : cmbTipoSangre.SelectedItem.ToString(),
-                    txtAlergias.Text.Trim(),
-                    txtAntecedentes.Text.Trim(),
-                    contactoNombre,
-                    txtContactoSegundoNombre.Text.Trim(),
-                    contactoApellido,
-                    txtContactoSegundoApellido.Text.Trim(),
-                    contactoParentesco,
-                    contactoTelefono,
-                    txtContactoCedula.Text.Trim());
+                if (idPacienteEditar.HasValue)
+                {
+                    controlador.editarPaciente(
+                        idPacienteEditar.Value,
+                        txtNombres.Text.Trim(),
+                        txtSegundoNombre.Text.Trim(),
+                        txtApellidos.Text.Trim(),
+                        txtSegundoApellido.Text.Trim(),
+                        txtCedula.Text.Trim(),
+                        txtNumeroINSS.Text.Trim(),
+                        dtpFechaNacimiento.Value,
+                        cmbGenero.SelectedItem == null ? null : cmbGenero.SelectedItem.ToString(),
+                        telefono,
+                        ((Comunidades)cmbComunidad.SelectedItem).IdComunidad,
+                        txtDireccion.Text.Trim(),
+                        cmbTipoSangre.SelectedItem == null ? null : cmbTipoSangre.SelectedItem.ToString(),
+                        txtAlergias.Text.Trim(),
+                        txtAntecedentes.Text.Trim());
+                }
+                else
+                {
+                    controlador.crearPaciente(
+                        idUsuario,
+                        txtNombres.Text.Trim(),
+                        txtSegundoNombre.Text.Trim(),
+                        txtApellidos.Text.Trim(),
+                        txtSegundoApellido.Text.Trim(),
+                        txtCedula.Text.Trim(),
+                        txtNumeroINSS.Text.Trim(),
+                        dtpFechaNacimiento.Value,
+                        cmbGenero.SelectedItem == null ? null : cmbGenero.SelectedItem.ToString(),
+                        telefono,
+                        ((Comunidades)cmbComunidad.SelectedItem).IdComunidad,
+                        txtDireccion.Text.Trim(),
+                        cmbTipoSangre.SelectedItem == null ? null : cmbTipoSangre.SelectedItem.ToString(),
+                        txtAlergias.Text.Trim(),
+                        txtAntecedentes.Text.Trim(),
+                        contactoNombre,
+                        txtContactoSegundoNombre.Text.Trim(),
+                        contactoApellido,
+                        txtContactoSegundoApellido.Text.Trim(),
+                        contactoParentesco,
+                        contactoTelefono,
+                        txtContactoCedula.Text.Trim());
+                }
 
-                // Confirmar el registro y volver al menú principal.
-                MessageBox.Show("¡Paciente registrado con éxito!", "Registro Exitoso", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                menuPrincipalMedicos menuPaciente = new menuPrincipalMedicos();
-                menuPaciente.Show();
+                MessageBox.Show(idPacienteEditar.HasValue ? "Los datos del paciente se actualizaron correctamente." : "¡Paciente registrado con éxito!",
+                    "Operación exitosa", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                DialogResult = DialogResult.OK;
                 Close();
             }
             catch (Exception ex)
@@ -397,8 +526,7 @@ namespace SanarRuralUnan.Views
 
         private void lnkVolver_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            menuPrincipalMedicos menu = new menuPrincipalMedicos();
-            menu.Show();
+            DialogResult = DialogResult.Cancel;
             Close();
         }
 

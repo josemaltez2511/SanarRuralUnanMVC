@@ -1,4 +1,4 @@
-﻿using SanarRuralUnan.Helpers;
+using SanarRuralUnan.Helpers;
 
 namespace SanarRuralUnan.Views
 {
@@ -193,10 +193,10 @@ namespace SanarRuralUnan.Views
             // btnVerContrasena
             // 
             this.btnVerContrasena.BackColor = Tema.FondoTarjeta;
-            this.btnVerContrasena.FlatAppearance.BorderColor = System.Drawing.Color.LightGray;
+            this.btnVerContrasena.FlatAppearance.BorderColor = Tema.Borde;
             this.btnVerContrasena.FlatAppearance.BorderSize = 1;
             this.btnVerContrasena.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnVerContrasena.Font = new System.Drawing.Font("Segoe UI", 10F);
+            this.btnVerContrasena.Font = Tema.FuenteCuerpo;
             this.btnVerContrasena.Location = new System.Drawing.Point(420, 220);
             this.btnVerContrasena.Name = "btnVerContrasena";
             this.btnVerContrasena.Size = new System.Drawing.Size(40, 27);
@@ -244,10 +244,10 @@ namespace SanarRuralUnan.Views
             // btnVerConfirmarContrasena
             // 
             this.btnVerConfirmarContrasena.BackColor = Tema.FondoTarjeta;
-            this.btnVerConfirmarContrasena.FlatAppearance.BorderColor = System.Drawing.Color.LightGray;
+            this.btnVerConfirmarContrasena.FlatAppearance.BorderColor = Tema.Borde;
             this.btnVerConfirmarContrasena.FlatAppearance.BorderSize = 1;
             this.btnVerConfirmarContrasena.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnVerConfirmarContrasena.Font = new System.Drawing.Font("Segoe UI", 10F);
+            this.btnVerConfirmarContrasena.Font = Tema.FuenteCuerpo;
             this.btnVerConfirmarContrasena.Location = new System.Drawing.Point(420, 310);
             this.btnVerConfirmarContrasena.Name = "btnVerConfirmarContrasena";
             this.btnVerConfirmarContrasena.Size = new System.Drawing.Size(40, 27);
@@ -285,7 +285,7 @@ namespace SanarRuralUnan.Views
             // Sigue existiendo como el valor real que se marca al hacer clic en panelTarjetaPaciente.
             // 
             this.rbPaciente.AutoSize = true;
-            this.rbPaciente.Font = new System.Drawing.Font("Segoe UI", 10F);
+            this.rbPaciente.Font = Tema.FuenteCuerpo;
             this.rbPaciente.Location = new System.Drawing.Point(40, 382);
             this.rbPaciente.Name = "rbPaciente";
             this.rbPaciente.Size = new System.Drawing.Size(90, 24);
@@ -300,7 +300,7 @@ namespace SanarRuralUnan.Views
             // NUEVO: igual que rbPaciente, oculto pero sigue siendo el valor real
             // 
             this.rbMedico.AutoSize = true;
-            this.rbMedico.Font = new System.Drawing.Font("Segoe UI", 10F);
+            this.rbMedico.Font = Tema.FuenteCuerpo;
             this.rbMedico.Location = new System.Drawing.Point(200, 382);
             this.rbMedico.Name = "rbMedico";
             this.rbMedico.Size = new System.Drawing.Size(220, 24);
@@ -346,7 +346,7 @@ namespace SanarRuralUnan.Views
             this.btnGuardar.FlatAppearance.BorderSize = 0;
             this.btnGuardar.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnGuardar.Font = Tema.FuenteBoton;
-            this.btnGuardar.ForeColor = System.Drawing.Color.White;
+            this.btnGuardar.ForeColor = Tema.Superficie;
             this.btnGuardar.Location = new System.Drawing.Point(40, 451);
             this.btnGuardar.Name = "btnGuardar";
             this.btnGuardar.Size = new System.Drawing.Size(420, 40);
@@ -375,10 +375,14 @@ namespace SanarRuralUnan.Views
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = Tema.FondoVentana;
-            this.ClientSize = new System.Drawing.Size(750, 620);
+            this.ClientSize = new System.Drawing.Size(950, 760);
             this.Controls.Add(this.panelCard);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Sizable;
+            this.MaximizeBox = false;
+            this.MinimizeBox = false;
+            this.MinimumSize = new System.Drawing.Size(820, 660);
             this.Name = "crearUsuario";
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Sanar Rural - Registro de Usuario";
             this.Load += new System.EventHandler(this.crearUsuario_Load);
             this.Resize += new System.EventHandler(this.crearUsuario_Resize);

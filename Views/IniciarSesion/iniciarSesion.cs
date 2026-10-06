@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Text.RegularExpressions; // Necesario para validar el formato del correo
 using SanarRuralUnan.Controllers;
+using SanarRuralUnan.Helpers;
 using SanarRuralUnan.Views;
 
 namespace SanarRuralUnan
@@ -37,7 +38,7 @@ namespace SanarRuralUnan
             // Textos de advertencia iniciales
             lblErrorCorreo.Text = "";
             lblErrorContrasena.Text = "La contraseña debe ser al menos 5 caracteres";
-            lblErrorContrasena.ForeColor = Color.FromArgb(100, 110, 120);
+            lblErrorContrasena.ForeColor = Tema.TextoSecundario;
         }
 
         private void iniciarSesion_Resize(object sender, EventArgs e)
@@ -60,12 +61,12 @@ namespace SanarRuralUnan
             if (!Regex.IsMatch(correo, patronCorreo))
             {
                 lblErrorCorreo.Text = "Formato de correo inválido.";
-                lblErrorCorreo.ForeColor = Color.Red;
+                lblErrorCorreo.ForeColor = Tema.Error;
             }
             else
             {
                 lblErrorCorreo.Text = "Formato correcto.";
-                lblErrorCorreo.ForeColor = Color.FromArgb(120, 190, 32);
+                lblErrorCorreo.ForeColor = Tema.VerdeAcento;
             }
         }
 
@@ -77,19 +78,19 @@ namespace SanarRuralUnan
             if (string.IsNullOrEmpty(pass))
             {
                 lblErrorContrasena.Text = "La contraseña debe ser al menos 5 caracteres";
-                lblErrorContrasena.ForeColor = Color.FromArgb(100, 110, 120);
+                lblErrorContrasena.ForeColor = Tema.TextoSecundario;
                 return;
             }
 
             if (pass.Length < 5)
             {
                 lblErrorContrasena.Text = "La contraseña debe ser al menos 5 caracteres";
-                lblErrorContrasena.ForeColor = Color.Red;
+                lblErrorContrasena.ForeColor = Tema.Error;
             }
             else
             {
                 lblErrorContrasena.Text = "Longitud de contraseña válida";
-                lblErrorContrasena.ForeColor = Color.FromArgb(120, 190, 32);
+                lblErrorContrasena.ForeColor = Tema.VerdeAcento;
             }
         }
 
@@ -148,14 +149,13 @@ namespace SanarRuralUnan
                 if (tipoUsuario == controlador.ObtenerIdRol("Doctor"))
                 {
                     // Es Doctor
-                    menuPrincipalMedicos menuMedico = new menuPrincipalMedicos();
-                    menuMedico.Show();
-                    this.Hide();
+                    using (menuPrincipalMedicos menuMedico = new menuPrincipalMedicos())
+                        menuMedico.ShowDialog(this);
                 }
                 else if (tipoUsuario == controlador.ObtenerIdRol("Administrativo"))
                 {
-                    new SanarRuralUnan.Views.paginaPrincipalUsuarios().Show();
-                    this.Hide();
+                    using (var menu = new SanarRuralUnan.Views.menuPrincipalAdministrativo())
+                        menu.ShowDialog(this);
                 }
                 else if (tipoUsuario == controlador.ObtenerIdRol("Paciente"))
                 {
@@ -182,9 +182,8 @@ namespace SanarRuralUnan
 
         private void lnkCrearUsuario_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            crearUsuario formCrear = new crearUsuario();
-            formCrear.Show();
-            this.Hide();
+            using (crearUsuario formCrear = new crearUsuario())
+                formCrear.ShowDialog(this);
         }
 
         private void lblSubtitulo_Click(object sender, EventArgs e) { }

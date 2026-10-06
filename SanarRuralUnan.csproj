@@ -42,6 +42,9 @@
     <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>packages\EntityFramework.6.5.2\lib\net45\EntityFramework.SqlServer.dll</HintPath>
     </Reference>
+    <Reference Include="MaterialSkin">
+      <HintPath>packages\MaterialSkin.2.3.1\lib\net45\MaterialSkin.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Configuration" />
@@ -176,11 +179,23 @@
     <Compile Include="Views\Menu\menuPrincipalMedicos.Designer.cs">
       <DependentUpon>menuPrincipalMedicos.cs</DependentUpon>
     </Compile>
+    <Compile Include="Views\Menu\menuPrincipalAdministrativo.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Views\Menu\menuPrincipalAdministrativo.Designer.cs">
+      <DependentUpon>menuPrincipalAdministrativo.cs</DependentUpon>
+    </Compile>
     <Compile Include="Views\Pacientes\crearPaciente.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Views\Pacientes\crearPaciente.Designer.cs">
       <DependentUpon>crearPaciente.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Pacientes\paginaPrincipalPacientes.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Views\Pacientes\paginaPrincipalPacientes.Designer.cs">
+      <DependentUpon>paginaPrincipalPacientes.cs</DependentUpon>
     </Compile>
     <Compile Include="Views\Usuarios\crearUsuario.cs">
       <SubType>Form</SubType>
@@ -229,8 +244,14 @@
     <EmbeddedResource Include="Views\Menu\menuPrincipalMedicos.resx">
       <DependentUpon>menuPrincipalMedicos.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Views\Menu\menuPrincipalAdministrativo.resx">
+      <DependentUpon>menuPrincipalAdministrativo.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Views\Pacientes\crearPaciente.resx">
       <DependentUpon>crearPaciente.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\Pacientes\paginaPrincipalPacientes.resx">
+      <DependentUpon>paginaPrincipalPacientes.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Views\Usuarios\crearUsuario.resx">
       <DependentUpon>crearUsuario.cs</DependentUpon>
@@ -287,10 +308,14 @@
     <None Include="packages\EntityFramework.6.5.2\tools\init.ps1" />
     <None Include="packages\EntityFramework.6.5.2\tools\install.ps1" />
     <None Include="packages\EntityFramework.6.5.2\tools\net6.0\any\ef6.runtimeconfig.json" />
+    <None Include="packages\MaterialSkin.2.2.3.1\.signature.p7s" />
+    <None Include="packages\MaterialSkin.2.2.3.1\MaterialSkin.2.2.3.1.nupkg" />
+    <None Include="packages\MaterialSkin.2.2.3.1\README.md" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
+    <None Include="Properties\sanar-rural-logo.png" />
     <Compile Include="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Settings.settings</DependentUpon>
@@ -331,6 +356,12 @@
     <Content Include="packages\EntityFramework.6.5.2\lib\net40\EntityFramework.SqlServer.xml" />
     <Content Include="packages\EntityFramework.6.5.2\lib\net40\EntityFramework.xml" />
     <Content Include="packages\EntityFramework.6.5.2\lib\net45\EntityFramework.dll" />
+    <Content Include="packages\MaterialSkin.2.2.3.1\lib\net45\MaterialSkin.dll" />
+    <Content Include="packages\MaterialSkin.2.2.3.1\lib\net461\MaterialSkin.dll" />
+    <Content Include="packages\MaterialSkin.2.2.3.1\lib\net48\MaterialSkin.dll" />
+    <Content Include="packages\MaterialSkin.2.2.3.1\lib\net5.0-windows7.0\MaterialSkin.dll" />
+    <Content Include="packages\MaterialSkin.2.2.3.1\nugetIcon.png" />
+    <Content Include="packages\MaterialSkin.2.3.1\lib\net45\MaterialSkin.dll" />
     <Content Include="packages\EntityFramework.6.5.2\lib\net45\EntityFramework.SqlServer.dll" />
     <Content Include="packages\EntityFramework.6.5.2\lib\net45\EntityFramework.SqlServer.xml" />
     <Content Include="packages\EntityFramework.6.5.2\lib\net45\EntityFramework.xml" />

@@ -19,25 +19,10 @@ namespace SanarRuralUnan.Views.Doctores
         }
 
         // ============================================================
-        // CENTRAR TARJETA PRINCIPAL
-        // ============================================================
-        private void CentrarPanelCard()
-        {
-            int x = (this.ClientSize.Width - panelCard.Width) / 2;
-            int y = (this.ClientSize.Height - panelCard.Height) / 2;
-
-            panelCard.Location = new Point(
-                Math.Max(10, x),
-                Math.Max(10, y)
-            );
-        }
-
-        // ============================================================
         // LOAD
         // ============================================================
         private void paginaPrincipalDoctores_Load(object sender, EventArgs e)
         {
-            CentrarPanelCard();
             ConfigurarEstiloGrid();
             CargarDoctores();
 
@@ -51,43 +36,16 @@ namespace SanarRuralUnan.Views.Doctores
             };
         }
 
-        private void paginaPrincipalDoctores_Resize(object sender, EventArgs e)
-        {
-            CentrarPanelCard();
-        }
-
         // ============================================================
         // CONFIGURACIÓN VISUAL DEL DATAGRIDVIEW
         // ============================================================
         private void ConfigurarEstiloGrid()
         {
-            dgvDoctores.BackgroundColor = Color.White;
-            dgvDoctores.BorderStyle = BorderStyle.None;
-            dgvDoctores.CellBorderStyle = DataGridViewCellBorderStyle.SingleHorizontal;
+            Tema.ConfigurarTabla(dgvDoctores);
             dgvDoctores.ColumnHeadersBorderStyle = DataGridViewHeaderBorderStyle.None;
-            dgvDoctores.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dgvDoctores.MultiSelect = false;
-            dgvDoctores.ReadOnly = true;
-            dgvDoctores.AllowUserToAddRows = false;
-            dgvDoctores.AllowUserToDeleteRows = false;
             dgvDoctores.AllowUserToResizeRows = false;
-            dgvDoctores.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-            dgvDoctores.RowHeadersVisible = false;
-
-            // Encabezado
-            dgvDoctores.EnableHeadersVisualStyles = false;
-            dgvDoctores.ColumnHeadersDefaultCellStyle.BackColor = Tema.AzulPrimario;
-            dgvDoctores.ColumnHeadersDefaultCellStyle.ForeColor = Color.White;
-            dgvDoctores.ColumnHeadersDefaultCellStyle.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
-            dgvDoctores.ColumnHeadersHeight = 36;
-
-            // Filas
-            dgvDoctores.DefaultCellStyle.Font = new Font("Segoe UI", 9.5F);
-            dgvDoctores.DefaultCellStyle.ForeColor = Tema.TextoPrincipal;
-            dgvDoctores.DefaultCellStyle.SelectionBackColor = Tema.FondoTarjetaSeleccionada;
-            dgvDoctores.DefaultCellStyle.SelectionForeColor = Color.Black;
-            dgvDoctores.RowTemplate.Height = 36;
-            dgvDoctores.AlternatingRowsDefaultCellStyle.BackColor = Color.FromArgb(248, 250, 252);
+            dgvDoctores.AccessibleName = "Listado de doctores";
+            dgvDoctores.AccessibleDescription = "Use las flechas para recorrer doctores y Tab para acceder a sus acciones.";
         }
 
         // ============================================================
@@ -195,14 +153,17 @@ namespace SanarRuralUnan.Views.Doctores
                     e.Graphics.FillRectangle(brush, btnRect);
                 }
 
-                TextRenderer.DrawText(
-                    e.Graphics,
-                    textoBoton,
-                    new Font("Segoe UI", 9F, FontStyle.Bold),
-                    btnRect,
-                    Color.White,
-                    TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter
-                );
+                using (Font fuenteBoton = Tema.FuenteBoton)
+                {
+                    TextRenderer.DrawText(
+                        e.Graphics,
+                        textoBoton,
+                        fuenteBoton,
+                        btnRect,
+                        Tema.Superficie,
+                        TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter
+                    );
+                }
 
                 e.Handled = true;
             }
@@ -234,9 +195,11 @@ namespace SanarRuralUnan.Views.Doctores
             if (dgvDoctores.Columns[e.ColumnIndex].Name == "colEditar")
             {
                 int idDoctor = Convert.ToInt32(dgvDoctores.Rows[e.RowIndex].Cells["IdDoctor"].Value);
-                crearDoctor formEditar = new crearDoctor(idDoctor, true);
-                formEditar.Show();
-                this.Hide();
+                using (crearDoctor formEditar = new crearDoctor(idDoctor, true))
+                {
+                    if (formEditar.ShowDialog(this) == DialogResult.OK)
+                        CargarDoctores(txtBuscar.Text.Trim());
+                }
             }
             // Acción: DAR DE BAJA
             else if (dgvDoctores.Columns[e.ColumnIndex].Name == "colBaja")
@@ -289,26 +252,26 @@ namespace SanarRuralUnan.Views.Doctores
 
             if (respuesta == DialogResult.Yes)
             {
-                crearUsuario formUsuario = new crearUsuario(true);
-                formUsuario.Show();
-                this.Hide();
+                using (crearUsuario formUsuario = new crearUsuario(true))
+                {
+                    if (formUsuario.ShowDialog(this) == DialogResult.OK && formUsuario.IdUsuarioCreado.HasValue)
+                    {
+                        using (crearDoctor formDoctor = new crearDoctor(formUsuario.IdUsuarioCreado.Value))
+                        {
+                            if (formDoctor.ShowDialog(this) == DialogResult.OK)
+                                CargarDoctores(txtBuscar.Text.Trim());
+                        }
+                    }
+                }
             }
             else if (respuesta == DialogResult.No)
             {
-                crearDoctor formDoctor = new crearDoctor();
-                formDoctor.Show();
-                this.Hide();
+                using (crearDoctor formDoctor = new crearDoctor())
+                {
+                    if (formDoctor.ShowDialog(this) == DialogResult.OK)
+                        CargarDoctores(txtBuscar.Text.Trim());
+                }
             }
-        }
-
-        // ============================================================
-        // VOLVER AL MENÚ PRINCIPAL
-        // ============================================================
-        private void lnkVolver_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
-        {
-            menuPrincipalMedicos menu = new menuPrincipalMedicos();
-            menu.Show();
-            this.Close();
         }
 
         private void panelCard_Paint(object sender, PaintEventArgs e)

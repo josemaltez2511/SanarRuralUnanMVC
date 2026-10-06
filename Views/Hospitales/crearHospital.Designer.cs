@@ -47,9 +47,8 @@ namespace SanarRuralUnan.Views.Hospitales
             this.panelCard.Controls.Add(this.txtTelefono);
             this.panelCard.Controls.Add(this.btnGuardar);
             this.panelCard.Controls.Add(this.lnkVolver);
-            this.panelCard.Location = new System.Drawing.Point(70, 25);
+            this.panelCard.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panelCard.Name = "panelCard";
-            this.panelCard.Size = new System.Drawing.Size(560, 500);
             this.panelCard.TabIndex = 0;
             //
             // lblTitulo
@@ -76,6 +75,7 @@ namespace SanarRuralUnan.Views.Hospitales
             // cmbDepartamento
             //
             this.cmbDepartamento.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbDepartamento.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
             this.cmbDepartamento.Font = Tema.FuenteInput;
             this.cmbDepartamento.Location = new System.Drawing.Point(40, 112);
             this.cmbDepartamento.Name = "cmbDepartamento";
@@ -96,6 +96,7 @@ namespace SanarRuralUnan.Views.Hospitales
             // cmbMunicipio
             //
             this.cmbMunicipio.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbMunicipio.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
             this.cmbMunicipio.Font = Tema.FuenteInput;
             this.cmbMunicipio.Location = new System.Drawing.Point(40, 177);
             this.cmbMunicipio.Name = "cmbMunicipio";
@@ -115,6 +116,7 @@ namespace SanarRuralUnan.Views.Hospitales
             // txtNombre
             //
             this.txtNombre.Font = Tema.FuenteInput;
+            this.txtNombre.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
             this.txtNombre.Location = new System.Drawing.Point(40, 242);
             this.txtNombre.Name = "txtNombre";
             this.txtNombre.Size = new System.Drawing.Size(480, 25);
@@ -133,6 +135,7 @@ namespace SanarRuralUnan.Views.Hospitales
             // txtDireccion
             //
             this.txtDireccion.Font = Tema.FuenteInput;
+            this.txtDireccion.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
             this.txtDireccion.Location = new System.Drawing.Point(40, 307);
             this.txtDireccion.Multiline = true;
             this.txtDireccion.Name = "txtDireccion";
@@ -152,6 +155,7 @@ namespace SanarRuralUnan.Views.Hospitales
             // txtTelefono
             //
             this.txtTelefono.Font = Tema.FuenteInput;
+            this.txtTelefono.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
             this.txtTelefono.Location = new System.Drawing.Point(40, 399);
             this.txtTelefono.Name = "txtTelefono";
             this.txtTelefono.Size = new System.Drawing.Size(480, 25);
@@ -160,10 +164,11 @@ namespace SanarRuralUnan.Views.Hospitales
             // btnGuardar
             //
             this.btnGuardar.BackColor = Tema.AzulPrimario;
+            this.btnGuardar.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
             this.btnGuardar.FlatAppearance.BorderSize = 0;
             this.btnGuardar.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnGuardar.Font = Tema.FuenteBoton;
-            this.btnGuardar.ForeColor = System.Drawing.Color.White;
+            this.btnGuardar.ForeColor = Tema.Superficie;
             this.btnGuardar.Location = new System.Drawing.Point(40, 440);
             this.btnGuardar.Name = "btnGuardar";
             this.btnGuardar.Size = new System.Drawing.Size(300, 40);
@@ -175,6 +180,7 @@ namespace SanarRuralUnan.Views.Hospitales
             // lnkVolver
             //
             this.lnkVolver.AutoSize = true;
+            this.lnkVolver.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
             this.lnkVolver.Font = Tema.FuenteSubtitulo;
             this.lnkVolver.LinkColor = Tema.AzulPrimario;
             this.lnkVolver.Location = new System.Drawing.Point(390, 452);
@@ -190,8 +196,12 @@ namespace SanarRuralUnan.Views.Hospitales
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = Tema.FondoVentana;
-            this.ClientSize = new System.Drawing.Size(700, 550);
+            this.ClientSize = new System.Drawing.Size(950, 760);
             this.Controls.Add(this.panelCard);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Sizable;
+            this.MaximizeBox = false;
+            this.MinimizeBox = false;
+            this.MinimumSize = new System.Drawing.Size(820, 660);
             this.Name = "crearHospital";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Sanar Rural - Hospital";

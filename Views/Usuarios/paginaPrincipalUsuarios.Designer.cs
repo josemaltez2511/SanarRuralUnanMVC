@@ -17,11 +17,12 @@ namespace SanarRuralUnan.Views
 
         private void InitializeComponent()
         {
+            this.panelEncabezado = new System.Windows.Forms.Panel();
+            this.panelTabla = new System.Windows.Forms.Panel();
             this.lblTitulo = new System.Windows.Forms.Label();
             this.lblBuscar = new System.Windows.Forms.Label();
             this.txtBuscar = new System.Windows.Forms.TextBox();
             this.btnNuevo = new System.Windows.Forms.Button();
-            this.btnCerrarSesion = new System.Windows.Forms.Button();
             this.dgvUsuarios = new System.Windows.Forms.DataGridView();
             this.IdUsuario = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Correo = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -31,13 +32,15 @@ namespace SanarRuralUnan.Views
             this.colEditar = new System.Windows.Forms.DataGridViewButtonColumn();
             this.colBaja = new System.Windows.Forms.DataGridViewButtonColumn();
             ((System.ComponentModel.ISupportInitialize)(this.dgvUsuarios)).BeginInit();
+            this.panelEncabezado.SuspendLayout();
+            this.panelTabla.SuspendLayout();
             this.SuspendLayout();
             // 
             // lblTitulo
             // 
             this.lblTitulo.AutoSize = true;
-            this.lblTitulo.Font = new System.Drawing.Font("Segoe UI", 20F, System.Drawing.FontStyle.Bold);
-            this.lblTitulo.ForeColor = Tema.AzulPrimario;
+            this.lblTitulo.Font = Tema.FuenteTitulo;
+            this.lblTitulo.ForeColor = Tema.AzulOscuro;
             this.lblTitulo.Location = new System.Drawing.Point(28, 22);
             this.lblTitulo.Name = "lblTitulo";
             this.lblTitulo.Size = new System.Drawing.Size(242, 37);
@@ -47,7 +50,8 @@ namespace SanarRuralUnan.Views
             // lblBuscar
             // 
             this.lblBuscar.AutoSize = true;
-            this.lblBuscar.Font = new System.Drawing.Font("Segoe UI", 10F);
+            this.lblBuscar.Font = Tema.FuenteLabelCampo;
+            this.lblBuscar.ForeColor = Tema.TextoPrincipal;
             this.lblBuscar.Location = new System.Drawing.Point(32, 91);
             this.lblBuscar.Name = "lblBuscar";
             this.lblBuscar.Size = new System.Drawing.Size(138, 19);
@@ -56,50 +60,41 @@ namespace SanarRuralUnan.Views
             // 
             // txtBuscar
             // 
-            this.txtBuscar.Font = new System.Drawing.Font("Segoe UI", 10F);
+            this.txtBuscar.Font = Tema.FuenteInput;
+            this.txtBuscar.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
             this.txtBuscar.Location = new System.Drawing.Point(177, 88);
             this.txtBuscar.Name = "txtBuscar";
-            this.txtBuscar.Size = new System.Drawing.Size(390, 25);
+            this.txtBuscar.Size = new System.Drawing.Size(510, Tema.AltoCampo);
+            this.txtBuscar.AccessibleName = "Buscar usuarios por correo o rol";
+            this.txtBuscar.AccessibleDescription = "Escriba parte de un correo o el nombre de un rol para filtrar.";
             this.txtBuscar.TabIndex = 2;
             this.txtBuscar.TextChanged += new System.EventHandler(this.txtBuscar_TextChanged);
             // 
             // btnNuevo
             // 
             this.btnNuevo.BackColor = Tema.AzulPrimario;
+            this.btnNuevo.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
             this.btnNuevo.FlatAppearance.BorderSize = 0;
             this.btnNuevo.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnNuevo.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
-            this.btnNuevo.ForeColor = System.Drawing.Color.White;
+            this.btnNuevo.Font = Tema.FuenteBoton;
+            this.btnNuevo.ForeColor = Tema.Superficie;
             this.btnNuevo.Location = new System.Drawing.Point(723, 79);
             this.btnNuevo.Name = "btnNuevo";
             this.btnNuevo.Size = new System.Drawing.Size(150, 38);
             this.btnNuevo.TabIndex = 3;
             this.btnNuevo.Text = "Nuevo Usuario";
+            this.btnNuevo.AccessibleName = "Crear usuario";
             this.btnNuevo.UseVisualStyleBackColor = false;
             this.btnNuevo.Click += new System.EventHandler(this.btnNuevo_Click);
             // 
-            // btnCerrarSesion
-            // 
-            this.btnCerrarSesion.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnCerrarSesion.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnCerrarSesion.Font = new System.Drawing.Font("Segoe UI", 9F);
-            this.btnCerrarSesion.Location = new System.Drawing.Point(901, 24);
-            this.btnCerrarSesion.Name = "btnCerrarSesion";
-            this.btnCerrarSesion.Size = new System.Drawing.Size(135, 34);
-            this.btnCerrarSesion.TabIndex = 4;
-            this.btnCerrarSesion.Text = "Cerrar sesión";
-            this.btnCerrarSesion.UseVisualStyleBackColor = true;
-            this.btnCerrarSesion.Click += new System.EventHandler(this.btnCerrarSesion_Click);
             // 
             // dgvUsuarios
             // 
             this.dgvUsuarios.AllowUserToAddRows = false;
             this.dgvUsuarios.AllowUserToDeleteRows = false;
-            this.dgvUsuarios.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.dgvUsuarios.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dgvUsuarios.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
-            this.dgvUsuarios.BackgroundColor = System.Drawing.Color.White;
+            this.dgvUsuarios.BackgroundColor = Tema.Superficie;
             this.dgvUsuarios.ColumnHeadersHeight = 36;
             this.dgvUsuarios.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.IdUsuario,
@@ -109,13 +104,11 @@ namespace SanarRuralUnan.Views
             this.Estado,
             this.colEditar,
             this.colBaja});
-            this.dgvUsuarios.Location = new System.Drawing.Point(33, 140);
             this.dgvUsuarios.MultiSelect = false;
             this.dgvUsuarios.Name = "dgvUsuarios";
             this.dgvUsuarios.ReadOnly = true;
             this.dgvUsuarios.RowHeadersVisible = false;
             this.dgvUsuarios.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dgvUsuarios.Size = new System.Drawing.Size(1003, 461);
             this.dgvUsuarios.TabIndex = 5;
             this.dgvUsuarios.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvUsuarios_CellContentClick);
             // 
@@ -173,29 +166,40 @@ namespace SanarRuralUnan.Views
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.BackColor = System.Drawing.Color.White;
+            this.BackColor = Tema.Fondo;
             this.ClientSize = new System.Drawing.Size(1068, 630);
-            this.Controls.Add(this.dgvUsuarios);
-            this.Controls.Add(this.btnCerrarSesion);
-            this.Controls.Add(this.btnNuevo);
-            this.Controls.Add(this.txtBuscar);
-            this.Controls.Add(this.lblBuscar);
-            this.Controls.Add(this.lblTitulo);
+            this.panelEncabezado.Dock = System.Windows.Forms.DockStyle.Top;
+            this.panelEncabezado.Height = 132;
+            this.panelEncabezado.BackColor = Tema.Fondo;
+            this.panelEncabezado.Controls.Add(this.lblTitulo);
+            this.panelEncabezado.Controls.Add(this.lblBuscar);
+            this.panelEncabezado.Controls.Add(this.txtBuscar);
+            this.panelEncabezado.Controls.Add(this.btnNuevo);
+            this.panelTabla.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panelTabla.Padding = new System.Windows.Forms.Padding(24, 0, 24, 24);
+            this.panelTabla.BackColor = Tema.Fondo;
+            this.panelTabla.Controls.Add(this.dgvUsuarios);
+            this.Controls.Add(this.panelTabla);
+            this.Controls.Add(this.panelEncabezado);
             this.MinimumSize = new System.Drawing.Size(900, 500);
             this.Name = "paginaPrincipalUsuarios";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Sanar Rural - Usuarios";
             this.Load += new System.EventHandler(this.paginaPrincipalUsuarios_Load);
+            this.panelEncabezado.ResumeLayout(false);
+            this.panelEncabezado.PerformLayout();
+            this.panelTabla.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dgvUsuarios)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
         }
 
         private System.Windows.Forms.Label lblTitulo;
+        private System.Windows.Forms.Panel panelEncabezado;
+        private System.Windows.Forms.Panel panelTabla;
         private System.Windows.Forms.Label lblBuscar;
         private System.Windows.Forms.TextBox txtBuscar;
         private System.Windows.Forms.Button btnNuevo;
-        private System.Windows.Forms.Button btnCerrarSesion;
         private System.Windows.Forms.DataGridView dgvUsuarios;
         private System.Windows.Forms.DataGridViewTextBoxColumn IdUsuario;
         private System.Windows.Forms.DataGridViewTextBoxColumn Correo;

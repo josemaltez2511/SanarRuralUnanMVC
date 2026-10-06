@@ -1,4 +1,6 @@
-﻿namespace SanarRuralUnan.Views
+using SanarRuralUnan.Helpers;
+
+namespace SanarRuralUnan.Views
 {
     partial class crearPaciente
     {
@@ -66,7 +68,7 @@
             // panelCard
             // 
             this.panelCard.AutoScroll = true;
-            this.panelCard.BackColor = System.Drawing.Color.White;
+            this.panelCard.BackColor = Tema.FondoTarjeta;
             this.panelCard.Controls.Add(this.panelDatosPersonales);
             this.panelCard.Controls.Add(this.panelRegistroSalud);
             this.panelCard.Controls.Add(this.panelLineaVerde);
@@ -74,7 +76,8 @@
             this.panelCard.Controls.Add(this.lblTitulo);
             this.panelCard.Controls.Add(this.btnGuardar);
             this.panelCard.Controls.Add(this.lnkVolver);
-            this.panelCard.Location = new System.Drawing.Point(40, 25);
+            this.panelCard.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panelCard.Location = new System.Drawing.Point(0, 0);
             this.panelCard.Name = "panelCard";
             this.panelCard.Size = new System.Drawing.Size(1070, 720);
             this.panelCard.TabIndex = 0;
@@ -82,7 +85,7 @@
             // 
             // panelDatosPersonales
             // 
-            this.panelDatosPersonales.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(248)))), ((int)(((byte)(250)))), ((int)(((byte)(252)))));
+            this.panelDatosPersonales.BackColor = Tema.FondoTarjeta;
             this.panelDatosPersonales.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.panelDatosPersonales.Controls.Add(this.lblSeccionPersonal);
             this.panelDatosPersonales.Controls.Add(this.lblUbicacion);
@@ -115,8 +118,8 @@
             // lblSeccionPersonal
             // 
             this.lblSeccionPersonal.AutoSize = true;
-            this.lblSeccionPersonal.Font = new System.Drawing.Font("Segoe UI", 13F, System.Drawing.FontStyle.Bold);
-            this.lblSeccionPersonal.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(27)))), ((int)(((byte)(108)))), ((int)(((byte)(168)))));
+            this.lblSeccionPersonal.Font = Tema.FuenteLabelCampo;
+            this.lblSeccionPersonal.ForeColor = Tema.AzulPrimario;
             this.lblSeccionPersonal.Location = new System.Drawing.Point(20, 18);
             this.lblSeccionPersonal.Name = "lblSeccionPersonal";
             this.lblSeccionPersonal.Size = new System.Drawing.Size(157, 25);
@@ -126,8 +129,8 @@
             // lblUbicacion
             // 
             this.lblUbicacion.AutoSize = true;
-            this.lblUbicacion.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
-            this.lblUbicacion.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(70)))), ((int)(((byte)(80)))), ((int)(((byte)(90)))));
+            this.lblUbicacion.Font = Tema.FuenteLabelCampo;
+            this.lblUbicacion.ForeColor = Tema.TextoSecundario;
             this.lblUbicacion.Location = new System.Drawing.Point(20, 320);
             this.lblUbicacion.Name = "lblUbicacion";
             this.lblUbicacion.Size = new System.Drawing.Size(75, 19);
@@ -137,8 +140,8 @@
             // lblNombres
             // 
             this.lblNombres.AutoSize = true;
-            this.lblNombres.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
-            this.lblNombres.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(50)))), ((int)(((byte)(60)))), ((int)(((byte)(70)))));
+            this.lblNombres.Font = Tema.FuenteLabelCampo;
+            this.lblNombres.ForeColor = Tema.TextoPrincipal;
             this.lblNombres.Location = new System.Drawing.Point(20, 58);
             this.lblNombres.Name = "lblNombres";
             this.lblNombres.Size = new System.Drawing.Size(66, 15);
@@ -147,7 +150,7 @@
             // 
             // txtNombres
             // 
-            this.txtNombres.Font = new System.Drawing.Font("Segoe UI", 10F);
+            this.txtNombres.Font = Tema.FuenteCuerpo;
             this.txtNombres.Location = new System.Drawing.Point(20, 77);
             this.txtNombres.Name = "txtNombres";
             this.txtNombres.Size = new System.Drawing.Size(450, 25);
@@ -157,8 +160,8 @@
             // lblErrorNombres
             // 
             this.lblErrorNombres.AutoSize = true;
-            this.lblErrorNombres.Font = new System.Drawing.Font("Segoe UI", 8F);
-            this.lblErrorNombres.ForeColor = System.Drawing.Color.Red;
+            this.lblErrorNombres.Font = Tema.FuenteAyuda;
+            this.lblErrorNombres.ForeColor = Tema.Error;
             this.lblErrorNombres.Location = new System.Drawing.Point(20, 105);
             this.lblErrorNombres.Name = "lblErrorNombres";
             this.lblErrorNombres.Size = new System.Drawing.Size(0, 13);
@@ -167,8 +170,8 @@
             // lblApellidos
             // 
             this.lblApellidos.AutoSize = true;
-            this.lblApellidos.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
-            this.lblApellidos.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(50)))), ((int)(((byte)(60)))), ((int)(((byte)(70)))));
+            this.lblApellidos.Font = Tema.FuenteLabelCampo;
+            this.lblApellidos.ForeColor = Tema.TextoPrincipal;
             this.lblApellidos.Location = new System.Drawing.Point(20, 125);
             this.lblApellidos.Name = "lblApellidos";
             this.lblApellidos.Size = new System.Drawing.Size(65, 15);
@@ -177,7 +180,7 @@
             // 
             // txtApellidos
             // 
-            this.txtApellidos.Font = new System.Drawing.Font("Segoe UI", 10F);
+            this.txtApellidos.Font = Tema.FuenteCuerpo;
             this.txtApellidos.Location = new System.Drawing.Point(20, 144);
             this.txtApellidos.Name = "txtApellidos";
             this.txtApellidos.Size = new System.Drawing.Size(450, 25);
@@ -186,8 +189,8 @@
             // lblFechaNacimiento
             // 
             this.lblFechaNacimiento.AutoSize = true;
-            this.lblFechaNacimiento.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
-            this.lblFechaNacimiento.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(50)))), ((int)(((byte)(60)))), ((int)(((byte)(70)))));
+            this.lblFechaNacimiento.Font = Tema.FuenteLabelCampo;
+            this.lblFechaNacimiento.ForeColor = Tema.TextoPrincipal;
             this.lblFechaNacimiento.Location = new System.Drawing.Point(20, 185);
             this.lblFechaNacimiento.Name = "lblFechaNacimiento";
             this.lblFechaNacimiento.Size = new System.Drawing.Size(129, 15);
@@ -196,7 +199,7 @@
             // 
             // dtpFechaNacimiento
             // 
-            this.dtpFechaNacimiento.Font = new System.Drawing.Font("Segoe UI", 10F);
+            this.dtpFechaNacimiento.Font = Tema.FuenteCuerpo;
             this.dtpFechaNacimiento.Format = System.Windows.Forms.DateTimePickerFormat.Short;
             this.dtpFechaNacimiento.Location = new System.Drawing.Point(20, 204);
             this.dtpFechaNacimiento.Name = "dtpFechaNacimiento";
@@ -206,8 +209,8 @@
             // lblGenero
             // 
             this.lblGenero.AutoSize = true;
-            this.lblGenero.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
-            this.lblGenero.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(50)))), ((int)(((byte)(60)))), ((int)(((byte)(70)))));
+            this.lblGenero.Font = Tema.FuenteLabelCampo;
+            this.lblGenero.ForeColor = Tema.TextoPrincipal;
             this.lblGenero.Location = new System.Drawing.Point(260, 185);
             this.lblGenero.Name = "lblGenero";
             this.lblGenero.Size = new System.Drawing.Size(49, 15);
@@ -217,7 +220,7 @@
             // cmbGenero
             // 
             this.cmbGenero.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbGenero.Font = new System.Drawing.Font("Segoe UI", 10F);
+            this.cmbGenero.Font = Tema.FuenteCuerpo;
             this.cmbGenero.FormattingEnabled = true;
             this.cmbGenero.Items.AddRange(new object[] {
             "Masculino",
@@ -230,8 +233,8 @@
             // lblTelefono
             // 
             this.lblTelefono.AutoSize = true;
-            this.lblTelefono.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
-            this.lblTelefono.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(50)))), ((int)(((byte)(60)))), ((int)(((byte)(70)))));
+            this.lblTelefono.Font = Tema.FuenteLabelCampo;
+            this.lblTelefono.ForeColor = Tema.TextoPrincipal;
             this.lblTelefono.Location = new System.Drawing.Point(20, 245);
             this.lblTelefono.Name = "lblTelefono";
             this.lblTelefono.Size = new System.Drawing.Size(56, 15);
@@ -240,7 +243,7 @@
             // 
             // txtTelefono
             // 
-            this.txtTelefono.Font = new System.Drawing.Font("Segoe UI", 10F);
+            this.txtTelefono.Font = Tema.FuenteCuerpo;
             this.txtTelefono.Location = new System.Drawing.Point(20, 264);
             this.txtTelefono.Name = "txtTelefono";
             this.txtTelefono.Size = new System.Drawing.Size(450, 25);
@@ -250,8 +253,8 @@
             // lblErrorTelefono
             // 
             this.lblErrorTelefono.AutoSize = true;
-            this.lblErrorTelefono.Font = new System.Drawing.Font("Segoe UI", 8F);
-            this.lblErrorTelefono.ForeColor = System.Drawing.Color.Red;
+            this.lblErrorTelefono.Font = Tema.FuenteAyuda;
+            this.lblErrorTelefono.ForeColor = Tema.Error;
             this.lblErrorTelefono.Location = new System.Drawing.Point(20, 292);
             this.lblErrorTelefono.Name = "lblErrorTelefono";
             this.lblErrorTelefono.Size = new System.Drawing.Size(0, 13);
@@ -260,7 +263,7 @@
             // lblDepartamento
             // 
             this.lblDepartamento.AutoSize = true;
-            this.lblDepartamento.Font = new System.Drawing.Font("Segoe UI", 8.5F, System.Drawing.FontStyle.Bold);
+            this.lblDepartamento.Font = Tema.FuenteAyuda;
             this.lblDepartamento.Location = new System.Drawing.Point(20, 350);
             this.lblDepartamento.Name = "lblDepartamento";
             this.lblDepartamento.Size = new System.Drawing.Size(89, 15);
@@ -269,7 +272,7 @@
             // 
             // txtDepartamento
             // 
-            this.txtDepartamento.Font = new System.Drawing.Font("Segoe UI", 9.5F);
+            this.txtDepartamento.Font = Tema.FuenteCuerpo;
             this.txtDepartamento.Location = new System.Drawing.Point(20, 369);
             this.txtDepartamento.Name = "txtDepartamento";
             this.txtDepartamento.Size = new System.Drawing.Size(210, 24);
@@ -278,7 +281,7 @@
             // lblMunicipio
             // 
             this.lblMunicipio.AutoSize = true;
-            this.lblMunicipio.Font = new System.Drawing.Font("Segoe UI", 8.5F, System.Drawing.FontStyle.Bold);
+            this.lblMunicipio.Font = Tema.FuenteAyuda;
             this.lblMunicipio.Location = new System.Drawing.Point(260, 350);
             this.lblMunicipio.Name = "lblMunicipio";
             this.lblMunicipio.Size = new System.Drawing.Size(61, 15);
@@ -287,7 +290,7 @@
             // 
             // txtMunicipio
             // 
-            this.txtMunicipio.Font = new System.Drawing.Font("Segoe UI", 9.5F);
+            this.txtMunicipio.Font = Tema.FuenteCuerpo;
             this.txtMunicipio.Location = new System.Drawing.Point(260, 369);
             this.txtMunicipio.Name = "txtMunicipio";
             this.txtMunicipio.Size = new System.Drawing.Size(210, 24);
@@ -296,7 +299,7 @@
             // lblComunidad
             // 
             this.lblComunidad.AutoSize = true;
-            this.lblComunidad.Font = new System.Drawing.Font("Segoe UI", 8.5F, System.Drawing.FontStyle.Bold);
+            this.lblComunidad.Font = Tema.FuenteAyuda;
             this.lblComunidad.Location = new System.Drawing.Point(20, 405);
             this.lblComunidad.Name = "lblComunidad";
             this.lblComunidad.Size = new System.Drawing.Size(69, 15);
@@ -305,7 +308,7 @@
             // 
             // txtComunidad
             // 
-            this.txtComunidad.Font = new System.Drawing.Font("Segoe UI", 9.5F);
+            this.txtComunidad.Font = Tema.FuenteCuerpo;
             this.txtComunidad.Location = new System.Drawing.Point(20, 424);
             this.txtComunidad.Name = "txtComunidad";
             this.txtComunidad.Size = new System.Drawing.Size(210, 24);
@@ -314,7 +317,7 @@
             // lblDireccion
             // 
             this.lblDireccion.AutoSize = true;
-            this.lblDireccion.Font = new System.Drawing.Font("Segoe UI", 8.5F, System.Drawing.FontStyle.Bold);
+            this.lblDireccion.Font = Tema.FuenteAyuda;
             this.lblDireccion.Location = new System.Drawing.Point(260, 405);
             this.lblDireccion.Name = "lblDireccion";
             this.lblDireccion.Size = new System.Drawing.Size(60, 15);
@@ -323,7 +326,7 @@
             // 
             // txtDireccion
             // 
-            this.txtDireccion.Font = new System.Drawing.Font("Segoe UI", 9.5F);
+            this.txtDireccion.Font = Tema.FuenteCuerpo;
             this.txtDireccion.Location = new System.Drawing.Point(260, 424);
             this.txtDireccion.Multiline = true;
             this.txtDireccion.Name = "txtDireccion";
@@ -332,7 +335,7 @@
             // 
             // panelRegistroSalud
             // 
-            this.panelRegistroSalud.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(248)))), ((int)(((byte)(250)))), ((int)(((byte)(252)))));
+            this.panelRegistroSalud.BackColor = Tema.FondoTarjeta;
             this.panelRegistroSalud.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.panelRegistroSalud.Controls.Add(this.lblSeccionSalud);
             this.panelRegistroSalud.Controls.Add(this.lblMensajeSalud);
@@ -352,8 +355,8 @@
             // lblSeccionSalud
             // 
             this.lblSeccionSalud.AutoSize = true;
-            this.lblSeccionSalud.Font = new System.Drawing.Font("Segoe UI", 13F, System.Drawing.FontStyle.Bold);
-            this.lblSeccionSalud.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(27)))), ((int)(((byte)(108)))), ((int)(((byte)(168)))));
+            this.lblSeccionSalud.Font = Tema.FuenteLabelCampo;
+            this.lblSeccionSalud.ForeColor = Tema.AzulPrimario;
             this.lblSeccionSalud.Location = new System.Drawing.Point(20, 18);
             this.lblSeccionSalud.Name = "lblSeccionSalud";
             this.lblSeccionSalud.Size = new System.Drawing.Size(159, 25);
@@ -362,8 +365,8 @@
             // 
             // lblMensajeSalud
             // 
-            this.lblMensajeSalud.Font = new System.Drawing.Font("Segoe UI", 9F);
-            this.lblMensajeSalud.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(110)))), ((int)(((byte)(120)))));
+            this.lblMensajeSalud.Font = Tema.FuenteAyuda;
+            this.lblMensajeSalud.ForeColor = Tema.TextoSecundario;
             this.lblMensajeSalud.Location = new System.Drawing.Point(20, 55);
             this.lblMensajeSalud.Name = "lblMensajeSalud";
             this.lblMensajeSalud.Size = new System.Drawing.Size(450, 55);
@@ -374,8 +377,8 @@
             // lblContactoEmergencia
             // 
             this.lblContactoEmergencia.AutoSize = true;
-            this.lblContactoEmergencia.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
-            this.lblContactoEmergencia.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(50)))), ((int)(((byte)(60)))), ((int)(((byte)(70)))));
+            this.lblContactoEmergencia.Font = Tema.FuenteLabelCampo;
+            this.lblContactoEmergencia.ForeColor = Tema.TextoPrincipal;
             this.lblContactoEmergencia.Location = new System.Drawing.Point(20, 125);
             this.lblContactoEmergencia.Name = "lblContactoEmergencia";
             this.lblContactoEmergencia.Size = new System.Drawing.Size(143, 15);
@@ -384,7 +387,7 @@
             // 
             // txtContactoEmergencia
             // 
-            this.txtContactoEmergencia.Font = new System.Drawing.Font("Segoe UI", 10F);
+            this.txtContactoEmergencia.Font = Tema.FuenteCuerpo;
             this.txtContactoEmergencia.Location = new System.Drawing.Point(20, 145);
             this.txtContactoEmergencia.Name = "txtContactoEmergencia";
             this.txtContactoEmergencia.Size = new System.Drawing.Size(450, 25);
@@ -393,8 +396,8 @@
             // lblTipoSangre
             // 
             this.lblTipoSangre.AutoSize = true;
-            this.lblTipoSangre.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
-            this.lblTipoSangre.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(50)))), ((int)(((byte)(60)))), ((int)(((byte)(70)))));
+            this.lblTipoSangre.Font = Tema.FuenteLabelCampo;
+            this.lblTipoSangre.ForeColor = Tema.TextoPrincipal;
             this.lblTipoSangre.Location = new System.Drawing.Point(20, 185);
             this.lblTipoSangre.Name = "lblTipoSangre";
             this.lblTipoSangre.Size = new System.Drawing.Size(88, 15);
@@ -404,7 +407,7 @@
             // cmbTipoSangre
             // 
             this.cmbTipoSangre.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbTipoSangre.Font = new System.Drawing.Font("Segoe UI", 10F);
+            this.cmbTipoSangre.Font = Tema.FuenteCuerpo;
             this.cmbTipoSangre.FormattingEnabled = true;
             this.cmbTipoSangre.Items.AddRange(new object[] {
             "No especificado",
@@ -424,8 +427,8 @@
             // lblAlergias
             // 
             this.lblAlergias.AutoSize = true;
-            this.lblAlergias.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
-            this.lblAlergias.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(50)))), ((int)(((byte)(60)))), ((int)(((byte)(70)))));
+            this.lblAlergias.Font = Tema.FuenteLabelCampo;
+            this.lblAlergias.ForeColor = Tema.TextoPrincipal;
             this.lblAlergias.Location = new System.Drawing.Point(20, 245);
             this.lblAlergias.Name = "lblAlergias";
             this.lblAlergias.Size = new System.Drawing.Size(51, 15);
@@ -434,7 +437,7 @@
             // 
             // txtAlergias
             // 
-            this.txtAlergias.Font = new System.Drawing.Font("Segoe UI", 10F);
+            this.txtAlergias.Font = Tema.FuenteCuerpo;
             this.txtAlergias.Location = new System.Drawing.Point(20, 265);
             this.txtAlergias.Multiline = true;
             this.txtAlergias.Name = "txtAlergias";
@@ -445,8 +448,8 @@
             // lblAntecedentes
             // 
             this.lblAntecedentes.AutoSize = true;
-            this.lblAntecedentes.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
-            this.lblAntecedentes.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(50)))), ((int)(((byte)(60)))), ((int)(((byte)(70)))));
+            this.lblAntecedentes.Font = Tema.FuenteLabelCampo;
+            this.lblAntecedentes.ForeColor = Tema.TextoPrincipal;
             this.lblAntecedentes.Location = new System.Drawing.Point(20, 350);
             this.lblAntecedentes.Name = "lblAntecedentes";
             this.lblAntecedentes.Size = new System.Drawing.Size(85, 15);
@@ -455,7 +458,7 @@
             // 
             // txtAntecedentes
             // 
-            this.txtAntecedentes.Font = new System.Drawing.Font("Segoe UI", 10F);
+            this.txtAntecedentes.Font = Tema.FuenteCuerpo;
             this.txtAntecedentes.Location = new System.Drawing.Point(20, 370);
             this.txtAntecedentes.Multiline = true;
             this.txtAntecedentes.Name = "txtAntecedentes";
@@ -465,7 +468,7 @@
             // 
             // panelLineaVerde
             // 
-            this.panelLineaVerde.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(120)))), ((int)(((byte)(190)))), ((int)(((byte)(32)))));
+            this.panelLineaVerde.BackColor = Tema.VerdeAcento;
             this.panelLineaVerde.Location = new System.Drawing.Point(30, 20);
             this.panelLineaVerde.Name = "panelLineaVerde";
             this.panelLineaVerde.Size = new System.Drawing.Size(6, 45);
@@ -474,8 +477,8 @@
             // lblSubtitulo
             // 
             this.lblSubtitulo.AutoSize = true;
-            this.lblSubtitulo.Font = new System.Drawing.Font("Segoe UI", 9.5F);
-            this.lblSubtitulo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(110)))), ((int)(((byte)(120)))));
+            this.lblSubtitulo.Font = Tema.FuenteCuerpo;
+            this.lblSubtitulo.ForeColor = Tema.TextoSecundario;
             this.lblSubtitulo.Location = new System.Drawing.Point(45, 45);
             this.lblSubtitulo.Name = "lblSubtitulo";
             this.lblSubtitulo.Size = new System.Drawing.Size(188, 17);
@@ -485,8 +488,8 @@
             // lblTitulo
             // 
             this.lblTitulo.AutoSize = true;
-            this.lblTitulo.Font = new System.Drawing.Font("Segoe UI", 18F, System.Drawing.FontStyle.Bold);
-            this.lblTitulo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(27)))), ((int)(((byte)(108)))), ((int)(((byte)(168)))));
+            this.lblTitulo.Font = Tema.FuenteTitulo;
+            this.lblTitulo.ForeColor = Tema.AzulPrimario;
             this.lblTitulo.Location = new System.Drawing.Point(42, 15);
             this.lblTitulo.Name = "lblTitulo";
             this.lblTitulo.Size = new System.Drawing.Size(181, 32);
@@ -495,12 +498,12 @@
             // 
             // btnGuardar
             // 
-            this.btnGuardar.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(27)))), ((int)(((byte)(108)))), ((int)(((byte)(168)))));
+            this.btnGuardar.BackColor = Tema.AzulPrimario;
             this.btnGuardar.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnGuardar.FlatAppearance.BorderSize = 0;
             this.btnGuardar.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnGuardar.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Bold);
-            this.btnGuardar.ForeColor = System.Drawing.Color.White;
+            this.btnGuardar.Font = Tema.FuenteLabelCampo;
+            this.btnGuardar.ForeColor = Tema.Superficie;
             this.btnGuardar.Location = new System.Drawing.Point(30, 660);
             this.btnGuardar.Name = "btnGuardar";
             this.btnGuardar.Size = new System.Drawing.Size(1010, 38);
@@ -512,8 +515,8 @@
             // lnkVolver
             // 
             this.lnkVolver.AutoSize = true;
-            this.lnkVolver.Font = new System.Drawing.Font("Segoe UI", 9.5F);
-            this.lnkVolver.LinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(27)))), ((int)(((byte)(108)))), ((int)(((byte)(168)))));
+            this.lnkVolver.Font = Tema.FuenteCuerpo;
+            this.lnkVolver.LinkColor = Tema.AzulPrimario;
             this.lnkVolver.Location = new System.Drawing.Point(450, 700);
             this.lnkVolver.Name = "lnkVolver";
             this.lnkVolver.Size = new System.Drawing.Size(171, 17);
@@ -526,17 +529,17 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.AutoScroll = true;
-            this.AutoScrollMinSize = new System.Drawing.Size(1110, 770);
-            this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(238)))), ((int)(((byte)(243)))), ((int)(((byte)(248)))));
-            this.ClientSize = new System.Drawing.Size(1167, 749);
+            this.BackColor = Tema.Fondo;
+            this.ClientSize = new System.Drawing.Size(950, 760);
             this.Controls.Add(this.panelCard);
-            this.MinimumSize = new System.Drawing.Size(850, 600);
+            this.MinimumSize = new System.Drawing.Size(820, 660);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Sizable;
+            this.MaximizeBox = false;
+            this.MinimizeBox = false;
             this.Name = "crearPaciente";
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Sanar Rural - Registro de Paciente";
             this.Load += new System.EventHandler(this.crearPaciente_Load);
-            this.Resize += new System.EventHandler(this.crearPaciente_Resize);
             this.panelCard.ResumeLayout(false);
             this.panelCard.PerformLayout();
             this.panelDatosPersonales.ResumeLayout(false);

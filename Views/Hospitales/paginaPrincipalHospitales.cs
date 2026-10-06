@@ -1,5 +1,4 @@
 using System;
-using System.Drawing;
 using System.Windows.Forms;
 using SanarRuralUnan.Controllers;
 using SanarRuralUnan.Helpers;
@@ -23,23 +22,13 @@ namespace SanarRuralUnan.Views.Hospitales
 
         private void ConfigurarGrid()
         {
-            dgvHospitales.BackgroundColor = Color.White;
-            dgvHospitales.BorderStyle = BorderStyle.None;
-            dgvHospitales.CellBorderStyle = DataGridViewCellBorderStyle.SingleHorizontal;
-            dgvHospitales.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dgvHospitales.MultiSelect = false;
-            dgvHospitales.ReadOnly = true;
-            dgvHospitales.AllowUserToAddRows = false;
-            dgvHospitales.AllowUserToDeleteRows = false;
-            dgvHospitales.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-            dgvHospitales.RowHeadersVisible = false;
-            dgvHospitales.EnableHeadersVisualStyles = false;
-            dgvHospitales.ColumnHeadersDefaultCellStyle.BackColor = Tema.AzulPrimario;
-            dgvHospitales.ColumnHeadersDefaultCellStyle.ForeColor = Color.White;
-            dgvHospitales.ColumnHeadersDefaultCellStyle.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
-            dgvHospitales.ColumnHeadersHeight = 36;
-            dgvHospitales.DefaultCellStyle.Font = new Font("Segoe UI", 9F);
-            dgvHospitales.AlternatingRowsDefaultCellStyle.BackColor = Color.FromArgb(248, 250, 252);
+            Tema.ConfigurarTabla(dgvHospitales);
+            dgvHospitales.Columns["Nombre"].FillWeight = 135;
+            dgvHospitales.Columns["Direccion"].FillWeight = 145;
+            dgvHospitales.Columns["colEditar"].FillWeight = 62;
+            dgvHospitales.Columns["colBaja"].FillWeight = 78;
+            dgvHospitales.Columns["colEditar"].DefaultCellStyle.ForeColor = Tema.AzulPrimario;
+            dgvHospitales.Columns["colBaja"].DefaultCellStyle.ForeColor = Tema.Error;
         }
 
         private void CargarHospitales(string filtro = "")
@@ -116,10 +105,5 @@ namespace SanarRuralUnan.Views.Hospitales
             }
         }
 
-        private void lnkVolver_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
-        {
-            new menuPrincipalMedicos().Show();
-            Close();
-        }
     }
 }

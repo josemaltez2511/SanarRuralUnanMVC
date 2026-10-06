@@ -1,4 +1,4 @@
-﻿using SanarRuralUnan.Helpers;
+using SanarRuralUnan.Helpers;
 
 namespace SanarRuralUnan.Views.Doctores
 {
@@ -20,6 +20,8 @@ namespace SanarRuralUnan.Views.Doctores
         private void InitializeComponent()
         {
             this.panelCard = new System.Windows.Forms.Panel();
+            this.panelEncabezado = new System.Windows.Forms.Panel();
+            this.panelTabla = new System.Windows.Forms.Panel();
             this.panelLineaVerde = new System.Windows.Forms.Panel();
             this.lblTitulo = new System.Windows.Forms.Label();
             this.lblSubtitulo = new System.Windows.Forms.Label();
@@ -27,27 +29,34 @@ namespace SanarRuralUnan.Views.Doctores
             this.txtBuscar = new System.Windows.Forms.TextBox();
             this.btnNuevo = new System.Windows.Forms.Button();
             this.dgvDoctores = new System.Windows.Forms.DataGridView();
-            this.lnkVolver = new System.Windows.Forms.LinkLabel();
             this.panelCard.SuspendLayout();
+            this.panelEncabezado.SuspendLayout();
+            this.panelTabla.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvDoctores)).BeginInit();
             this.SuspendLayout();
             // 
             // panelCard
             // 
             this.panelCard.BackColor = Tema.FondoTarjeta;
-            this.panelCard.Controls.Add(this.panelLineaVerde);
-            this.panelCard.Controls.Add(this.lblTitulo);
-            this.panelCard.Controls.Add(this.lblSubtitulo);
-            this.panelCard.Controls.Add(this.lblBuscar);
-            this.panelCard.Controls.Add(this.txtBuscar);
-            this.panelCard.Controls.Add(this.btnNuevo);
-            this.panelCard.Controls.Add(this.dgvDoctores);
-            this.panelCard.Controls.Add(this.lnkVolver);
-            this.panelCard.Location = new System.Drawing.Point(40, 25);
+            this.panelCard.Controls.Add(this.panelTabla);
+            this.panelCard.Controls.Add(this.panelEncabezado);
+            this.panelCard.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panelCard.Name = "panelCard";
-            this.panelCard.Size = new System.Drawing.Size(950, 600);
             this.panelCard.TabIndex = 0;
             this.panelCard.Paint += new System.Windows.Forms.PaintEventHandler(this.panelCard_Paint);
+            this.panelEncabezado.Dock = System.Windows.Forms.DockStyle.Top;
+            this.panelEncabezado.Height = 132;
+            this.panelEncabezado.BackColor = Tema.Superficie;
+            this.panelEncabezado.Controls.Add(this.panelLineaVerde);
+            this.panelEncabezado.Controls.Add(this.lblTitulo);
+            this.panelEncabezado.Controls.Add(this.lblSubtitulo);
+            this.panelEncabezado.Controls.Add(this.lblBuscar);
+            this.panelEncabezado.Controls.Add(this.txtBuscar);
+            this.panelEncabezado.Controls.Add(this.btnNuevo);
+            this.panelTabla.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panelTabla.BackColor = Tema.Superficie;
+            this.panelTabla.Padding = new System.Windows.Forms.Padding(40, 0, 40, 35);
+            this.panelTabla.Controls.Add(this.dgvDoctores);
             // 
             // panelLineaVerde
             // 
@@ -93,6 +102,7 @@ namespace SanarRuralUnan.Views.Doctores
             // txtBuscar
             // 
             this.txtBuscar.Font = Tema.FuenteInput;
+            this.txtBuscar.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
             this.txtBuscar.Location = new System.Drawing.Point(145, 92);
             this.txtBuscar.Name = "txtBuscar";
             this.txtBuscar.Size = new System.Drawing.Size(430, 27);
@@ -102,11 +112,12 @@ namespace SanarRuralUnan.Views.Doctores
             // btnNuevo
             // 
             this.btnNuevo.BackColor = Tema.AzulPrimario;
+            this.btnNuevo.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
             this.btnNuevo.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnNuevo.FlatAppearance.BorderSize = 0;
             this.btnNuevo.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnNuevo.Font = Tema.FuenteBoton;
-            this.btnNuevo.ForeColor = System.Drawing.Color.White;
+            this.btnNuevo.ForeColor = Tema.Superficie;
             this.btnNuevo.Location = new System.Drawing.Point(740, 88);
             this.btnNuevo.Name = "btnNuevo";
             this.btnNuevo.Size = new System.Drawing.Size(170, 35);
@@ -118,26 +129,12 @@ namespace SanarRuralUnan.Views.Doctores
             // dgvDoctores
             // 
             this.dgvDoctores.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dgvDoctores.Location = new System.Drawing.Point(40, 135);
+            this.dgvDoctores.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dgvDoctores.Name = "dgvDoctores";
-            this.dgvDoctores.Size = new System.Drawing.Size(870, 395);
             this.dgvDoctores.TabIndex = 6;
             this.dgvDoctores.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvDoctores_CellContentClick);
             this.dgvDoctores.CellPainting += new System.Windows.Forms.DataGridViewCellPaintingEventHandler(this.dgvDoctores_CellPainting);
             this.dgvDoctores.CellMouseMove += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dgvDoctores_CellMouseMove);
-            // 
-            // lnkVolver
-            // 
-            this.lnkVolver.AutoSize = true;
-            this.lnkVolver.Font = Tema.FuenteSubtitulo;
-            this.lnkVolver.LinkColor = Tema.AzulPrimario;
-            this.lnkVolver.Location = new System.Drawing.Point(40, 545);
-            this.lnkVolver.Name = "lnkVolver";
-            this.lnkVolver.Size = new System.Drawing.Size(165, 17);
-            this.lnkVolver.TabIndex = 7;
-            this.lnkVolver.TabStop = true;
-            this.lnkVolver.Text = "⬅ Volver al Menú Principal";
-            this.lnkVolver.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.lnkVolver_LinkClicked);
             // 
             // paginaPrincipalDoctores
             // 
@@ -151,9 +148,11 @@ namespace SanarRuralUnan.Views.Doctores
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Sanar Rural - Gestión de Doctores";
             this.Load += new System.EventHandler(this.paginaPrincipalDoctores_Load);
-            this.Resize += new System.EventHandler(this.paginaPrincipalDoctores_Resize);
             this.panelCard.ResumeLayout(false);
             this.panelCard.PerformLayout();
+            this.panelEncabezado.ResumeLayout(false);
+            this.panelEncabezado.PerformLayout();
+            this.panelTabla.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dgvDoctores)).EndInit();
             this.ResumeLayout(false);
         }
@@ -161,6 +160,8 @@ namespace SanarRuralUnan.Views.Doctores
         #endregion
 
         private System.Windows.Forms.Panel panelCard;
+        private System.Windows.Forms.Panel panelEncabezado;
+        private System.Windows.Forms.Panel panelTabla;
         private System.Windows.Forms.Panel panelLineaVerde;
         private System.Windows.Forms.Label lblTitulo;
         private System.Windows.Forms.Label lblSubtitulo;
@@ -168,6 +169,5 @@ namespace SanarRuralUnan.Views.Doctores
         private System.Windows.Forms.TextBox txtBuscar;
         private System.Windows.Forms.Button btnNuevo;
         private System.Windows.Forms.DataGridView dgvDoctores;
-        private System.Windows.Forms.LinkLabel lnkVolver;
     }
 }

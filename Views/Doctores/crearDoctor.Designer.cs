@@ -1,4 +1,6 @@
-﻿namespace SanarRuralUnan.Views
+using SanarRuralUnan.Helpers;
+
+namespace SanarRuralUnan.Views
 {
     partial class crearDoctor
     {
@@ -51,7 +53,7 @@
             // 
             // panelCard
             // 
-            this.panelCard.BackColor = System.Drawing.Color.White;
+            this.panelCard.BackColor = Tema.Superficie;
 
             this.panelCard.Controls.Add(this.panelLineaVerde);
             this.panelCard.Controls.Add(this.lblTitulo);
@@ -78,9 +80,8 @@
             this.panelCard.Controls.Add(this.btnGuardar);
             this.panelCard.Controls.Add(this.lnkVolver);
 
-            this.panelCard.Location = new System.Drawing.Point(275, 80);
+            this.panelCard.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panelCard.Name = "panelCard";
-            this.panelCard.Size = new System.Drawing.Size(600, 620);
             this.panelCard.TabIndex = 0;
 
             this.panelCard.Paint +=
@@ -92,11 +93,7 @@
             // panelLineaVerde
             // 
             this.panelLineaVerde.BackColor =
-                System.Drawing.Color.FromArgb(
-                    ((int)(((byte)(120)))),
-                    ((int)(((byte)(190)))),
-                    ((int)(((byte)(32))))
-                );
+                Tema.VerdeAcento;
 
             this.panelLineaVerde.Location =
                 new System.Drawing.Point(45, 25);
@@ -115,20 +112,10 @@
             this.lblTitulo.AutoSize = true;
 
             this.lblTitulo.Font =
-                new System.Drawing.Font(
-                    "Segoe UI",
-                    18F,
-                    System.Drawing.FontStyle.Bold,
-                    System.Drawing.GraphicsUnit.Point,
-                    ((byte)(0))
-                );
+                Tema.FuenteTitulo;
 
             this.lblTitulo.ForeColor =
-                System.Drawing.Color.FromArgb(
-                    ((int)(((byte)(27)))),
-                    ((int)(((byte)(108)))),
-                    ((int)(((byte)(168))))
-                );
+                Tema.AzulPrimario;
 
             this.lblTitulo.Location =
                 new System.Drawing.Point(58, 20);
@@ -150,20 +137,10 @@
             this.lblSubtitulo.AutoSize = true;
 
             this.lblSubtitulo.Font =
-                new System.Drawing.Font(
-                    "Segoe UI",
-                    9.5F,
-                    System.Drawing.FontStyle.Regular,
-                    System.Drawing.GraphicsUnit.Point,
-                    ((byte)(0))
-                );
+                Tema.FuenteCuerpo;
 
             this.lblSubtitulo.ForeColor =
-                System.Drawing.Color.FromArgb(
-                    ((int)(((byte)(100)))),
-                    ((int)(((byte)(110)))),
-                    ((int)(((byte)(120))))
-                );
+                Tema.TextoSecundario;
 
             this.lblSubtitulo.Location =
                 new System.Drawing.Point(61, 50);
@@ -185,18 +162,10 @@
             this.lblNombres.AutoSize = true;
 
             this.lblNombres.Font =
-                new System.Drawing.Font(
-                    "Segoe UI",
-                    9.5F,
-                    System.Drawing.FontStyle.Bold
-                );
+                Tema.FuenteLabelCampo;
 
             this.lblNombres.ForeColor =
-                System.Drawing.Color.FromArgb(
-                    ((int)(((byte)(50)))),
-                    ((int)(((byte)(60)))),
-                    ((int)(((byte)(70))))
-                );
+                Tema.TextoPrincipal;
 
             this.lblNombres.Location =
                 new System.Drawing.Point(42, 105);
@@ -216,10 +185,7 @@
             // txtNombres
             // 
             this.txtNombres.Font =
-                new System.Drawing.Font(
-                    "Segoe UI",
-                    11F
-                );
+                Tema.FuenteInput;
 
             this.txtNombres.Location =
                 new System.Drawing.Point(45, 127);
@@ -239,13 +205,10 @@
             this.lblErrorNombres.AutoSize = true;
 
             this.lblErrorNombres.Font =
-                new System.Drawing.Font(
-                    "Segoe UI",
-                    8.5F
-                );
+                Tema.FuenteAyuda;
 
             this.lblErrorNombres.ForeColor =
-                System.Drawing.Color.Red;
+                Tema.Error;
 
             this.lblErrorNombres.Location =
                 new System.Drawing.Point(45, 157);
@@ -264,18 +227,10 @@
             this.lblApellidos.AutoSize = true;
 
             this.lblApellidos.Font =
-                new System.Drawing.Font(
-                    "Segoe UI",
-                    9.5F,
-                    System.Drawing.FontStyle.Bold
-                );
+                Tema.FuenteLabelCampo;
 
             this.lblApellidos.ForeColor =
-                System.Drawing.Color.FromArgb(
-                    ((int)(((byte)(50)))),
-                    ((int)(((byte)(60)))),
-                    ((int)(((byte)(70))))
-                );
+                Tema.TextoPrincipal;
 
             this.lblApellidos.Location =
                 new System.Drawing.Point(42, 190);
@@ -295,10 +250,7 @@
             // txtApellidos
             // 
             this.txtApellidos.Font =
-                new System.Drawing.Font(
-                    "Segoe UI",
-                    11F
-                );
+                Tema.FuenteInput;
 
             this.txtApellidos.Location =
                 new System.Drawing.Point(45, 212);
@@ -318,13 +270,10 @@
             this.lblErrorApellidos.AutoSize = true;
 
             this.lblErrorApellidos.Font =
-                new System.Drawing.Font(
-                    "Segoe UI",
-                    8.5F
-                );
+                Tema.FuenteAyuda;
 
             this.lblErrorApellidos.ForeColor =
-                System.Drawing.Color.Red;
+                Tema.Error;
 
             this.lblErrorApellidos.Location =
                 new System.Drawing.Point(45, 242);
@@ -343,18 +292,10 @@
             this.lblEspecialidad.AutoSize = true;
 
             this.lblEspecialidad.Font =
-                new System.Drawing.Font(
-                    "Segoe UI",
-                    9.5F,
-                    System.Drawing.FontStyle.Bold
-                );
+                Tema.FuenteLabelCampo;
 
             this.lblEspecialidad.ForeColor =
-                System.Drawing.Color.FromArgb(
-                    ((int)(((byte)(50)))),
-                    ((int)(((byte)(60)))),
-                    ((int)(((byte)(70))))
-                );
+                Tema.TextoPrincipal;
 
             this.lblEspecialidad.Location =
                 new System.Drawing.Point(42, 275);
@@ -374,10 +315,7 @@
             // txtEspecialidad
             // 
             this.txtEspecialidad.Font =
-                new System.Drawing.Font(
-                    "Segoe UI",
-                    11F
-                );
+                Tema.FuenteInput;
 
             this.txtEspecialidad.Location =
                 new System.Drawing.Point(45, 297);
@@ -396,18 +334,10 @@
             this.lblNumeroLicencia.AutoSize = true;
 
             this.lblNumeroLicencia.Font =
-                new System.Drawing.Font(
-                    "Segoe UI",
-                    9.5F,
-                    System.Drawing.FontStyle.Bold
-                );
+                Tema.FuenteLabelCampo;
 
             this.lblNumeroLicencia.ForeColor =
-                System.Drawing.Color.FromArgb(
-                    ((int)(((byte)(50)))),
-                    ((int)(((byte)(60)))),
-                    ((int)(((byte)(70))))
-                );
+                Tema.TextoPrincipal;
 
             this.lblNumeroLicencia.Location =
                 new System.Drawing.Point(42, 350);
@@ -427,10 +357,7 @@
             // txtNumeroLicencia
             // 
             this.txtNumeroLicencia.Font =
-                new System.Drawing.Font(
-                    "Segoe UI",
-                    11F
-                );
+                Tema.FuenteInput;
 
             this.txtNumeroLicencia.Location =
                 new System.Drawing.Point(45, 372);
@@ -450,13 +377,10 @@
             this.lblErrorLicencia.AutoSize = true;
 
             this.lblErrorLicencia.Font =
-                new System.Drawing.Font(
-                    "Segoe UI",
-                    8.5F
-                );
+                Tema.FuenteAyuda;
 
             this.lblErrorLicencia.ForeColor =
-                System.Drawing.Color.Red;
+                Tema.Error;
 
             this.lblErrorLicencia.Location =
                 new System.Drawing.Point(45, 402);
@@ -475,18 +399,10 @@
             this.lblHospital.AutoSize = true;
 
             this.lblHospital.Font =
-                new System.Drawing.Font(
-                    "Segoe UI",
-                    9.5F,
-                    System.Drawing.FontStyle.Bold
-                );
+                Tema.FuenteLabelCampo;
 
             this.lblHospital.ForeColor =
-                System.Drawing.Color.FromArgb(
-                    ((int)(((byte)(50)))),
-                    ((int)(((byte)(60)))),
-                    ((int)(((byte)(70))))
-                );
+                Tema.TextoPrincipal;
 
             this.lblHospital.Location =
                 new System.Drawing.Point(42, 435);
@@ -509,10 +425,7 @@
                 System.Windows.Forms.ComboBoxStyle.DropDownList;
 
             this.cmbHospital.Font =
-                new System.Drawing.Font(
-                    "Segoe UI",
-                    10.5F
-                );
+                Tema.FuenteInput;
 
             this.cmbHospital.FormattingEnabled = true;
 
@@ -531,11 +444,7 @@
             // btnGuardar
             // 
             this.btnGuardar.BackColor =
-                System.Drawing.Color.FromArgb(
-                    ((int)(((byte)(27)))),
-                    ((int)(((byte)(108)))),
-                    ((int)(((byte)(168))))
-                );
+                Tema.AzulPrimario;
 
             this.btnGuardar.Cursor =
                 System.Windows.Forms.Cursors.Hand;
@@ -546,14 +455,10 @@
                 System.Windows.Forms.FlatStyle.Flat;
 
             this.btnGuardar.Font =
-                new System.Drawing.Font(
-                    "Segoe UI",
-                    11F,
-                    System.Drawing.FontStyle.Bold
-                );
+                Tema.FuenteLabelCampo;
 
             this.btnGuardar.ForeColor =
-                System.Drawing.Color.White;
+                Tema.Superficie;
 
             this.btnGuardar.Location =
                 new System.Drawing.Point(45, 510);
@@ -582,17 +487,10 @@
             this.lnkVolver.AutoSize = true;
 
             this.lnkVolver.Font =
-                new System.Drawing.Font(
-                    "Segoe UI",
-                    9.5F
-                );
+                Tema.FuenteCuerpo;
 
             this.lnkVolver.LinkColor =
-                System.Drawing.Color.FromArgb(
-                    ((int)(((byte)(27)))),
-                    ((int)(((byte)(108)))),
-                    ((int)(((byte)(168))))
-                );
+                Tema.AzulPrimario;
 
             this.lnkVolver.Location =
                 new System.Drawing.Point(210, 570);
@@ -628,33 +526,24 @@
                 System.Windows.Forms.AutoScaleMode.Font;
 
             this.BackColor =
-                System.Drawing.Color.FromArgb(
-                    ((int)(((byte)(238)))),
-                    ((int)(((byte)(243)))),
-                    ((int)(((byte)(248))))
-                );
+                Tema.Fondo;
 
-            this.ClientSize =
-                new System.Drawing.Size(
-                    1150,
-                    780
-                );
+            this.ClientSize = new System.Drawing.Size(950, 760);
 
             this.Controls.Add(
                 this.panelCard
             );
 
-            this.MinimumSize =
-                new System.Drawing.Size(
-                    850,
-                    650
-                );
+            this.MinimumSize = new System.Drawing.Size(820, 660);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Sizable;
+            this.MaximizeBox = false;
+            this.MinimizeBox = false;
 
             this.Name =
                 "crearDoctor";
 
             this.StartPosition =
-                System.Windows.Forms.FormStartPosition.CenterScreen;
+                System.Windows.Forms.FormStartPosition.CenterParent;
 
             this.Text =
                 "Sanar Rural - Registro de Doctor";
@@ -664,10 +553,6 @@
                     this.crearDoctor_Load
                 );
 
-            this.Resize +=
-                new System.EventHandler(
-                    this.crearDoctor_Resize
-                );
 
             this.panelCard.ResumeLayout(false);
             this.panelCard.PerformLayout();

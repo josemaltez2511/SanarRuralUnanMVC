@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 
 // Modelo de paciente para la aplicación SanarRuralUnan
@@ -92,6 +93,34 @@ namespace SanarRuralUnan.Models
                 .Where(c => c.IdMunicipio == idMunicipio)
                 .OrderBy(c => c.Nombre)
                 .ToList();
+        }
+
+        public List<Pacientes> listarPacientes(string busqueda = "")
+        {
+            var consulta = db.Pacientes
+                .Include(p => p.Comunidades.Municipios.Departamentos)
+                .Where(p => p.Estado);
+
+            if (!string.IsNullOrWhiteSpace(busqueda))
+            {
+                string filtro = busqueda.Trim();
+                consulta = consulta.Where(p =>
+                    p.PrimerNombre.Contains(filtro) ||
+                    (p.SegundoNombre != null && p.SegundoNombre.Contains(filtro)) ||
+                    p.PrimerApellido.Contains(filtro) ||
+                    (p.SegundoApellido != null && p.SegundoApellido.Contains(filtro)) ||
+                    (p.Cedula != null && p.Cedula.Contains(filtro)));
+            }
+
+            return consulta.OrderBy(p => p.PrimerApellido).ThenBy(p => p.PrimerNombre).ToList();
+        }
+
+        public Pacientes buscarPacientePorId(int idPaciente)
+        {
+            return db.Pacientes
+                .Include(p => p.Comunidades.Municipios.Departamentos)
+                .Include(p => p.ContactosEmergencia)
+                .FirstOrDefault(p => p.IdPaciente == idPaciente && p.Estado);
         }
 
         // ============================================================

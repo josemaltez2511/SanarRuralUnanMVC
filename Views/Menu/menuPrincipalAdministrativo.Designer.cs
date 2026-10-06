@@ -1,0 +1,182 @@
+using MaterialSkin.Controls;
+using SanarRuralUnan.Helpers;
+
+namespace SanarRuralUnan.Views
+{
+    partial class menuPrincipalAdministrativo
+    {
+        private System.ComponentModel.IContainer components = null;
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing && (components != null))
+                components.Dispose();
+            base.Dispose(disposing);
+        }
+
+        private void InitializeComponent()
+        {
+            this.panelBarra = new System.Windows.Forms.Panel();
+            this.panelEncabezado = new System.Windows.Forms.Panel();
+            this.panelNavegacion = new System.Windows.Forms.Panel();
+            this.panelIndicador = new System.Windows.Forms.Panel();
+            this.picLogo = new System.Windows.Forms.PictureBox();
+            this.lblMarca = new System.Windows.Forms.Label();
+            this.lblDescripcion = new System.Windows.Forms.Label();
+            this.lblRol = new System.Windows.Forms.Label();
+            this.btnUsuarios = new MaterialButton();
+            this.btnDoctores = new MaterialButton();
+            this.btnPacientes = new MaterialButton();
+            this.btnHospitales = new MaterialButton();
+            this.btnCerrarSesion = new MaterialButton();
+            this.panelContenido = new System.Windows.Forms.Panel();
+            this.lblSeccion = new MaterialLabel();
+            this.lblContenido = new MaterialLabel();
+            this.panelBarra.SuspendLayout();
+            this.panelEncabezado.SuspendLayout();
+            this.panelNavegacion.SuspendLayout();
+            this.panelContenido.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.picLogo)).BeginInit();
+            this.SuspendLayout();
+            this.panelBarra.Dock = System.Windows.Forms.DockStyle.Top;
+            this.panelBarra.Height = 132;
+            this.panelBarra.BackColor = Tema.FondoSecundario;
+            this.panelBarra.Controls.Add(this.panelNavegacion);
+            this.panelBarra.Controls.Add(this.panelEncabezado);
+            this.panelEncabezado.Dock = System.Windows.Forms.DockStyle.Top;
+            this.panelEncabezado.Height = 76;
+            this.panelEncabezado.BackColor = Tema.Superficie;
+            this.panelEncabezado.Controls.Add(this.picLogo);
+            this.panelEncabezado.Controls.Add(this.lblMarca);
+            this.panelEncabezado.Controls.Add(this.lblDescripcion);
+            this.panelEncabezado.Controls.Add(this.lblRol);
+            this.panelEncabezado.Controls.Add(this.btnCerrarSesion);
+            this.picLogo.Location = new System.Drawing.Point(18, 8);
+            this.picLogo.Size = new System.Drawing.Size(132, 60);
+            this.picLogo.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.picLogo.AccessibleName = "Logo de Sanar Rural";
+            this.picLogo.AccessibleDescription = "Identidad visual del sistema Sanar Rural";
+            this.lblMarca.AutoSize = true;
+            this.lblMarca.Location = new System.Drawing.Point(164, 13);
+            this.lblMarca.Font = Tema.FuenteMarca;
+            this.lblMarca.ForeColor = Tema.AzulOscuro;
+            this.lblMarca.Text = "Sanar Rural";
+            this.lblDescripcion.AutoSize = true;
+            this.lblDescripcion.Location = new System.Drawing.Point(166, 42);
+            this.lblDescripcion.Font = Tema.FuenteAyuda;
+            this.lblDescripcion.ForeColor = Tema.TextoSecundario;
+            this.lblDescripcion.Text = "Sistema de gestión médica";
+            this.lblRol.AutoSize = true;
+            this.lblRol.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
+            this.lblRol.Location = new System.Drawing.Point(930, 26);
+            this.lblRol.Font = Tema.FuenteLabelCampo;
+            this.lblRol.ForeColor = Tema.AzulOscuro;
+            this.lblRol.Text = "Administración";
+            this.lblRol.AccessibleName = "Rol actual";
+            this.lblRol.AccessibleDescription = "Sesión administrativa";
+            this.panelNavegacion.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.panelNavegacion.Height = 56;
+            this.panelNavegacion.BackColor = Tema.FondoSecundario;
+            this.panelNavegacion.Controls.Add(this.btnUsuarios);
+            this.panelNavegacion.Controls.Add(this.btnDoctores);
+            this.panelNavegacion.Controls.Add(this.btnPacientes);
+            this.panelNavegacion.Controls.Add(this.btnHospitales);
+            this.panelNavegacion.Controls.Add(this.panelIndicador);
+            this.panelIndicador.BackColor = Tema.VerdeOscuro;
+            this.panelIndicador.Location = new System.Drawing.Point(24, 51);
+            this.panelIndicador.Size = new System.Drawing.Size(112, 3);
+            this.panelIndicador.TabStop = false;
+            this.panelIndicador.AccessibleDescription = "Indicador visual de la sección seleccionada";
+            this.btnUsuarios.Text = "Usuarios";
+            this.btnUsuarios.Type = MaterialButton.MaterialButtonType.Text;
+            this.btnUsuarios.Size = new System.Drawing.Size(112, 42);
+            this.btnUsuarios.TabIndex = 0;
+            this.btnUsuarios.AccessibleName = "Usuarios";
+            this.btnUsuarios.AccessibleDescription = "Navegar a la sección Usuarios";
+            this.btnUsuarios.Click += new System.EventHandler(this.btnUsuarios_Click);
+            this.btnDoctores.Text = "Doctores";
+            this.btnDoctores.Type = MaterialButton.MaterialButtonType.Text;
+            this.btnDoctores.Size = new System.Drawing.Size(112, 42);
+            this.btnDoctores.TabIndex = 1;
+            this.btnDoctores.AccessibleName = "Doctores";
+            this.btnDoctores.AccessibleDescription = "Navegar a la sección Doctores";
+            this.btnDoctores.Click += new System.EventHandler(this.btnDoctores_Click);
+            this.btnPacientes.Text = "Pacientes";
+            this.btnPacientes.Type = MaterialButton.MaterialButtonType.Text;
+            this.btnPacientes.Size = new System.Drawing.Size(112, 42);
+            this.btnPacientes.TabIndex = 2;
+            this.btnPacientes.AccessibleName = "Pacientes";
+            this.btnPacientes.AccessibleDescription = "Navegar a la sección Pacientes";
+            this.btnPacientes.Click += new System.EventHandler(this.btnPacientes_Click);
+            this.btnHospitales.Text = "Hospitales";
+            this.btnHospitales.Type = MaterialButton.MaterialButtonType.Text;
+            this.btnHospitales.Size = new System.Drawing.Size(122, 42);
+            this.btnHospitales.TabIndex = 3;
+            this.btnHospitales.AccessibleName = "Hospitales";
+            this.btnHospitales.AccessibleDescription = "Navegar a la sección Hospitales";
+            this.btnHospitales.Click += new System.EventHandler(this.btnHospitales_Click);
+            this.btnCerrarSesion.Text = "Cerrar sesión";
+            this.btnCerrarSesion.Type = MaterialButton.MaterialButtonType.Text;
+            this.btnCerrarSesion.Size = new System.Drawing.Size(132, 40);
+            this.btnCerrarSesion.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
+            this.btnCerrarSesion.TabIndex = 4;
+            this.btnCerrarSesion.AccessibleName = "Cerrar sesión";
+            this.btnCerrarSesion.AccessibleDescription = "Cerrar la sesión actual";
+            this.btnCerrarSesion.HighEmphasis = true;
+            this.btnCerrarSesion.UseAccentColor = true;
+            this.btnCerrarSesion.Click += new System.EventHandler(this.btnCerrarSesion_Click);
+            this.panelContenido.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panelContenido.BackColor = Tema.Fondo;
+            this.panelContenido.Padding = new System.Windows.Forms.Padding(36);
+            this.panelContenido.Controls.Add(this.lblSeccion);
+            this.panelContenido.Controls.Add(this.lblContenido);
+            this.lblSeccion.AutoSize = true;
+            this.lblSeccion.Font = Tema.FuenteLabelCampo;
+            this.lblSeccion.ForeColor = Tema.AzulOscuro;
+            this.lblSeccion.Location = new System.Drawing.Point(40, 36);
+            this.lblSeccion.FontType = MaterialSkin.MaterialSkinManager.fontType.H5;
+            this.lblContenido.AutoSize = true;
+            this.lblContenido.ForeColor = Tema.TextoSecundario;
+            this.lblContenido.Location = new System.Drawing.Point(42, 92);
+            this.lblContenido.MaximumSize = new System.Drawing.Size(850, 0);
+            this.lblContenido.FontType = MaterialSkin.MaterialSkinManager.fontType.Body1;
+            this.Controls.Add(this.panelContenido);
+            this.Controls.Add(this.panelBarra);
+            this.BackColor = Tema.Fondo;
+            this.ClientSize = new System.Drawing.Size(1280, 800);
+            this.MinimumSize = new System.Drawing.Size(1050, 620);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Sizable;
+            this.MaximizeBox = true;
+            this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
+            this.Name = "menuPrincipalAdministrativo";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+            this.Text = "Sanar Rural - Administración";
+            this.Resize += new System.EventHandler(this.menuPrincipalAdministrativo_Resize);
+            this.panelBarra.ResumeLayout(false);
+            this.panelEncabezado.ResumeLayout(false);
+            this.panelEncabezado.PerformLayout();
+            this.panelNavegacion.ResumeLayout(false);
+            this.panelContenido.ResumeLayout(false);
+            this.panelContenido.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.picLogo)).EndInit();
+            this.ResumeLayout(false);
+        }
+
+        private System.Windows.Forms.Panel panelBarra;
+        private System.Windows.Forms.Panel panelEncabezado;
+        private System.Windows.Forms.Panel panelNavegacion;
+        private System.Windows.Forms.Panel panelIndicador;
+        private System.Windows.Forms.PictureBox picLogo;
+        private System.Windows.Forms.Label lblMarca;
+        private System.Windows.Forms.Label lblDescripcion;
+        private System.Windows.Forms.Label lblRol;
+        private MaterialButton btnUsuarios;
+        private MaterialButton btnDoctores;
+        private MaterialButton btnPacientes;
+        private MaterialButton btnHospitales;
+        private MaterialButton btnCerrarSesion;
+        private System.Windows.Forms.Panel panelContenido;
+        private MaterialLabel lblSeccion;
+        private MaterialLabel lblContenido;
+    }
+}

@@ -15,6 +15,7 @@ namespace SanarRuralUnan.Views
         private bool esRegistroDoctorFijo;
         private bool modoAdministracion;
         private int? idUsuarioEditar;
+        public int? IdUsuarioCreado { get; private set; }
 
         public crearUsuario()
         {
@@ -38,6 +39,25 @@ namespace SanarRuralUnan.Views
 
         private void CentrarPanelCard()
         {
+            panelCard.Width = Math.Max(500, Math.Min(870, ClientSize.Width - 40));
+            panelCard.Height = 570;
+
+            int anchoCampo = panelCard.Width - 80;
+            txtCorreo.Width = anchoCampo;
+            txtContrasena.Width = panelCard.Width - 125;
+            txtConfirmarContrasena.Width = panelCard.Width - 125;
+            btnVerContrasena.Left = panelCard.Width - 80;
+            btnVerConfirmarContrasena.Left = panelCard.Width - 80;
+            cmbRol.Width = anchoCampo;
+            btnGuardar.Width = anchoCampo;
+
+            int xTarjetas = (panelCard.Width - 420) / 2;
+            panelTarjetaPaciente.Left = xTarjetas;
+            panelTarjetaMedico.Left = xTarjetas + 220;
+            rbPaciente.Left = xTarjetas;
+            rbMedico.Left = xTarjetas + 220;
+            lnkVolver.Left = (panelCard.Width - lnkVolver.Width) / 2;
+
             panelCard.Location = new Point(
                 Math.Max(10, (ClientSize.Width - panelCard.Width) / 2),
                 Math.Max(10, (ClientSize.Height - panelCard.Height) / 2));
@@ -298,15 +318,19 @@ namespace SanarRuralUnan.Views
             {
                 if (modoAdministracion)
                 {
+                    int idCreado = editar ? 0 : controlador.CrearUsuario(idRol, correo, contrasena);
                     bool guardado = editar
                         ? controlador.EditarUsuario(idUsuarioEditar.Value, idRol, correo, contrasena)
-                        : controlador.CrearUsuario(idRol, correo, contrasena) > 0;
+                        : idCreado > 0;
 
                     if (!guardado)
                     {
                         MessageBox.Show("El correo ya está registrado o el usuario no está disponible.", "No se pudo guardar", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                         return;
                     }
+
+                    if (!editar)
+                        IdUsuarioCreado = idCreado;
 
                     DialogResult = DialogResult.OK;
                     Close();
@@ -320,17 +344,29 @@ namespace SanarRuralUnan.Views
                     return;
                 }
 
+                IdUsuarioCreado = idUsuarioCreado;
+
+                if (esRegistroDoctorFijo)
+                {
+                    DialogResult = DialogResult.OK;
+                    Close();
+                    return;
+                }
+
                 MessageBox.Show("¡Usuario registrado con éxito!", "Registro Exitoso", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 if (idRol == controlador.ObtenerIdRol("Paciente"))
                 {
-                    new crearPaciente(idUsuarioCreado).Show();
-                    Close();
+                    using (crearPaciente formularioPaciente = new crearPaciente(idUsuarioCreado))
+                        formularioPaciente.ShowDialog(this);
                 }
                 else if (idRol == controlador.ObtenerIdRol("Doctor"))
                 {
-                    new crearDoctor(idUsuarioCreado).Show();
-                    Close();
+                    using (crearDoctor formularioDoctor = new crearDoctor(idUsuarioCreado))
+                        formularioDoctor.ShowDialog(this);
                 }
+
+                DialogResult = DialogResult.OK;
+                Close();
             }
             catch (InvalidOperationException ex)
             {
@@ -353,20 +389,13 @@ namespace SanarRuralUnan.Views
 
             if (esRegistroDoctorFijo)
             {
-                paginaPrincipalDoctores ventanaDoctores = Application.OpenForms["paginaPrincipalDoctores"] as paginaPrincipalDoctores;
-                if (ventanaDoctores == null)
-                    new paginaPrincipalDoctores().Show();
-                else
-                {
-                    ventanaDoctores.Show();
-                    ventanaDoctores.BringToFront();
-                }
+                DialogResult = DialogResult.Cancel;
                 Close();
             }
             else
             {
-                new iniciarSesion().Show();
-                Hide();
+                DialogResult = DialogResult.Cancel;
+                Close();
             }
         }
 

@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+using System.Drawing;
+using System.Windows.Forms;
 
 // Clase central de estilos visuales de Sanar Rural.
 // Aquí viven TODOS los colores, fuentes y medidas del sistema, en un solo lugar.
@@ -10,31 +11,97 @@ namespace SanarRuralUnan.Helpers
     public static class Tema
     {
         // ===== COLORES =====
-        public static readonly Color AzulPrimario = Color.FromArgb(27, 108, 168);   // Botones, título, marca
-        public static readonly Color VerdeAcento = Color.FromArgb(120, 190, 32);    // Línea decorativa, éxito
-        public static readonly Color FondoVentana = Color.FromArgb(238, 243, 248);  // Fondo detrás de la tarjeta
-        public static readonly Color FondoTarjeta = Color.White;
-        public static readonly Color FondoTarjetaSeleccionada = Color.FromArgb(230, 240, 248); // Fondo de la tarjeta de tipo de usuario cuando está elegida
-        public static readonly Color TextoPrincipal = Color.FromArgb(50, 60, 70);   // Labels de campo
-        public static readonly Color TextoAyuda = Color.FromArgb(85, 98, 112);      // Texto gris de ayuda (más oscuro para contraste)
-        public static readonly Color ColorError = Color.FromArgb(211, 47, 47);
-        public static readonly Color ColorExito = Color.FromArgb(120, 190, 32);
+        public static readonly Color Fondo = Color.FromArgb(237, 247, 240);
+        public static readonly Color FondoSecundario = Color.FromArgb(228, 241, 232);
+        public static readonly Color Superficie = Color.FromArgb(249, 252, 250);
+        public static readonly Color AzulPrimario = Color.FromArgb(35, 120, 183);
+        public static readonly Color AzulOscuro = Color.FromArgb(23, 74, 107);
+        public static readonly Color AzulClaro = Color.FromArgb(88, 169, 210);
+        public static readonly Color Verde = Color.FromArgb(120, 184, 106);
+        public static readonly Color VerdeOscuro = Color.FromArgb(77, 142, 86);
+        public static readonly Color TextoPrincipal = Color.FromArgb(23, 51, 66);
+        public static readonly Color TextoSecundario = Color.FromArgb(89, 112, 120);
+        public static readonly Color Borde = Color.FromArgb(207, 225, 213);
+        public static readonly Color Error = Color.FromArgb(198, 83, 83);
+        public static readonly Color Advertencia = Color.FromArgb(214, 154, 58);
+        public static readonly Color Informacion = AzulPrimario;
+
+        // Alias conservados para los formularios existentes.
+        public static readonly Color VerdeAcento = Verde; // Línea decorativa, éxito
+        public static readonly Color FondoVentana = Fondo; // Fondo detrás de la tarjeta
+        public static readonly Color FondoTarjeta = Superficie;
+        public static readonly Color FondoTarjetaSeleccionada = FondoSecundario; // Fondo de la tarjeta de tipo de usuario cuando está elegida
+        public static readonly Color TextoAyuda = TextoSecundario; // Texto gris de ayuda (más oscuro para contraste)
+        public static readonly Color ColorError = Error;
+        public static readonly Color ColorExito = VerdeOscuro;
 
         // ===== FUENTES =====
         // FontStyle.Bold / Regular ya vienen incluidos en cada constante para no repetirlo en cada formulario
-        public static Font FuenteTitulo => new Font("Segoe UI", 18F, FontStyle.Bold);
-        public static Font FuenteSubtitulo => new Font("Segoe UI", 9.5F, FontStyle.Regular);
-        public static Font FuenteLabelCampo => new Font("Segoe UI", 9.5F, FontStyle.Bold);
-        public static Font FuenteInput => new Font("Segoe UI", 11F);
-        public static Font FuenteAyuda => new Font("Segoe UI", 8.5F);
-        public static Font FuenteBoton => new Font("Segoe UI", 11F, FontStyle.Bold);
+        public const string FamiliaFuente = "Segoe UI";
+        public const float TamanoTitulo = 22F;
+        public const float TamanoSubtitulo = 10F;
+        public const float TamanoCuerpo = 10F;
+        public const float TamanoEtiqueta = 9.5F;
+        public const float TamanoBoton = 10F;
+        public const float TamanoAyuda = 9F;
+
+        public static Font FuenteTitulo => new Font(FamiliaFuente, TamanoTitulo, FontStyle.Bold);
+        public static Font FuenteMarca => new Font(FamiliaFuente, 16F, FontStyle.Bold);
+        public static Font FuenteSubtitulo => new Font(FamiliaFuente, TamanoSubtitulo, FontStyle.Regular);
+        public static Font FuenteCuerpo => new Font(FamiliaFuente, TamanoCuerpo, FontStyle.Regular);
+        public static Font FuenteLabelCampo => new Font(FamiliaFuente, TamanoEtiqueta, FontStyle.Bold);
+        public static Font FuenteInput => new Font(FamiliaFuente, 11F, FontStyle.Regular);
+        public static Font FuenteAyuda => new Font(FamiliaFuente, TamanoAyuda, FontStyle.Regular);
+        public static Font FuenteBoton => new Font(FamiliaFuente, TamanoBoton, FontStyle.Bold);
+
+        // Espaciado
+        public const int EspacioPequeno = 8;
+        public const int EspacioMediano = 16;
+        public const int EspacioGrande = 24;
+        public const int EspacioExtraGrande = 32;
 
         // ===== MEDIDAS ESTÁNDAR =====
+        public const int AltoBoton = 42;
+        public const int AltoCampo = 40;
+        public const int AltoEncabezado = 48;
+        public const int AltoFilaTabla = 38;
+
+        // Alias conservados para formularios existentes.
         public const int AnchoTarjeta = 500;
         public const int AnchoInput = 420;
-        public const int AltoInput = 32;          // Antes 27px — se sube un poco para mejor accesibilidad táctil
+        public const int AltoInput = AltoCampo;
         public const int MargenIzquierdo = 40;
         public const int EspacioEntreCampos = 70; // Distancia vertical estándar entre un campo y el siguiente
-        public const int AltoBoton = 44;
+
+        // Duraciones disponibles para transiciones sencillas de interfaz.
+        public const int AnimacionRapida = 150;
+        public const int AnimacionNormal = 180;
+
+        public static void ConfigurarTabla(DataGridView tabla)
+        {
+            tabla.BackgroundColor = Superficie;
+            tabla.BorderStyle = BorderStyle.None;
+            tabla.CellBorderStyle = DataGridViewCellBorderStyle.SingleHorizontal;
+            tabla.GridColor = Borde;
+            tabla.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            tabla.MultiSelect = false;
+            tabla.ReadOnly = true;
+            tabla.AllowUserToAddRows = false;
+            tabla.AllowUserToDeleteRows = false;
+            tabla.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            tabla.RowHeadersVisible = false;
+            tabla.EnableHeadersVisualStyles = false;
+            tabla.ColumnHeadersDefaultCellStyle.BackColor = FondoSecundario;
+            tabla.ColumnHeadersDefaultCellStyle.ForeColor = AzulOscuro;
+            tabla.ColumnHeadersDefaultCellStyle.Font = FuenteLabelCampo;
+            tabla.ColumnHeadersHeight = AltoEncabezado;
+            tabla.DefaultCellStyle.BackColor = Superficie;
+            tabla.DefaultCellStyle.ForeColor = TextoPrincipal;
+            tabla.DefaultCellStyle.SelectionBackColor = FondoSecundario;
+            tabla.DefaultCellStyle.SelectionForeColor = TextoPrincipal;
+            tabla.DefaultCellStyle.Font = FuenteCuerpo;
+            tabla.AlternatingRowsDefaultCellStyle.BackColor = Fondo;
+            tabla.RowTemplate.Height = AltoFilaTabla;
+        }
     }
 }

@@ -1,6 +1,7 @@
 using System;
 using System.Windows.Forms;
 using SanarRuralUnan.Controllers;
+using SanarRuralUnan.Helpers;
 using SanarRuralUnan.Models;
 
 namespace SanarRuralUnan.Views
@@ -16,6 +17,12 @@ namespace SanarRuralUnan.Views
 
         private void paginaPrincipalUsuarios_Load(object sender, EventArgs e)
         {
+            Tema.ConfigurarTabla(dgvUsuarios);
+            dgvUsuarios.Columns["Correo"].FillWeight = 150;
+            dgvUsuarios.Columns["colEditar"].FillWeight = 65;
+            dgvUsuarios.Columns["colBaja"].FillWeight = 75;
+            dgvUsuarios.Columns["colBaja"].DefaultCellStyle.ForeColor = Tema.Error;
+
             if (!VerificarAccesoAdministrativo())
                 return;
 
@@ -29,8 +36,6 @@ namespace SanarRuralUnan.Views
                 return true;
 
             MessageBox.Show("Esta sección está disponible para usuarios administrativos.", "Acceso restringido", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-            new iniciarSesion().Show();
-            Close();
             return false;
         }
 
@@ -49,7 +54,7 @@ namespace SanarRuralUnan.Views
                         usuario.Correo,
                         usuario.Roles.Nombre,
                         usuario.FechaRegistro.ToString("g"),
-                        usuario.Estado ? "Activo" : "Inactivo");
+                        usuario.Estado ? "✓ Activo" : "Inactivo");
                 }
             }
             catch (Exception ex)
@@ -105,11 +110,5 @@ namespace SanarRuralUnan.Views
             }
         }
 
-        private void btnCerrarSesion_Click(object sender, EventArgs e)
-        {
-            controlador.CerrarSesion();
-            new iniciarSesion().Show();
-            Close();
-        }
     }
 }

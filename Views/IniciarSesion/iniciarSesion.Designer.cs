@@ -1,4 +1,6 @@
-﻿namespace SanarRuralUnan
+using SanarRuralUnan.Helpers;
+
+namespace SanarRuralUnan
 {
     partial class iniciarSesion
     {
@@ -35,7 +37,7 @@
             // 
             // panelCard
             // 
-            this.panelCard.BackColor = System.Drawing.Color.White;
+            this.panelCard.BackColor = Tema.Superficie;
             this.panelCard.Controls.Add(this.panelLineaVerde);
             this.panelCard.Controls.Add(this.lblSubtitulo);
             this.panelCard.Controls.Add(this.lblTitulo);
@@ -56,7 +58,7 @@
             // 
             // panelLineaVerde
             // 
-            this.panelLineaVerde.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(120)))), ((int)(((byte)(190)))), ((int)(((byte)(32)))));
+            this.panelLineaVerde.BackColor = Tema.VerdeAcento;
             this.panelLineaVerde.Location = new System.Drawing.Point(40, 20);
             this.panelLineaVerde.Name = "panelLineaVerde";
             this.panelLineaVerde.Size = new System.Drawing.Size(6, 45);
@@ -65,8 +67,8 @@
             // lblSubtitulo
             // 
             this.lblSubtitulo.AutoSize = true;
-            this.lblSubtitulo.Font = new System.Drawing.Font("Segoe UI", 9.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblSubtitulo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(110)))), ((int)(((byte)(120)))));
+            this.lblSubtitulo.Font = Tema.FuenteCuerpo;
+            this.lblSubtitulo.ForeColor = Tema.TextoSecundario;
             this.lblSubtitulo.Location = new System.Drawing.Point(55, 45);
             this.lblSubtitulo.Name = "lblSubtitulo";
             this.lblSubtitulo.Size = new System.Drawing.Size(167, 17);
@@ -77,8 +79,8 @@
             // lblTitulo
             // 
             this.lblTitulo.AutoSize = true;
-            this.lblTitulo.Font = new System.Drawing.Font("Segoe UI", 18F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblTitulo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(27)))), ((int)(((byte)(108)))), ((int)(((byte)(168)))));
+            this.lblTitulo.Font = Tema.FuenteTitulo;
+            this.lblTitulo.ForeColor = Tema.AzulPrimario;
             this.lblTitulo.Location = new System.Drawing.Point(52, 15);
             this.lblTitulo.Name = "lblTitulo";
             this.lblTitulo.Size = new System.Drawing.Size(181, 32);
@@ -87,12 +89,12 @@
             // 
             // btnIniciarSesion
             // 
-            this.btnIniciarSesion.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(27)))), ((int)(((byte)(108)))), ((int)(((byte)(168)))));
+            this.btnIniciarSesion.BackColor = Tema.AzulPrimario;
             this.btnIniciarSesion.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnIniciarSesion.FlatAppearance.BorderSize = 0;
             this.btnIniciarSesion.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnIniciarSesion.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnIniciarSesion.ForeColor = System.Drawing.Color.White;
+            this.btnIniciarSesion.Font = Tema.FuenteLabelCampo;
+            this.btnIniciarSesion.ForeColor = Tema.Superficie;
             this.btnIniciarSesion.Location = new System.Drawing.Point(40, 350);
             this.btnIniciarSesion.Name = "btnIniciarSesion";
             this.btnIniciarSesion.Size = new System.Drawing.Size(420, 40);
@@ -103,7 +105,7 @@
             // 
             // txtContrasena
             // 
-            this.txtContrasena.Font = new System.Drawing.Font("Segoe UI", 11F);
+            this.txtContrasena.Font = Tema.FuenteInput;
             this.txtContrasena.Location = new System.Drawing.Point(40, 240);
             this.txtContrasena.Name = "txtContrasena";
             this.txtContrasena.PasswordChar = '●';
@@ -113,11 +115,11 @@
             // 
             // btnVerContrasena
             // 
-            this.btnVerContrasena.BackColor = System.Drawing.Color.White;
-            this.btnVerContrasena.FlatAppearance.BorderColor = System.Drawing.Color.LightGray;
+            this.btnVerContrasena.BackColor = Tema.Superficie;
+            this.btnVerContrasena.FlatAppearance.BorderColor = Tema.Borde;
             this.btnVerContrasena.FlatAppearance.BorderSize = 1;
             this.btnVerContrasena.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnVerContrasena.Font = new System.Drawing.Font("Segoe UI", 10F);
+            this.btnVerContrasena.Font = Tema.FuenteCuerpo;
             this.btnVerContrasena.Location = new System.Drawing.Point(420, 240);
             this.btnVerContrasena.Name = "btnVerContrasena";
             this.btnVerContrasena.Size = new System.Drawing.Size(40, 27);
@@ -129,8 +131,8 @@
             // lblContrasena
             // 
             this.lblContrasena.AutoSize = true;
-            this.lblContrasena.Font = new System.Drawing.Font("Segoe UI", 9.5F, System.Drawing.FontStyle.Bold);
-            this.lblContrasena.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(50)))), ((int)(((byte)(60)))), ((int)(((byte)(70)))));
+            this.lblContrasena.Font = Tema.FuenteLabelCampo;
+            this.lblContrasena.ForeColor = Tema.TextoPrincipal;
             this.lblContrasena.Location = new System.Drawing.Point(37, 220);
             this.lblContrasena.Name = "lblContrasena";
             this.lblContrasena.Size = new System.Drawing.Size(77, 17);
@@ -139,7 +141,7 @@
             // 
             // txtCorreo
             // 
-            this.txtCorreo.Font = new System.Drawing.Font("Segoe UI", 11F);
+            this.txtCorreo.Font = Tema.FuenteInput;
             this.txtCorreo.Location = new System.Drawing.Point(40, 135);
             this.txtCorreo.Name = "txtCorreo";
             this.txtCorreo.Size = new System.Drawing.Size(420, 27);
@@ -149,8 +151,8 @@
             // lblCorreo
             // 
             this.lblCorreo.AutoSize = true;
-            this.lblCorreo.Font = new System.Drawing.Font("Segoe UI", 9.5F, System.Drawing.FontStyle.Bold);
-            this.lblCorreo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(50)))), ((int)(((byte)(60)))), ((int)(((byte)(70)))));
+            this.lblCorreo.Font = Tema.FuenteLabelCampo;
+            this.lblCorreo.ForeColor = Tema.TextoPrincipal;
             this.lblCorreo.Location = new System.Drawing.Point(37, 115);
             this.lblCorreo.Name = "lblCorreo";
             this.lblCorreo.Size = new System.Drawing.Size(121, 17);
@@ -160,8 +162,8 @@
             // lnkCrearUsuario
             // 
             this.lnkCrearUsuario.AutoSize = true;
-            this.lnkCrearUsuario.Font = new System.Drawing.Font("Segoe UI", 9.5F);
-            this.lnkCrearUsuario.LinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(27)))), ((int)(((byte)(108)))), ((int)(((byte)(168)))));
+            this.lnkCrearUsuario.Font = Tema.FuenteCuerpo;
+            this.lnkCrearUsuario.LinkColor = Tema.AzulPrimario;
             this.lnkCrearUsuario.Location = new System.Drawing.Point(145, 410);
             this.lnkCrearUsuario.Name = "lnkCrearUsuario";
             this.lnkCrearUsuario.Size = new System.Drawing.Size(203, 17);
@@ -173,8 +175,8 @@
             // lblErrorCorreo
             // 
             this.lblErrorCorreo.AutoSize = true;
-            this.lblErrorCorreo.Font = new System.Drawing.Font("Segoe UI", 8.5F);
-            this.lblErrorCorreo.ForeColor = System.Drawing.Color.Red;
+            this.lblErrorCorreo.Font = Tema.FuenteAyuda;
+            this.lblErrorCorreo.ForeColor = Tema.Error;
             this.lblErrorCorreo.Location = new System.Drawing.Point(40, 165);
             this.lblErrorCorreo.Name = "lblErrorCorreo";
             this.lblErrorCorreo.Size = new System.Drawing.Size(0, 15);
@@ -183,8 +185,8 @@
             // lblErrorContrasena
             // 
             this.lblErrorContrasena.AutoSize = true;
-            this.lblErrorContrasena.Font = new System.Drawing.Font("Segoe UI", 8.5F);
-            this.lblErrorContrasena.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(110)))), ((int)(((byte)(120)))));
+            this.lblErrorContrasena.Font = Tema.FuenteAyuda;
+            this.lblErrorContrasena.ForeColor = Tema.TextoSecundario;
             this.lblErrorContrasena.Location = new System.Drawing.Point(40, 270);
             this.lblErrorContrasena.Name = "lblErrorContrasena";
             this.lblErrorContrasena.Size = new System.Drawing.Size(230, 15);
@@ -195,7 +197,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(238)))), ((int)(((byte)(243)))), ((int)(((byte)(248)))));
+            this.BackColor = Tema.Fondo;
             this.ClientSize = new System.Drawing.Size(750, 520);
             this.Controls.Add(this.panelCard);
             this.Name = "iniciarSesion";
