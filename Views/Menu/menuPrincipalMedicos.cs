@@ -51,7 +51,7 @@ namespace SanarRuralUnan.Views
 
         private void btnHospitales_Click(object sender, EventArgs e)
         {
-            crearHospital formHospital = new crearHospital();
+            paginaPrincipalHospitales formHospital = new paginaPrincipalHospitales();
             formHospital.Show();
             this.Hide();
         }

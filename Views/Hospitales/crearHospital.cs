@@ -1,158 +1,151 @@
-﻿using System;
+using System;
 using System.Windows.Forms;
 using SanarRuralUnan.Controllers;
-using SanarRuralUnan.Helpers;
-using SanarRuralUnan.Views;
 
 namespace SanarRuralUnan.Views.Hospitales
 {
     public partial class crearHospital : Form
     {
-        // ============================================================
-        // CONTROLLER
-        // ============================================================
         // La Vista utiliza el Controller para comunicarse con el Modelo.
         // La Vista nunca accede directamente a la base de datos.
-        private hospitalesController controlador = new hospitalesController();
+        private readonly hospitalesController controlador = new hospitalesController();
+        private readonly int? idHospital;
+        private bool cargandoCatalogos;
 
         public crearHospital()
         {
             InitializeComponent();
         }
 
-        // ============================================================
-        // CENTRAR TARJETA
-        // ============================================================
-        private void CentrarPanelCard()
+        public crearHospital(int idHospital) : this()
         {
-            int x = (this.ClientSize.Width - panelCard.Width) / 2;
-            int y = (this.ClientSize.Height - panelCard.Height) / 2;
-
-            panelCard.Location = new System.Drawing.Point(
-                Math.Max(10, x),
-                Math.Max(10, y)
-            );
+            this.idHospital = idHospital;
         }
 
-        // ============================================================
-        // LOAD
-        // ============================================================
+        // Carga los departamentos y, al editar, selecciona el municipio del hospital.
         private void crearHospital_Load(object sender, EventArgs e)
         {
-            txtNombre.Focus();
-            CentrarPanelCard();
+            try
+            {
+                CargarDepartamentos();
 
-            lblErrorNombre.Text = "";
-            lblErrorUbicacion.Text = "";
+                if (idHospital.HasValue)
+                {
+                    SanarRuralUnan.Hospitales hospital = controlador.consultarHospital(idHospital.Value);
+                    if (hospital == null)
+                    {
+                        MessageBox.Show("El hospital ya no está disponible.", "Hospital no encontrado", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        Close();
+                        return;
+                    }
+
+                    txtNombre.Text = hospital.Nombre;
+                    txtDireccion.Text = hospital.Direccion;
+                    txtTelefono.Text = hospital.Telefono;
+
+                    cargandoCatalogos = true;
+                    cmbDepartamento.SelectedValue = hospital.Municipios.IdDepartamento;
+                    CargarMunicipios(hospital.Municipios.IdDepartamento);
+                    cmbMunicipio.SelectedValue = hospital.IdMunicipio;
+                    cargandoCatalogos = false;
+                    Text = "Editar Hospital";
+                    lblTitulo.Text = "Editar Hospital";
+                    btnGuardar.Text = "Guardar Cambios";
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("No se pudieron cargar los datos del hospital:\n\n" + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                Close();
+            }
         }
 
-        private void crearHospital_Resize(object sender, EventArgs e)
+        private void CargarDepartamentos()
         {
-            CentrarPanelCard();
+            cargandoCatalogos = true;
+            cmbDepartamento.DisplayMember = "Nombre";
+            cmbDepartamento.ValueMember = "IdDepartamento";
+            cmbDepartamento.DataSource = controlador.listarDepartamentos();
+            cmbDepartamento.SelectedIndex = -1;
+            cmbMunicipio.DataSource = null;
+            cargandoCatalogos = false;
         }
 
-        // ============================================================
-        // VALIDACIÓN DE NOMBRE
-        // ============================================================
-        private void txtNombre_TextChanged(object sender, EventArgs e)
+        private void CargarMunicipios(int idDepartamento)
         {
-            if (string.IsNullOrWhiteSpace(txtNombre.Text))
-            {
-                lblErrorNombre.Text = "El nombre no puede estar vacío.";
-                lblErrorNombre.ForeColor = Tema.ColorError;
-            }
-            else
-            {
-                lblErrorNombre.Text = "";
-            }
+            cmbMunicipio.DisplayMember = "Nombre";
+            cmbMunicipio.ValueMember = "IdMunicipio";
+            cmbMunicipio.DataSource = controlador.listarMunicipios(idDepartamento);
+            cmbMunicipio.SelectedIndex = -1;
         }
 
-        // ============================================================
-        // VALIDACIÓN DE UBICACIÓN
-        // ============================================================
-        private void txtUbicacion_TextChanged(object sender, EventArgs e)
+        private void cmbDepartamento_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (string.IsNullOrWhiteSpace(txtUbicacion.Text))
+            if (cargandoCatalogos) return;
+
+            Departamentos departamento = cmbDepartamento.SelectedItem as Departamentos;
+            cargandoCatalogos = true;
+            cmbMunicipio.DataSource = null;
+            if (departamento != null)
             {
-                lblErrorUbicacion.Text = "La ubicación no puede estar vacía.";
-                lblErrorUbicacion.ForeColor = Tema.ColorError;
+                CargarMunicipios(departamento.IdDepartamento);
             }
-            else
-            {
-                lblErrorUbicacion.Text = "";
-            }
+            cargandoCatalogos = false;
         }
 
-        // ============================================================
-        // GUARDAR HOSPITAL
-        // RF nuevo: Crear Hospital (identificado a partir del diagrama E-R)
-        // ============================================================
+        // Valida los campos obligatorios y guarda el hospital.
         private void btnGuardar_Click(object sender, EventArgs e)
         {
-            string nombre = txtNombre.Text.Trim();
-            string ubicacion = txtUbicacion.Text.Trim();
-
-            if (string.IsNullOrWhiteSpace(nombre))
+            if (!(cmbDepartamento.SelectedItem is Departamentos departamento))
             {
-                MessageBox.Show(
-                    "Por favor, ingrese el nombre del hospital.",
-                    "Campo requerido",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Warning
-                );
-                txtNombre.Focus();
+                MessageBox.Show("Seleccione un departamento.", "Campo requerido", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                cmbDepartamento.Focus();
                 return;
             }
 
-            if (string.IsNullOrWhiteSpace(ubicacion))
+            if (!(cmbMunicipio.SelectedItem is Municipios municipio) || municipio.IdDepartamento != departamento.IdDepartamento)
             {
-                MessageBox.Show(
-                    "Por favor, ingrese la ubicación del hospital.",
-                    "Campo requerido",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Warning
-                );
-                txtUbicacion.Focus();
+                MessageBox.Show("Seleccione un municipio del departamento indicado.", "Campo requerido", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                cmbMunicipio.Focus();
+                return;
+            }
+
+            if (string.IsNullOrWhiteSpace(txtNombre.Text))
+            {
+                MessageBox.Show("Ingrese el nombre del hospital.", "Campo requerido", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                txtNombre.Focus();
                 return;
             }
 
             try
             {
-                // Le pedimos al Controller que cree el hospital.
-                // El controller a su vez le pide al Modelo que lo guarde
-                // (y que le asigne Estado = true por defecto).
-                controlador.crearHospital(nombre, ubicacion);
+                string nombre = txtNombre.Text.Trim();
+                string direccion = txtDireccion.Text.Trim();
+                string telefono = txtTelefono.Text.Trim();
 
-                MessageBox.Show(
-                    "¡Hospital registrado con éxito!",
-                    "Registro Exitoso",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Information
-                );
+                if (idHospital.HasValue)
+                {
+                    controlador.editarHospital(idHospital.Value, municipio.IdMunicipio, nombre, direccion, telefono);
+                }
+                else
+                {
+                    controlador.crearHospital(municipio.IdMunicipio, nombre, direccion, telefono);
+                }
 
-                this.Close();
+                MessageBox.Show("Los datos del hospital se guardaron correctamente.", "Operación exitosa", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                DialogResult = DialogResult.OK;
+                Close();
             }
             catch (Exception ex)
             {
-                MessageBox.Show(
-                    "Ocurrió un error al guardar el hospital:\n\n" + ex.Message,
-                    "Error",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Error
-                );
+                MessageBox.Show("Ocurrió un error al guardar el hospital:\n\n" + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
-        // ============================================================
-        // CERRAR / CANCELAR
-        // ============================================================
+        // Cierra el formulario y regresa al listado.
         private void lnkVolver_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            SanarRuralUnan.Views.menuPrincipalMedicos menu = new SanarRuralUnan.Views.menuPrincipalMedicos();
-            menu.Show();
-            this.Close();
+            Close();
         }
-
-        private void panelCard_Paint(object sender, PaintEventArgs e) { }
     }
 }
