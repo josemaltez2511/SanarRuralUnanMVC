@@ -1,0 +1,145 @@
+# Contexto del Proyecto: Sanar Rural UNAN
+
+## 1. Visión General del Sistema
+**Sanar Rural** es una aplicación de escritorio diseñada para la gestión clínica y administrativa de servicios de salud en entornos rurales de Nicaragua. El sistema busca agilizar el registro de pacientes, asignación de doctores por hospital y especialidad, programación de citas médicas, ejecución de consultas clínicas con captura de signos vitales, diagnósticos, prescripciones e historial médico, facilitando la toma de decisiones y garantizando la continuidad de la atención.
+
+Desarrolladores del proyecto: **José, Esther y Amarelis** (UNAN-Managua).
+
+---
+
+## 2. Stack Tecnológico
+- **Plataforma:** Aplicación de escritorio Windows (Windows Forms / WinForms).
+- **Lenguaje:** C# (.NET Framework 4.7.2).
+- **Base de Datos:** Microsoft SQL Server 2022 (instancia local `SQLEXPRESS02`, base de datos `SanarRuralDB` / `SanarRural`).
+- **ORM / Acceso a Datos:** Entity Framework 6.5.2 (Enfoque **Database First** mediante `ModelSanarRural.edmx`).
+- **Componentes Visuales:** `MaterialSkin 2` (versión 2.3.1).
+- **Sistema de Identidad Visual:** `SanarRuralUnan.Helpers.Tema` (`Helpers/Tema.cs`).
+- **Control de Versiones:** Git / GitHub (rama activa: `feature/modulo-clinico`).
+
+> **Aclaración Arquitectónica Vital:**  
+> Este proyecto **NO es ASP.NET MVC**, ni aplicación web. No se debe introducir código Razor (`.cshtml`), controladores web de ASP.NET, rutas HTTP, ni dependencias de ASP.NET Core.
+
+---
+
+## 3. Arquitectura del Código
+El sistema sigue un patrón arquitectónico **MVC informal** adaptado a Windows Forms:
+```
+[ Vistas (Views) ] 
+       │  (Eventos de UI, captura y presentación de datos)
+       ▼
+[ Controladores (Controllers) ] 
+       │  (Coordinación, orquestación y validaciones de flujo)
+       ▼
+[ Modelos (Models) ] 
+       │  (Consultas LINQ a EF, reglas de persistencia, transacciones)
+       ▼
+[ Entity Framework 6 (SanarRuralDBEntities) ] 
+       │
+       ▼
+[ Base de Datos SQL Server ]
+```
+
+### Reglas de separación por capas:
+1. **Views (`Views/`):**
+   - Formularios (`Form`, `MaterialForm`) y controles visuales.
+   - Manejan interacción, selección de archivos, validación visual y navegación.
+   - **Prohibido:** Instanciar `SanarRuralDBEntities` o ejecutar consultas LINQ a la base de datos directamente desde las vistas.
+2. **Controllers (`Controllers/`):**
+   - Clases terminadas en `Controller` o `Controllers` (ej. `doctoresControllers`, `pacientesControllers`).
+   - Conectan la vista con el modelo sin acoplar la UI a la capa de persistencia.
+3. **Models (`Models/`):**
+   - Clases terminadas en `Models` (ej. `doctoresModels`, `pacientesModels`).
+   - Encapsulan las operaciones CRUD, transacciones atómicas y lógica de consulta a `SanarRuralDBEntities`.
+4. **Entidades Autogeneradas (`*.cs` en la raíz dependientes de `ModelSanarRural.tt`):**
+   - Clases POCO generadas por el archivo de plantilla T4 (`Doctores.cs`, `Pacientes.cs`, `Citas.cs`, `Consultas.cs`, etc.).
+   - **Prohibido:** Modificar manualmente estos archivos, ya que se sobrescriben al regenerar el EDMX.
+
+---
+
+## 4. Estructura de Carpetas del Repositorio
+```
+SanarRuralUnan/
+├── Controllers/                 # Controladores del sistema
+│   ├── doctoresControllers.cs
+│   ├── hospitalesController.cs
+│   ├── pacientesControllers.cs
+│   └── usuariosController.cs
+├── Models/                      # Lógica de acceso a datos y persistencia
+│   ├── doctoresModels.cs
+│   ├── hospitalesModels.cs
+│   ├── pacientesModels.cs
+│   └── usuariosModels.cs
+├── Views/                       # Formularios organizados por módulo
+│   ├── Doctores/                # crearDoctor, paginaPrincipalDoctores
+│   ├── Hospitales/              # crearHospital, paginaPrincipalHospitales
+│   ├── IniciarSesion/           # iniciarSesion
+│   ├── Menu/                    # menuPrincipalAdministrativo, menuPrincipalMedicos
+│   ├── Pacientes/               # crearPaciente, paginaPrincipalPacientes
+│   └── Usuarios/                # crearUsuario, paginaPrincipalUsuarios
+├── Helpers/                     # Utilidades transversales
+│   └── Tema.cs                  # Identidad visual centralizada (colores, fuentes, medidas)
+├── Properties/                  # Recursos, ensamblados y configuraciones
+├── ModelSanarRural.edmx         # Diagrama y mapeo Entity Framework Database First
+├── ModelSanarRural.Context.cs   # DbContext generado (SanarRuralDBEntities)
+├── App.config                   # Cadenas de conexión (SanarRuralDB, SanarRuralDBEntities)
+├── SanarRuralUnan.csproj        # Definición del proyecto .NET Framework 4.7.2
+├── .agents/                     # Reglas, skills y workflows para agentes de IA
+│   ├── rules/
+│   ├── skills/
+│   └── workflows/
+└── docs/AI/                     # Documentación de contexto para IA
+    └── PROJECT_CONTEXT.md
+```
+
+---
+
+## 5. Roles del Sistema y Shells de Navegación
+El acceso al sistema se realiza a través de `iniciarSesion.cs` (`Program.cs` inicia en esta pantalla). Según el rol autenticado:
+
+1. **Administrativo (Rol Id = `ObtenerIdRol("Administrativo")`):**
+   - **Shell Principal:** `Views/Menu/menuPrincipalAdministrativo.cs` (`MaterialForm`).
+   - **Módulos accesibles:** Usuarios, Doctores, Pacientes, Hospitales.
+   - Navegación embebida: El shell conmuta los formularios secundarios (`paginaPrincipalUsuarios`, `paginaPrincipalDoctores`, `paginaPrincipalHospitales`, `paginaPrincipalPacientes`) dentro de su contenedor `panelContenido`.
+2. **Doctor / Médico (Rol Id = `ObtenerIdRol("Doctor")`):**
+   - **Shell Principal:** `Views/Menu/menuPrincipalMedicos.cs` (`MaterialForm`).
+   - **Módulos:** Pacientes (activo), Citas, Consultas, Historial Clínico (en desarrollo dentro de `feature/modulo-clinico`).
+3. **Paciente:**
+   - Rol contemplado en base de datos; interfaz propia en etapa posterior.
+
+---
+
+## 6. Módulos del Sistema y Estado Actual
+- **Autenticación (`Views/IniciarSesion`):** Implementado con validación en tiempo real y enrutamiento por rol.
+- **Usuarios (`Views/Usuarios`):** Implementado (listado, búsqueda, creación con rol asignado).
+- **Hospitales (`Views/Hospitales`):** Implementado (listado y creación con departamentos/municipios).
+- **Doctores (`Views/Doctores`):** Implementado (gestión completa, especialidades múltiples, asignaciones hospital-especialidad, foto con previsualización).
+- **Pacientes (`Views/Pacientes`):** Implementado (listado, búsqueda, registro con datos demográficos, contactos de emergencia y comunidad).
+- **Módulo Clínico (`feature/modulo-clinico` - En curso):**
+  - **Citas:** Planificación de citas médicas (`Citas.cs`).
+  - **Consultas:** Registro de la atención médica (`Consultas.cs`).
+  - **Signos Vitales:** Captura de presión, frecuencia, temperatura, peso, talla (`SignosVitales.cs`).
+  - **Diagnósticos y Prescripciones:** Diagnósticos CIE/enfermedad (`Diagnosticos.cs`) y medicación (`Prescripciones.cs`).
+  - **Historial Médico:** Visualización cronológica e integrada del paciente.
+
+---
+
+## 7. Reglas Clínicas Fundamentales
+1. **Diferenciación Cita vs. Consulta:**
+   - La **Cita** representa una reserva programada (`FechaHoraProgramada`, `Estado`, `Motivo`).
+   - La **Consulta** representa el acto médico presencial (`FechaHoraInicio`, `FechaHoraFin`, `PadecimientoActual`, `ExamenFisico`, `Observaciones`, `PlanSeguimiento`).
+   - Una Cita puede dar origen a una Consulta, pero **no son la misma entidad ni deben fusionarse**.
+2. **Integridad del Expediente Clínico:**
+   - Toda atención médica debe preservar el registro histórico. No se deben sobrescribir o eliminar consultas ya efectuadas salvo reglas explícitas de anulación auditada.
+   - Los diagnósticos y prescripciones pertenecen a una consulta concreta (`IdConsulta`).
+   - El sistema no inventa diagnósticos automáticos; registra estrictamente lo indicado por el profesional de salud.
+
+---
+
+## 8. Identidad Visual y Diseño Centrado en el Usuario (UCD)
+- **Concepto rector:** Salud, Tecnología, Confianza y Naturaleza.
+- **Biblia visual:** `Helpers/Tema.cs`. Todo color, fuente o espaciado debe provenir de esta clase.
+- **Fondo General de Ventana:** `#EDF7F0` (Verde claro suave). **Prohibido usar blanco puro (`#FFFFFF`) como fondo de ventana**.
+- **Superficies y Tarjetas:** `#F9FCFA`.
+- **Acentos:** Azul Primario `#2378B7`, Verde Acento `#78B86A`, Texto Principal `#173342`.
+- **Componentes:** Combinación armónica de `MaterialSkin 2` con controles estándar WinForms estilizados con `Tema.cs`.
+- **Responsive:** Controles anclados con `Anchor`, contenedores `TableLayoutPanel` o recalculados en eventos `Resize` para adaptarse fluidamente a diferentes resoluciones.
