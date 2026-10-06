@@ -1,8 +1,9 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Security.Cryptography;
+
 // Modelo de usuario para la aplicación SanarRuralUnan
 // Este modelo representa un usuario en la aplicación y contiene métodos para guardar un usuario,
 // El modelo es para manejar la lógica de negocio relacionada con los usuarios,
@@ -11,133 +12,218 @@ namespace SanarRuralUnan.Models
 {
     public class usuariosModels
     {
-        // ESTE COMENTARIO LO HIZO ETHER 
-        // El modelo de usuario es una clase que representa un usuario en la aplicación
-        // INICIALIZAR OBJETO DE CONEXIÓN A LA BD
-        // (la conexión a la base de datos SOLO debe existir aquí, en el Modelo, nunca en la Vista)
+        private const int IteracionesHash = 600000;
+        private const int LongitudHash = 32;
+        private const string VersionHash = "PBKDF2-SHA256$1";
 
-        SanarRuralDBEntities db = new SanarRuralDBEntities();
-
-        // DECLARACIÓN DE LAS PROPIEDADES (CORREO, CONTRASENA, ESTADO)
-
-        // Hola, cambio realizado por Esther
-        // estamos aprendiendo a usar github
-
-
-
-        public string Correo { get; set; }
-        public string Contrasena { get; set; }
-        public bool Estado { get; set; }
-        public DateTime FechaRegistro { get; set; }
-        public string usuarioActual { get; private set; }
-
-        // CONSTRUCTOR VACÍO
-        public usuariosModels() { }
-
-        // CONSTRUCTOR CON PARÁMETROS
-        public usuariosModels(string correo, string contrasena, DateTime fechaRegistro, bool estado)
-        {
-            this.Correo = correo;
-            this.Contrasena = contrasena;
-            this.FechaRegistro = fechaRegistro;
-            this.Estado = estado;
-        }
+        public static int? IdUsuarioActual { get; private set; }
+        public static int? IdRolActual { get; private set; }
+        public static string CorreoActual { get; private set; }
 
         // MÉTODO PARA VERIFICAR SI UN CORREO YA EXISTE EN LA BD
         // esto lo usa el Controller para validar antes de crear o mientras el usuario escribe
         // devuelve true si el correo ya está registrado, false si está libre
-        public bool ExisteCorreo(string correo)
+        public bool ExisteCorreo(string correo, int? idUsuarioExcluir = null)
         {
-
-            try
+            using (var db = new SanarRuralDBEntities())
             {
-                return db.Usuarios.Any(u => u.Correo == correo);
+                return db.Usuarios.Any(u => u.Correo == correo &&
+                    (!idUsuarioExcluir.HasValue || u.IdUsuario != idUsuarioExcluir.Value));
             }
-            catch
+        }
+
+        public List<Roles> ListarRoles()
+        {
+            using (var db = new SanarRuralDBEntities())
             {
-                // si algo falla al consultar la BD, asumimos que no podemos confirmar
-                // y devolvemos false para no bloquear al usuario por un error de conexión
-                return false;
+                return db.Roles.OrderBy(r => r.Nombre).ToList();
+            }
+        }
+
+        public int ObtenerIdRol(string nombre)
+        {
+            using (var db = new SanarRuralDBEntities())
+            {
+                Roles rol = db.Roles.FirstOrDefault(r => r.Nombre == nombre);
+                return rol == null ? -1 : rol.IdRol;
+            }
+        }
+
+        public List<Usuarios> ListarUsuarios(string filtro)
+        {
+            using (var db = new SanarRuralDBEntities())
+            {
+                var consulta = db.Usuarios.Include(u => u.Roles).Where(u => u.Estado);
+                if (!string.IsNullOrWhiteSpace(filtro))
+                {
+                    filtro = filtro.Trim();
+                    consulta = consulta.Where(u => u.Correo.Contains(filtro) || u.Roles.Nombre.Contains(filtro));
+                }
+
+                return consulta.OrderBy(u => u.Correo).ToList();
+            }
+        }
+
+        public Usuarios ConsultarUsuario(int idUsuario)
+        {
+            using (var db = new SanarRuralDBEntities())
+            {
+                return db.Usuarios.Include(u => u.Roles)
+                    .FirstOrDefault(u => u.IdUsuario == idUsuario && u.Estado);
             }
         }
 
         // MÉTODO PARA GUARDAR UN USUARIO
-        // CAMBIO: antes este método era "void" (no devolvía nada).
-        // Ahora es "int" y devuelve el IdUsuario que la base de datos generó automáticamente,
-        // porque lo necesitamos para poder crear después el Paciente o el Doctor
-        // asociado a esta misma cuenta (RF-02, RF-03, RF-07).
-        public int Guardar()
+        // Devuelve el IdUsuario generado para asociar el perfil correspondiente.
+        public int Guardar(int idRol, string correo, string contrasena)
         {
+            using (var db = new SanarRuralDBEntities())
+            {
+                Usuarios usuarioNuevo = new Usuarios
+                {
+                    IdRol = idRol,
+                    Correo = correo,
+                    ContrasenaHash = CrearHashContrasena(contrasena),
+                    FechaRegistro = DateTime.Now,
+                    Estado = true
+                };
 
-            // CREAR OBJETO CON LA ENTIDAD USUARIO DE LA BD
-            // esto es como un contrato para definir y verificar si recibimos los mismos datos
-            // que requerimos para crear un usuario 
-            Usuarios usuarioNuevo = new Usuarios();
-
-
-            // ASIGNAR LOS VALORES DE LAS PROPIEDADES RECIBIDAS
-            // A LAS PROPIEDADES DEL OBJETO USUARIO
-
-            usuarioNuevo.Correo = Correo;
-            usuarioNuevo.Contrasena = Contrasena;
-            usuarioNuevo.FechaRegistro = FechaRegistro; // Asignamos la fecha y hora actual del sistema
-            usuarioNuevo.Estado = Estado;
-
-            // AGREGAR EL OBJETO USUARIO NUEVO A LA TABLA USUARIOS DE LA BD
-            db.Usuarios.Add(usuarioNuevo);
-
-            // GUARDAR LOS CAMBIOS EN LA BD
-            db.SaveChanges();
-
-            // IMPORTANTE: después de db.SaveChanges(), Entity Framework ya conoce
-            // el IdUsuario que la base de datos generó automáticamente (autoincremental)
-            // y lo escribe de vuelta en el objeto "usuarioNuevo". Por eso ya lo podemos leer aquí.
-            return usuarioNuevo.IdUsuario;
+                db.Usuarios.Add(usuarioNuevo);
+                db.SaveChanges();
+                return usuarioNuevo.IdUsuario;
+            }
         }
 
+        public bool Actualizar(int idUsuario, int idRol, string correo, string nuevaContrasena)
+        {
+            using (var db = new SanarRuralDBEntities())
+            {
+                Usuarios usuario = db.Usuarios.FirstOrDefault(u => u.IdUsuario == idUsuario && u.Estado);
+                if (usuario == null)
+                    return false;
+
+                bool tieneDoctor = db.Doctores.Any(d => d.IdUsuario == idUsuario);
+                bool tienePaciente = db.Pacientes.Any(p => p.IdUsuario == idUsuario);
+                bool rolCompatible = (!tieneDoctor || idRol == ObtenerIdRolEnContexto(db, "Doctor")) &&
+                    (!tienePaciente || idRol == ObtenerIdRolEnContexto(db, "Paciente"));
+
+                if (idRol != usuario.IdRol && !rolCompatible)
+                    throw new InvalidOperationException("No se puede cambiar el rol porque el usuario tiene un perfil relacionado.");
+
+                usuario.IdRol = idRol;
+                usuario.Correo = correo;
+                if (!string.IsNullOrEmpty(nuevaContrasena))
+                    usuario.ContrasenaHash = CrearHashContrasena(nuevaContrasena);
+
+                db.SaveChanges();
+
+                if (IdUsuarioActual == idUsuario)
+                {
+                    IdRolActual = idRol;
+                    CorreoActual = correo;
+                }
+                return true;
+            }
+        }
+
+        private int ObtenerIdRolEnContexto(SanarRuralDBEntities db, string nombre)
+        {
+            Roles rol = db.Roles.FirstOrDefault(r => r.Nombre == nombre);
+            return rol == null ? -1 : rol.IdRol;
+        }
+
+        public bool DarDeBaja(int idUsuario)
+        {
+            using (var db = new SanarRuralDBEntities())
+            {
+                Usuarios usuario = db.Usuarios.FirstOrDefault(u => u.IdUsuario == idUsuario && u.Estado);
+                if (usuario == null)
+                    return false;
+
+                usuario.Estado = false;
+                db.SaveChanges();
+                if (IdUsuarioActual == idUsuario)
+                    CerrarSesion();
+                return true;
+            }
+        }
+
+        public bool VerificarContrasena(string contrasena, string hashGuardado)
+        {
+            if (string.IsNullOrEmpty(contrasena) || string.IsNullOrEmpty(hashGuardado))
+                return false;
+
+            try
+            {
+                string[] partes = hashGuardado.Split('$');
+                if (partes.Length != 5 || partes[0] != "PBKDF2-SHA256" || partes[1] != "1")
+                    return false;
+
+                int iteraciones;
+                if (!int.TryParse(partes[2], out iteraciones) || iteraciones < 100000 || iteraciones > 2000000)
+                    return false;
+
+                byte[] sal = Convert.FromBase64String(partes[3]);
+                byte[] hashEsperado = Convert.FromBase64String(partes[4]);
+                if (sal.Length != 16 || hashEsperado.Length != LongitudHash)
+                    return false;
+
+                byte[] hashCalculado;
+                using (var derivador = new Rfc2898DeriveBytes(contrasena, sal, iteraciones, HashAlgorithmName.SHA256))
+                    hashCalculado = derivador.GetBytes(LongitudHash);
+
+                int diferencia = 0;
+                for (int i = 0; i < hashEsperado.Length; i++)
+                    diferencia |= hashEsperado[i] ^ hashCalculado[i];
+
+                return diferencia == 0;
+            }
+            catch (FormatException)
+            {
+                return false;
+            }
+        }
+
+        private string CrearHashContrasena(string contrasena)
+        {
+            byte[] sal = new byte[16];
+            using (var generador = RandomNumberGenerator.Create())
+                generador.GetBytes(sal);
+
+            byte[] hash;
+            using (var derivador = new Rfc2898DeriveBytes(contrasena, sal, IteracionesHash, HashAlgorithmName.SHA256))
+                hash = derivador.GetBytes(LongitudHash);
+
+            return VersionHash + "$" + IteracionesHash + "$" +
+                Convert.ToBase64String(sal) + "$" + Convert.ToBase64String(hash);
+        }
 
         // MÉTODO PARA INICIAR SESIÓN
-        // este metodo (funcion) es de tipo Bool (verdadero o falso)
-        // porque solo necesitamos verificar si es verdadero que el usuario ya existe en la base de datos
-        // o si es falso y no tenemos registros
-        // Retorna:
-        // -1 = Credenciales incorrectas
-        //  0 = Es Paciente
-        //  1 = Es Doctor
+        // Retorna -1 si las credenciales son incorrectas o el IdRol de la cuenta activa.
         public int IniciarSesion(string correo, string contrasena)
         {
-            var consultarUsuario = db.Usuarios.FirstOrDefault(
-                u => u.Correo == correo &&
-                     u.Contrasena == contrasena &&
-                     u.Estado == true
-            );
-
-            if (consultarUsuario == null)
+            using (var db = new SanarRuralDBEntities())
             {
-                return -1;
-            }
+                Usuarios usuario = db.Usuarios.FirstOrDefault(u => u.Correo == correo && u.Estado);
+                if (usuario == null || !VerificarContrasena(contrasena, usuario.ContrasenaHash))
+                {
+                    CerrarSesion();
+                    return -1;
+                }
 
-            usuarioActual = correo;
-
-            // Verificar si el usuario tiene un registro en Doctores
-            bool esDoctor = db.Doctores.Any(
-                d => d.IdUsuario == consultarUsuario.IdUsuario
-            );
-
-            if (esDoctor)
-            {
-                return 1; // Doctor
-            }
-            else
-            {
-                return 0; // Paciente
+                IdUsuarioActual = usuario.IdUsuario;
+                IdRolActual = usuario.IdRol;
+                CorreoActual = usuario.Correo;
+                return usuario.IdRol;
             }
         }
 
         // MÉTODO CERRAR SESIÓN
         public void CerrarSesion()
         {
-            usuarioActual = null;
+            IdUsuarioActual = null;
+            IdRolActual = null;
+            CorreoActual = null;
         }
     }
 }

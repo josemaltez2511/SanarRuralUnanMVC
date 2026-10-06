@@ -117,7 +117,7 @@ namespace SanarRuralUnan
         private void btnIniciarSesion_Click(object sender, EventArgs e)
         {
             string correo = txtCorreo.Text.Trim();
-            string contrasena = txtContrasena.Text.Trim();
+            string contrasena = txtContrasena.Text;
 
             if (string.IsNullOrEmpty(correo) || string.IsNullOrEmpty(contrasena))
             {
@@ -145,20 +145,28 @@ namespace SanarRuralUnan
                                 MessageBoxIcon.Information);
 
                 // Enrutamiento según el rol
-                if (tipoUsuario == 1)
+                if (tipoUsuario == controlador.ObtenerIdRol("Doctor"))
                 {
                     // Es Doctor
                     menuPrincipalMedicos menuMedico = new menuPrincipalMedicos();
                     menuMedico.Show();
+                    this.Hide();
+                }
+                else if (tipoUsuario == controlador.ObtenerIdRol("Administrativo"))
+                {
+                    new SanarRuralUnan.Views.paginaPrincipalUsuarios().Show();
+                    this.Hide();
+                }
+                else if (tipoUsuario == controlador.ObtenerIdRol("Paciente"))
+                {
+                    MessageBox.Show("Aún no se ha creado el menú principal para Pacientes.", "Aviso");
+                    controlador.CerrarSesion();
                 }
                 else
                 {
-                    // Es Paciente
-                
-                    MessageBox.Show("Aún no se ha creado el menú principal para Pacientes.", "Aviso");
+                    MessageBox.Show("El rol de esta cuenta no está disponible en la aplicación.", "Aviso");
+                    controlador.CerrarSesion();
                 }
-
-                this.Hide();
             }
             else
             {

@@ -125,7 +125,6 @@
     <Compile Include="Municipios.cs">
       <DependentUpon>ModelSanarRural.tt</DependentUpon>
     </Compile>
-    <Compile Include="obj\Debug\.NETFramework,Version=v4.7.2.AssemblyAttributes.cs" />
     <Compile Include="Pacientes.cs">
       <DependentUpon>ModelSanarRural.tt</DependentUpon>
     </Compile>
@@ -189,6 +188,12 @@
     <Compile Include="Views\Usuarios\crearUsuario.Designer.cs">
       <DependentUpon>crearUsuario.cs</DependentUpon>
     </Compile>
+    <Compile Include="Views\Usuarios\paginaPrincipalUsuarios.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Views\Usuarios\paginaPrincipalUsuarios.Designer.cs">
+      <DependentUpon>paginaPrincipalUsuarios.cs</DependentUpon>
+    </Compile>
     <Compile Include="Views\IniciarSesion\iniciarSesion.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -229,6 +234,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Views\Usuarios\crearUsuario.resx">
       <DependentUpon>crearUsuario.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\Usuarios\paginaPrincipalUsuarios.resx">
+      <DependentUpon>paginaPrincipalUsuarios.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Views\IniciarSesion\iniciarSesion.resx">
       <DependentUpon>iniciarSesion.cs</DependentUpon>

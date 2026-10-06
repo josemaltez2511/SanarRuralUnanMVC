@@ -51,6 +51,7 @@ namespace SanarRuralUnan.Views
             // NUEVO: paneles-tarjeta que envuelven visualmente a rbPaciente y rbMedico
             this.panelTarjetaPaciente = new System.Windows.Forms.Panel();
             this.panelTarjetaMedico = new System.Windows.Forms.Panel();
+            this.cmbRol = new System.Windows.Forms.ComboBox();
 
             this.panelCard.SuspendLayout();
             this.SuspendLayout();
@@ -90,6 +91,7 @@ namespace SanarRuralUnan.Views
             // NUEVO: agregamos los paneles-tarjeta al panelCard
             this.panelCard.Controls.Add(this.panelTarjetaPaciente);
             this.panelCard.Controls.Add(this.panelTarjetaMedico);
+            this.panelCard.Controls.Add(this.cmbRol);
 
             this.panelCard.Location = new System.Drawing.Point(125, 20);
             this.panelCard.Name = "panelCard";
@@ -325,6 +327,17 @@ namespace SanarRuralUnan.Views
             this.panelTarjetaMedico.Size = new System.Drawing.Size(200, 45);
             this.panelTarjetaMedico.TabIndex = 11;
 
+            //
+            // cmbRol
+            //
+            this.cmbRol.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbRol.Font = Tema.FuenteInput;
+            this.cmbRol.Location = new System.Drawing.Point(40, 382);
+            this.cmbRol.Name = "cmbRol";
+            this.cmbRol.Size = new System.Drawing.Size(420, 25);
+            this.cmbRol.TabIndex = 7;
+            this.cmbRol.Visible = false;
+
             // 
             // btnGuardar
             // 
@@ -409,5 +422,6 @@ namespace SanarRuralUnan.Views
         // NUEVO: declaración de los paneles-tarjeta
         private System.Windows.Forms.Panel panelTarjetaPaciente;
         private System.Windows.Forms.Panel panelTarjetaMedico;
+        private System.Windows.Forms.ComboBox cmbRol;
     }
 }
