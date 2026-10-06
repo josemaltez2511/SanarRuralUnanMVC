@@ -1,7 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.IO;
+using System.Linq;
 using System.Windows.Forms;
 using SanarRuralUnan.Controllers;
-using SanarRuralUnan.Models;
 using SanarRuralUnan.Views.Doctores;
 
 namespace SanarRuralUnan.Views
@@ -11,35 +14,53 @@ namespace SanarRuralUnan.Views
         // ============================================================
         // CONTROLLERS
         // ============================================================
-
         // La Vista nunca accede directamente a la base de datos.
-        // Instanciamos los controladores para comunicar con el modelo.
-        private doctoresControllers controladorDoctores = new doctoresControllers();
-        private hospitalesController controladorHospitales = new hospitalesController();
-
+        private readonly doctoresControllers controladorDoctores = new doctoresControllers();
 
         // ============================================================
         // PROPIEDADES DE ESTADO
         // ============================================================
+        private int? idUsuario;
+        private int idDoctorEdicion;
+        private bool esModoEdicion;
+        private bool formularioConfigurado;
+        private byte[] foto;
+        private string fotoNombre;
+        private string fotoMimeType;
 
-        private int idUsuario;
-        private int idDoctorEdicion = 0;
-        private bool esModoEdicion = false;
-
+        private TextBox txtPrimerNombre;
+        private TextBox txtSegundoNombre;
+        private TextBox txtPrimerApellido;
+        private TextBox txtSegundoApellido;
+        private TextBox txtCedula;
+        private TextBox txtTelefono;
+        private TextBox txtLicencia;
+        private CheckedListBox lstEspecialidades;
+        private ComboBox cmbHospitalAsignacion;
+        private ComboBox cmbEspecialidadHospital;
+        private ListBox lstAsignaciones;
+        private Label lblFoto;
+        private readonly List<Tuple<int, int>> asignaciones = new List<Tuple<int, int>>();
+        private List<Especialidades> especialidadesDisponibles = new List<Especialidades>();
+        private List<SanarRuralUnan.Hospitales> hospitalesDisponibles = new List<SanarRuralUnan.Hospitales>();
 
         // ============================================================
         // CONSTRUCTORES
         // ============================================================
+        // Permite registrar un doctor sin una cuenta de usuario.
+        // Constructor para registro nuevo sin cuenta de usuario.
+        public crearDoctor()
+        {
+            InitializeComponent();
+        }
 
-        // Constructor para registro nuevo (recibe el IdUsuario recién creado)
         public crearDoctor(int idUsuarioRecibido)
         {
             InitializeComponent();
-            idUsuario = idUsuarioRecibido;
-            esModoEdicion = false;
+            // Conserva la cuenta creada en el paso anterior del registro.
+            idUsuario = idUsuarioRecibido > 0 ? idUsuarioRecibido : (int?)null;
         }
 
-        // Constructor para edición (recibe el IdDoctor a editar)
         public crearDoctor(int idDoctor, bool modoEdicion)
         {
             InitializeComponent();
@@ -47,293 +68,455 @@ namespace SanarRuralUnan.Views
             esModoEdicion = modoEdicion;
         }
 
-
-        // ============================================================
-        // CENTRAR TARJETA
-        // ============================================================
-
-        private void CentrarPanelCard()
-        {
-            int x = (this.ClientSize.Width - panelCard.Width) / 2;
-            int y = (this.ClientSize.Height - panelCard.Height) / 2;
-
-            panelCard.Location = new System.Drawing.Point(
-                Math.Max(10, x),
-                Math.Max(10, y)
-            );
-        }
-
-
         // ============================================================
         // LOAD
         // ============================================================
-
         private void crearDoctor_Load(object sender, EventArgs e)
         {
-            txtNombres.Focus();
+            ConfigurarFormulario();
+            try
+            {
+                CargarCatalogos();
+
+                if (esModoEdicion)
+                {
+                    lblSubtitulo.Text = "Modificar Datos del Doctor";
+                    btnGuardar.Text = "Guardar Cambios";
+                    CargarDoctor();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(
+                    "No fue posible cargar los datos del doctor.\n\n" + ex.Message,
+                    "Error",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error
+                );
+                btnGuardar.Enabled = false;
+            }
+        }
+
+        // ============================================================
+        // CONFIGURAR FORMULARIO
+        // ============================================================
+        private void ConfigurarFormulario()
+        {
+            if (formularioConfigurado)
+            {
+                return;
+            }
+
+            formularioConfigurado = true;
+            panelCard.Controls.Clear();
+            panelCard.AutoScroll = true;
+            panelCard.Size = new Size(1160, 850);
+            this.ClientSize = new Size(1360, 960);
             CentrarPanelCard();
 
-            // Cargar hospitales disponibles en el ComboBox
-            CargarHospitales();
+            panelCard.Controls.Add(panelLineaVerde);
+            panelCard.Controls.Add(lblTitulo);
+            panelCard.Controls.Add(lblSubtitulo);
 
-            // Limpiar advertencias
-            lblErrorNombres.Text = "";
-            lblErrorApellidos.Text = "";
-            lblErrorLicencia.Text = "";
+            lblTitulo.Location = new Point(58, 20);
+            lblSubtitulo.Location = new Point(61, 56);
 
-            // Si entramos en modo edición, cargamos los datos existentes del médico
-            if (esModoEdicion)
+            txtPrimerNombre = AgregarCampo("Primer nombre *", 45, 105, 500, 1);
+            txtSegundoNombre = AgregarCampo("Segundo nombre", 590, 105, 500, 2);
+            txtPrimerApellido = AgregarCampo("Primer apellido *", 45, 180, 500, 3);
+            txtSegundoApellido = AgregarCampo("Segundo apellido", 590, 180, 500, 4);
+            txtCedula = AgregarCampo("Cédula *", 45, 255, 500, 5);
+            txtTelefono = AgregarCampo("Teléfono", 590, 255, 500, 6);
+            txtLicencia = AgregarCampo("Número de licencia *", 45, 330, 500, 7);
+            txtPrimerNombre.MaxLength = 50;
+            txtSegundoNombre.MaxLength = 50;
+            txtPrimerApellido.MaxLength = 50;
+            txtSegundoApellido.MaxLength = 50;
+            txtCedula.MaxLength = 20;
+            txtTelefono.MaxLength = 30;
+            txtLicencia.MaxLength = 50;
+
+            AgregarEtiqueta("Foto", 590, 330);
+            lblFoto = new Label
             {
-                lblSubtitulo.Text = "Modificar Datos del Doctor";
-                btnGuardar.Text = "Guardar Cambios";
+                AutoEllipsis = true,
+                Location = new Point(590, 355),
+                Size = new Size(360, 28),
+                Text = "Sin foto seleccionada",
+                TextAlign = ContentAlignment.MiddleLeft
+            };
+            panelCard.Controls.Add(lblFoto);
 
-                var doctor = controladorDoctores.consultarDoctorPorId(idDoctorEdicion);
-                if (doctor != null)
+            Button btnSeleccionarFoto = CrearBoton("Seleccionar foto", 960, 353, 130, 32);
+            btnSeleccionarFoto.Click += btnSeleccionarFoto_Click;
+            panelCard.Controls.Add(btnSeleccionarFoto);
+
+            AgregarEtiqueta("Especialidades * (puede elegir varias)", 45, 395);
+            lstEspecialidades = new CheckedListBox
+            {
+                CheckOnClick = true,
+                Font = new Font("Segoe UI", 10F),
+                Location = new Point(45, 420),
+                Size = new Size(420, 230)
+            };
+            panelCard.Controls.Add(lstEspecialidades);
+
+            AgregarEtiqueta("Hospital", 500, 395);
+            AgregarEtiqueta("Especialidad que ejerce allí", 790, 395);
+            cmbHospitalAsignacion = CrearCombo(500, 420, 270, 32);
+            cmbEspecialidadHospital = CrearCombo(790, 420, 300, 32);
+            panelCard.Controls.Add(cmbHospitalAsignacion);
+            panelCard.Controls.Add(cmbEspecialidadHospital);
+
+            Button btnAgregarAsignacion = CrearBoton("Agregar", 500, 465, 115, 34);
+            btnAgregarAsignacion.Click += btnAgregarAsignacion_Click;
+            panelCard.Controls.Add(btnAgregarAsignacion);
+
+            AgregarEtiqueta("Hospitales y especialidades asignados", 500, 510);
+            lstAsignaciones = new ListBox
+            {
+                Font = new Font("Segoe UI", 10F),
+                Location = new Point(500, 535),
+                Size = new Size(590, 115)
+            };
+            panelCard.Controls.Add(lstAsignaciones);
+
+            Button btnQuitarAsignacion = CrearBoton("Quitar seleccionado", 500, 660, 180, 34);
+            btnQuitarAsignacion.Click += btnQuitarAsignacion_Click;
+            panelCard.Controls.Add(btnQuitarAsignacion);
+
+            btnGuardar.Location = new Point(45, 720);
+            btnGuardar.Size = new Size(1045, 42);
+            btnGuardar.TabIndex = 8;
+            btnGuardar.Text = "Guardar Doctor";
+            panelCard.Controls.Add(btnGuardar);
+
+            lnkVolver.Location = new Point(490, 780);
+            lnkVolver.Text = "Completar después / Volver";
+            panelCard.Controls.Add(lnkVolver);
+        }
+
+        private TextBox AgregarCampo(string texto, int x, int y, int ancho, int tabIndex)
+        {
+            AgregarEtiqueta(texto, x, y);
+            var campo = new TextBox
+            {
+                Font = new Font("Segoe UI", 11F),
+                Location = new Point(x, y + 25),
+                Size = new Size(ancho, 30),
+                TabIndex = tabIndex
+            };
+            panelCard.Controls.Add(campo);
+            return campo;
+        }
+
+        private void AgregarEtiqueta(string texto, int x, int y)
+        {
+            panelCard.Controls.Add(new Label
+            {
+                AutoSize = true,
+                Font = new Font("Segoe UI", 9.5F, FontStyle.Bold),
+                Location = new Point(x, y),
+                Text = texto
+            });
+        }
+
+        private ComboBox CrearCombo(int x, int y, int ancho, int alto)
+        {
+            return new ComboBox
+            {
+                DropDownStyle = ComboBoxStyle.DropDownList,
+                Font = new Font("Segoe UI", 10F),
+                Location = new Point(x, y),
+                Size = new Size(ancho, alto)
+            };
+        }
+
+        private Button CrearBoton(string texto, int x, int y, int ancho, int alto)
+        {
+            return new Button
+            {
+                BackColor = Color.FromArgb(27, 108, 168),
+                Cursor = Cursors.Hand,
+                FlatStyle = FlatStyle.Flat,
+                Font = new Font("Segoe UI", 9.5F, FontStyle.Bold),
+                ForeColor = Color.White,
+                Location = new Point(x, y),
+                Size = new Size(ancho, alto),
+                Text = texto,
+                UseVisualStyleBackColor = false
+            };
+        }
+
+        // ============================================================
+        // CARGAR ESPECIALIDADES Y HOSPITALES
+        // ============================================================
+        private void CargarCatalogos()
+        {
+            especialidadesDisponibles = controladorDoctores.listarEspecialidades();
+            hospitalesDisponibles = controladorDoctores.listarHospitales();
+
+            lstEspecialidades.DataSource = especialidadesDisponibles;
+            lstEspecialidades.DisplayMember = "Nombre";
+            lstEspecialidades.ValueMember = "IdEspecialidad";
+
+            cmbHospitalAsignacion.DataSource = hospitalesDisponibles;
+            cmbHospitalAsignacion.DisplayMember = "Nombre";
+            cmbHospitalAsignacion.ValueMember = "IdHospital";
+            cmbHospitalAsignacion.SelectedIndex = -1;
+
+            cmbEspecialidadHospital.DataSource = especialidadesDisponibles.ToList();
+            cmbEspecialidadHospital.DisplayMember = "Nombre";
+            cmbEspecialidadHospital.ValueMember = "IdEspecialidad";
+            cmbEspecialidadHospital.SelectedIndex = -1;
+        }
+
+        // ============================================================
+        // CARGAR DATOS DEL DOCTOR
+        // ============================================================
+        private void CargarDoctor()
+        {
+            var doctor = controladorDoctores.consultarDoctorPorId(idDoctorEdicion);
+            if (doctor == null)
+            {
+                MessageBox.Show("No se encontró el doctor seleccionado.", "Doctor no disponible", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            txtPrimerNombre.Text = doctor.PrimerNombre;
+            txtSegundoNombre.Text = doctor.SegundoNombre;
+            txtPrimerApellido.Text = doctor.PrimerApellido;
+            txtSegundoApellido.Text = doctor.SegundoApellido;
+            txtCedula.Text = doctor.Cedula;
+            txtTelefono.Text = doctor.Telefono;
+            txtLicencia.Text = doctor.NumeroLicencia;
+
+            foreach (var doctorEspecialidad in doctor.DoctorEspecialidad)
+            {
+                int indice = especialidadesDisponibles.FindIndex(e => e.IdEspecialidad == doctorEspecialidad.IdEspecialidad);
+                if (indice >= 0)
                 {
-                    txtNombres.Text = doctor.Nombres;
-                    txtApellidos.Text = doctor.Apellidos;
-                    txtEspecialidad.Text = doctor.Especialidad;
-                    txtNumeroLicencia.Text = doctor.NumeroLicencia;
-                    cmbHospital.SelectedValue = doctor.IdHospital;
+                    lstEspecialidades.SetItemChecked(indice, true);
+                }
+
+                foreach (var asignacion in doctorEspecialidad.DoctorHospitalEspecialidad)
+                {
+                    AgregarAsignacion(asignacion.IdHospital, asignacion.IdEspecialidad);
+                }
+            }
+
+            fotoNombre = doctor.FotoNombre;
+            fotoMimeType = doctor.FotoMimeType;
+            lblFoto.Text = string.IsNullOrWhiteSpace(fotoNombre) ? "Sin foto seleccionada" : fotoNombre;
+        }
+
+        private void btnSeleccionarFoto_Click(object sender, EventArgs e)
+        {
+            using (var selector = new OpenFileDialog())
+            {
+                selector.Title = "Seleccionar foto del doctor";
+                selector.Filter = "Imágenes|*.jpg;*.jpeg;*.png;*.bmp";
+
+                if (selector.ShowDialog() == DialogResult.OK)
+                {
+                    foto = File.ReadAllBytes(selector.FileName);
+                    fotoNombre = Path.GetFileName(selector.FileName);
+                    fotoMimeType = GetMimeType(selector.FileName);
+                    lblFoto.Text = fotoNombre;
                 }
             }
         }
 
+        private string GetMimeType(string ruta)
+        {
+            switch (Path.GetExtension(ruta).ToLowerInvariant())
+            {
+                case ".jpg":
+                case ".jpeg":
+                    return "image/jpeg";
+                case ".png":
+                    return "image/png";
+                case ".bmp":
+                    return "image/bmp";
+                default:
+                    return "application/octet-stream";
+            }
+        }
+
+        private void btnAgregarAsignacion_Click(object sender, EventArgs e)
+        {
+            if (cmbHospitalAsignacion.SelectedValue == null || cmbEspecialidadHospital.SelectedValue == null)
+            {
+                MessageBox.Show("Seleccione un hospital y una especialidad.", "Campos requeridos", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            int idEspecialidad = Convert.ToInt32(cmbEspecialidadHospital.SelectedValue);
+            bool especialidadSeleccionada = lstEspecialidades.CheckedItems
+                .Cast<Especialidades>()
+                .Any(especialidad => especialidad.IdEspecialidad == idEspecialidad);
+
+            if (!especialidadSeleccionada)
+            {
+                MessageBox.Show("Marque primero esa especialidad en la lista del doctor.", "Especialidad no seleccionada", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            AgregarAsignacion(Convert.ToInt32(cmbHospitalAsignacion.SelectedValue), idEspecialidad);
+        }
+
+        private void AgregarAsignacion(int idHospital, int idEspecialidad)
+        {
+            if (asignaciones.Any(a => a.Item1 == idHospital && a.Item2 == idEspecialidad))
+            {
+                return;
+            }
+
+            asignaciones.Add(Tuple.Create(idHospital, idEspecialidad));
+            lstAsignaciones.Items.Add(FormatearAsignacion(idHospital, idEspecialidad));
+        }
+
+        private string FormatearAsignacion(int idHospital, int idEspecialidad)
+        {
+            string hospital = hospitalesDisponibles.FirstOrDefault(h => h.IdHospital == idHospital)?.Nombre ?? "Hospital";
+            string especialidad = especialidadesDisponibles.FirstOrDefault(e => e.IdEspecialidad == idEspecialidad)?.Nombre ?? "Especialidad";
+            return hospital + " — " + especialidad;
+        }
+
+        private void btnQuitarAsignacion_Click(object sender, EventArgs e)
+        {
+            int indice = lstAsignaciones.SelectedIndex;
+            if (indice >= 0)
+            {
+                asignaciones.RemoveAt(indice);
+                lstAsignaciones.Items.RemoveAt(indice);
+            }
+        }
+
+        // ============================================================
+        // GUARDAR / EDITAR DOCTOR
+        // ============================================================
+        private void btnGuardar_Click(object sender, EventArgs e)
+        {
+            // Validaciones de campos obligatorios.
+            string primerNombre = txtPrimerNombre.Text.Trim();
+            string primerApellido = txtPrimerApellido.Text.Trim();
+            string cedula = txtCedula.Text.Trim();
+            string numeroLicencia = txtLicencia.Text.Trim();
+            var idEspecialidades = lstEspecialidades.CheckedItems
+                .Cast<Especialidades>()
+                .Select(especialidad => especialidad.IdEspecialidad)
+                .ToList();
+            var asignacionesSeleccionadas = asignaciones
+                .Where(asignacion => idEspecialidades.Contains(asignacion.Item2))
+                .ToList();
+
+            if (string.IsNullOrWhiteSpace(primerNombre) || string.IsNullOrWhiteSpace(primerApellido) ||
+                string.IsNullOrWhiteSpace(cedula) || string.IsNullOrWhiteSpace(numeroLicencia))
+            {
+                MessageBox.Show("Complete primer nombre, primer apellido, cédula y número de licencia.", "Campos requeridos", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            if (idEspecialidades.Count == 0)
+            {
+                MessageBox.Show("Seleccione al menos una especialidad para el doctor.", "Especialidad requerida", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            if (asignacionesSeleccionadas.Count == 0)
+            {
+                MessageBox.Show("Asigne el doctor al menos a un hospital.", "Hospital requerido", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            try
+            {
+                if (esModoEdicion)
+                {
+                    // MODO EDICIÓN
+                    controladorDoctores.editarDoctor(
+                        idDoctorEdicion,
+                        primerNombre,
+                        txtSegundoNombre.Text.Trim(),
+                        primerApellido,
+                        txtSegundoApellido.Text.Trim(),
+                        cedula,
+                        numeroLicencia,
+                        txtTelefono.Text.Trim(),
+                        foto,
+                        fotoNombre,
+                        fotoMimeType,
+                        idEspecialidades,
+                        asignacionesSeleccionadas
+                    );
+                }
+                else
+                {
+                    // MODO CREACIÓN
+                    controladorDoctores.crearDoctor(
+                        idUsuario,
+                        primerNombre,
+                        txtSegundoNombre.Text.Trim(),
+                        primerApellido,
+                        txtSegundoApellido.Text.Trim(),
+                        cedula,
+                        numeroLicencia,
+                        txtTelefono.Text.Trim(),
+                        foto,
+                        fotoNombre,
+                        fotoMimeType,
+                        idEspecialidades,
+                        asignacionesSeleccionadas
+                    );
+                }
+
+                MessageBox.Show(
+                    esModoEdicion ? "¡Doctor modificado con éxito!" : "¡Doctor registrado con éxito!",
+                    esModoEdicion ? "Registro Actualizado" : "Registro Exitoso",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Information
+                );
+                RegresarAMenuDoctores();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Ocurrió un error al guardar el doctor:\n\n" + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        // ============================================================
+        // CENTRAR TARJETA
+        // ============================================================
+        private void CentrarPanelCard()
+        {
+            int x = (ClientSize.Width - panelCard.Width) / 2;
+            int y = (ClientSize.Height - panelCard.Height) / 2;
+            panelCard.Location = new Point(Math.Max(10, x), Math.Max(10, y));
+        }
 
         // ============================================================
         // RESPONSIVE
         // ============================================================
-
         private void crearDoctor_Resize(object sender, EventArgs e)
         {
             CentrarPanelCard();
         }
 
-
-        // ============================================================
-        // CARGAR HOSPITALES
-        // ============================================================
-
-        private void CargarHospitales()
-        {
-            try
-            {
-                var listaHospitales = controladorHospitales.listarHospitales();
-
-                cmbHospital.DataSource = listaHospitales;
-                cmbHospital.DisplayMember = "Nombre";
-                cmbHospital.ValueMember = "IdHospital";
-
-                cmbHospital.DropDownStyle = ComboBoxStyle.DropDown;
-                cmbHospital.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
-                cmbHospital.AutoCompleteSource = AutoCompleteSource.ListItems;
-
-                if (cmbHospital.Items.Count > 0)
-                {
-                    cmbHospital.SelectedIndex = 0;
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(
-                    "No fue posible cargar los hospitales.\n\n" + ex.Message,
-                    "Error",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Error
-                );
-            }
-        }
-
-
-        // ============================================================
-        // VALIDACIÓN DE NOMBRES
-        // ============================================================
-
-        private void txtNombres_TextChanged(object sender, EventArgs e)
-        {
-            if (string.IsNullOrWhiteSpace(txtNombres.Text))
-            {
-                lblErrorNombres.Text = "El nombre no puede estar vacío.";
-                lblErrorNombres.ForeColor = System.Drawing.Color.Red;
-            }
-            else
-            {
-                lblErrorNombres.Text = "";
-            }
-        }
-
-
-        // ============================================================
-        // VALIDACIÓN DE APELLIDOS
-        // ============================================================
-
-        private void txtApellidos_TextChanged(object sender, EventArgs e)
-        {
-            if (string.IsNullOrWhiteSpace(txtApellidos.Text))
-            {
-                lblErrorApellidos.Text = "Los apellidos no pueden estar vacíos.";
-                lblErrorApellidos.ForeColor = System.Drawing.Color.Red;
-            }
-            else
-            {
-                lblErrorApellidos.Text = "";
-            }
-        }
-
-
-        // ============================================================
-        // VALIDACIÓN DE LICENCIA
-        // ============================================================
-
-        private void txtNumeroLicencia_TextChanged(object sender, EventArgs e)
-        {
-            if (string.IsNullOrWhiteSpace(txtNumeroLicencia.Text))
-            {
-                lblErrorLicencia.Text = "La licencia no puede estar vacía.";
-                lblErrorLicencia.ForeColor = System.Drawing.Color.Red;
-            }
-            else
-            {
-                lblErrorLicencia.Text = "";
-            }
-        }
-
-
-        // ============================================================
-        // GUARDAR / EDITAR DOCTOR
-        // ============================================================
-
-        private void btnGuardar_Click(object sender, EventArgs e)
-        {
-            string nombres = txtNombres.Text.Trim();
-            string apellidos = txtApellidos.Text.Trim();
-            string especialidad = txtEspecialidad.Text.Trim();
-            string numeroLicencia = txtNumeroLicencia.Text.Trim();
-
-            // Validaciones de campos obligatorios
-            if (string.IsNullOrWhiteSpace(nombres))
-            {
-                MessageBox.Show("Por favor, ingrese los nombres del doctor.", "Campo requerido", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                txtNombres.Focus();
-                return;
-            }
-
-            if (string.IsNullOrWhiteSpace(apellidos))
-            {
-                MessageBox.Show("Por favor, ingrese los apellidos del doctor.", "Campo requerido", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                txtApellidos.Focus();
-                return;
-            }
-
-            if (string.IsNullOrWhiteSpace(especialidad))
-            {
-                MessageBox.Show("Por favor, ingrese la especialidad.", "Campo requerido", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                txtEspecialidad.Focus();
-                return;
-            }
-
-            if (string.IsNullOrWhiteSpace(numeroLicencia))
-            {
-                MessageBox.Show("Por favor, ingrese el número de licencia.", "Campo requerido", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                txtNumeroLicencia.Focus();
-                return;
-            }
-
-            if (cmbHospital.SelectedValue == null)
-            {
-                MessageBox.Show("Por favor, seleccione un hospital o centro de salud.", "Campo requerido", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                cmbHospital.Focus();
-                return;
-            }
-
-            int idHospital = Convert.ToInt32(cmbHospital.SelectedValue);
-
-            // --------------------------------------------------------
-            // MODO EDICIÓN
-            // --------------------------------------------------------
-            if (esModoEdicion)
-            {
-                try
-                {
-                    controladorDoctores.editarDoctor(
-                        idDoctorEdicion,
-                        nombres,
-                        apellidos,
-                        especialidad,
-                        numeroLicencia,
-                        idHospital
-                    );
-
-                    MessageBox.Show(
-                        "¡Doctor modificado con éxito!",
-                        "Registro Actualizado",
-                        MessageBoxButtons.OK,
-                        MessageBoxIcon.Information
-                    );
-
-                    RegresarAMenuDoctores();
-                    return;
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("Ocurrió un error al actualizar el doctor:\n\n" + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    return;
-                }
-            }
-
-            // --------------------------------------------------------
-            // MODO CREACIÓN
-            // --------------------------------------------------------
-            try
-            {
-                controladorDoctores.crearDoctor(
-                    idUsuario,
-                    nombres,
-                    apellidos,
-                    especialidad,
-                    numeroLicencia,
-                    idHospital
-                );
-
-                MessageBox.Show(
-                    "¡Doctor registrado con éxito!",
-                    "Registro Exitoso",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Information
-                );
-
-                RegresarAMenuDoctores();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(
-                    "Ocurrió un error al guardar el doctor:\n\n" + ex.Message,
-                    "Error",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Error
-                );
-            }
-        }
-
-
         // ============================================================
         // VOLVER / CANCELAR
         // ============================================================
-
         private void lnkVolver_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             RegresarAMenuDoctores();
         }
-
 
         // ============================================================
         // NAVEGACIÓN HACIA LA PANTALLA PRINCIPAL DE DOCTORES
         // ============================================================
         private void RegresarAMenuDoctores()
         {
-            // Verificamos si la ventana de doctores ya estaba abierta en segundo plano
-            paginaPrincipalDoctores ventanaAbierta = Application.OpenForms["paginaPrincipalDoctores"] as paginaPrincipalDoctores;
-
+            var ventanaAbierta = Application.OpenForms["paginaPrincipalDoctores"] as paginaPrincipalDoctores;
             if (ventanaAbierta != null)
             {
                 ventanaAbierta.Show();
@@ -341,18 +524,12 @@ namespace SanarRuralUnan.Views
             }
             else
             {
-                // Si venía desde el registro de usuario, creamos la ventana del catálogo
-                paginaPrincipalDoctores formDoctores = new paginaPrincipalDoctores();
-                formDoctores.Show();
+                // Si no hay una ventana de doctores abierta, se crea el catálogo.
+                new paginaPrincipalDoctores().Show();
             }
 
-            this.Close();
+            Close();
         }
-
-
-        // ============================================================
-        // PANEL PAINT
-        // ============================================================
 
         private void panelCard_Paint(object sender, PaintEventArgs e)
         {

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using SanarRuralUnan.Models;
 
 namespace SanarRuralUnan.Controllers
@@ -6,59 +7,61 @@ namespace SanarRuralUnan.Controllers
     public class doctoresControllers
     {
         // ============================================================
+        // CONSULTAR CATÁLOGOS
+        // ============================================================
+        public List<Especialidades> listarEspecialidades()
+        {
+            return new doctoresModels().listarEspecialidades();
+        }
+
+        public List<Hospitales> listarHospitales()
+        {
+            return new doctoresModels().listarHospitales();
+        }
+
+        // ============================================================
         // CREAR DOCTOR
         // RF-07
         // ============================================================
-
         public void crearDoctor(
-            int idUsuario,
-            string nombres,
-            string apellidos,
-            string especialidad,
+            int? idUsuario,
+            string primerNombre,
+            string segundoNombre,
+            string primerApellido,
+            string segundoApellido,
+            string cedula,
             string numeroLicencia,
-            int idHospital)
+            string telefono,
+            byte[] foto,
+            string fotoNombre,
+            string fotoMimeType,
+            IList<int> idEspecialidades,
+            IList<Tuple<int, int>> asignaciones)
         {
-            // Crear objeto del modelo.
-            doctoresModels objetoDoctor =
-                new doctoresModels();
-
-
-            // --------------------------------------------------------
-            // ENVIAR DATOS AL MODELO
-            // --------------------------------------------------------
-
-            objetoDoctor.IdUsuario = idUsuario;
-            objetoDoctor.Nombres = nombres;
-            objetoDoctor.Apellidos = apellidos;
-            objetoDoctor.Especialidad = especialidad;
-            objetoDoctor.NumeroLicencia = numeroLicencia;
-            objetoDoctor.IdHospital = idHospital;
-
-
-            // --------------------------------------------------------
-            // GUARDAR DOCTOR
-            // --------------------------------------------------------
-
-            // El modelo se encarga de establecer:
-            // Estado = true
-            // y guardar en la base de datos.
-
-            objetoDoctor.guardarDoctor();
+            // El modelo guarda el doctor con sus relaciones y lo marca como activo.
+            new doctoresModels().guardarDoctor(
+                idUsuario,
+                primerNombre,
+                segundoNombre,
+                primerApellido,
+                segundoApellido,
+                cedula,
+                numeroLicencia,
+                telefono,
+                foto,
+                fotoNombre,
+                fotoMimeType,
+                idEspecialidades,
+                asignaciones
+            );
         }
-
-
-        // ============================================================
-        // CONSULTAR DOCTOR
-        // RF-09
-        // ============================================================
 
         // ============================================================
         // LISTAR DOCTORES
         // ============================================================
         public object listarDoctores(string busqueda = "")
         {
-            doctoresModels objetoDoctor = new doctoresModels();
-            return objetoDoctor.listarDoctores(busqueda);
+            return new doctoresModels().listarDoctores(busqueda);
         }
 
         // ============================================================
@@ -66,70 +69,54 @@ namespace SanarRuralUnan.Controllers
         // ============================================================
         public Doctores consultarDoctorPorId(int idDoctor)
         {
-            doctoresModels objetoDoctor = new doctoresModels();
-            return objetoDoctor.buscarDoctorPorId(idDoctor);
+            return new doctoresModels().buscarDoctorPorId(idDoctor);
         }
-
 
         // ============================================================
         // EDITAR DOCTOR
         // RF-08
         // ============================================================
-
         public void editarDoctor(
             int idDoctor,
-            string nombres,
-            string apellidos,
-            string especialidad,
+            string primerNombre,
+            string segundoNombre,
+            string primerApellido,
+            string segundoApellido,
+            string cedula,
             string numeroLicencia,
-            int idHospital)
+            string telefono,
+            byte[] foto,
+            string fotoNombre,
+            string fotoMimeType,
+            IList<int> idEspecialidades,
+            IList<Tuple<int, int>> asignaciones)
         {
-            // Crear objeto del modelo.
-            doctoresModels objetoDoctor =
-                new doctoresModels();
-
-
-            // --------------------------------------------------------
-            // ACTUALIZAR DATOS
-            // --------------------------------------------------------
-
-            // El modelo verificará que el doctor esté activo
-            // antes de permitir la edición.
-
-            objetoDoctor.actualizarDoctor(
+            // El modelo verifica que el doctor esté activo antes de actualizarlo.
+            new doctoresModels().actualizarDoctor(
                 idDoctor,
-                nombres,
-                apellidos,
-                especialidad,
+                primerNombre,
+                segundoNombre,
+                primerApellido,
+                segundoApellido,
+                cedula,
                 numeroLicencia,
-                idHospital
+                telefono,
+                foto,
+                fotoNombre,
+                fotoMimeType,
+                idEspecialidades,
+                asignaciones
             );
         }
-
 
         // ============================================================
         // ELIMINAR DOCTOR
         // RF-10
         // ============================================================
-
         public void eliminarDoctor(int idDoctor)
         {
-            // Crear objeto del modelo.
-            doctoresModels objetoDoctor =
-                new doctoresModels();
-
-
-            // --------------------------------------------------------
-            // ELIMINACIÓN LÓGICA
-            // --------------------------------------------------------
-
-            // El modelo NO elimina físicamente el registro.
-            //
-            // Cambia:
-            //
-            // true → false
-
-            objetoDoctor.eliminarDoctor(idDoctor);
+            // El modelo cambia el estado sin eliminar el registro.
+            new doctoresModels().eliminarDoctor(idDoctor);
         }
     }
 }

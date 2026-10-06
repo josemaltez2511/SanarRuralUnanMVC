@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using SanarRuralUnan.Models;
 
@@ -15,248 +17,274 @@ namespace SanarRuralUnan.Models
 {
     public class doctoresModels
     {
-        // ============================================================
-        // CONEXIÓN A LA BASE DE DATOS
-        // ============================================================
-
         // La conexión a la base de datos solo existe en el Modelo.
-        SanarRuralDBEntities db = new SanarRuralDBEntities();
-
-
-        // ============================================================
-        // PROPIEDADES DEL DOCTOR
-        // ============================================================
-
-        // Identificador único del doctor.
-        // Se genera automáticamente en la base de datos.
-        public int IdDoctor { get; set; }
-
-        // Identificador del usuario relacionado con el doctor.
-        public int IdUsuario { get; set; }
-
-        // Nombre del doctor.
-        public string Nombres { get; set; }
-
-        // Apellidos del doctor.
-        public string Apellidos { get; set; }
-
-        // Especialidad médica.
-        public string Especialidad { get; set; }
-
-        // Número de licencia o código profesional.
-        public string NumeroLicencia { get; set; }
-
-        // Hospital o centro de salud donde trabaja.
-        public int IdHospital { get; set; }
-
-        // Estado del doctor.
-        // Puede ser Activo o Inactivo.
-        public bool Estado { get; set; }
-
+        private readonly SanarRuralDBEntities db = new SanarRuralDBEntities();
 
         // ============================================================
-        // CONSTRUCTOR VACÍO
+        // LISTAR ESPECIALIDADES Y HOSPITALES
         // ============================================================
-
-        public doctoresModels()
+        public List<Especialidades> listarEspecialidades()
         {
+            return db.Especialidades
+                .Where(e => e.Estado)
+                .OrderBy(e => e.Nombre)
+                .ToList();
         }
 
-
-        // ============================================================
-        // CONSTRUCTOR CON PARÁMETROS
-        // ============================================================
-
-        public doctoresModels(
-            int idUsuario,
-            string nombres,
-            string apellidos,
-            string especialidad,
-            string numeroLicencia,
-            int idHospital)
+        public List<Hospitales> listarHospitales()
         {
-            this.IdUsuario = idUsuario;
-            this.Nombres = nombres;
-            this.Apellidos = apellidos;
-            this.Especialidad = especialidad;
-            this.NumeroLicencia = numeroLicencia;
-            this.IdHospital = idHospital;
-
-            // Todo doctor nuevo comienza activo.
-            this.Estado = true;
+            return db.Hospitales
+                .Where(h => h.Estado)
+                .OrderBy(h => h.Nombre)
+                .ToList();
         }
-
 
         // ============================================================
         // CREAR / GUARDAR DOCTOR
         // RF-07
         // ============================================================
-
-        // Crea un nuevo doctor y lo guarda en la base de datos.
-
-        public void guardarDoctor()
+        public void guardarDoctor(
+            int? idUsuario,
+            string primerNombre,
+            string segundoNombre,
+            string primerApellido,
+            string segundoApellido,
+            string cedula,
+            string numeroLicencia,
+            string telefono,
+            byte[] foto,
+            string fotoNombre,
+            string fotoMimeType,
+            IList<int> idEspecialidades,
+            IList<Tuple<int, int>> asignaciones)
         {
-            // Crear una nueva entidad Doctor.
-            Doctores doctorNuevo = new Doctores();
+            // Crear una nueva entidad Doctor con sus relaciones.
+            var especialidades = (idEspecialidades ?? new List<int>()).Distinct().ToList();
+            var relaciones = (asignaciones ?? new List<Tuple<int, int>>())
+                .Where(a => especialidades.Contains(a.Item2))
+                .Distinct()
+                .ToList();
 
+            var doctor = new Doctores
+            {
+                IdUsuario = idUsuario.GetValueOrDefault() > 0 ? idUsuario : null,
+                PrimerNombre = primerNombre,
+                SegundoNombre = segundoNombre,
+                PrimerApellido = primerApellido,
+                SegundoApellido = segundoApellido,
+                Cedula = cedula,
+                NumeroLicencia = numeroLicencia,
+                Telefono = telefono,
+                Foto = foto,
+                FotoNombre = fotoNombre,
+                FotoMimeType = fotoMimeType,
+                // Todo doctor nuevo se crea como Activo.
+                Estado = true
+            };
 
-            // --------------------------------------------------------
-            // DATOS DEL DOCTOR
-            // --------------------------------------------------------
+            foreach (int idEspecialidad in especialidades)
+            {
+                var doctorEspecialidad = new DoctorEspecialidad
+                {
+                    IdEspecialidad = idEspecialidad
+                };
 
-            doctorNuevo.IdUsuario = IdUsuario;
-            doctorNuevo.Nombres = Nombres;
-            doctorNuevo.Apellidos = Apellidos;
-            doctorNuevo.Especialidad = Especialidad;
-            doctorNuevo.NumeroLicencia = NumeroLicencia;
-            doctorNuevo.IdHospital = IdHospital;
+                foreach (var asignacion in relaciones.Where(a => a.Item2 == idEspecialidad))
+                {
+                    doctorEspecialidad.DoctorHospitalEspecialidad.Add(
+                        new DoctorHospitalEspecialidad { IdHospital = asignacion.Item1 }
+                    );
+                }
 
-            // Todo doctor nuevo se crea como Activo.
-            doctorNuevo.Estado = true;
+                doctor.DoctorEspecialidad.Add(doctorEspecialidad);
+            }
 
-
-            // --------------------------------------------------------
-            // GUARDAR EN LA BASE DE DATOS
-            // --------------------------------------------------------
-
-            db.Doctores.Add(doctorNuevo);
-
+            db.Doctores.Add(doctor);
             db.SaveChanges();
         }
-
-
-        // ============================================================
-        // CONSULTAR DOCTOR
-        // RF-09
-        // ============================================================
 
         // ============================================================
         // LISTAR DOCTORES CON BÚSQUEDA
         // ============================================================
-        // Devuelve una proyección con los datos del doctor y su hospital.
-        // Se usa LEFT JOIN explícito para no depender de propiedades de navegación en EF.
         public object listarDoctores(string busqueda = "")
         {
-            var consulta = from d in db.Doctores
-                           join h in db.Hospitales on d.IdHospital equals h.IdHospital into grupoHospital
-                           from h in grupoHospital.DefaultIfEmpty()
-                           where d.Estado == true
-                           select new
-                           {
-                               d.IdDoctor,
-                               d.Nombres,
-                               d.Apellidos,
-                               d.Especialidad,
-                               d.NumeroLicencia,
-                               HospitalNombre = h != null ? h.Nombre : "Sin asignar",
-                               d.Estado
-                           };
+            var consulta = db.Doctores
+                .Include(d => d.DoctorEspecialidad.Select(de => de.Especialidades))
+                .Include(d => d.DoctorEspecialidad.Select(de => de.DoctorHospitalEspecialidad.Select(dhe => dhe.Hospitales)))
+                .Where(d => d.Estado);
 
             if (!string.IsNullOrWhiteSpace(busqueda))
             {
-                busqueda = busqueda.Trim().ToLower();
+                string filtro = busqueda.Trim();
                 consulta = consulta.Where(d =>
-                    d.Nombres.ToLower().Contains(busqueda) ||
-                    d.Apellidos.ToLower().Contains(busqueda) ||
-                    d.Especialidad.ToLower().Contains(busqueda) ||
-                    d.NumeroLicencia.ToLower().Contains(busqueda)
+                    d.PrimerNombre.Contains(filtro) ||
+                    (d.SegundoNombre != null && d.SegundoNombre.Contains(filtro)) ||
+                    d.PrimerApellido.Contains(filtro) ||
+                    (d.SegundoApellido != null && d.SegundoApellido.Contains(filtro)) ||
+                    d.Cedula.Contains(filtro) ||
+                    d.NumeroLicencia.Contains(filtro) ||
+                    d.DoctorEspecialidad.Any(de => de.Especialidades.Nombre.Contains(filtro)) ||
+                    d.DoctorEspecialidad.Any(de => de.DoctorHospitalEspecialidad
+                        .Any(dhe => dhe.Hospitales.Nombre.Contains(filtro)))
                 );
             }
 
-            return consulta.Select(d => new
+            return consulta.ToList().Select(d => new
             {
                 d.IdDoctor,
-                Nombre = d.Nombres + " " + d.Apellidos,
-                d.Especialidad,
+                Nombre = string.Join(" ", new[]
+                {
+                    d.PrimerNombre,
+                    d.SegundoNombre,
+                    d.PrimerApellido,
+                    d.SegundoApellido
+                }.Where(nombre => !string.IsNullOrWhiteSpace(nombre))),
+                Especialidades = string.Join(", ", d.DoctorEspecialidad
+                    .Select(de => de.Especialidades.Nombre)
+                    .Distinct()),
                 Licencia = d.NumeroLicencia,
-                Hospital = d.HospitalNombre,
-                Estado = (d.Estado == true) ? "Activo" : "Inactivo"
+                Hospital = string.Join(", ", d.DoctorEspecialidad
+                    .SelectMany(de => de.DoctorHospitalEspecialidad)
+                    .Select(dhe => dhe.Hospitales.Nombre)
+                    .Distinct()
+                    .DefaultIfEmpty("Sin asignar")),
+                Estado = d.Estado ? "Activo" : "Inactivo"
             }).ToList();
         }
 
         // ============================================================
         // BUSCAR DOCTOR POR ID DOCTOR
         // ============================================================
-        // Permite recuperar la entidad de un doctor específico para edición.
         public Doctores buscarDoctorPorId(int idDoctor)
         {
-            return db.Doctores.FirstOrDefault(d => d.IdDoctor == idDoctor && d.Estado == true);
+            return db.Doctores
+                .Include(d => d.DoctorEspecialidad.Select(de => de.Especialidades))
+                .Include(d => d.DoctorEspecialidad.Select(de => de.DoctorHospitalEspecialidad.Select(dhe => dhe.Hospitales)))
+                .FirstOrDefault(d => d.IdDoctor == idDoctor && d.Estado);
         }
-
 
         // ============================================================
         // EDITAR DOCTOR
         // RF-08
         // ============================================================
-
-        // Actualiza los datos de un doctor existente.
-        //
-        // Solo se pueden editar doctores que estén activos.
-
         public void actualizarDoctor(
             int idDoctor,
-            string nombres,
-            string apellidos,
-            string especialidad,
+            string primerNombre,
+            string segundoNombre,
+            string primerApellido,
+            string segundoApellido,
+            string cedula,
             string numeroLicencia,
-            int idHospital)
+            string telefono,
+            byte[] foto,
+            string fotoNombre,
+            string fotoMimeType,
+            IList<int> idEspecialidades,
+            IList<Tuple<int, int>> asignaciones)
         {
-            // Buscar el doctor por su IdDoctor
-            // y verificar que esté activo.
-            var doctor = db.Doctores.FirstOrDefault(
-                d => d.IdDoctor == idDoctor && d.Estado == true
-            );
+            // Solo se pueden editar doctores que estén activos.
+            var doctor = db.Doctores
+                .Include(d => d.DoctorEspecialidad.Select(de => de.DoctorHospitalEspecialidad))
+                .FirstOrDefault(d => d.IdDoctor == idDoctor && d.Estado);
 
-
-            // Si existe y está activo, actualizar sus datos.
-            if (doctor != null)
+            if (doctor == null)
             {
-                doctor.Nombres = nombres;
-                doctor.Apellidos = apellidos;
-                doctor.Especialidad = especialidad;
-                doctor.NumeroLicencia = numeroLicencia;
-                doctor.IdHospital = idHospital;
-
-                // El estado se mantiene como Activo.
-                doctor.Estado = true;
-
-
-                // Guardar cambios.
-                db.SaveChanges();
+                return;
             }
-        }
 
+            var especialidades = (idEspecialidades ?? new List<int>()).Distinct().ToList();
+            var relaciones = (asignaciones ?? new List<Tuple<int, int>>())
+                .Where(a => especialidades.Contains(a.Item2))
+                .Distinct()
+                .ToList();
+
+            doctor.PrimerNombre = primerNombre;
+            doctor.SegundoNombre = segundoNombre;
+            doctor.PrimerApellido = primerApellido;
+            doctor.SegundoApellido = segundoApellido;
+            doctor.Cedula = cedula;
+            doctor.NumeroLicencia = numeroLicencia;
+            doctor.Telefono = telefono;
+            if (foto != null)
+            {
+                doctor.Foto = foto;
+                doctor.FotoNombre = fotoNombre;
+                doctor.FotoMimeType = fotoMimeType;
+            }
+
+            foreach (var existente in doctor.DoctorEspecialidad.ToList())
+            {
+                foreach (var asignacionExistente in existente.DoctorHospitalEspecialidad.ToList())
+                {
+                    bool seleccionada = relaciones.Any(a =>
+                        a.Item1 == asignacionExistente.IdHospital &&
+                        a.Item2 == asignacionExistente.IdEspecialidad);
+
+                    bool tieneCitas = db.Citas.Any(c =>
+                        c.IdDoctor == asignacionExistente.IdDoctor &&
+                        c.IdHospital == asignacionExistente.IdHospital &&
+                        c.IdEspecialidad == asignacionExistente.IdEspecialidad);
+
+                    if (!seleccionada && !tieneCitas)
+                    {
+                        db.DoctorHospitalEspecialidad.Remove(asignacionExistente);
+                    }
+                }
+
+                bool conservaAsignacion = existente.DoctorHospitalEspecialidad.Any(a =>
+                    db.Entry(a).State != EntityState.Deleted);
+
+                if (!especialidades.Contains(existente.IdEspecialidad) && !conservaAsignacion)
+                {
+                    db.DoctorEspecialidad.Remove(existente);
+                }
+            }
+
+            foreach (int idEspecialidad in especialidades)
+            {
+                var doctorEspecialidad = doctor.DoctorEspecialidad
+                    .FirstOrDefault(de => de.IdEspecialidad == idEspecialidad);
+
+                if (doctorEspecialidad == null)
+                {
+                    doctorEspecialidad = new DoctorEspecialidad { IdEspecialidad = idEspecialidad };
+                    doctor.DoctorEspecialidad.Add(doctorEspecialidad);
+                }
+
+                foreach (var asignacion in relaciones.Where(a => a.Item2 == idEspecialidad))
+                {
+                    bool existe = doctorEspecialidad.DoctorHospitalEspecialidad.Any(dhe =>
+                        dhe.IdHospital == asignacion.Item1 &&
+                        db.Entry(dhe).State != EntityState.Deleted);
+
+                    if (!existe)
+                    {
+                        doctorEspecialidad.DoctorHospitalEspecialidad.Add(
+                            new DoctorHospitalEspecialidad { IdHospital = asignacion.Item1 }
+                        );
+                    }
+                }
+            }
+
+            db.SaveChanges();
+        }
 
         // ============================================================
         // ELIMINAR DOCTOR
         // RF-10
         // ============================================================
-
-        // Este método realiza una eliminación lógica (soft delete).
-        //
-        // El registro NO se elimina físicamente de la base de datos.
-        //
-        // Simplemente cambia:
-        //
-        // Activo → Inactivo
-        //
-        // Esto permite conservar el historial del doctor.
-
+        // Este método realiza una eliminación lógica para conservar
+        // el historial del doctor.
         public void eliminarDoctor(int idDoctor)
         {
             // Buscar únicamente un doctor que esté activo.
             var doctor = db.Doctores.FirstOrDefault(
-               d => d.IdDoctor == idDoctor && d.Estado == true
+                d => d.IdDoctor == idDoctor && d.Estado
             );
 
-
-            // Si el doctor existe y está activo,
-            // cambiar su estado a Inactivo.
             if (doctor != null)
             {
                 doctor.Estado = false;
-
-                // Guardar el cambio en la base de datos.
                 db.SaveChanges();
             }
         }

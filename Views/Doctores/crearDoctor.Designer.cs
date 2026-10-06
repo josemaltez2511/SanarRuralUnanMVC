@@ -232,10 +232,6 @@
 
             this.txtNombres.TabIndex = 1;
 
-            this.txtNombres.TextChanged +=
-                new System.EventHandler(
-                    this.txtNombres_TextChanged
-                );
 
             // 
             // lblErrorNombres
@@ -315,10 +311,6 @@
 
             this.txtApellidos.TabIndex = 2;
 
-            this.txtApellidos.TextChanged +=
-                new System.EventHandler(
-                    this.txtApellidos_TextChanged
-                );
 
             // 
             // lblErrorApellidos
@@ -451,10 +443,6 @@
 
             this.txtNumeroLicencia.TabIndex = 4;
 
-            this.txtNumeroLicencia.TextChanged +=
-                new System.EventHandler(
-                    this.txtNumeroLicencia_TextChanged
-                );
 
             // 
             // lblErrorLicencia

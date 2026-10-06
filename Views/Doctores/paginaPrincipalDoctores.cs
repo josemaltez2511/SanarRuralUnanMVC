@@ -109,9 +109,10 @@ namespace SanarRuralUnan.Views.Doctores
                     dgvDoctores.Columns["Nombre"].HeaderText = "Médico";
                     dgvDoctores.Columns["Nombre"].FillWeight = 140;
                 }
-                if (dgvDoctores.Columns["Especialidad"] != null)
+                if (dgvDoctores.Columns["Especialidades"] != null)
                 {
-                    dgvDoctores.Columns["Especialidad"].FillWeight = 100;
+                    dgvDoctores.Columns["Especialidades"].HeaderText = "Especialidades";
+                    dgvDoctores.Columns["Especialidades"].FillWeight = 125;
                 }
                 if (dgvDoctores.Columns["Licencia"] != null)
                 {
@@ -279,9 +280,25 @@ namespace SanarRuralUnan.Views.Doctores
         // ============================================================
         private void btnNuevo_Click(object sender, EventArgs e)
         {
-            crearUsuario formUsuario = new crearUsuario(true);
-            formUsuario.Show();
-            this.Hide();
+            DialogResult respuesta = MessageBox.Show(
+                "¿Desea crear una cuenta de usuario para este doctor?",
+                "Registro de doctor",
+                MessageBoxButtons.YesNoCancel,
+                MessageBoxIcon.Question
+            );
+
+            if (respuesta == DialogResult.Yes)
+            {
+                crearUsuario formUsuario = new crearUsuario(true);
+                formUsuario.Show();
+                this.Hide();
+            }
+            else if (respuesta == DialogResult.No)
+            {
+                crearDoctor formDoctor = new crearDoctor();
+                formDoctor.Show();
+                this.Hide();
+            }
         }
 
         // ============================================================
