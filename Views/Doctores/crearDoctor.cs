@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
@@ -28,6 +28,7 @@ namespace SanarRuralUnan.Views
         private byte[] foto;
         private string fotoNombre;
         private string fotoMimeType;
+        private bool fotoEliminadaExplicita;
 
         private TextBox txtPrimerNombre;
         private TextBox txtSegundoNombre;
@@ -42,6 +43,8 @@ namespace SanarRuralUnan.Views
         private ListBox lstAsignaciones;
         private Label lblFoto;
         private Button btnSeleccionarFoto;
+        private Button btnQuitarFoto;
+        private PictureBox picPreview;
         private Button btnAgregarAsignacion;
         private Button btnQuitarAsignacion;
         private readonly List<Tuple<int, int>> asignaciones = new List<Tuple<int, int>>();
@@ -138,74 +141,98 @@ namespace SanarRuralUnan.Views
             txtTelefono.MaxLength = 30;
             txtLicencia.MaxLength = 50;
 
-            AgregarEtiqueta("Foto", 590, 330);
+            // Vista previa de la foto del doctor
+            AgregarEtiqueta("Foto del doctor", 590, 330);
+            picPreview = new PictureBox
+            {
+                Anchor = AnchorStyles.Top | AnchorStyles.Right,
+                BackColor = Tema.FondoSecundario,
+                BorderStyle = BorderStyle.FixedSingle,
+                Location = new Point(590, 355),
+                Size = new Size(130, 130),
+                SizeMode = PictureBoxSizeMode.Zoom,
+                Tag = "photoPreview",
+                AccessibleName = "Vista previa de la foto del doctor"
+            };
+            panelCard.Controls.Add(picPreview);
+
             lblFoto = new Label
             {
                 AutoEllipsis = true,
                 Anchor = AnchorStyles.Top | AnchorStyles.Right,
-                Location = new Point(590, 355),
-                Size = new Size(360, 28),
+                Font = Tema.FuenteAyuda,
+                ForeColor = Tema.TextoSecundario,
+                Location = new Point(730, 360),
+                Size = new Size(360, 20),
                 Tag = "photoLabel",
                 Text = "Sin foto seleccionada",
                 TextAlign = ContentAlignment.MiddleLeft
             };
             panelCard.Controls.Add(lblFoto);
 
-            btnSeleccionarFoto = CrearBoton("Seleccionar foto", 960, 353, 130, 32);
+            btnSeleccionarFoto = CrearBoton("Seleccionar foto", 730, 385, 140, 32);
             btnSeleccionarFoto.Tag = "photoButton";
             btnSeleccionarFoto.Click += btnSeleccionarFoto_Click;
             panelCard.Controls.Add(btnSeleccionarFoto);
 
-            AgregarEtiqueta("Especialidades * (puede elegir varias)", 45, 395);
+            btnQuitarFoto = CrearBoton("Quitar foto", 730, 425, 140, 32);
+            btnQuitarFoto.Tag = "photoRemoveButton";
+            btnQuitarFoto.BackColor = Tema.Error;
+            btnQuitarFoto.Visible = false;
+            btnQuitarFoto.Click += btnQuitarFoto_Click;
+            panelCard.Controls.Add(btnQuitarFoto);
+
+            // Especialidades y asignaciones hospitalarias
+            AgregarEtiqueta("Especialidades * (puede elegir varias)", 45, 515);
             lstEspecialidades = new CheckedListBox
             {
                 CheckOnClick = true,
                 Font = Tema.FuenteCuerpo,
                 Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right,
-                Location = new Point(45, 420),
+                Location = new Point(45, 540),
                 Size = new Size(420, 230),
                 Tag = "specialties"
             };
             panelCard.Controls.Add(lstEspecialidades);
 
-            AgregarEtiqueta("Hospital", 500, 395);
-            AgregarEtiqueta("Especialidad que ejerce allí", 790, 395);
-            cmbHospitalAsignacion = CrearCombo(500, 420, 270, 32);
+            AgregarEtiqueta("Hospital", 500, 515);
+            AgregarEtiqueta("Especialidad que ejerce allí", 790, 515);
+            cmbHospitalAsignacion = CrearCombo(500, 540, 270, 32);
             cmbHospitalAsignacion.Tag = "assignHospital";
-            cmbEspecialidadHospital = CrearCombo(790, 420, 300, 32);
+            cmbEspecialidadHospital = CrearCombo(790, 540, 300, 32);
             cmbEspecialidadHospital.Tag = "assignSpecialty";
             panelCard.Controls.Add(cmbHospitalAsignacion);
             panelCard.Controls.Add(cmbEspecialidadHospital);
 
-            btnAgregarAsignacion = CrearBoton("Agregar", 500, 465, 115, 34);
+            btnAgregarAsignacion = CrearBoton("Agregar", 500, 585, 115, 34);
             btnAgregarAsignacion.Tag = "addAssignment";
             btnAgregarAsignacion.Click += btnAgregarAsignacion_Click;
             panelCard.Controls.Add(btnAgregarAsignacion);
 
-            AgregarEtiqueta("Hospitales y especialidades asignados", 500, 510);
+            AgregarEtiqueta("Hospitales y especialidades asignados", 500, 630);
             lstAsignaciones = new ListBox
             {
                 Font = Tema.FuenteCuerpo,
                 Anchor = AnchorStyles.Top | AnchorStyles.Right,
-                Location = new Point(500, 535),
+                Location = new Point(500, 655),
                 Size = new Size(590, 115),
                 Tag = "assignments"
             };
             panelCard.Controls.Add(lstAsignaciones);
 
-            btnQuitarAsignacion = CrearBoton("Quitar seleccionado", 500, 660, 180, 34);
+            btnQuitarAsignacion = CrearBoton("Quitar seleccionado", 500, 780, 180, 34);
             btnQuitarAsignacion.Tag = "removeAssignment";
             btnQuitarAsignacion.Click += btnQuitarAsignacion_Click;
             panelCard.Controls.Add(btnQuitarAsignacion);
 
-            btnGuardar.Location = new Point(45, 720);
+            btnGuardar.Location = new Point(45, 840);
             btnGuardar.Size = new Size(1045, 42);
             btnGuardar.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             btnGuardar.TabIndex = 8;
             btnGuardar.Text = "Guardar Doctor";
             panelCard.Controls.Add(btnGuardar);
 
-            lnkVolver.Location = new Point(490, 780);
+            lnkVolver.Location = new Point(490, 900);
             lnkVolver.Tag = "back";
             lnkVolver.Text = "Completar después / Volver";
             panelCard.Controls.Add(lnkVolver);
@@ -310,12 +337,16 @@ namespace SanarRuralUnan.Views
                         control.Location = new Point(xDerecha, control.Top);
                         control.Width = anchoColumna;
                         break;
-                    case "photoLabel":
+                    case "photoPreview":
                         control.Location = new Point(xDerecha, control.Top);
-                        control.Width = Math.Max(80, anchoColumna - 145);
+                        break;
+                    case "photoLabel":
+                        control.Location = new Point(xDerecha + 140, control.Top);
+                        control.Width = Math.Max(80, anchoColumna - 155);
                         break;
                     case "photoButton":
-                        control.Location = new Point(xDerecha + anchoColumna - control.Width, control.Top);
+                    case "photoRemoveButton":
+                        control.Location = new Point(xDerecha + 140, control.Top);
                         break;
                     case "specialties":
                         control.Location = new Point(margen, control.Top);
@@ -404,9 +435,20 @@ namespace SanarRuralUnan.Views
                 }
             }
 
+            foto = doctor.Foto;
             fotoNombre = doctor.FotoNombre;
             fotoMimeType = doctor.FotoMimeType;
-            lblFoto.Text = string.IsNullOrWhiteSpace(fotoNombre) ? "Sin foto seleccionada" : fotoNombre;
+
+            if (foto != null && foto.Length > 0)
+            {
+                MostrarPreviewDesdeBytes(foto);
+                lblFoto.Text = fotoNombre ?? "Foto cargada";
+                btnQuitarFoto.Visible = true;
+            }
+            else
+            {
+                lblFoto.Text = "Sin foto seleccionada";
+            }
         }
 
         private void btnSeleccionarFoto_Click(object sender, EventArgs e)
@@ -416,13 +458,114 @@ namespace SanarRuralUnan.Views
                 selector.Title = "Seleccionar foto del doctor";
                 selector.Filter = "Imágenes|*.jpg;*.jpeg;*.png;*.bmp";
 
-                if (selector.ShowDialog() == DialogResult.OK)
+                if (selector.ShowDialog() != DialogResult.OK)
                 {
-                    foto = File.ReadAllBytes(selector.FileName);
-                    fotoNombre = Path.GetFileName(selector.FileName);
-                    fotoMimeType = GetMimeType(selector.FileName);
-                    lblFoto.Text = fotoNombre;
+                    return;
                 }
+
+                // Se leen los bytes directamente para no retener bloqueos sobre el archivo original.
+                byte[] bytesArchivo;
+                try
+                {
+                    bytesArchivo = File.ReadAllBytes(selector.FileName);
+                }
+                catch (IOException ex)
+                {
+                    MessageBox.Show(
+                        "No se pudo leer el archivo seleccionado.\n\n" + ex.Message,
+                        "Error de lectura",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Error);
+                    return;
+                }
+
+                // Validar que el archivo corresponda a una imagen legible.
+                Image imagenCargada;
+                try
+                {
+                    using (var stream = new MemoryStream(bytesArchivo))
+                    {
+                        // Se crea una copia en un nuevo Bitmap para gestionar independientemente el ciclo de vida.
+                        using (var temporal = Image.FromStream(stream))
+                        {
+                            imagenCargada = new Bitmap(temporal);
+                        }
+                    }
+                }
+                catch (ArgumentException)
+                {
+                    MessageBox.Show(
+                        "El archivo seleccionado no es una imagen válida.\nFormatos permitidos: JPG, PNG, BMP.",
+                        "Imagen no válida",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Warning);
+                    return;
+                }
+
+                // Liberar la imagen anterior para evitar fugas de memoria en GDI+.
+                LimpiarPreview();
+
+                foto = bytesArchivo;
+                fotoNombre = Path.GetFileName(selector.FileName);
+                fotoMimeType = GetMimeType(selector.FileName);
+                fotoEliminadaExplicita = false;
+
+                picPreview.Image = imagenCargada;
+                lblFoto.Text = fotoNombre;
+                btnQuitarFoto.Visible = true;
+            }
+        }
+
+        private void btnQuitarFoto_Click(object sender, EventArgs e)
+        {
+            LimpiarPreview();
+            foto = null;
+            fotoNombre = null;
+            fotoMimeType = null;
+            fotoEliminadaExplicita = true;
+            lblFoto.Text = "Sin foto seleccionada";
+            btnQuitarFoto.Visible = false;
+        }
+
+        // ============================================================
+        // MÉTODOS DE VISTA PREVIA DE FOTO
+        // ============================================================
+        // Genera un Bitmap a partir del arreglo de bytes y lo asigna al PictureBox.
+        private void MostrarPreviewDesdeBytes(byte[] bytes)
+        {
+            if (bytes == null || bytes.Length == 0)
+            {
+                return;
+            }
+
+            try
+            {
+                Image imagenNueva;
+                using (var stream = new MemoryStream(bytes))
+                {
+                    using (var temporal = Image.FromStream(stream))
+                    {
+                        imagenNueva = new Bitmap(temporal);
+                    }
+                }
+
+                LimpiarPreview();
+                picPreview.Image = imagenNueva;
+            }
+            catch (ArgumentException)
+            {
+                // Si los bytes almacenados no forman una imagen válida, se deja la vista previa vacía.
+            }
+        }
+
+        // Libera la imagen actual del PictureBox para gestionar adecuadamente los recursos GDI+.
+        private void LimpiarPreview()
+        {
+            if (picPreview.Image != null)
+            {
+                var imagenAnterior = picPreview.Image;
+                picPreview.Image = null;
+                imagenAnterior.Dispose();
             }
         }
 
@@ -546,6 +689,7 @@ namespace SanarRuralUnan.Views
                         foto,
                         fotoNombre,
                         fotoMimeType,
+                        fotoEliminadaExplicita,
                         idEspecialidades,
                         asignacionesSeleccionadas
                     );
