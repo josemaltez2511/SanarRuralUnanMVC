@@ -74,6 +74,7 @@
     <Compile Include="ContactosEmergencia.cs">
       <DependentUpon>ModelSanarRural.tt</DependentUpon>
     </Compile>
+    <Compile Include="Controllers\citasControllers.cs" />
     <Compile Include="Controllers\doctoresControllers.cs" />
     <Compile Include="Controllers\hospitalesController.cs" />
     <Compile Include="Controllers\pacientesControllers.cs" />
@@ -121,6 +122,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>ModelSanarRural.edmx</DependentUpon>
     </Compile>
+    <Compile Include="Models\citasModels.cs" />
     <Compile Include="Models\doctoresModels.cs" />
     <Compile Include="Models\hospitalesModels.cs" />
     <Compile Include="Models\pacientesModels.cs" />
@@ -148,6 +150,18 @@
     </Compile>
     <Compile Include="Usuarios.cs">
       <DependentUpon>ModelSanarRural.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Citas\crearCita.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Views\Citas\crearCita.Designer.cs">
+      <DependentUpon>crearCita.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Citas\paginaPrincipalCitas.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Views\Citas\paginaPrincipalCitas.Designer.cs">
+      <DependentUpon>paginaPrincipalCitas.cs</DependentUpon>
     </Compile>
     <Compile Include="Views\Doctores\crearDoctor.cs">
       <SubType>Form</SubType>
@@ -229,6 +243,12 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="Views\Citas\crearCita.resx">
+      <DependentUpon>crearCita.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\Citas\paginaPrincipalCitas.resx">
+      <DependentUpon>paginaPrincipalCitas.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Views\Doctores\crearDoctor.resx">
       <DependentUpon>crearDoctor.cs</DependentUpon>
     </EmbeddedResource>

@@ -28,6 +28,7 @@ namespace SanarRuralUnan.Views
             this.btnDoctores = new MaterialButton();
             this.btnPacientes = new MaterialButton();
             this.btnHospitales = new MaterialButton();
+            this.btnCitas = new MaterialButton();
             this.btnCerrarSesion = new MaterialButton();
             this.panelContenido = new System.Windows.Forms.Panel();
             this.lblSeccion = new MaterialLabel();
@@ -81,6 +82,7 @@ namespace SanarRuralUnan.Views
             this.panelNavegacion.Controls.Add(this.btnDoctores);
             this.panelNavegacion.Controls.Add(this.btnPacientes);
             this.panelNavegacion.Controls.Add(this.btnHospitales);
+            this.panelNavegacion.Controls.Add(this.btnCitas);
             this.panelNavegacion.Controls.Add(this.panelIndicador);
             this.panelIndicador.BackColor = Tema.VerdeOscuro;
             this.panelIndicador.Location = new System.Drawing.Point(24, 51);
@@ -115,11 +117,18 @@ namespace SanarRuralUnan.Views
             this.btnHospitales.AccessibleName = "Hospitales";
             this.btnHospitales.AccessibleDescription = "Navegar a la sección Hospitales";
             this.btnHospitales.Click += new System.EventHandler(this.btnHospitales_Click);
+            this.btnCitas.Text = "Citas";
+            this.btnCitas.Type = MaterialButton.MaterialButtonType.Text;
+            this.btnCitas.Size = new System.Drawing.Size(100, 42);
+            this.btnCitas.TabIndex = 4;
+            this.btnCitas.AccessibleName = "Citas";
+            this.btnCitas.AccessibleDescription = "Navegar a la sección Citas";
+            this.btnCitas.Click += new System.EventHandler(this.btnCitas_Click);
             this.btnCerrarSesion.Text = "Cerrar sesión";
             this.btnCerrarSesion.Type = MaterialButton.MaterialButtonType.Text;
             this.btnCerrarSesion.Size = new System.Drawing.Size(132, 40);
             this.btnCerrarSesion.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
-            this.btnCerrarSesion.TabIndex = 4;
+            this.btnCerrarSesion.TabIndex = 5;
             this.btnCerrarSesion.AccessibleName = "Cerrar sesión";
             this.btnCerrarSesion.AccessibleDescription = "Cerrar la sesión actual";
             this.btnCerrarSesion.HighEmphasis = true;
@@ -174,6 +183,7 @@ namespace SanarRuralUnan.Views
         private MaterialButton btnDoctores;
         private MaterialButton btnPacientes;
         private MaterialButton btnHospitales;
+        private MaterialButton btnCitas;
         private MaterialButton btnCerrarSesion;
         private System.Windows.Forms.Panel panelContenido;
         private MaterialLabel lblSeccion;
