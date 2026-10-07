@@ -103,6 +103,7 @@ namespace SanarRuralUnan.Views
             btnPacientes.Type = MaterialButton.MaterialButtonType.Contained;
             btnCitas.Text = "Citas";
             btnCitas.Type = MaterialButton.MaterialButtonType.Text;
+            btnConsultas.Text = "Consultas";
             btnConsultas.Type = MaterialButton.MaterialButtonType.Text;
             btnHistorial.Type = MaterialButton.MaterialButtonType.Text;
         }

@@ -1,50 +1,152 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using SanarRuralUnan.Models;
 
-// Controller de pacientes para la aplicación SanarRuralUnan
-// Este controlador comunica la Vista con el Modelo.
-// La Vista no accede directamente a la base de datos.
-
 namespace SanarRuralUnan.Controllers
 {
+    // Controlador del módulo de Pacientes.
+    // Orquesta la comunicación entre la capa de Vista y el Modelo respetando el patrón MVC informal.
     public class pacientesControllers
     {
+        private readonly pacientesModels modelo = new pacientesModels();
+
         // ============================================================
-        // CONSULTAS DE UBICACIÓN
+        // CONSULTAS GEOGRÁFICAS
         // ============================================================
 
-        // Carga las listas dependientes del formulario de paciente.
-        public List<Departamentos> listarDepartamentos()
+        public List<UbicacionItemDto> listarDepartamentos()
         {
-            return new pacientesModel().listarDepartamentos();
+            return modelo.listarDepartamentos();
         }
 
-        public List<Municipios> listarMunicipios(int idDepartamento)
+        public List<UbicacionItemDto> listarMunicipios(int idDepartamento)
         {
-            return new pacientesModel().listarMunicipios(idDepartamento);
+            return modelo.listarMunicipios(idDepartamento);
         }
 
-        public List<Comunidades> listarComunidades(int idMunicipio)
+        public List<UbicacionItemDto> listarComunidades(int idMunicipio)
         {
-            return new pacientesModel().listarComunidades(idMunicipio);
+            return modelo.listarComunidades(idMunicipio);
         }
 
-        public List<Pacientes> listarPacientes(string busqueda = "")
+        // ============================================================
+        // LISTADO Y DETALLE DE PACIENTES
+        // ============================================================
+
+        public List<PacienteItemDto> listarPacientes(string busqueda = "", string estadoFiltro = "Activos")
         {
-            return new pacientesModel().listarPacientes(busqueda);
+            return modelo.listarPacientes(busqueda, estadoFiltro);
         }
+
+        public PacienteDetalleDto obtenerPacienteDetalle(int idPaciente)
+        {
+            return modelo.obtenerPacienteDetalle(idPaciente);
+        }
+
+        public PacienteDetalleDto buscarPacientePorUsuario(int idUsuario)
+        {
+            return modelo.buscarPacientePorUsuario(idUsuario);
+        }
+
+        public bool EsAdministrativo()
+        {
+            return modelo.EsAdministrativo();
+        }
+
+        // ============================================================
+        // COMPROBACIONES DE UNICIDAD
+        // ============================================================
+
+        public bool existeCedula(string cedula, int? idPacienteExcluir = null)
+        {
+            return modelo.existeCedula(cedula, idPacienteExcluir);
+        }
+
+        public bool existeNumeroINSS(string numeroINSS, int? idPacienteExcluir = null)
+        {
+            return modelo.existeNumeroINSS(numeroINSS, idPacienteExcluir);
+        }
+
+        // ============================================================
+        // REGISTRO Y EDICIÓN (ATÓMICO CON CONTACTOS)
+        // ============================================================
+
+        public int crearPaciente(
+            int? idUsuario,
+            string primerNombre,
+            string segundoNombre,
+            string primerApellido,
+            string segundoApellido,
+            string cedula,
+            string numeroINSS,
+            DateTime fechaNacimiento,
+            string genero,
+            string telefono,
+            int idComunidad,
+            string direccion,
+            string tipoSangre,
+            string alergias,
+            string antecedentes,
+            List<ContactoEmergenciaDto> contactos = null)
+        {
+            return modelo.guardarPaciente(
+                idUsuario, primerNombre, segundoNombre, primerApellido, segundoApellido,
+                cedula, numeroINSS, fechaNacimiento, genero, telefono, idComunidad,
+                direccion, tipoSangre, alergias, antecedentes, contactos);
+        }
+
+        public void editarPaciente(
+            int idPaciente,
+            string primerNombre,
+            string segundoNombre,
+            string primerApellido,
+            string segundoApellido,
+            string cedula,
+            string numeroINSS,
+            DateTime fechaNacimiento,
+            string genero,
+            string telefono,
+            int idComunidad,
+            string direccion,
+            string tipoSangre,
+            string alergias,
+            string antecedentes,
+            List<ContactoEmergenciaDto> contactos = null)
+        {
+            modelo.actualizarPaciente(
+                idPaciente, primerNombre, segundoNombre, primerApellido, segundoApellido,
+                cedula, numeroINSS, fechaNacimiento, genero, telefono, idComunidad,
+                direccion, tipoSangre, alergias, antecedentes, contactos);
+        }
+
+        // ============================================================
+        // BAJA LÓGICA Y REACTIVACIÓN
+        // ============================================================
+
+        public void eliminarPaciente(int idPaciente)
+        {
+            modelo.eliminarPaciente(idPaciente);
+        }
+
+        public void reactivarPaciente(int idPaciente)
+        {
+            modelo.reactivarPaciente(idPaciente);
+        }
+
+        // ============================================================
+        // MÉTODOS DE COMPATIBILIDAD HACIA ATRÁS
+        // ============================================================
 
         public Pacientes consultarPacientePorId(int idPaciente)
         {
-            return new pacientesModel().buscarPacientePorId(idPaciente);
+            return modelo.buscarPacientePorId(idPaciente);
         }
 
-        // ============================================================
-        // CREAR PACIENTE
-        // RF-03
-        // ============================================================
-        // Recibe los datos enviados desde la Vista y los pasa al Modelo.
+        public Pacientes consultarPaciente(int idUsuario)
+        {
+            return modelo.buscarPaciente(idUsuario);
+        }
+
         public void crearPaciente(
             int? idUsuario,
             string primerNombre,
@@ -69,46 +171,14 @@ namespace SanarRuralUnan.Controllers
             string contactoTelefono,
             string contactoCedula)
         {
-            new pacientesModel().guardarPaciente(
-                idUsuario,
-                primerNombre,
-                segundoNombre,
-                primerApellido,
-                segundoApellido,
-                cedula,
-                numeroINSS,
-                fechaNacimiento,
-                genero,
-                telefono,
-                idComunidad,
-                direccion,
-                tipoSangre,
-                alergias,
-                antecedentes,
-                contactoPrimerNombre,
-                contactoSegundoNombre,
-                contactoPrimerApellido,
-                contactoSegundoApellido,
-                contactoParentesco,
-                contactoTelefono,
-                contactoCedula);
+            modelo.guardarPaciente(
+                idUsuario, primerNombre, segundoNombre, primerApellido, segundoApellido,
+                cedula, numeroINSS, fechaNacimiento, genero, telefono, idComunidad,
+                direccion, tipoSangre, alergias, antecedentes,
+                contactoPrimerNombre, contactoSegundoNombre, contactoPrimerApellido,
+                contactoSegundoApellido, contactoParentesco, contactoTelefono, contactoCedula);
         }
 
-        // ============================================================
-        // CONSULTAR PACIENTE
-        // RF-05
-        // ============================================================
-        // Busca un paciente utilizando el IdUsuario.
-        public Pacientes consultarPaciente(int idUsuario)
-        {
-            return new pacientesModel().buscarPaciente(idUsuario);
-        }
-
-        // ============================================================
-        // EDITAR PACIENTE
-        // RF-04
-        // ============================================================
-        // Recibe los datos editables y los envía al Modelo.
         public void editarPaciente(
             int idPaciente,
             string primerNombre,
@@ -126,32 +196,10 @@ namespace SanarRuralUnan.Controllers
             string alergias,
             string antecedentes)
         {
-            new pacientesModel().actualizarPaciente(
-                idPaciente,
-                primerNombre,
-                segundoNombre,
-                primerApellido,
-                segundoApellido,
-                cedula,
-                numeroINSS,
-                fechaNacimiento,
-                genero,
-                telefono,
-                idComunidad,
-                direccion,
-                tipoSangre,
-                alergias,
-                antecedentes);
-        }
-
-        // ============================================================
-        // ELIMINAR PACIENTE
-        // RF-06
-        // ============================================================
-        // Realiza una baja lógica y conserva el registro en la BD.
-        public void eliminarPaciente(int idPaciente)
-        {
-            new pacientesModel().eliminarPaciente(idPaciente);
+            modelo.actualizarPaciente(
+                idPaciente, primerNombre, segundoNombre, primerApellido, segundoApellido,
+                cedula, numeroINSS, fechaNacimiento, genero, telefono, idComunidad,
+                direccion, tipoSangre, alergias, antecedentes);
         }
     }
 }

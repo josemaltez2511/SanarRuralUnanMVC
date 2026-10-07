@@ -1,4 +1,5 @@
-using System;
+﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
@@ -8,417 +9,386 @@ using SanarRuralUnan.Models;
 
 namespace SanarRuralUnan.Views
 {
+    /// <summary>
+    /// Formulario para la creación y edición de pacientes, incluyendo
+    /// cascada geográfica y gestión compacta de contactos de emergencia (1:N).
+    /// </summary>
     public partial class crearPaciente : Form
     {
-        // La Vista utiliza el Controller para comunicarse con el Modelo.
-        // La Vista nunca accede directamente a la base de datos.
         private readonly pacientesControllers controlador = new pacientesControllers();
+        private readonly List<ContactoEmergenciaDto> listaContactos = new List<ContactoEmergenciaDto>();
 
-        // El paciente puede asociarse a una cuenta existente o guardarse sin usuario.
         private int? idUsuario;
         private int? idPacienteEditar;
-
-
-        // ============================================================
-        // CONTROLES DEL FORMULARIO
-        // ============================================================
-        private ComboBox cmbDepartamento;
-        private ComboBox cmbMunicipio;
-        private ComboBox cmbComunidad;
-        private TextBox txtSegundoNombre;
-        private TextBox txtSegundoApellido;
-        private TextBox txtCedula;
-        private TextBox txtNumeroINSS;
-        private TextBox txtContactoPrimerNombre;
-        private TextBox txtContactoSegundoNombre;
-        private TextBox txtContactoPrimerApellido;
-        private TextBox txtContactoSegundoApellido;
-        private TextBox txtContactoParentesco;
-        private TextBox txtContactoTelefono;
-        private TextBox txtContactoCedula;
         private bool cargandoUbicacion;
-
-        // ============================================================
-        // CONSTRUCTOR
-        // ============================================================
 
         public crearPaciente()
         {
             InitializeComponent();
-            PrepararCampos();
         }
 
         public crearPaciente(int idUsuarioRecibido) : this()
         {
-            // El menú usa cero cuando no hay una cuenta relacionada.
             idUsuario = idUsuarioRecibido > 0 ? idUsuarioRecibido : (int?)null;
         }
 
         public crearPaciente(int idPaciente, bool modoEdicion) : this()
         {
             if (modoEdicion)
+            {
                 idPacienteEditar = idPaciente;
-        }
-
-        private void PrepararCampos()
-        {
-            panelCard.AutoScrollMinSize = Size.Empty;
-            panelDatosPersonales.Size = new Size(panelDatosPersonales.Width, 660);
-            panelRegistroSalud.Size = new Size(panelRegistroSalud.Width, 660);
-            btnGuardar.Location = new Point(btnGuardar.Left, 780);
-            lnkVolver.Location = new Point(450, 825);
-
-            lblNombres.Text = "Primer nombre *";
-            lblApellidos.Text = "Primer apellido *";
-            lblUbicacion.Location = new Point(20, 395);
-            lblDepartamento.Location = new Point(20, 425);
-            lblMunicipio.Location = new Point(260, 425);
-            lblComunidad.Location = new Point(20, 485);
-            OcultarControl(lblDepartamento);
-            OcultarControl(lblMunicipio);
-            OcultarControl(lblComunidad);
-            lblDireccion.Location = new Point(20, 545);
-
-            txtNombres.Location = new Point(20, 77);
-            txtNombres.Size = new Size(210, 25);
-            txtApellidos.Location = new Point(20, 144);
-            txtApellidos.Size = new Size(210, 25);
-            txtDireccion.Location = new Point(20, 564);
-            txtDireccion.Size = new Size(450, 55);
-
-            lblFechaNacimiento.Location = new Point(20, 259);
-            dtpFechaNacimiento.Location = new Point(20, 278);
-            lblGenero.Location = new Point(260, 259);
-            cmbGenero.Location = new Point(260, 278);
-            lblTelefono.Location = new Point(20, 326);
-            txtTelefono.Location = new Point(20, 345);
-            lblErrorTelefono.Location = new Point(20, 373);
-            lblErrorNombres.Location = new Point(20, 105);
-
-            OcultarControl(txtDepartamento);
-            OcultarControl(txtMunicipio);
-            OcultarControl(txtComunidad);
-            OcultarControl(txtContactoEmergencia);
-
-            txtSegundoNombre = AgregarTexto(panelDatosPersonales, "Segundo nombre", 260, 58, 210, 77);
-            txtSegundoApellido = AgregarTexto(panelDatosPersonales, "Segundo apellido", 260, 125, 210, 144);
-            txtCedula = AgregarTexto(panelDatosPersonales, "Cédula", 20, 192, 210, 211);
-            txtNumeroINSS = AgregarTexto(panelDatosPersonales, "Número INSS", 260, 192, 210, 211);
-
-            cmbDepartamento = AgregarCombo(panelDatosPersonales, "Departamento *", 20, 425, 210, 444);
-            cmbMunicipio = AgregarCombo(panelDatosPersonales, "Municipio *", 260, 425, 210, 444);
-            cmbComunidad = AgregarCombo(panelDatosPersonales, "Comunidad *", 20, 485, 450, 504);
-            cmbDepartamento.SelectedIndexChanged += cmbDepartamento_SelectedIndexChanged;
-            cmbMunicipio.SelectedIndexChanged += cmbMunicipio_SelectedIndexChanged;
-
-            lblContactoEmergencia.Text = "Contacto de emergencia (opcional)";
-            lblContactoEmergencia.Location = new Point(20, 125);
-            lblTipoSangre.Location = new Point(20, 370);
-            cmbTipoSangre.Location = new Point(20, 390);
-            lblAlergias.Location = new Point(20, 425);
-            txtAlergias.Location = new Point(20, 445);
-            txtAlergias.Size = new Size(450, 60);
-            lblAntecedentes.Location = new Point(20, 515);
-            txtAntecedentes.Location = new Point(20, 535);
-            txtAntecedentes.Size = new Size(450, 90);
-
-            txtContactoPrimerNombre = AgregarTexto(panelRegistroSalud, "Primer nombre *", 20, 145, 210, 164);
-            txtContactoSegundoNombre = AgregarTexto(panelRegistroSalud, "Segundo nombre", 260, 145, 210, 164);
-            txtContactoPrimerApellido = AgregarTexto(panelRegistroSalud, "Primer apellido *", 20, 205, 210, 224);
-            txtContactoSegundoApellido = AgregarTexto(panelRegistroSalud, "Segundo apellido", 260, 205, 210, 224);
-            txtContactoParentesco = AgregarTexto(panelRegistroSalud, "Parentesco *", 20, 265, 210, 284);
-            txtContactoTelefono = AgregarTexto(panelRegistroSalud, "Teléfono *", 260, 265, 210, 284);
-            txtContactoCedula = AgregarTexto(panelRegistroSalud, "Cédula", 20, 325, 210, 344);
-
-            panelCard.Resize += panelCard_Resize;
-            AjustarLayoutPaciente();
-        }
-
-        private TextBox AgregarTexto(Control contenedor, string etiqueta, int x, int yEtiqueta, int ancho, int yTexto)
-        {
-            Label label = new Label
-            {
-                AutoSize = true,
-                Font = Tema.FuenteLabelCampo,
-                ForeColor = Tema.TextoPrincipal,
-                Location = new Point(x, yEtiqueta),
-                Tag = new Point(x, ancho),
-                Text = etiqueta
-            };
-            TextBox texto = new TextBox
-            {
-                Font = Tema.FuenteInput,
-                Location = new Point(x, yTexto),
-                Size = new Size(ancho, 25)
-            };
-            texto.Tag = new Point(x, ancho);
-            contenedor.Controls.Add(label);
-            contenedor.Controls.Add(texto);
-            return texto;
-        }
-
-        private ComboBox AgregarCombo(Control contenedor, string etiqueta, int x, int yEtiqueta, int ancho, int yCombo)
-        {
-            Label label = new Label
-            {
-                AutoSize = true,
-                Font = Tema.FuenteLabelCampo,
-                ForeColor = Tema.TextoPrincipal,
-                Location = new Point(x, yEtiqueta),
-                Tag = new Point(x, ancho),
-                Text = etiqueta
-            };
-            ComboBox combo = new ComboBox
-            {
-                DropDownStyle = ComboBoxStyle.DropDownList,
-                Font = Tema.FuenteInput,
-                Location = new Point(x, yCombo),
-                Size = new Size(ancho, 25)
-            };
-            combo.Tag = new Point(x, ancho);
-            contenedor.Controls.Add(label);
-            contenedor.Controls.Add(combo);
-            return combo;
-        }
-
-        private static void OcultarControl(Control control)
-        {
-            control.Visible = false;
-        }
-
-        private void panelCard_Resize(object sender, EventArgs e)
-        {
-            AjustarLayoutPaciente();
-        }
-
-        private void AjustarLayoutPaciente()
-        {
-            int anchoColumna = Math.Max(0, (panelCard.ClientSize.Width - 80) / 2);
-            int anchoCompleto = Math.Max(0, panelCard.ClientSize.Width - 80);
-
-            panelDatosPersonales.Width = anchoColumna;
-            panelRegistroSalud.Width = anchoColumna;
-            panelDatosPersonales.Location = new Point(20, 90);
-            panelRegistroSalud.Location = new Point(anchoColumna + 40, 90);
-
-            AjustarCampos(panelDatosPersonales);
-            AjustarCampos(panelRegistroSalud);
-
-            btnGuardar.Location = new Point(40, btnGuardar.Top);
-            btnGuardar.Width = anchoCompleto;
-            lnkVolver.Location = new Point((panelCard.ClientSize.Width - lnkVolver.Width) / 2, lnkVolver.Top);
-        }
-
-        private static void AjustarCampos(Panel panel)
-        {
-            int anchoColumna = Math.Max(0, (panel.ClientSize.Width - 50) / 2);
-            int xDerecha = anchoColumna + 30;
-
-            foreach (Control control in panel.Controls)
-            {
-                Point dimensiones = control.Tag is Point
-                    ? (Point)control.Tag
-                    : new Point(control.Left, control.Width);
-                control.Tag = dimensiones;
-
-                bool esColumnaDerecha = dimensiones.X >= 240 && dimensiones.X < 400;
-                int x = esColumnaDerecha ? xDerecha : 20;
-                control.Left = x;
-
-                if (!(control is Label))
-                {
-                    control.Width = dimensiones.Y >= 400
-                        ? Math.Max(0, panel.ClientSize.Width - 40)
-                        : anchoColumna;
-                }
             }
         }
 
         private void crearPaciente_Load(object sender, EventArgs e)
         {
-            // Colocar el cursor inicialmente en el primer nombre.
-            txtNombres.Focus();
-
-            // Si el ComboBox tiene opciones, seleccionar la primera.
-            if (cmbGenero.Items.Count > 0) cmbGenero.SelectedIndex = 0;
-
-            // No permitir una fecha de nacimiento futura.
-            dtpFechaNacimiento.MaxDate = DateTime.Today;
-
-            // Mensajes de error iniciales.
-            lblErrorNombres.Text = string.Empty;
-            lblErrorTelefono.Text = string.Empty;
+            ConfigurarFormulario();
             CargarDepartamentos();
 
             if (idPacienteEditar.HasValue)
+            {
                 CargarPacienteParaEditar();
+            }
+            else
+            {
+                txtNombres.Focus();
+            }
         }
 
-        private void CargarPacienteParaEditar()
+        private void ConfigurarFormulario()
         {
-            SanarRuralUnan.Pacientes paciente = controlador.consultarPacientePorId(idPacienteEditar.Value);
-            if (paciente == null)
+            Tema.ConfigurarTabla(dgvContactos);
+            dgvContactos.AutoGenerateColumns = false;
+            colContQuitar.DefaultCellStyle.ForeColor = Tema.Error;
+
+            dtpFechaNacimiento.MaxDate = DateTime.Today;
+
+            if (cmbGenero.Items.Count > 0)
             {
-                MessageBox.Show("El paciente ya no está disponible.", "Paciente no encontrado", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                DialogResult = DialogResult.Cancel;
-                Close();
-                return;
+                cmbGenero.SelectedIndex = 0;
             }
 
-            Text = "Sanar Rural - Editar Paciente";
-            lblSubtitulo.Text = "Editar datos del paciente";
-            btnGuardar.Text = "Guardar cambios";
-            lnkVolver.Text = "Cancelar";
-            txtNombres.Text = paciente.PrimerNombre;
-            txtSegundoNombre.Text = paciente.SegundoNombre;
-            txtApellidos.Text = paciente.PrimerApellido;
-            txtSegundoApellido.Text = paciente.SegundoApellido;
-            txtCedula.Text = paciente.Cedula;
-            txtNumeroINSS.Text = paciente.NumeroINSS;
-            dtpFechaNacimiento.Value = paciente.FechaNacimiento;
-            cmbGenero.SelectedItem = paciente.Genero;
-            txtTelefono.Text = paciente.Telefono;
-            txtDireccion.Text = paciente.Direccion;
-            cmbTipoSangre.SelectedItem = paciente.TipoSangre;
-            txtAlergias.Text = paciente.Alergias;
-            txtAntecedentes.Text = paciente.Antecedentes;
-
-            cargandoUbicacion = true;
-            cmbDepartamento.SelectedValue = paciente.Comunidades.Municipios.IdDepartamento;
-            cmbMunicipio.DataSource = controlador.listarMunicipios(paciente.Comunidades.Municipios.IdDepartamento);
-            cmbMunicipio.DisplayMember = "Nombre";
-            cmbMunicipio.ValueMember = "IdMunicipio";
-            cmbMunicipio.SelectedValue = paciente.Comunidades.IdMunicipio;
-            cmbComunidad.DataSource = controlador.listarComunidades(paciente.Comunidades.IdMunicipio);
-            cmbComunidad.DisplayMember = "Nombre";
-            cmbComunidad.ValueMember = "IdComunidad";
-            cmbComunidad.SelectedValue = paciente.IdComunidad;
-            cargandoUbicacion = false;
-
-            ContactosEmergencia contacto = paciente.ContactosEmergencia.FirstOrDefault();
-            if (contacto != null)
+            if (cmbTipoSangre.Items.Count > 0)
             {
-                txtContactoPrimerNombre.Text = contacto.PrimerNombre;
-                txtContactoSegundoNombre.Text = contacto.SegundoNombre;
-                txtContactoPrimerApellido.Text = contacto.PrimerApellido;
-                txtContactoSegundoApellido.Text = contacto.SegundoApellido;
-                txtContactoParentesco.Text = contacto.Parentesco;
-                txtContactoTelefono.Text = contacto.Telefono;
-                txtContactoCedula.Text = contacto.Cedula;
+                cmbTipoSangre.SelectedIndex = 0;
             }
 
-            txtContactoPrimerNombre.ReadOnly = true;
-            txtContactoSegundoNombre.ReadOnly = true;
-            txtContactoPrimerApellido.ReadOnly = true;
-            txtContactoSegundoApellido.ReadOnly = true;
-            txtContactoParentesco.ReadOnly = true;
-            txtContactoTelefono.ReadOnly = true;
-            txtContactoCedula.ReadOnly = true;
+            lblErrorNombres.Text = string.Empty;
+            lblErrorTelefono.Text = string.Empty;
+            lblErrorContacto.Text = string.Empty;
         }
 
         // ============================================================
-        // UBICACIÓN DEPENDIENTE
+        // CASCADA GEOGRÁFICA
         // ============================================================
 
         private void CargarDepartamentos()
         {
-            cargandoUbicacion = true;
-            cmbDepartamento.DataSource = controlador.listarDepartamentos();
-            cmbDepartamento.DisplayMember = "Nombre";
-            cmbDepartamento.ValueMember = "IdDepartamento";
-            cmbDepartamento.SelectedIndex = -1;
-            cmbMunicipio.DataSource = null;
-            cmbComunidad.DataSource = null;
-            cargandoUbicacion = false;
+            try
+            {
+                cargandoUbicacion = true;
+                cmbDepartamento.DataSource = controlador.listarDepartamentos();
+                cmbDepartamento.DisplayMember = "Nombre";
+                cmbDepartamento.ValueMember = "Id";
+                cmbDepartamento.SelectedIndex = -1;
+                cmbMunicipio.DataSource = null;
+                cmbComunidad.DataSource = null;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("No se pudieron cargar los departamentos: " + ex.Message, "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+            finally
+            {
+                cargandoUbicacion = false;
+            }
         }
 
         private void cmbDepartamento_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (cargandoUbicacion) return;
+            if (cargandoUbicacion || cmbDepartamento.SelectedValue == null)
+                return;
 
-            Departamentos departamento = cmbDepartamento.SelectedItem as Departamentos;
-            cargandoUbicacion = true;
-            cmbMunicipio.DataSource = departamento == null
-                ? null
-                : controlador.listarMunicipios(departamento.IdDepartamento);
-            cmbMunicipio.DisplayMember = "Nombre";
-            cmbMunicipio.ValueMember = "IdMunicipio";
-            cmbMunicipio.SelectedIndex = -1;
-            cmbComunidad.DataSource = null;
-            cargandoUbicacion = false;
+            if (int.TryParse(cmbDepartamento.SelectedValue.ToString(), out int idDepto))
+            {
+                try
+                {
+                    cargandoUbicacion = true;
+                    cmbMunicipio.DataSource = controlador.listarMunicipios(idDepto);
+                    cmbMunicipio.DisplayMember = "Nombre";
+                    cmbMunicipio.ValueMember = "Id";
+                    cmbMunicipio.SelectedIndex = -1;
+                    cmbComunidad.DataSource = null;
+                }
+                finally
+                {
+                    cargandoUbicacion = false;
+                }
+            }
         }
 
         private void cmbMunicipio_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (cargandoUbicacion) return;
+            if (cargandoUbicacion || cmbMunicipio.SelectedValue == null)
+                return;
 
-            Municipios municipio = cmbMunicipio.SelectedItem as Municipios;
-            cargandoUbicacion = true;
-            cmbComunidad.DataSource = municipio == null
-                ? null
-                : controlador.listarComunidades(municipio.IdMunicipio);
-            cmbComunidad.DisplayMember = "Nombre";
-            cmbComunidad.ValueMember = "IdComunidad";
-            cmbComunidad.SelectedIndex = -1;
-            cargandoUbicacion = false;
+            if (int.TryParse(cmbMunicipio.SelectedValue.ToString(), out int idMuni))
+            {
+                try
+                {
+                    cargandoUbicacion = true;
+                    cmbComunidad.DataSource = controlador.listarComunidades(idMuni);
+                    cmbComunidad.DisplayMember = "Nombre";
+                    cmbComunidad.ValueMember = "Id";
+                    cmbComunidad.SelectedIndex = -1;
+                }
+                finally
+                {
+                    cargandoUbicacion = false;
+                }
+            }
         }
 
         // ============================================================
-        // VALIDACIÓN DE NOMBRES
+        // CARGA EN MODO EDICIÓN
+        // ============================================================
+
+        private void CargarPacienteParaEditar()
+        {
+            try
+            {
+                PacienteDetalleDto paciente = controlador.obtenerPacienteDetalle(idPacienteEditar.Value);
+                if (paciente == null)
+                {
+                    MessageBox.Show("El paciente no existe o no tiene permisos para consultarlo.", "Paciente no encontrado", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    DialogResult = DialogResult.Cancel;
+                    Close();
+                    return;
+                }
+
+                Text = "Sanar Rural - Editar Paciente";
+                lblSubtitulo.Text = string.Format("Editar expediente #{0} | {1}", paciente.IdPaciente, paciente.NombreCompleto);
+                btnGuardar.Text = "Guardar cambios";
+                lnkVolver.Text = "Cancelar";
+
+                txtNombres.Text = paciente.PrimerNombre;
+                txtSegundoNombre.Text = paciente.SegundoNombre;
+                txtApellidos.Text = paciente.PrimerApellido;
+                txtSegundoApellido.Text = paciente.SegundoApellido;
+                txtCedula.Text = paciente.Cedula;
+                txtNumeroINSS.Text = paciente.NumeroINSS;
+                dtpFechaNacimiento.Value = paciente.FechaNacimiento;
+                cmbGenero.SelectedItem = paciente.Genero;
+                txtTelefono.Text = paciente.Telefono;
+                txtDireccion.Text = paciente.Direccion;
+
+                cmbTipoSangre.SelectedItem = string.IsNullOrWhiteSpace(paciente.TipoSangre) ? "No especificado" : paciente.TipoSangre;
+                txtAlergias.Text = paciente.Alergias;
+                txtAntecedentes.Text = paciente.Antecedentes;
+
+                // Cascada de ubicación
+                cargandoUbicacion = true;
+                cmbDepartamento.SelectedValue = paciente.IdDepartamento;
+                cmbMunicipio.DataSource = controlador.listarMunicipios(paciente.IdDepartamento);
+                cmbMunicipio.DisplayMember = "Nombre";
+                cmbMunicipio.ValueMember = "Id";
+                cmbMunicipio.SelectedValue = paciente.IdMunicipio;
+                cmbComunidad.DataSource = controlador.listarComunidades(paciente.IdMunicipio);
+                cmbComunidad.DisplayMember = "Nombre";
+                cmbComunidad.ValueMember = "Id";
+                cmbComunidad.SelectedValue = paciente.IdComunidad;
+                cargandoUbicacion = false;
+
+                // Contactos de emergencia existentes
+                listaContactos.Clear();
+                if (paciente.ContactosEmergencia != null)
+                {
+                    listaContactos.AddRange(paciente.ContactosEmergencia);
+                }
+                RefrescarGridContactos();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error al cargar datos del paciente:\n\n" + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                DialogResult = DialogResult.Cancel;
+                Close();
+            }
+        }
+
+        // ============================================================
+        // GESTIÓN DE CONTACTOS DE EMERGENCIA (1:N)
+        // ============================================================
+
+        private void btnAgregarContacto_Click(object sender, EventArgs e)
+        {
+            string pNombre = txtContactoPrimerNombre.Text.Trim();
+            string sNombre = txtContactoSegundoNombre.Text.Trim();
+            string pApellido = txtContactoPrimerApellido.Text.Trim();
+            string sApellido = txtContactoSegundoApellido.Text.Trim();
+            string parentesco = txtContactoParentesco.Text.Trim();
+            string tel = txtContactoTelefono.Text.Trim();
+            string ced = txtContactoCedula.Text.Trim();
+
+            if (string.IsNullOrWhiteSpace(pNombre))
+            {
+                lblErrorContacto.Text = "El primer nombre del contacto es obligatorio.";
+                txtContactoPrimerNombre.Focus();
+                return;
+            }
+
+            if (string.IsNullOrWhiteSpace(pApellido))
+            {
+                lblErrorContacto.Text = "El primer apellido del contacto es obligatorio.";
+                txtContactoPrimerApellido.Focus();
+                return;
+            }
+
+            if (string.IsNullOrWhiteSpace(parentesco))
+            {
+                lblErrorContacto.Text = "El parentesco del contacto es obligatorio.";
+                txtContactoParentesco.Focus();
+                return;
+            }
+
+            if (string.IsNullOrWhiteSpace(tel))
+            {
+                lblErrorContacto.Text = "El teléfono del contacto es obligatorio.";
+                txtContactoTelefono.Focus();
+                return;
+            }
+
+            if (!EsTelefonoValido(tel))
+            {
+                lblErrorContacto.Text = "El teléfono del contacto solo debe contener números (mínimo 8 dígitos).";
+                txtContactoTelefono.Focus();
+                return;
+            }
+
+            var contacto = new ContactoEmergenciaDto
+            {
+                PrimerNombre = pNombre,
+                SegundoNombre = sNombre,
+                PrimerApellido = pApellido,
+                SegundoApellido = sApellido,
+                Parentesco = parentesco,
+                Telefono = tel,
+                Cedula = ced
+            };
+
+            listaContactos.Add(contacto);
+            RefrescarGridContactos();
+            LimpiarCamposContacto();
+            lblErrorContacto.Text = string.Empty;
+        }
+
+        private void dgvContactos_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex < 0 || e.ColumnIndex < 0)
+                return;
+
+            if (dgvContactos.Columns[e.ColumnIndex].Name == "colContQuitar")
+            {
+                if (e.RowIndex < listaContactos.Count)
+                {
+                    string contactoDesc = listaContactos[e.RowIndex].NombreCompleto;
+                    if (MessageBox.Show("¿Desea quitar de la lista a " + contactoDesc + "?",
+                        "Quitar contacto", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+                    {
+                        listaContactos.RemoveAt(e.RowIndex);
+                        RefrescarGridContactos();
+                    }
+                }
+            }
+        }
+
+        private void RefrescarGridContactos()
+        {
+            dgvContactos.Rows.Clear();
+            foreach (ContactoEmergenciaDto c in listaContactos)
+            {
+                dgvContactos.Rows.Add(
+                    c.NombreCompleto,
+                    c.Parentesco,
+                    c.Telefono,
+                    string.IsNullOrWhiteSpace(c.Cedula) ? "-" : c.Cedula);
+            }
+        }
+
+        private void LimpiarCamposContacto()
+        {
+            txtContactoPrimerNombre.Clear();
+            txtContactoSegundoNombre.Clear();
+            txtContactoPrimerApellido.Clear();
+            txtContactoSegundoApellido.Clear();
+            txtContactoParentesco.Clear();
+            txtContactoTelefono.Clear();
+            txtContactoCedula.Clear();
+            txtContactoPrimerNombre.Focus();
+        }
+
+        // ============================================================
+        // VALIDACIONES INLINE
         // ============================================================
 
         private void txtNombres_TextChanged(object sender, EventArgs e)
         {
             lblErrorNombres.Text = string.IsNullOrWhiteSpace(txtNombres.Text)
-                ? "El nombre no puede estar vacío."
+                ? "El primer nombre es obligatorio."
                 : string.Empty;
         }
-
-        // ============================================================
-        // VALIDACIÓN DE TELÉFONO
-        // ============================================================
-        // El teléfono es opcional. Si se escribe, solamente permitimos números.
 
         private void txtTelefono_TextChanged(object sender, EventArgs e)
         {
-            string telefono = txtTelefono.Text.Trim();
-            lblErrorTelefono.Text = !string.IsNullOrEmpty(telefono) && !EsTelefonoValido(telefono)
-                ? "El teléfono solo debe contener números."
-                : string.Empty;
+            string tel = txtTelefono.Text.Trim();
+            if (!string.IsNullOrEmpty(tel) && !EsTelefonoValido(tel))
+            {
+                lblErrorTelefono.Text = "El teléfono debe contener solo números (mínimo 8 dígitos).";
+            }
+            else
+            {
+                lblErrorTelefono.Text = string.Empty;
+            }
         }
 
-        private static bool EsTelefonoValido(string telefono)
+        private static bool EsTelefonoValido(string tel)
         {
-            foreach (char caracter in telefono)
+            if (string.IsNullOrWhiteSpace(tel) || tel.Length < 8)
+                return false;
+
+            foreach (char c in tel)
             {
-                if (!char.IsDigit(caracter)) return false;
+                if (!char.IsDigit(c))
+                    return false;
             }
             return true;
         }
 
         // ============================================================
         // GUARDAR PACIENTE
-        // RF-03
         // ============================================================
 
         private void btnGuardar_Click(object sender, EventArgs e)
         {
-            // Datos obligatorios para crear el paciente.
-            if (string.IsNullOrWhiteSpace(txtNombres.Text))
+            // Validaciones de obligatoriedad en UI
+            string pNombre = txtNombres.Text.Trim();
+            if (string.IsNullOrWhiteSpace(pNombre))
             {
-                MessageBox.Show("Por favor, ingrese el primer nombre del paciente.", "Campo requerido", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("El primer nombre del paciente es obligatorio.", "Campo requerido", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 txtNombres.Focus();
                 return;
             }
-            if (string.IsNullOrWhiteSpace(txtApellidos.Text))
+
+            string pApellido = txtApellidos.Text.Trim();
+            if (string.IsNullOrWhiteSpace(pApellido))
             {
-                MessageBox.Show("Por favor, ingrese el primer apellido del paciente.", "Campo requerido", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("El primer apellido del paciente es obligatorio.", "Campo requerido", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 txtApellidos.Focus();
                 return;
             }
-            if (cmbComunidad.SelectedItem == null)
+
+            if (cmbComunidad.SelectedValue == null || !int.TryParse(cmbComunidad.SelectedValue.ToString(), out int idComunidad))
             {
-                MessageBox.Show("Seleccione la comunidad del paciente.", "Campo requerido", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Debe seleccionar la comunidad de residencia del paciente.", "Campo requerido", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 cmbComunidad.Focus();
                 return;
             }
@@ -426,38 +396,41 @@ namespace SanarRuralUnan.Views
             string telefono = txtTelefono.Text.Trim();
             if (!string.IsNullOrEmpty(telefono) && !EsTelefonoValido(telefono))
             {
-                MessageBox.Show("El teléfono solo debe contener números.", "Teléfono inválido", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("El teléfono ingresado no es válido. Debe contener solo números y al menos 8 dígitos.", "Teléfono inválido", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 txtTelefono.Focus();
                 return;
             }
 
-            string contactoNombre = txtContactoPrimerNombre.Text.Trim();
-            string contactoApellido = txtContactoPrimerApellido.Text.Trim();
-            string contactoParentesco = txtContactoParentesco.Text.Trim();
-            string contactoTelefono = txtContactoTelefono.Text.Trim();
-            // Si se empieza a registrar un contacto, sus datos obligatorios deben completarse.
-            bool ingresoContacto = !string.IsNullOrWhiteSpace(contactoNombre)
-                || !string.IsNullOrWhiteSpace(txtContactoSegundoNombre.Text)
-                || !string.IsNullOrWhiteSpace(contactoApellido)
-                || !string.IsNullOrWhiteSpace(txtContactoSegundoApellido.Text)
-                || !string.IsNullOrWhiteSpace(contactoParentesco)
-                || !string.IsNullOrWhiteSpace(contactoTelefono)
-                || !string.IsNullOrWhiteSpace(txtContactoCedula.Text);
+            // Comprobar si el usuario escribió datos de un contacto en las cajas de texto pero olvidó presionar "+ Agregar"
+            if (!string.IsNullOrWhiteSpace(txtContactoPrimerNombre.Text) || !string.IsNullOrWhiteSpace(txtContactoPrimerApellido.Text))
+            {
+                var respuesta = MessageBox.Show(
+                    "Hay datos ingresados en el formulario de contactos de emergencia que no han sido agregados a la lista.\n\n¿Desea agregarlo antes de guardar?",
+                    "Contacto pendiente",
+                    MessageBoxButtons.YesNoCancel,
+                    MessageBoxIcon.Question);
 
-            if (ingresoContacto && (string.IsNullOrWhiteSpace(contactoNombre)
-                || string.IsNullOrWhiteSpace(contactoApellido)
-                || string.IsNullOrWhiteSpace(contactoParentesco)
-                || string.IsNullOrWhiteSpace(contactoTelefono)))
-            {
-                MessageBox.Show("Complete el primer nombre, primer apellido, parentesco y teléfono del contacto de emergencia.", "Contacto incompleto", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
+                if (respuesta == DialogResult.Cancel)
+                    return;
+
+                if (respuesta == DialogResult.Yes)
+                {
+                    btnAgregarContacto_Click(sender, e);
+                    if (!string.IsNullOrEmpty(lblErrorContacto.Text))
+                        return; // Hubo error en el contacto
+                }
             }
-            if (ingresoContacto && !EsTelefonoValido(contactoTelefono))
-            {
-                MessageBox.Show("El teléfono del contacto solo debe contener números.", "Teléfono inválido", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                txtContactoTelefono.Focus();
-                return;
-            }
+
+            string sNombre = txtSegundoNombre.Text.Trim();
+            string sApellido = txtSegundoApellido.Text.Trim();
+            string cedula = txtCedula.Text.Trim();
+            string inss = txtNumeroINSS.Text.Trim();
+            DateTime fechaNac = dtpFechaNacimiento.Value.Date;
+            string genero = cmbGenero.SelectedItem != null ? cmbGenero.SelectedItem.ToString() : null;
+            string direccion = txtDireccion.Text.Trim();
+            string tipoSangre = cmbTipoSangre.SelectedItem != null ? cmbTipoSangre.SelectedItem.ToString() : null;
+            string alergias = txtAlergias.Text.Trim();
+            string antecedentes = txtAntecedentes.Text.Trim();
 
             try
             {
@@ -465,75 +438,60 @@ namespace SanarRuralUnan.Views
                 {
                     controlador.editarPaciente(
                         idPacienteEditar.Value,
-                        txtNombres.Text.Trim(),
-                        txtSegundoNombre.Text.Trim(),
-                        txtApellidos.Text.Trim(),
-                        txtSegundoApellido.Text.Trim(),
-                        txtCedula.Text.Trim(),
-                        txtNumeroINSS.Text.Trim(),
-                        dtpFechaNacimiento.Value,
-                        cmbGenero.SelectedItem == null ? null : cmbGenero.SelectedItem.ToString(),
+                        pNombre,
+                        sNombre,
+                        pApellido,
+                        sApellido,
+                        cedula,
+                        inss,
+                        fechaNac,
+                        genero,
                         telefono,
-                        ((Comunidades)cmbComunidad.SelectedItem).IdComunidad,
-                        txtDireccion.Text.Trim(),
-                        cmbTipoSangre.SelectedItem == null ? null : cmbTipoSangre.SelectedItem.ToString(),
-                        txtAlergias.Text.Trim(),
-                        txtAntecedentes.Text.Trim());
+                        idComunidad,
+                        direccion,
+                        tipoSangre,
+                        alergias,
+                        antecedentes,
+                        listaContactos);
+
+                    MessageBox.Show("Los datos del paciente y sus contactos se actualizaron correctamente.", "Expediente actualizado", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
                 else
                 {
                     controlador.crearPaciente(
                         idUsuario,
-                        txtNombres.Text.Trim(),
-                        txtSegundoNombre.Text.Trim(),
-                        txtApellidos.Text.Trim(),
-                        txtSegundoApellido.Text.Trim(),
-                        txtCedula.Text.Trim(),
-                        txtNumeroINSS.Text.Trim(),
-                        dtpFechaNacimiento.Value,
-                        cmbGenero.SelectedItem == null ? null : cmbGenero.SelectedItem.ToString(),
+                        pNombre,
+                        sNombre,
+                        pApellido,
+                        sApellido,
+                        cedula,
+                        inss,
+                        fechaNac,
+                        genero,
                         telefono,
-                        ((Comunidades)cmbComunidad.SelectedItem).IdComunidad,
-                        txtDireccion.Text.Trim(),
-                        cmbTipoSangre.SelectedItem == null ? null : cmbTipoSangre.SelectedItem.ToString(),
-                        txtAlergias.Text.Trim(),
-                        txtAntecedentes.Text.Trim(),
-                        contactoNombre,
-                        txtContactoSegundoNombre.Text.Trim(),
-                        contactoApellido,
-                        txtContactoSegundoApellido.Text.Trim(),
-                        contactoParentesco,
-                        contactoTelefono,
-                        txtContactoCedula.Text.Trim());
+                        idComunidad,
+                        direccion,
+                        tipoSangre,
+                        alergias,
+                        antecedentes,
+                        listaContactos);
+
+                    MessageBox.Show("¡Paciente y contactos registrados con éxito!", "Registro exitoso", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
 
-                MessageBox.Show(idPacienteEditar.HasValue ? "Los datos del paciente se actualizaron correctamente." : "¡Paciente registrado con éxito!",
-                    "Operación exitosa", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 DialogResult = DialogResult.OK;
                 Close();
             }
             catch (Exception ex)
             {
-                // Mostrar el error recibido durante la persistencia.
-                MessageBox.Show("Ocurrió un error al guardar el paciente:\n\n" + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("No se pudo guardar la información del paciente:\n\n" + ex.Message, "Error al guardar", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
-
-        // ============================================================
-        // VOLVER / OMITIR
-        // ============================================================
-        // Permite cerrar el formulario sin completar información adicional.
 
         private void lnkVolver_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             DialogResult = DialogResult.Cancel;
             Close();
         }
-
-        private void crearPaciente_Load_1(object sender, EventArgs e) { }
-
-        // Eventos requeridos por los controles del formulario.
-        private void panelCard_Paint(object sender, PaintEventArgs e) { }
-        private void panelDatosPersonales_Paint(object sender, PaintEventArgs e) { }
     }
 }

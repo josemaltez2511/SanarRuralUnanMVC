@@ -1,11 +1,17 @@
-using System;
-using System.Linq;
+﻿using System;
+using System.Collections.Generic;
+using System.Drawing;
 using System.Windows.Forms;
 using SanarRuralUnan.Controllers;
 using SanarRuralUnan.Helpers;
+using SanarRuralUnan.Models;
 
 namespace SanarRuralUnan.Views.Pacientes
 {
+    /// <summary>
+    /// Formulario principal del catálogo de pacientes.
+    /// Permite buscar, filtrar por estado (según rol), consultar ficha, editar y gestionar baja/reactivación.
+    /// </summary>
     public partial class paginaPrincipalPacientes : Form
     {
         private readonly pacientesControllers controlador = new pacientesControllers();
@@ -18,52 +24,79 @@ namespace SanarRuralUnan.Views.Pacientes
         private void paginaPrincipalPacientes_Load(object sender, EventArgs e)
         {
             ConfigurarGrid();
+            ConfigurarSeguridadPorRol();
             CargarPacientes();
         }
 
         private void ConfigurarGrid()
         {
             Tema.ConfigurarTabla(dgvPacientes);
-            dgvPacientes.AccessibleName = "Listado de pacientes activos";
-            dgvPacientes.AccessibleDescription = "Use las flechas para recorrer pacientes y Tab para acceder a sus acciones.";
-            dgvPacientes.Columns["Nombre"].FillWeight = 150;
-            dgvPacientes.Columns["Comunidad"].FillWeight = 105;
-            dgvPacientes.Columns["Municipio"].FillWeight = 90;
-            dgvPacientes.Columns["Departamento"].FillWeight = 95;
-            dgvPacientes.Columns["colEditar"].FillWeight = 58;
-            dgvPacientes.Columns["colBaja"].FillWeight = 76;
+            dgvPacientes.AccessibleName = "Listado de pacientes";
+            dgvPacientes.AccessibleDescription = "Use las flechas para recorrer pacientes y Enter o espacio en los botones de acción.";
+
+            dgvPacientes.Columns["Nombre"].FillWeight = 140;
+            dgvPacientes.Columns["Cedula"].FillWeight = 85;
+            dgvPacientes.Columns["Telefono"].FillWeight = 75;
+            dgvPacientes.Columns["Comunidad"].FillWeight = 95;
+            dgvPacientes.Columns["Municipio"].FillWeight = 85;
+            dgvPacientes.Columns["Departamento"].FillWeight = 85;
+            dgvPacientes.Columns["Estado"].FillWeight = 65;
+            dgvPacientes.Columns["colVer"].FillWeight = 50;
+            dgvPacientes.Columns["colEditar"].FillWeight = 50;
+            dgvPacientes.Columns["colBaja"].FillWeight = 75;
+
+            dgvPacientes.Columns["colVer"].DefaultCellStyle.ForeColor = Tema.VerdeOscuro;
             dgvPacientes.Columns["colEditar"].DefaultCellStyle.ForeColor = Tema.AzulPrimario;
-            dgvPacientes.Columns["colBaja"].DefaultCellStyle.ForeColor = Tema.Error;
         }
 
-        private void CargarPacientes(string filtro = "")
+        private void ConfigurarSeguridadPorRol()
+        {
+            bool esAdmin = controlador.EsAdministrativo();
+            if (esAdmin)
+            {
+                lblFiltroEstado.Visible = true;
+                cmbFiltroEstado.Visible = true;
+                cmbFiltroEstado.SelectedIndex = 0; // "Activos" por defecto
+                dgvPacientes.Columns["colBaja"].Visible = true;
+            }
+            else
+            {
+                // El rol Doctor únicamente puede consultar y dar de alta pacientes activos
+                lblFiltroEstado.Visible = false;
+                cmbFiltroEstado.Visible = false;
+                dgvPacientes.Columns["colBaja"].Visible = false;
+            }
+        }
+
+        private void CargarPacientes()
         {
             try
             {
                 dgvPacientes.Rows.Clear();
-                var pacientes = controlador.listarPacientes(filtro);
-                foreach (SanarRuralUnan.Pacientes paciente in pacientes)
-                {
-                    string nombre = string.Join(" ", new[]
-                    {
-                        paciente.PrimerNombre,
-                        paciente.SegundoNombre,
-                        paciente.PrimerApellido,
-                        paciente.SegundoApellido
-                    }.Where(parte => !string.IsNullOrWhiteSpace(parte)));
+                string filtro = txtBuscar.Text.Trim();
+                string estadoFiltro = cmbFiltroEstado.Visible && cmbFiltroEstado.SelectedItem != null
+                    ? cmbFiltroEstado.SelectedItem.ToString()
+                    : "Activos";
 
-                    dgvPacientes.Rows.Add(
+                List<PacienteItemDto> pacientes = controlador.listarPacientes(filtro, estadoFiltro);
+                foreach (PacienteItemDto paciente in pacientes)
+                {
+                    int rowIndex = dgvPacientes.Rows.Add(
                         paciente.IdPaciente,
-                        nombre,
-                        paciente.Cedula,
-                        paciente.Telefono,
-                        paciente.Comunidades.Nombre,
-                        paciente.Comunidades.Municipios.Nombre,
-                        paciente.Comunidades.Municipios.Departamentos.Nombre,
+                        paciente.NombreCompleto,
+                        string.IsNullOrWhiteSpace(paciente.Cedula) ? "-" : paciente.Cedula,
+                        string.IsNullOrWhiteSpace(paciente.Telefono) ? "-" : paciente.Telefono,
+                        paciente.Comunidad,
+                        paciente.Municipio,
+                        paciente.Departamento,
                         paciente.Estado ? "✓ Activo" : "Inactivo");
+
+                    DataGridViewRow fila = dgvPacientes.Rows[rowIndex];
+                    fila.Cells["colBaja"].Value = paciente.Estado ? "Dar de baja" : "Reactivar";
                 }
 
-                lblCantidad.Text = pacientes.Count + (pacientes.Count == 1 ? " paciente activo" : " pacientes activos");
+                string sufijoEstado = estadoFiltro == "Todos" ? "registrado(s)" : (estadoFiltro == "Inactivos" ? "inactivo(s)" : "activo(s)");
+                lblCantidad.Text = string.Format("{0} paciente(s) {1}", pacientes.Count, sufijoEstado);
             }
             catch (Exception ex)
             {
@@ -74,7 +107,12 @@ namespace SanarRuralUnan.Views.Pacientes
 
         private void txtBuscar_TextChanged(object sender, EventArgs e)
         {
-            CargarPacientes(txtBuscar.Text.Trim());
+            CargarPacientes();
+        }
+
+        private void cmbFiltroEstado_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            CargarPacientes();
         }
 
         private void btnNuevo_Click(object sender, EventArgs e)
@@ -82,7 +120,9 @@ namespace SanarRuralUnan.Views.Pacientes
             using (crearPaciente formulario = new crearPaciente())
             {
                 if (formulario.ShowDialog(this) == DialogResult.OK)
-                    CargarPacientes(txtBuscar.Text.Trim());
+                {
+                    CargarPacientes();
+                }
             }
         }
 
@@ -92,28 +132,77 @@ namespace SanarRuralUnan.Views.Pacientes
                 return;
 
             int idPaciente = Convert.ToInt32(dgvPacientes.Rows[e.RowIndex].Cells["IdPaciente"].Value);
-            if (dgvPacientes.Columns[e.ColumnIndex].Name == "colEditar")
+            string columna = dgvPacientes.Columns[e.ColumnIndex].Name;
+
+            if (columna == "colVer")
+            {
+                using (fichaPaciente ficha = new fichaPaciente(idPaciente))
+                {
+                    ficha.ShowDialog(this);
+                }
+            }
+            else if (columna == "colEditar")
             {
                 using (crearPaciente formulario = new crearPaciente(idPaciente, true))
                 {
                     if (formulario.ShowDialog(this) == DialogResult.OK)
-                        CargarPacientes(txtBuscar.Text.Trim());
+                    {
+                        CargarPacientes();
+                    }
                 }
             }
-            else if (dgvPacientes.Columns[e.ColumnIndex].Name == "colBaja")
+            else if (columna == "colBaja")
             {
-                string nombre = dgvPacientes.Rows[e.RowIndex].Cells["Nombre"].Value?.ToString() ?? "este paciente";
-                if (MessageBox.Show("¿Desea dar de baja a " + nombre + "? Su historial se conservará.",
-                    "Confirmar baja", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+                if (!controlador.EsAdministrativo())
                 {
-                    try
+                    MessageBox.Show("Solo los usuarios con rol Administrativo pueden dar de baja o reactivar pacientes.", "Acceso restringido", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
+                string nombre = dgvPacientes.Rows[e.RowIndex].Cells["Nombre"].Value != null
+                    ? dgvPacientes.Rows[e.RowIndex].Cells["Nombre"].Value.ToString()
+                    : "este paciente";
+
+                string accion = dgvPacientes.Rows[e.RowIndex].Cells["colBaja"].Value != null
+                    ? dgvPacientes.Rows[e.RowIndex].Cells["colBaja"].Value.ToString()
+                    : "Dar de baja";
+
+                if (accion == "Dar de baja")
+                {
+                    if (MessageBox.Show(
+                        string.Format("¿Desea dar de baja a {0}? Su expediente e historial clínico se conservarán intactos.", nombre),
+                        "Confirmar baja de paciente",
+                        MessageBoxButtons.YesNo,
+                        MessageBoxIcon.Question) == DialogResult.Yes)
                     {
-                        controlador.eliminarPaciente(idPaciente);
-                        CargarPacientes(txtBuscar.Text.Trim());
+                        try
+                        {
+                            controlador.eliminarPaciente(idPaciente);
+                            CargarPacientes();
+                        }
+                        catch (Exception ex)
+                        {
+                            MessageBox.Show("No se pudo dar de baja al paciente:\n\n" + ex.Message, "Error al procesar baja", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        }
                     }
-                    catch (Exception ex)
+                }
+                else // Reactivar
+                {
+                    if (MessageBox.Show(
+                        string.Format("¿Desea reactivar a {0} para habilitar nuevamente la programación de citas y consultas?", nombre),
+                        "Confirmar reactivación",
+                        MessageBoxButtons.YesNo,
+                        MessageBoxIcon.Question) == DialogResult.Yes)
                     {
-                        MessageBox.Show("No se pudo dar de baja al paciente:\n\n" + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        try
+                        {
+                            controlador.reactivarPaciente(idPaciente);
+                            CargarPacientes();
+                        }
+                        catch (Exception ex)
+                        {
+                            MessageBox.Show("No se pudo reactivar al paciente:\n\n" + ex.Message, "Error al reactivar", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        }
                     }
                 }
             }
@@ -121,9 +210,32 @@ namespace SanarRuralUnan.Views.Pacientes
 
         private void dgvPacientes_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
         {
-            if (e.RowIndex >= 0 && dgvPacientes.Columns[e.ColumnIndex].Name == "Estado")
+            if (e.RowIndex < 0)
+                return;
+
+            string columna = dgvPacientes.Columns[e.ColumnIndex].Name;
+
+            if (columna == "Estado" && e.Value != null)
             {
-                e.CellStyle.ForeColor = Tema.VerdeOscuro;
+                if (e.Value.ToString().StartsWith("✓"))
+                {
+                    e.CellStyle.ForeColor = Tema.VerdeOscuro;
+                }
+                else
+                {
+                    e.CellStyle.ForeColor = Tema.Error;
+                }
+            }
+            else if (columna == "colBaja" && e.Value != null)
+            {
+                if (e.Value.ToString() == "Reactivar")
+                {
+                    e.CellStyle.ForeColor = Tema.VerdeOscuro;
+                }
+                else
+                {
+                    e.CellStyle.ForeColor = Tema.Error;
+                }
             }
         }
     }
