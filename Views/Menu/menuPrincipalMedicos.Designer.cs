@@ -112,10 +112,10 @@ namespace SanarRuralUnan.Views
             this.btnHistorial.TabIndex = 3;
             this.btnHistorial.AccessibleName = "Historial clínico";
             this.btnHistorial.AccessibleDescription = "El historial clínico estará disponible cuando se implemente el módulo correspondiente";
-            this.btnConsultas.Enabled = true;
+            this.btnConsultas.Enabled = false;
             this.btnHistorial.Enabled = false;
             this.btnCitas.Click += new System.EventHandler(this.btnCitas_Click);
-            this.btnConsultas.Click += new System.EventHandler(this.btnConsultas_Click);
+            this.btnConsultas.Click += new System.EventHandler(this.btnFuturo_Click);
             this.btnHistorial.Click += new System.EventHandler(this.btnFuturo_Click);
             this.btnCerrarSesion.Text = "Cerrar sesión";
             this.btnCerrarSesion.Type = MaterialButton.MaterialButtonType.Text;

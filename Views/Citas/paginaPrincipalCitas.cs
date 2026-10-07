@@ -3,7 +3,6 @@ using System.Drawing;
 using System.Windows.Forms;
 using SanarRuralUnan.Controllers;
 using SanarRuralUnan.Helpers;
-using SanarRuralUnan.Views.ConsultaMedica;
 
 namespace SanarRuralUnan.Views.Citas
 {
@@ -150,20 +149,6 @@ namespace SanarRuralUnan.Views.Citas
 
         private void AgregarColumnasAcciones()
         {
-            if (idDoctorFiltro.HasValue && !dgvCitas.Columns.Contains("colAtender"))
-            {
-                DataGridViewButtonColumn colAtender = new DataGridViewButtonColumn
-                {
-                    Name = "colAtender",
-                    HeaderText = "Atender",
-                    Text = "🩺 Atender",
-                    UseColumnTextForButtonValue = true,
-                    FlatStyle = FlatStyle.Flat,
-                    FillWeight = 80
-                };
-                dgvCitas.Columns.Add(colAtender);
-            }
-
             if (!dgvCitas.Columns.Contains("colConfirmar"))
             {
                 DataGridViewButtonColumn colConfirmar = new DataGridViewButtonColumn
@@ -221,10 +206,6 @@ namespace SanarRuralUnan.Views.Citas
             }
 
             // Ubicar las columnas de acción al final de la tabla.
-            if (idDoctorFiltro.HasValue && dgvCitas.Columns.Contains("colAtender"))
-            {
-                dgvCitas.Columns["colAtender"].DisplayIndex = dgvCitas.Columns.Count - 5;
-            }
             dgvCitas.Columns["colConfirmar"].DisplayIndex = dgvCitas.Columns.Count - 4;
             dgvCitas.Columns["colEditar"].DisplayIndex = dgvCitas.Columns.Count - 3;
             dgvCitas.Columns["colCancelar"].DisplayIndex = dgvCitas.Columns.Count - 2;
@@ -327,13 +308,7 @@ namespace SanarRuralUnan.Views.Citas
                 Color colorBoton = Tema.AzulPrimario;
                 string textoBoton = "";
 
-                if (nombreColumna == "colAtender")
-                {
-                    habilitado = (estado == "Pendiente" || estado == "Confirmada");
-                    colorBoton = Tema.VerdeOscuro;
-                    textoBoton = "🩺 Atender";
-                }
-                else if (nombreColumna == "colConfirmar")
+                if (nombreColumna == "colConfirmar")
                 {
                     habilitado = (estado == "Pendiente");
                     colorBoton = Tema.VerdeOscuro;
@@ -408,7 +383,6 @@ namespace SanarRuralUnan.Views.Citas
                 bool citaYaPaso = fechaProg <= DateTime.Now;
 
                 bool esBotonAccion =
-                    (nombreColumna == "colAtender" && (estado == "Pendiente" || estado == "Confirmada")) ||
                     (nombreColumna == "colConfirmar" && estado == "Pendiente") ||
                     (nombreColumna == "colEditar" && (estado == "Pendiente" || estado == "Confirmada")) ||
                     (nombreColumna == "colCancelar" && (estado == "Pendiente" || estado == "Confirmada")) ||
@@ -436,43 +410,8 @@ namespace SanarRuralUnan.Views.Citas
             string doctor = dgvCitas.Rows[e.RowIndex].Cells["Doctor"]?.Value?.ToString() ?? "el médico";
             string fechaHora = dgvCitas.Rows[e.RowIndex].Cells["FechaHoraTexto"]?.Value?.ToString() ?? "";
 
-            // Acción: ATENDER CITA (Iniciar o continuar consulta médica)
-            if (nombreColumna == "colAtender")
-            {
-                if (estado != "Pendiente" && estado != "Confirmada")
-                {
-                    MessageBox.Show($"No se puede iniciar la atención de una cita en estado '{estado}'.", "Operación no permitida", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    return;
-                }
-
-                try
-                {
-                    consultasControllers ctrlConsultas = new consultasControllers();
-                    int? idExistente = ctrlConsultas.obtenerIdConsultaPorCita(idCita);
-                    int idConsulta;
-
-                    if (idExistente.HasValue)
-                    {
-                        idConsulta = idExistente.Value;
-                    }
-                    else
-                    {
-                        idConsulta = ctrlConsultas.iniciarConsulta(idCita, idDoctorFiltro);
-                    }
-
-                    using (atencionConsulta formAtencion = new atencionConsulta(idConsulta, idDoctorFiltro))
-                    {
-                        formAtencion.ShowDialog(this);
-                        CargarCitas();
-                    }
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show(ex.Message, "Error al iniciar consulta", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
-            }
             // Acción: CONFIRMAR CITA (Pendiente -> Confirmada)
-            else if (nombreColumna == "colConfirmar")
+            if (nombreColumna == "colConfirmar")
             {
                 if (estado != "Pendiente")
                 {

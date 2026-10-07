@@ -1,13 +1,11 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 
 namespace SanarRuralUnan.Models
 {
-    // DTO usado para mostrar una cita médica en la tabla principal del listado.
-    // Solo incluye los datos que la pantalla necesita ver: paciente, médico, sede, fecha, estado y motivo.
-    // Lo usamos para no enviar a la vista toda la entidad Citas con todas sus tablas relacionadas.
+    // DTO para representar una cita médica formateada en listados y grillas.
     public class CitaItemDto
     {
         public int IdCita { get; set; }
@@ -26,10 +24,14 @@ namespace SanarRuralUnan.Models
         public string Motivo { get; set; }
     }
 
+    // DTO para presentar pacientes activos en selectores de citas.
+    public class PacienteItemDto
+    {
+        public int IdPaciente { get; set; }
+        public string NombreCompleto { get; set; }
+    }
 
-    // DTO usado para llenar el combo de selección de médicos al agendar una cita.
-    // Solo pasa el identificador del doctor y su nombre completo formateado.
-    // Lo usamos para no enviar toda la entidad Doctores con datos que el selector no necesita.
+    // DTO para presentar doctores activos en selectores dependientes.
     public class DoctorItemDto
     {
         public int IdDoctor { get; set; }

@@ -75,7 +75,6 @@
       <DependentUpon>ModelSanarRural.tt</DependentUpon>
     </Compile>
     <Compile Include="Controllers\citasControllers.cs" />
-    <Compile Include="Controllers\consultasControllers.cs" />
     <Compile Include="Controllers\doctoresControllers.cs" />
     <Compile Include="Controllers\hospitalesController.cs" />
     <Compile Include="Controllers\pacientesControllers.cs" />
@@ -124,7 +123,6 @@
       <DependentUpon>ModelSanarRural.edmx</DependentUpon>
     </Compile>
     <Compile Include="Models\citasModels.cs" />
-    <Compile Include="Models\consultasModels.cs" />
     <Compile Include="Models\doctoresModels.cs" />
     <Compile Include="Models\hospitalesModels.cs" />
     <Compile Include="Models\pacientesModels.cs" />
@@ -164,24 +162,6 @@
     </Compile>
     <Compile Include="Views\Citas\paginaPrincipalCitas.Designer.cs">
       <DependentUpon>paginaPrincipalCitas.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Views\ConsultaMedica\atencionConsulta.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Views\ConsultaMedica\atencionConsulta.Designer.cs">
-      <DependentUpon>atencionConsulta.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Views\ConsultaMedica\paginaPrincipalConsultas.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Views\ConsultaMedica\paginaPrincipalConsultas.Designer.cs">
-      <DependentUpon>paginaPrincipalConsultas.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Views\ConsultaMedica\seleccionarCitaConsulta.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Views\ConsultaMedica\seleccionarCitaConsulta.Designer.cs">
-      <DependentUpon>seleccionarCitaConsulta.cs</DependentUpon>
     </Compile>
     <Compile Include="Views\Doctores\crearDoctor.cs">
       <SubType>Form</SubType>
@@ -274,15 +254,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Views\Citas\paginaPrincipalCitas.resx">
       <DependentUpon>paginaPrincipalCitas.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Views\ConsultaMedica\atencionConsulta.resx">
-      <DependentUpon>atencionConsulta.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Views\ConsultaMedica\paginaPrincipalConsultas.resx">
-      <DependentUpon>paginaPrincipalConsultas.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Views\ConsultaMedica\seleccionarCitaConsulta.resx">
-      <DependentUpon>seleccionarCitaConsulta.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Views\Doctores\crearDoctor.resx">
       <DependentUpon>crearDoctor.cs</DependentUpon>
