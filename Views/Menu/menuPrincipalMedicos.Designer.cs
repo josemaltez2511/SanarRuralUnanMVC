@@ -99,7 +99,7 @@ namespace SanarRuralUnan.Views
             this.btnCitas.Size = new System.Drawing.Size(96, 42);
             this.btnCitas.TabIndex = 1;
             this.btnCitas.AccessibleName = "Citas";
-            this.btnCitas.AccessibleDescription = "Las citas estarán disponibles cuando se implemente el módulo correspondiente";
+            this.btnCitas.AccessibleDescription = "Navegar a la sección Citas";
             this.btnConsultas.Text = "Consultas";
             this.btnConsultas.Type = MaterialButton.MaterialButtonType.Text;
             this.btnConsultas.Size = new System.Drawing.Size(112, 42);
@@ -112,10 +112,9 @@ namespace SanarRuralUnan.Views
             this.btnHistorial.TabIndex = 3;
             this.btnHistorial.AccessibleName = "Historial clínico";
             this.btnHistorial.AccessibleDescription = "El historial clínico estará disponible cuando se implemente el módulo correspondiente";
-            this.btnCitas.Enabled = false;
             this.btnConsultas.Enabled = false;
             this.btnHistorial.Enabled = false;
-            this.btnCitas.Click += new System.EventHandler(this.btnFuturo_Click);
+            this.btnCitas.Click += new System.EventHandler(this.btnCitas_Click);
             this.btnConsultas.Click += new System.EventHandler(this.btnFuturo_Click);
             this.btnHistorial.Click += new System.EventHandler(this.btnFuturo_Click);
             this.btnCerrarSesion.Text = "Cerrar sesión";

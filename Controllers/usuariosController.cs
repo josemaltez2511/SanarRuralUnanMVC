@@ -26,6 +26,12 @@ namespace SanarRuralUnan.Controllers
             new usuariosModels().CerrarSesion();
         }
 
+        // Obtiene el identificador del médico asociado al usuario en sesión.
+        public int? ObtenerIdDoctorActual()
+        {
+            return new usuariosModels().ObtenerIdDoctorActual();
+        }
+
         // Método para saber si un correo ya está registrado
         // La Vista llama a este método en vez de consultar la base de datos directamente
         public bool CorreoYaExiste(string correo, int? idUsuarioExcluir = null)

@@ -6,6 +6,7 @@ using MaterialSkin;
 using MaterialSkin.Controls;
 using SanarRuralUnan.Controllers;
 using SanarRuralUnan.Views.Pacientes;
+using SanarRuralUnan.Views.Citas;
 
 namespace SanarRuralUnan.Views
 {
@@ -13,10 +14,13 @@ namespace SanarRuralUnan.Views
     {
         private Form formularioActual;
         private paginaPrincipalPacientes paginaPacientes;
+        private paginaPrincipalCitas paginaCitas;
+        private readonly int? idDoctorActual;
 
         public menuPrincipalMedicos()
         {
             InitializeComponent();
+            idDoctorActual = new usuariosControllers().ObtenerIdDoctorActual();
             ConfigurarTema();
             CargarLogo();
             FormClosed += menuPrincipalMedicos_FormClosed;
@@ -97,7 +101,22 @@ namespace SanarRuralUnan.Views
             lblContenido.Text = "Listado de pacientes activos.";
             btnPacientes.Text = "✓  Pacientes";
             btnPacientes.Type = MaterialButton.MaterialButtonType.Contained;
+            btnCitas.Text = "Citas";
             btnCitas.Type = MaterialButton.MaterialButtonType.Text;
+            btnConsultas.Type = MaterialButton.MaterialButtonType.Text;
+            btnHistorial.Type = MaterialButton.MaterialButtonType.Text;
+        }
+
+        private void btnCitas_Click(object sender, EventArgs e)
+        {
+            paginaCitas = paginaCitas ?? new paginaPrincipalCitas(idDoctorActual ?? -1);
+            CargarFormulario(paginaCitas);
+            lblSeccion.Text = "Sección actual: Citas";
+            lblContenido.Text = "Control y seguimiento de citas médicas.";
+            btnCitas.Text = "✓  Citas";
+            btnCitas.Type = MaterialButton.MaterialButtonType.Contained;
+            btnPacientes.Text = "Pacientes";
+            btnPacientes.Type = MaterialButton.MaterialButtonType.Text;
             btnConsultas.Type = MaterialButton.MaterialButtonType.Text;
             btnHistorial.Type = MaterialButton.MaterialButtonType.Text;
         }
@@ -123,6 +142,7 @@ namespace SanarRuralUnan.Views
         private void menuPrincipalMedicos_FormClosed(object sender, FormClosedEventArgs e)
         {
             if (paginaPacientes != null) paginaPacientes.Dispose();
+            if (paginaCitas != null) paginaCitas.Dispose();
             if (picLogo.Image != null) picLogo.Image.Dispose();
         }
     }

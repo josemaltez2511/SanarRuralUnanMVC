@@ -9,6 +9,7 @@ using SanarRuralUnan.Helpers;
 using SanarRuralUnan.Views.Doctores;
 using SanarRuralUnan.Views.Hospitales;
 using SanarRuralUnan.Views.Pacientes;
+using SanarRuralUnan.Views.Citas;
 
 namespace SanarRuralUnan.Views
 {
@@ -19,6 +20,7 @@ namespace SanarRuralUnan.Views
         private paginaPrincipalDoctores paginaDoctores;
         private paginaPrincipalHospitales paginaHospitales;
         private paginaPrincipalPacientes paginaPacientes;
+        private paginaPrincipalCitas paginaCitas;
         private readonly Timer timerIndicador = new Timer();
         private MaterialButton botonActivo;
         private int inicioIndicador;
@@ -65,6 +67,7 @@ namespace SanarRuralUnan.Views
             btnDoctores.Location = new System.Drawing.Point(btnUsuarios.Right + 8, 7);
             btnPacientes.Location = new System.Drawing.Point(btnDoctores.Right + 8, 7);
             btnHospitales.Location = new System.Drawing.Point(btnPacientes.Right + 8, 7);
+            btnCitas.Location = new System.Drawing.Point(btnHospitales.Right + 8, 7);
             btnCerrarSesion.Location = new System.Drawing.Point(panelEncabezado.Width - btnCerrarSesion.Width - 20, 18);
             lblRol.Location = new System.Drawing.Point(btnCerrarSesion.Left - lblRol.Width - 18, 26);
             if (botonActivo != null)
@@ -85,6 +88,8 @@ namespace SanarRuralUnan.Views
                 formulario = paginaHospitales ?? (paginaHospitales = new paginaPrincipalHospitales());
             else if (nombre == "Pacientes")
                 formulario = paginaPacientes ?? (paginaPacientes = new paginaPrincipalPacientes());
+            else if (nombre == "Citas")
+                formulario = paginaCitas ?? (paginaCitas = new paginaPrincipalCitas());
 
             if (formularioActual != formulario && formularioActual != null)
                 formularioActual.Visible = false;
@@ -96,14 +101,17 @@ namespace SanarRuralUnan.Views
             btnDoctores.Text = nombre == "Doctores" ? "✓  Doctores" : "Doctores";
             btnPacientes.Text = nombre == "Pacientes" ? "✓  Pacientes" : "Pacientes";
             btnHospitales.Text = nombre == "Hospitales" ? "✓  Hospitales" : "Hospitales";
+            btnCitas.Text = nombre == "Citas" ? "✓  Citas" : "Citas";
             btnUsuarios.Type = nombre == "Usuarios" ? MaterialButton.MaterialButtonType.Contained : MaterialButton.MaterialButtonType.Text;
             btnDoctores.Type = nombre == "Doctores" ? MaterialButton.MaterialButtonType.Contained : MaterialButton.MaterialButtonType.Text;
             btnPacientes.Type = nombre == "Pacientes" ? MaterialButton.MaterialButtonType.Contained : MaterialButton.MaterialButtonType.Text;
             btnHospitales.Type = nombre == "Hospitales" ? MaterialButton.MaterialButtonType.Contained : MaterialButton.MaterialButtonType.Text;
+            btnCitas.Type = nombre == "Citas" ? MaterialButton.MaterialButtonType.Contained : MaterialButton.MaterialButtonType.Text;
             lblSeccion.Text = "Sección actual: " + nombre;
             botonActivo = nombre == "Usuarios" ? btnUsuarios :
                 nombre == "Doctores" ? btnDoctores :
-                nombre == "Pacientes" ? btnPacientes : btnHospitales;
+                nombre == "Pacientes" ? btnPacientes :
+                nombre == "Hospitales" ? btnHospitales : btnCitas;
             AnimarIndicador(botonActivo.Left);
         }
 
@@ -150,6 +158,7 @@ namespace SanarRuralUnan.Views
         private void btnDoctores_Click(object sender, EventArgs e) { MostrarSeccion("Doctores"); }
         private void btnPacientes_Click(object sender, EventArgs e) { MostrarSeccion("Pacientes"); }
         private void btnHospitales_Click(object sender, EventArgs e) { MostrarSeccion("Hospitales"); }
+        private void btnCitas_Click(object sender, EventArgs e) { MostrarSeccion("Citas"); }
 
         private void btnCerrarSesion_Click(object sender, EventArgs e)
         {
@@ -168,6 +177,7 @@ namespace SanarRuralUnan.Views
             if (paginaDoctores != null) paginaDoctores.Dispose();
             if (paginaHospitales != null) paginaHospitales.Dispose();
             if (paginaPacientes != null) paginaPacientes.Dispose();
+            if (paginaCitas != null) paginaCitas.Dispose();
             if (picLogo.Image != null) picLogo.Image.Dispose();
             timerIndicador.Dispose();
         }
