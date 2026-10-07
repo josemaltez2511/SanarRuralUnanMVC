@@ -7,6 +7,7 @@ using MaterialSkin.Controls;
 using SanarRuralUnan.Controllers;
 using SanarRuralUnan.Views.Pacientes;
 using SanarRuralUnan.Views.Citas;
+using SanarRuralUnan.Views.ConsultaMedica;
 
 namespace SanarRuralUnan.Views
 {
@@ -15,6 +16,7 @@ namespace SanarRuralUnan.Views
         private Form formularioActual;
         private paginaPrincipalPacientes paginaPacientes;
         private paginaPrincipalCitas paginaCitas;
+        private paginaPrincipalConsultas paginaConsultas;
         private readonly int? idDoctorActual;
 
         public menuPrincipalMedicos()
@@ -103,6 +105,7 @@ namespace SanarRuralUnan.Views
             btnPacientes.Type = MaterialButton.MaterialButtonType.Contained;
             btnCitas.Text = "Citas";
             btnCitas.Type = MaterialButton.MaterialButtonType.Text;
+            btnConsultas.Text = "Consultas";
             btnConsultas.Type = MaterialButton.MaterialButtonType.Text;
             btnHistorial.Type = MaterialButton.MaterialButtonType.Text;
         }
@@ -117,7 +120,23 @@ namespace SanarRuralUnan.Views
             btnCitas.Type = MaterialButton.MaterialButtonType.Contained;
             btnPacientes.Text = "Pacientes";
             btnPacientes.Type = MaterialButton.MaterialButtonType.Text;
+            btnConsultas.Text = "Consultas";
             btnConsultas.Type = MaterialButton.MaterialButtonType.Text;
+            btnHistorial.Type = MaterialButton.MaterialButtonType.Text;
+        }
+
+        private void btnConsultas_Click(object sender, EventArgs e)
+        {
+            paginaConsultas = paginaConsultas ?? new paginaPrincipalConsultas(idDoctorActual ?? -1);
+            CargarFormulario(paginaConsultas);
+            lblSeccion.Text = "Sección actual: Consultas";
+            lblContenido.Text = "Atención clínica y seguimiento de pacientes.";
+            btnConsultas.Text = "✓  Consultas";
+            btnConsultas.Type = MaterialButton.MaterialButtonType.Contained;
+            btnPacientes.Text = "Pacientes";
+            btnPacientes.Type = MaterialButton.MaterialButtonType.Text;
+            btnCitas.Text = "Citas";
+            btnCitas.Type = MaterialButton.MaterialButtonType.Text;
             btnHistorial.Type = MaterialButton.MaterialButtonType.Text;
         }
 
@@ -143,6 +162,7 @@ namespace SanarRuralUnan.Views
         {
             if (paginaPacientes != null) paginaPacientes.Dispose();
             if (paginaCitas != null) paginaCitas.Dispose();
+            if (paginaConsultas != null) paginaConsultas.Dispose();
             if (picLogo.Image != null) picLogo.Image.Dispose();
         }
     }
