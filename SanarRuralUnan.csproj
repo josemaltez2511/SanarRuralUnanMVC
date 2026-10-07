@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="packages\EntityFramework.6.5.2\build\EntityFramework.props" Condition="Exists('packages\EntityFramework.6.5.2\build\EntityFramework.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
@@ -225,6 +225,12 @@
     <Compile Include="Views\Pacientes\crearPaciente.Designer.cs">
       <DependentUpon>crearPaciente.cs</DependentUpon>
     </Compile>
+    <Compile Include="Views\Pacientes\fichaPaciente.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Views\Pacientes\fichaPaciente.Designer.cs">
+      <DependentUpon>fichaPaciente.cs</DependentUpon>
+    </Compile>
     <Compile Include="Views\Pacientes\paginaPrincipalPacientes.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -298,6 +304,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Views\Pacientes\crearPaciente.resx">
       <DependentUpon>crearPaciente.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\Pacientes\fichaPaciente.resx">
+      <DependentUpon>fichaPaciente.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Views\Pacientes\paginaPrincipalPacientes.resx">
       <DependentUpon>paginaPrincipalPacientes.cs</DependentUpon>

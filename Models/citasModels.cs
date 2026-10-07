@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
@@ -26,14 +26,6 @@ namespace SanarRuralUnan.Models
         public string Motivo { get; set; }
     }
 
-    // DTO usado para llenar el combo de selección de pacientes al registrar o editar una cita.
-    // Solo pasa el identificador y el nombre completo listo para mostrar.
-    // Lo usamos para no enviar toda la entidad Pacientes cuando el selector solo necesita el nombre.
-    public class PacienteItemDto
-    {
-        public int IdPaciente { get; set; }
-        public string NombreCompleto { get; set; }
-    }
 
     // DTO usado para llenar el combo de selección de médicos al agendar una cita.
     // Solo pasa el identificador del doctor y su nombre completo formateado.
