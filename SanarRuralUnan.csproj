@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="packages\EntityFramework.6.5.2\build\EntityFramework.props" Condition="Exists('packages\EntityFramework.6.5.2\build\EntityFramework.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
@@ -75,6 +75,7 @@
       <DependentUpon>ModelSanarRural.tt</DependentUpon>
     </Compile>
     <Compile Include="Controllers\citasControllers.cs" />
+    <Compile Include="Controllers\consultasControllers.cs" />
     <Compile Include="Controllers\doctoresControllers.cs" />
     <Compile Include="Controllers\hospitalesController.cs" />
     <Compile Include="Controllers\pacientesControllers.cs" />
@@ -123,6 +124,7 @@
       <DependentUpon>ModelSanarRural.edmx</DependentUpon>
     </Compile>
     <Compile Include="Models\citasModels.cs" />
+    <Compile Include="Models\consultasModels.cs" />
     <Compile Include="Models\doctoresModels.cs" />
     <Compile Include="Models\hospitalesModels.cs" />
     <Compile Include="Models\pacientesModels.cs" />
@@ -162,6 +164,24 @@
     </Compile>
     <Compile Include="Views\Citas\paginaPrincipalCitas.Designer.cs">
       <DependentUpon>paginaPrincipalCitas.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ConsultaMedica\atencionConsulta.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Views\ConsultaMedica\atencionConsulta.Designer.cs">
+      <DependentUpon>atencionConsulta.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ConsultaMedica\paginaPrincipalConsultas.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Views\ConsultaMedica\paginaPrincipalConsultas.Designer.cs">
+      <DependentUpon>paginaPrincipalConsultas.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ConsultaMedica\seleccionarCitaConsulta.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Views\ConsultaMedica\seleccionarCitaConsulta.Designer.cs">
+      <DependentUpon>seleccionarCitaConsulta.cs</DependentUpon>
     </Compile>
     <Compile Include="Views\Doctores\crearDoctor.cs">
       <SubType>Form</SubType>
@@ -237,9 +257,6 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="obj\Debug\SanarRuralUnan.iniciarSesion.resources" />
-    <EmbeddedResource Include="obj\Debug\SanarRuralUnan.Properties.Resources.resources" />
-    <EmbeddedResource Include="obj\Debug\SanarRuralUnan.Views.crearUsuario.resources" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -254,6 +271,15 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Views\Citas\paginaPrincipalCitas.resx">
       <DependentUpon>paginaPrincipalCitas.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\ConsultaMedica\atencionConsulta.resx">
+      <DependentUpon>atencionConsulta.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\ConsultaMedica\paginaPrincipalConsultas.resx">
+      <DependentUpon>paginaPrincipalConsultas.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\ConsultaMedica\seleccionarCitaConsulta.resx">
+      <DependentUpon>seleccionarCitaConsulta.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Views\Doctores\crearDoctor.resx">
       <DependentUpon>crearDoctor.cs</DependentUpon>
@@ -295,24 +321,22 @@
       <Generator>EntityModelCodeGenerator</Generator>
       <LastGenOutput>ModelSanarRural.Designer.cs</LastGenOutput>
     </EntityDeploy>
+    <None Include=".agents\rules\00-sanar-rural-core.md" />
+    <None Include=".agents\skills\sanar-rural-architecture\SKILL.md" />
+    <None Include=".agents\skills\sanar-rural-clinical\SKILL.md" />
+    <None Include=".agents\skills\sanar-rural-database\SKILL.md" />
+    <None Include=".agents\skills\sanar-rural-git-quality\SKILL.md" />
+    <None Include=".agents\skills\sanar-rural-ui-ux\SKILL.md" />
+    <None Include=".agents\workflows\review-change.md" />
     <None Include=".Designer.gitignore" />
     <None Include=".gitignore">
       <SubType>Form</SubType>
     </None>
-    <None Include="bin\Debug\SanarRuralUnan.exe.config" />
+    <None Include="AGENTS.md" />
+    <None Include="docs\AI\PROJECT_CONTEXT.md" />
     <None Include="ModelSanarRural.edmx.diagram">
       <DependentUpon>ModelSanarRural.edmx</DependentUpon>
     </None>
-    <None Include="obj\Debug\DesignTimeResolveAssemblyReferences.cache" />
-    <None Include="obj\Debug\DesignTimeResolveAssemblyReferencesInput.cache" />
-    <None Include="obj\Debug\edmxResourcesToEmbed\ModelSanarRural.csdl" />
-    <None Include="obj\Debug\edmxResourcesToEmbed\ModelSanarRural.msl" />
-    <None Include="obj\Debug\edmxResourcesToEmbed\ModelSanarRural.ssdl" />
-    <None Include="obj\Debug\SanarRur.584D474E.Up2Date" />
-    <None Include="obj\Debug\SanarRuralUnan.csproj.AssemblyReference.cache" />
-    <None Include="obj\Debug\SanarRuralUnan.csproj.CoreCompileInputs.cache" />
-    <None Include="obj\Debug\SanarRuralUnan.csproj.GenerateResource.cache" />
-    <None Include="obj\Debug\SanarRuralUnan.exe.config" />
     <None Include="packages.config" />
     <None Include="packages\EntityFramework.6.5.2\.signature.p7s" />
     <None Include="packages\EntityFramework.6.5.2\buildTransitive\EntityFramework.props" />
@@ -356,12 +380,6 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="bin\Debug\EntityFramework.dll" />
-    <Content Include="bin\Debug\EntityFramework.SqlServer.dll" />
-    <Content Include="bin\Debug\EntityFramework.SqlServer.xml" />
-    <Content Include="bin\Debug\EntityFramework.xml" />
-    <Content Include="bin\Debug\SanarRuralUnan.exe" />
-    <Content Include="bin\Debug\SanarRuralUnan.pdb" />
     <Content Include="ModelSanarRural.Context.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <DependentUpon>ModelSanarRural.edmx</DependentUpon>
@@ -372,12 +390,6 @@
       <DependentUpon>ModelSanarRural.edmx</DependentUpon>
       <LastGenOutput>ModelSanarRural.cs</LastGenOutput>
     </Content>
-    <Content Include="obj\Debug\SanarRuralUnan.csproj.FileListAbsolute.txt" />
-    <Content Include="obj\Debug\SanarRuralUnan.exe" />
-    <Content Include="obj\Debug\SanarRuralUnan.pdb" />
-    <Content Include="obj\Debug\TempPE\ModelSanarRural.Context.cs.dll" />
-    <Content Include="obj\Debug\TempPE\ModelSanarRural.cs.dll" />
-    <Content Include="obj\Debug\TempPE\ModelSanarRural.Designer.cs.dll" />
     <Content Include="packages\EntityFramework.6.5.2\build\Microsoft.Data.Entity.Build.Tasks.dll" />
     <Content Include="packages\EntityFramework.6.5.2\Icon.png" />
     <Content Include="packages\EntityFramework.6.5.2\lib\net40\EntityFramework.dll" />
@@ -409,9 +421,6 @@
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="bin\Release\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

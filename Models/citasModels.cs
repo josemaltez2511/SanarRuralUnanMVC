@@ -24,12 +24,6 @@ namespace SanarRuralUnan.Models
         public string Motivo { get; set; }
     }
 
-    // DTO para presentar pacientes activos en selectores de citas.
-    public class PacienteItemDto
-    {
-        public int IdPaciente { get; set; }
-        public string NombreCompleto { get; set; }
-    }
 
     // DTO para presentar doctores activos en selectores dependientes.
     public class DoctorItemDto
