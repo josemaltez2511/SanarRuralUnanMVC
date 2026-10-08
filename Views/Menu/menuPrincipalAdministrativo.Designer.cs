@@ -1,4 +1,5 @@
-using MaterialSkin.Controls;
+using System.Drawing;
+using System.Windows.Forms;
 using SanarRuralUnan.Helpers;
 
 namespace SanarRuralUnan.Views
@@ -16,177 +17,320 @@ namespace SanarRuralUnan.Views
 
         private void InitializeComponent()
         {
-            this.panelBarra = new System.Windows.Forms.Panel();
             this.panelEncabezado = new System.Windows.Forms.Panel();
-            this.panelNavegacion = new System.Windows.Forms.Panel();
-            this.panelIndicador = new System.Windows.Forms.Panel();
             this.picLogo = new System.Windows.Forms.PictureBox();
             this.lblMarca = new System.Windows.Forms.Label();
             this.lblDescripcion = new System.Windows.Forms.Label();
-            this.lblRol = new System.Windows.Forms.Label();
-            this.btnUsuarios = new MaterialButton();
-            this.btnDoctores = new MaterialButton();
-            this.btnPacientes = new MaterialButton();
-            this.btnHospitales = new MaterialButton();
-            this.btnCitas = new MaterialButton();
-            this.btnCerrarSesion = new MaterialButton();
+            this.panelBannerPaisaje = new System.Windows.Forms.Panel();
+            this.panelUsuario = new System.Windows.Forms.Panel();
+            this.lblAvatar = new System.Windows.Forms.Label();
+            this.lblUsuarioNombre = new System.Windows.Forms.Label();
+            this.lblUsuarioRol = new System.Windows.Forms.Label();
+            this.btnCerrarSesion = new System.Windows.Forms.Button();
+            this.panelSidebar = new System.Windows.Forms.Panel();
+            this.btnUsuarios = new System.Windows.Forms.Button();
+            this.btnDoctores = new System.Windows.Forms.Button();
+            this.btnPacientes = new System.Windows.Forms.Button();
+            this.btnHospitales = new System.Windows.Forms.Button();
+            this.btnCitas = new System.Windows.Forms.Button();
+            this.panelSidebarLema = new System.Windows.Forms.Panel();
             this.panelContenido = new System.Windows.Forms.Panel();
-            this.lblSeccion = new MaterialLabel();
-            this.lblContenido = new MaterialLabel();
-            this.panelBarra.SuspendLayout();
             this.panelEncabezado.SuspendLayout();
-            this.panelNavegacion.SuspendLayout();
-            this.panelContenido.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picLogo)).BeginInit();
+            this.panelUsuario.SuspendLayout();
+            this.panelSidebar.SuspendLayout();
             this.SuspendLayout();
-            this.panelBarra.Dock = System.Windows.Forms.DockStyle.Top;
-            this.panelBarra.Height = 132;
-            this.panelBarra.BackColor = Tema.FondoSecundario;
-            this.panelBarra.Controls.Add(this.panelNavegacion);
-            this.panelBarra.Controls.Add(this.panelEncabezado);
-            this.panelEncabezado.Dock = System.Windows.Forms.DockStyle.Top;
-            this.panelEncabezado.Height = 76;
+            //
+            // panelEncabezado
+            //
             this.panelEncabezado.BackColor = Tema.Superficie;
             this.panelEncabezado.Controls.Add(this.picLogo);
             this.panelEncabezado.Controls.Add(this.lblMarca);
             this.panelEncabezado.Controls.Add(this.lblDescripcion);
-            this.panelEncabezado.Controls.Add(this.lblRol);
+            this.panelEncabezado.Controls.Add(this.panelBannerPaisaje);
+            this.panelEncabezado.Controls.Add(this.panelUsuario);
             this.panelEncabezado.Controls.Add(this.btnCerrarSesion);
-            this.picLogo.Location = new System.Drawing.Point(18, 8);
-            this.picLogo.Size = new System.Drawing.Size(132, 60);
+            this.panelEncabezado.Dock = System.Windows.Forms.DockStyle.Top;
+            this.panelEncabezado.Height = 82;
+            this.panelEncabezado.Location = new System.Drawing.Point(0, 0);
+            this.panelEncabezado.Name = "panelEncabezado";
+            this.panelEncabezado.Size = new System.Drawing.Size(1280, 82);
+            this.panelEncabezado.TabIndex = 0;
+            //
+            // picLogo
+            //
+            this.picLogo.AccessibleDescription = "Identidad visual de Sanar Rural";
+            this.picLogo.AccessibleName = "Logo institucional";
+            this.picLogo.Location = new System.Drawing.Point(20, 14);
+            this.picLogo.Name = "picLogo";
+            this.picLogo.Size = new System.Drawing.Size(54, 54);
             this.picLogo.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-            this.picLogo.AccessibleName = "Logo de Sanar Rural";
-            this.picLogo.AccessibleDescription = "Identidad visual del sistema Sanar Rural";
+            this.picLogo.TabIndex = 0;
+            this.picLogo.TabStop = false;
+            //
+            // lblMarca
+            //
             this.lblMarca.AutoSize = true;
-            this.lblMarca.Location = new System.Drawing.Point(164, 13);
-            this.lblMarca.Font = Tema.FuenteMarca;
+            this.lblMarca.Font = new System.Drawing.Font(Tema.FamiliaFuente, 16F, System.Drawing.FontStyle.Bold);
             this.lblMarca.ForeColor = Tema.AzulOscuro;
-            this.lblMarca.Text = "Sanar Rural";
+            this.lblMarca.Location = new System.Drawing.Point(82, 14);
+            this.lblMarca.Name = "lblMarca";
+            this.lblMarca.Size = new System.Drawing.Size(188, 30);
+            this.lblMarca.TabIndex = 1;
+            this.lblMarca.Text = "SANAR RURAL";
+            //
+            // lblDescripcion
+            //
             this.lblDescripcion.AutoSize = true;
-            this.lblDescripcion.Location = new System.Drawing.Point(166, 42);
             this.lblDescripcion.Font = Tema.FuenteAyuda;
             this.lblDescripcion.ForeColor = Tema.TextoSecundario;
-            this.lblDescripcion.Text = "Sistema de gestión médica";
-            this.lblRol.AutoSize = true;
-            this.lblRol.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
-            this.lblRol.Location = new System.Drawing.Point(930, 26);
-            this.lblRol.Font = Tema.FuenteLabelCampo;
-            this.lblRol.ForeColor = Tema.AzulOscuro;
-            this.lblRol.Text = "Administración";
-            this.lblRol.AccessibleName = "Rol actual";
-            this.lblRol.AccessibleDescription = "Sesión administrativa";
-            this.panelNavegacion.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panelNavegacion.Height = 56;
-            this.panelNavegacion.BackColor = Tema.FondoSecundario;
-            this.panelNavegacion.Controls.Add(this.btnUsuarios);
-            this.panelNavegacion.Controls.Add(this.btnDoctores);
-            this.panelNavegacion.Controls.Add(this.btnPacientes);
-            this.panelNavegacion.Controls.Add(this.btnHospitales);
-            this.panelNavegacion.Controls.Add(this.btnCitas);
-            this.panelNavegacion.Controls.Add(this.panelIndicador);
-            this.panelIndicador.BackColor = Tema.VerdeOscuro;
-            this.panelIndicador.Location = new System.Drawing.Point(24, 51);
-            this.panelIndicador.Size = new System.Drawing.Size(112, 3);
-            this.panelIndicador.TabStop = false;
-            this.panelIndicador.AccessibleDescription = "Indicador visual de la sección seleccionada";
-            this.btnUsuarios.Text = "Usuarios";
-            this.btnUsuarios.Type = MaterialButton.MaterialButtonType.Text;
-            this.btnUsuarios.Size = new System.Drawing.Size(112, 42);
-            this.btnUsuarios.TabIndex = 0;
-            this.btnUsuarios.AccessibleName = "Usuarios";
-            this.btnUsuarios.AccessibleDescription = "Navegar a la sección Usuarios";
-            this.btnUsuarios.Click += new System.EventHandler(this.btnUsuarios_Click);
-            this.btnDoctores.Text = "Doctores";
-            this.btnDoctores.Type = MaterialButton.MaterialButtonType.Text;
-            this.btnDoctores.Size = new System.Drawing.Size(112, 42);
-            this.btnDoctores.TabIndex = 1;
-            this.btnDoctores.AccessibleName = "Doctores";
-            this.btnDoctores.AccessibleDescription = "Navegar a la sección Doctores";
-            this.btnDoctores.Click += new System.EventHandler(this.btnDoctores_Click);
-            this.btnPacientes.Text = "Pacientes";
-            this.btnPacientes.Type = MaterialButton.MaterialButtonType.Text;
-            this.btnPacientes.Size = new System.Drawing.Size(112, 42);
-            this.btnPacientes.TabIndex = 2;
-            this.btnPacientes.AccessibleName = "Pacientes";
-            this.btnPacientes.AccessibleDescription = "Navegar a la sección Pacientes";
-            this.btnPacientes.Click += new System.EventHandler(this.btnPacientes_Click);
-            this.btnHospitales.Text = "Hospitales";
-            this.btnHospitales.Type = MaterialButton.MaterialButtonType.Text;
-            this.btnHospitales.Size = new System.Drawing.Size(122, 42);
-            this.btnHospitales.TabIndex = 3;
-            this.btnHospitales.AccessibleName = "Hospitales";
-            this.btnHospitales.AccessibleDescription = "Navegar a la sección Hospitales";
-            this.btnHospitales.Click += new System.EventHandler(this.btnHospitales_Click);
-            this.btnCitas.Text = "Citas";
-            this.btnCitas.Type = MaterialButton.MaterialButtonType.Text;
-            this.btnCitas.Size = new System.Drawing.Size(100, 42);
-            this.btnCitas.TabIndex = 4;
-            this.btnCitas.AccessibleName = "Citas";
-            this.btnCitas.AccessibleDescription = "Navegar a la sección Citas";
-            this.btnCitas.Click += new System.EventHandler(this.btnCitas_Click);
-            this.btnCerrarSesion.Text = "Cerrar sesión";
-            this.btnCerrarSesion.Type = MaterialButton.MaterialButtonType.Text;
-            this.btnCerrarSesion.Size = new System.Drawing.Size(132, 40);
-            this.btnCerrarSesion.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
+            this.lblDescripcion.Location = new System.Drawing.Point(84, 48);
+            this.lblDescripcion.Name = "lblDescripcion";
+            this.lblDescripcion.Size = new System.Drawing.Size(155, 15);
+            this.lblDescripcion.TabIndex = 2;
+            this.lblDescripcion.Text = "Sistema de Gestión Médica";
+            //
+            // panelBannerPaisaje
+            //
+            this.panelBannerPaisaje.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.panelBannerPaisaje.BackColor = Tema.Superficie;
+            this.panelBannerPaisaje.Location = new System.Drawing.Point(280, 2);
+            this.panelBannerPaisaje.Name = "panelBannerPaisaje";
+            this.panelBannerPaisaje.Size = new System.Drawing.Size(560, 78);
+            this.panelBannerPaisaje.TabIndex = 3;
+            //
+            // panelUsuario
+            //
+            this.panelUsuario.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.panelUsuario.BackColor = Tema.Superficie;
+            this.panelUsuario.Controls.Add(this.lblAvatar);
+            this.panelUsuario.Controls.Add(this.lblUsuarioNombre);
+            this.panelUsuario.Controls.Add(this.lblUsuarioRol);
+            this.panelUsuario.Location = new System.Drawing.Point(860, 16);
+            this.panelUsuario.Name = "panelUsuario";
+            this.panelUsuario.Size = new System.Drawing.Size(240, 50);
+            this.panelUsuario.TabIndex = 4;
+            //
+            // lblAvatar
+            //
+            this.lblAvatar.BackColor = System.Drawing.Color.Transparent;
+            this.lblAvatar.Font = new System.Drawing.Font(Tema.FamiliaFuente, 11F, System.Drawing.FontStyle.Bold);
+            this.lblAvatar.ForeColor = Tema.AzulPrimario;
+            this.lblAvatar.Location = new System.Drawing.Point(8, 7);
+            this.lblAvatar.Name = "lblAvatar";
+            this.lblAvatar.Size = new System.Drawing.Size(36, 36);
+            this.lblAvatar.TabIndex = 0;
+            this.lblAvatar.Text = "AD";
+            this.lblAvatar.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            //
+            // lblUsuarioNombre
+            //
+            this.lblUsuarioNombre.AutoEllipsis = true;
+            this.lblUsuarioNombre.Font = Tema.FuenteLabelCampo;
+            this.lblUsuarioNombre.ForeColor = Tema.AzulOscuro;
+            this.lblUsuarioNombre.Location = new System.Drawing.Point(50, 6);
+            this.lblUsuarioNombre.Name = "lblUsuarioNombre";
+            this.lblUsuarioNombre.Size = new System.Drawing.Size(184, 18);
+            this.lblUsuarioNombre.TabIndex = 1;
+            this.lblUsuarioNombre.Text = "Administración";
+            //
+            // lblUsuarioRol
+            //
+            this.lblUsuarioRol.AutoSize = true;
+            this.lblUsuarioRol.Font = Tema.FuentePequena;
+            this.lblUsuarioRol.ForeColor = Tema.TextoSecundario;
+            this.lblUsuarioRol.Location = new System.Drawing.Point(50, 26);
+            this.lblUsuarioRol.Name = "lblUsuarioRol";
+            this.lblUsuarioRol.Size = new System.Drawing.Size(81, 15);
+            this.lblUsuarioRol.TabIndex = 2;
+            this.lblUsuarioRol.Text = "Administrativo";
+            //
+            // btnCerrarSesion
+            //
+            this.btnCerrarSesion.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnCerrarSesion.BackColor = Tema.Superficie;
+            this.btnCerrarSesion.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnCerrarSesion.FlatAppearance.BorderColor = Tema.Borde;
+            this.btnCerrarSesion.FlatAppearance.BorderSize = 1;
+            this.btnCerrarSesion.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnCerrarSesion.Font = Tema.FuenteLabelCampo;
+            this.btnCerrarSesion.ForeColor = Tema.TextoPrincipal;
+            this.btnCerrarSesion.Location = new System.Drawing.Point(1116, 21);
+            this.btnCerrarSesion.Name = "btnCerrarSesion";
+            this.btnCerrarSesion.Size = new System.Drawing.Size(144, 40);
             this.btnCerrarSesion.TabIndex = 5;
-            this.btnCerrarSesion.AccessibleName = "Cerrar sesión";
-            this.btnCerrarSesion.AccessibleDescription = "Cerrar la sesión actual";
-            this.btnCerrarSesion.HighEmphasis = true;
-            this.btnCerrarSesion.UseAccentColor = true;
+            this.btnCerrarSesion.Text = "🚪 Cerrar sesión";
+            this.btnCerrarSesion.UseVisualStyleBackColor = false;
             this.btnCerrarSesion.Click += new System.EventHandler(this.btnCerrarSesion_Click);
-            this.panelContenido.Dock = System.Windows.Forms.DockStyle.Fill;
+            //
+            // panelSidebar
+            //
+            this.panelSidebar.BackColor = Tema.Fondo;
+            this.panelSidebar.Controls.Add(this.btnUsuarios);
+            this.panelSidebar.Controls.Add(this.btnDoctores);
+            this.panelSidebar.Controls.Add(this.btnPacientes);
+            this.panelSidebar.Controls.Add(this.btnHospitales);
+            this.panelSidebar.Controls.Add(this.btnCitas);
+            this.panelSidebar.Controls.Add(this.panelSidebarLema);
+            this.panelSidebar.Dock = System.Windows.Forms.DockStyle.Left;
+            this.panelSidebar.Location = new System.Drawing.Point(0, 82);
+            this.panelSidebar.Name = "panelSidebar";
+            this.panelSidebar.Padding = new System.Windows.Forms.Padding(14, 16, 14, 16);
+            this.panelSidebar.Size = new System.Drawing.Size(195, 718);
+            this.panelSidebar.TabIndex = 1;
+            //
+            // btnUsuarios
+            //
+            this.btnUsuarios.BackColor = Tema.AzulPrimario;
+            this.btnUsuarios.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnUsuarios.FlatAppearance.BorderSize = 0;
+            this.btnUsuarios.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnUsuarios.Font = Tema.FuenteBoton;
+            this.btnUsuarios.ForeColor = System.Drawing.Color.White;
+            this.btnUsuarios.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.btnUsuarios.Location = new System.Drawing.Point(14, 16);
+            this.btnUsuarios.Name = "btnUsuarios";
+            this.btnUsuarios.Size = new System.Drawing.Size(167, 44);
+            this.btnUsuarios.TabIndex = 0;
+            this.btnUsuarios.Text = "  👥  Usuarios";
+            this.btnUsuarios.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.btnUsuarios.UseVisualStyleBackColor = false;
+            this.btnUsuarios.Click += new System.EventHandler(this.btnUsuarios_Click);
+            //
+            // btnDoctores
+            //
+            this.btnDoctores.BackColor = System.Drawing.Color.Transparent;
+            this.btnDoctores.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnDoctores.FlatAppearance.BorderSize = 0;
+            this.btnDoctores.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnDoctores.Font = Tema.FuenteBoton;
+            this.btnDoctores.ForeColor = Tema.AzulOscuro;
+            this.btnDoctores.Location = new System.Drawing.Point(14, 68);
+            this.btnDoctores.Name = "btnDoctores";
+            this.btnDoctores.Size = new System.Drawing.Size(167, 44);
+            this.btnDoctores.TabIndex = 1;
+            this.btnDoctores.Text = "  🩺  Doctores";
+            this.btnDoctores.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.btnDoctores.UseVisualStyleBackColor = false;
+            this.btnDoctores.Click += new System.EventHandler(this.btnDoctores_Click);
+            //
+            // btnPacientes
+            //
+            this.btnPacientes.BackColor = System.Drawing.Color.Transparent;
+            this.btnPacientes.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnPacientes.FlatAppearance.BorderSize = 0;
+            this.btnPacientes.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnPacientes.Font = Tema.FuenteBoton;
+            this.btnPacientes.ForeColor = Tema.AzulOscuro;
+            this.btnPacientes.Location = new System.Drawing.Point(14, 120);
+            this.btnPacientes.Name = "btnPacientes";
+            this.btnPacientes.Size = new System.Drawing.Size(167, 44);
+            this.btnPacientes.TabIndex = 2;
+            this.btnPacientes.Text = "  👥  Pacientes";
+            this.btnPacientes.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.btnPacientes.UseVisualStyleBackColor = false;
+            this.btnPacientes.Click += new System.EventHandler(this.btnPacientes_Click);
+            //
+            // btnHospitales
+            //
+            this.btnHospitales.BackColor = System.Drawing.Color.Transparent;
+            this.btnHospitales.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnHospitales.FlatAppearance.BorderSize = 0;
+            this.btnHospitales.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnHospitales.Font = Tema.FuenteBoton;
+            this.btnHospitales.ForeColor = Tema.AzulOscuro;
+            this.btnHospitales.Location = new System.Drawing.Point(14, 172);
+            this.btnHospitales.Name = "btnHospitales";
+            this.btnHospitales.Size = new System.Drawing.Size(167, 44);
+            this.btnHospitales.TabIndex = 3;
+            this.btnHospitales.Text = "  🏥  Hospitales";
+            this.btnHospitales.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.btnHospitales.UseVisualStyleBackColor = false;
+            this.btnHospitales.Click += new System.EventHandler(this.btnHospitales_Click);
+            //
+            // btnCitas
+            //
+            this.btnCitas.BackColor = System.Drawing.Color.Transparent;
+            this.btnCitas.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnCitas.FlatAppearance.BorderSize = 0;
+            this.btnCitas.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnCitas.Font = Tema.FuenteBoton;
+            this.btnCitas.ForeColor = Tema.AzulOscuro;
+            this.btnCitas.Location = new System.Drawing.Point(14, 224);
+            this.btnCitas.Name = "btnCitas";
+            this.btnCitas.Size = new System.Drawing.Size(167, 44);
+            this.btnCitas.TabIndex = 4;
+            this.btnCitas.Text = "  📅  Citas";
+            this.btnCitas.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.btnCitas.UseVisualStyleBackColor = false;
+            this.btnCitas.Click += new System.EventHandler(this.btnCitas_Click);
+            //
+            // panelSidebarLema
+            //
+            this.panelSidebarLema.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.panelSidebarLema.BackColor = System.Drawing.Color.Transparent;
+            this.panelSidebarLema.Location = new System.Drawing.Point(14, 560);
+            this.panelSidebarLema.Name = "panelSidebarLema";
+            this.panelSidebarLema.Size = new System.Drawing.Size(167, 140);
+            this.panelSidebarLema.TabIndex = 5;
+            //
+            // panelContenido
+            //
             this.panelContenido.BackColor = Tema.Fondo;
-            this.panelContenido.Padding = new System.Windows.Forms.Padding(36);
-            this.panelContenido.Controls.Add(this.lblSeccion);
-            this.panelContenido.Controls.Add(this.lblContenido);
-            this.lblSeccion.AutoSize = true;
-            this.lblSeccion.Font = Tema.FuenteLabelCampo;
-            this.lblSeccion.ForeColor = Tema.AzulOscuro;
-            this.lblSeccion.Location = new System.Drawing.Point(40, 36);
-            this.lblSeccion.FontType = MaterialSkin.MaterialSkinManager.fontType.H5;
-            this.lblContenido.AutoSize = true;
-            this.lblContenido.ForeColor = Tema.TextoSecundario;
-            this.lblContenido.Location = new System.Drawing.Point(42, 92);
-            this.lblContenido.MaximumSize = new System.Drawing.Size(850, 0);
-            this.lblContenido.FontType = MaterialSkin.MaterialSkinManager.fontType.Body1;
-            this.Controls.Add(this.panelContenido);
-            this.Controls.Add(this.panelBarra);
+            this.panelContenido.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panelContenido.Location = new System.Drawing.Point(195, 82);
+            this.panelContenido.Name = "panelContenido";
+            this.panelContenido.Padding = new System.Windows.Forms.Padding(12, 12, 16, 16);
+            this.panelContenido.Size = new System.Drawing.Size(1085, 718);
+            this.panelContenido.TabIndex = 2;
+            //
+            // menuPrincipalAdministrativo
+            //
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = Tema.Fondo;
             this.ClientSize = new System.Drawing.Size(1280, 800);
-            this.MinimumSize = new System.Drawing.Size(1050, 620);
+            this.Controls.Add(this.panelContenido);
+            this.Controls.Add(this.panelSidebar);
+            this.Controls.Add(this.panelEncabezado);
+            this.DoubleBuffered = true;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Sizable;
             this.MaximizeBox = true;
-            this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
+            this.MinimumSize = new System.Drawing.Size(1100, 700);
             this.Name = "menuPrincipalAdministrativo";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Sanar Rural - Administración";
-            this.Resize += new System.EventHandler(this.menuPrincipalAdministrativo_Resize);
-            this.panelBarra.ResumeLayout(false);
+            this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.menuPrincipalAdministrativo_FormClosed);
             this.panelEncabezado.ResumeLayout(false);
             this.panelEncabezado.PerformLayout();
-            this.panelNavegacion.ResumeLayout(false);
-            this.panelContenido.ResumeLayout(false);
-            this.panelContenido.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picLogo)).EndInit();
+            this.panelUsuario.ResumeLayout(false);
+            this.panelUsuario.PerformLayout();
+            this.panelSidebar.ResumeLayout(false);
             this.ResumeLayout(false);
+
         }
 
-        private System.Windows.Forms.Panel panelBarra;
         private System.Windows.Forms.Panel panelEncabezado;
-        private System.Windows.Forms.Panel panelNavegacion;
-        private System.Windows.Forms.Panel panelIndicador;
         private System.Windows.Forms.PictureBox picLogo;
         private System.Windows.Forms.Label lblMarca;
         private System.Windows.Forms.Label lblDescripcion;
-        private System.Windows.Forms.Label lblRol;
-        private MaterialButton btnUsuarios;
-        private MaterialButton btnDoctores;
-        private MaterialButton btnPacientes;
-        private MaterialButton btnHospitales;
-        private MaterialButton btnCitas;
-        private MaterialButton btnCerrarSesion;
+        private System.Windows.Forms.Panel panelBannerPaisaje;
+        private System.Windows.Forms.Panel panelUsuario;
+        private System.Windows.Forms.Label lblAvatar;
+        private System.Windows.Forms.Label lblUsuarioNombre;
+        private System.Windows.Forms.Label lblUsuarioRol;
+        private System.Windows.Forms.Button btnCerrarSesion;
+        private System.Windows.Forms.Panel panelSidebar;
+        private System.Windows.Forms.Button btnUsuarios;
+        private System.Windows.Forms.Button btnDoctores;
+        private System.Windows.Forms.Button btnPacientes;
+        private System.Windows.Forms.Button btnHospitales;
+        private System.Windows.Forms.Button btnCitas;
+        private System.Windows.Forms.Panel panelSidebarLema;
         private System.Windows.Forms.Panel panelContenido;
-        private MaterialLabel lblSeccion;
-        private MaterialLabel lblContenido;
     }
 }

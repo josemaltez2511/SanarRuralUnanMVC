@@ -1,4 +1,5 @@
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Windows.Forms;
 
 // Clase central de estilos visuales de Sanar Rural.
@@ -35,6 +36,17 @@ namespace SanarRuralUnan.Helpers
         public static readonly Color ColorError = Error;
         public static readonly Color ColorExito = VerdeOscuro;
 
+        // Colores para estados y badges del nuevo diseño
+        public static readonly Color BadgeActivoFondo = Color.FromArgb(235, 247, 238);
+        public static readonly Color BadgeInactivoFondo = Color.FromArgb(243, 245, 247);
+        public static readonly Color BadgeRolAdminFondo = Color.FromArgb(228, 239, 250);
+        public static readonly Color BadgeRolDoctorFondo = Color.FromArgb(233, 244, 252);
+        public static readonly Color BadgeRolPacienteFondo = Color.FromArgb(235, 248, 238);
+        public static readonly Color BotonPeligroFondo = Color.FromArgb(254, 242, 242);
+        public static readonly Color BotonPeligroBorde = Color.FromArgb(245, 198, 198);
+        public static readonly Color BotonEditarFondo = Color.FromArgb(240, 247, 253);
+        public static readonly Color BotonEditarBorde = Color.FromArgb(195, 222, 243);
+
         // ===== FUENTES =====
         // FontStyle.Bold / Regular ya vienen incluidos en cada constante para no repetirlo en cada formulario
         public const string FamiliaFuente = "Segoe UI";
@@ -53,6 +65,9 @@ namespace SanarRuralUnan.Helpers
         public static Font FuenteInput => new Font(FamiliaFuente, 11F, FontStyle.Regular);
         public static Font FuenteAyuda => new Font(FamiliaFuente, TamanoAyuda, FontStyle.Regular);
         public static Font FuenteBoton => new Font(FamiliaFuente, TamanoBoton, FontStyle.Bold);
+        public static Font FuentePequena => new Font(FamiliaFuente, 8.5F, FontStyle.Regular);
+        public static Font FuenteMetricaNumero => new Font(FamiliaFuente, 20F, FontStyle.Bold);
+        public static Font FuenteMetricaLabel => new Font(FamiliaFuente, 9F, FontStyle.Regular);
 
         // Espaciado
         public const int EspacioPequeno = 8;
@@ -65,6 +80,8 @@ namespace SanarRuralUnan.Helpers
         public const int AltoCampo = 40;
         public const int AltoEncabezado = 48;
         public const int AltoFilaTabla = 38;
+        public const int RadioTarjeta = 10;
+        public const int RadioBoton = 6;
 
         // Alias conservados para formularios existentes.
         public const int AnchoTarjeta = 500;
@@ -76,6 +93,44 @@ namespace SanarRuralUnan.Helpers
         // Duraciones disponibles para transiciones sencillas de interfaz.
         public const int AnimacionRapida = 150;
         public const int AnimacionNormal = 180;
+
+        // Genera una ruta gráfica con esquinas redondeadas para tarjetas y botones.
+        public static GraphicsPath CrearRutaRedondeada(Rectangle rect, int radio)
+        {
+            var ruta = new GraphicsPath();
+            if (radio <= 0)
+            {
+                ruta.AddRectangle(rect);
+                return ruta;
+            }
+
+            int diametro = radio * 2;
+            int r = System.Math.Min(diametro, System.Math.Min(rect.Width, rect.Height));
+
+            ruta.AddArc(rect.X, rect.Y, r, r, 180, 90);
+            ruta.AddArc(rect.Right - r, rect.Y, r, r, 270, 90);
+            ruta.AddArc(rect.Right - r, rect.Bottom - r, r, r, 0, 90);
+            ruta.AddArc(rect.X, rect.Bottom - r, r, r, 90, 90);
+            ruta.CloseFigure();
+            return ruta;
+        }
+
+        // Dibuja una tarjeta con fondo y borde redondeados con suavizado GDI+.
+        public static void DibujarTarjetaRedondeada(Graphics g, Rectangle rect, Color fondo, Color borde, int radio = 10)
+        {
+            g.SmoothingMode = SmoothingMode.AntiAlias;
+            using (var ruta = CrearRutaRedondeada(rect, radio))
+            {
+                using (var brocha = new SolidBrush(fondo))
+                {
+                    g.FillPath(brocha, ruta);
+                }
+                using (var pluma = new Pen(borde, 1f))
+                {
+                    g.DrawPath(pluma, ruta);
+                }
+            }
+        }
 
         public static void ConfigurarTabla(DataGridView tabla)
         {

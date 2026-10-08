@@ -1,5 +1,7 @@
-using System;
+﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Windows.Forms;
 using SanarRuralUnan.Controllers;
 using SanarRuralUnan.Helpers;
@@ -7,6 +9,7 @@ using SanarRuralUnan.Helpers;
 namespace SanarRuralUnan.Views.Citas
 {
     // Vista principal para consulta, filtrado y ciclo de vida de citas médicas.
+    // Presenta métricas resumidas, búsqueda ágil, badges de estado y acciones contextuales.
     public partial class paginaPrincipalCitas : Form
     {
         private readonly citasControllers controlador = new citasControllers();
@@ -29,8 +32,10 @@ namespace SanarRuralUnan.Views.Citas
         // ============================================================
         private void paginaPrincipalCitas_Load(object sender, EventArgs e)
         {
+            ConfigurarEstilosVisuales();
             ConfigurarEstiloGrid();
             CargarFiltrosEstado();
+            AjustarLayout();
             CargarCitas();
 
             // Refresca la tabla automáticamente cuando la ventana vuelve a mostrarse en el contenedor.
@@ -43,9 +48,81 @@ namespace SanarRuralUnan.Views.Citas
             };
         }
 
+        private void paginaPrincipalCitas_Resize(object sender, EventArgs e)
+        {
+            AjustarLayout();
+        }
+
+        private void ConfigurarEstilosVisuales()
+        {
+            panelCardPrincipal.Paint += (s, ev) =>
+            {
+                using (var pen = new Pen(Tema.Borde, 1f))
+                {
+                    ev.Graphics.DrawRectangle(pen, 0, 0, panelCardPrincipal.Width - 1, panelCardPrincipal.Height - 1);
+                }
+            };
+
+            panelBuscar.Paint += (s, ev) =>
+            {
+                Tema.DibujarTarjetaRedondeada(ev.Graphics, new Rectangle(0, 0, panelBuscar.Width - 1, panelBuscar.Height - 1), Color.White, Tema.Borde, 6);
+            };
+
+            panelFiltroFecha.Paint += (s, ev) =>
+            {
+                Tema.DibujarTarjetaRedondeada(ev.Graphics, new Rectangle(0, 0, panelFiltroFecha.Width - 1, panelFiltroFecha.Height - 1), Color.White, Tema.Borde, 6);
+            };
+
+            panelFiltroEstado.Paint += (s, ev) =>
+            {
+                Tema.DibujarTarjetaRedondeada(ev.Graphics, new Rectangle(0, 0, panelFiltroEstado.Width - 1, panelFiltroEstado.Height - 1), Color.White, Tema.Borde, 6);
+            };
+
+            cardTotal.Paint += (s, ev) =>
+            {
+                Tema.DibujarTarjetaRedondeada(ev.Graphics, new Rectangle(0, 0, cardTotal.Width - 1, cardTotal.Height - 1), cardTotal.BackColor, Tema.Borde, 8);
+            };
+
+            cardAtendidas.Paint += (s, ev) =>
+            {
+                Tema.DibujarTarjetaRedondeada(ev.Graphics, new Rectangle(0, 0, cardAtendidas.Width - 1, cardAtendidas.Height - 1), cardAtendidas.BackColor, Tema.Borde, 8);
+            };
+
+            cardPendientes.Paint += (s, ev) =>
+            {
+                Tema.DibujarTarjetaRedondeada(ev.Graphics, new Rectangle(0, 0, cardPendientes.Width - 1, cardPendientes.Height - 1), cardPendientes.BackColor, Tema.Borde, 8);
+            };
+
+            panelIconoModulo.Paint += (s, ev) =>
+            {
+                ev.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
+                using (var brush = new SolidBrush(Color.FromArgb(226, 238, 248)))
+                {
+                    ev.Graphics.FillEllipse(brush, 1, 1, panelIconoModulo.Width - 3, panelIconoModulo.Height - 3);
+                }
+            };
+
+            lblIconoTotal.Paint += DibujarFondoCircularIcono;
+            lblIconoAtendidas.Paint += DibujarFondoCircularIcono;
+            lblIconoPendientes.Paint += DibujarFondoCircularIcono;
+        }
+
+        private static void DibujarFondoCircularIcono(object sender, PaintEventArgs e)
+        {
+            Label lbl = sender as Label;
+            if (lbl == null) return;
+            e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
+            using (var brush = new SolidBrush(lbl.BackColor))
+            {
+                e.Graphics.FillEllipse(brush, 1, 1, lbl.Width - 3, lbl.Height - 3);
+            }
+        }
+
         private void ConfigurarEstiloGrid()
         {
             Tema.ConfigurarTabla(dgvCitas);
+            dgvCitas.RowTemplate.Height = 46;
+            dgvCitas.ColumnHeadersHeight = 42;
             dgvCitas.ColumnHeadersBorderStyle = DataGridViewHeaderBorderStyle.None;
             dgvCitas.AllowUserToResizeRows = false;
             dgvCitas.AccessibleName = "Listado de citas médicas";
@@ -116,7 +193,7 @@ namespace SanarRuralUnan.Views.Citas
                 if (dgvCitas.Columns["Estado"] != null)
                 {
                     dgvCitas.Columns["Estado"].HeaderText = "Estado";
-                    dgvCitas.Columns["Estado"].FillWeight = 75;
+                    dgvCitas.Columns["Estado"].FillWeight = 80;
                 }
                 if (dgvCitas.Columns["Motivo"] != null)
                 {
@@ -132,10 +209,53 @@ namespace SanarRuralUnan.Views.Citas
                 OcultarColumnaSiExiste("FechaHoraProgramada");
 
                 AgregarColumnasAcciones();
+                CalcularMetricas();
             }
             catch (Exception ex)
             {
                 MessageBox.Show("Error al cargar el listado de citas: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void CalcularMetricas()
+        {
+            try
+            {
+                var todas = controlador.listarCitas("", null, "Todos", idDoctorFiltro) as System.Collections.IList;
+                int total = todas != null ? todas.Count : 0;
+                int atendidasConfirmadas = 0;
+                int pendientes = 0;
+
+                if (todas != null)
+                {
+                    foreach (object item in todas)
+                    {
+                        var prop = item.GetType().GetProperty("Estado");
+                        if (prop != null)
+                        {
+                            string est = prop.GetValue(item, null)?.ToString() ?? "";
+                            if (est == "Atendida" || est == "Confirmada")
+                                atendidasConfirmadas++;
+                            else if (est == "Pendiente")
+                                pendientes++;
+                        }
+                    }
+                }
+
+                lblTotalNum.Text = total.ToString();
+                lblAtendidasNum.Text = atendidasConfirmadas.ToString();
+                lblPendientesNum.Text = pendientes.ToString();
+
+                int mostradas = dgvCitas.Rows.Count;
+                lblConteo.Text = string.Format("Mostrando {0} de {1} citas", mostradas, total);
+            }
+            catch
+            {
+                int mostradas = dgvCitas.Rows.Count;
+                lblTotalNum.Text = mostradas.ToString();
+                lblAtendidasNum.Text = "0";
+                lblPendientesNum.Text = "0";
+                lblConteo.Text = string.Format("Mostrando {0} citas", mostradas);
             }
         }
 
@@ -151,56 +271,56 @@ namespace SanarRuralUnan.Views.Citas
         {
             if (!dgvCitas.Columns.Contains("colConfirmar"))
             {
-                DataGridViewButtonColumn colConfirmar = new DataGridViewButtonColumn
+                var colConfirmar = new DataGridViewButtonColumn
                 {
                     Name = "colConfirmar",
                     HeaderText = "Confirmar",
                     Text = "✓ Confirmar",
                     UseColumnTextForButtonValue = true,
                     FlatStyle = FlatStyle.Flat,
-                    FillWeight = 75
+                    FillWeight = 78
                 };
                 dgvCitas.Columns.Add(colConfirmar);
             }
 
             if (!dgvCitas.Columns.Contains("colEditar"))
             {
-                DataGridViewButtonColumn colEditar = new DataGridViewButtonColumn
+                var colEditar = new DataGridViewButtonColumn
                 {
                     Name = "colEditar",
                     HeaderText = "Editar",
-                    Text = "✏️ Editar",
+                    Text = "✏ Editar",
                     UseColumnTextForButtonValue = true,
                     FlatStyle = FlatStyle.Flat,
-                    FillWeight = 75
+                    FillWeight = 62
                 };
                 dgvCitas.Columns.Add(colEditar);
             }
 
             if (!dgvCitas.Columns.Contains("colCancelar"))
             {
-                DataGridViewButtonColumn colCancelar = new DataGridViewButtonColumn
+                var colCancelar = new DataGridViewButtonColumn
                 {
                     Name = "colCancelar",
                     HeaderText = "Cancelar",
                     Text = "✕ Cancelar",
                     UseColumnTextForButtonValue = true,
                     FlatStyle = FlatStyle.Flat,
-                    FillWeight = 75
+                    FillWeight = 72
                 };
                 dgvCitas.Columns.Add(colCancelar);
             }
 
             if (!dgvCitas.Columns.Contains("colNoAsistio"))
             {
-                DataGridViewButtonColumn colNoAsistio = new DataGridViewButtonColumn
+                var colNoAsistio = new DataGridViewButtonColumn
                 {
                     Name = "colNoAsistio",
-                    HeaderText = "No Asistió",
-                    Text = "⊘ No Asistió",
+                    HeaderText = "Asistencia",
+                    Text = "⊘ Inasistencia",
                     UseColumnTextForButtonValue = true,
                     FlatStyle = FlatStyle.Flat,
-                    FillWeight = 80
+                    FillWeight = 82
                 };
                 dgvCitas.Columns.Add(colNoAsistio);
             }
@@ -210,6 +330,19 @@ namespace SanarRuralUnan.Views.Citas
             dgvCitas.Columns["colEditar"].DisplayIndex = dgvCitas.Columns.Count - 3;
             dgvCitas.Columns["colCancelar"].DisplayIndex = dgvCitas.Columns.Count - 2;
             dgvCitas.Columns["colNoAsistio"].DisplayIndex = dgvCitas.Columns.Count - 1;
+        }
+
+        private void AjustarLayout()
+        {
+            if (panelMetricas.ClientSize.Width <= 0) return;
+
+            int anchoTotal = panelMetricas.ClientSize.Width;
+            int gap = 14;
+            int cardW = Math.Max(180, (anchoTotal - (gap * 2)) / 3);
+
+            cardTotal.SetBounds(0, 6, cardW, 68);
+            cardAtendidas.SetBounds(cardW + gap, 6, cardW, 68);
+            cardPendientes.SetBounds((cardW + gap) * 2, 6, anchoTotal - ((cardW + gap) * 2), 68);
         }
 
         // ============================================================
@@ -222,80 +355,118 @@ namespace SanarRuralUnan.Views.Citas
             string nombreColumna = dgvCitas.Columns[e.ColumnIndex].Name;
             string estado = dgvCitas.Rows[e.RowIndex].Cells["Estado"]?.Value?.ToString() ?? "";
 
-            // Indicador visual con color temático para la columna Estado.
-            if (nombreColumna == "Estado")
+            // 1. Columna Paciente con Avatar
+            if (nombreColumna == "Paciente")
             {
                 e.PaintBackground(e.CellBounds, true);
+                e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
 
-                Color colorFondo = Tema.Superficie;
-                Color colorTexto = Tema.TextoPrincipal;
+                string paciente = e.Value?.ToString() ?? "";
+                string iniciales = ObtenerIniciales(paciente);
 
-                if (estado == "Pendiente")
+                int diametro = 28;
+                int avatarX = e.CellBounds.X + 12;
+                int avatarY = e.CellBounds.Y + ((e.CellBounds.Height - diametro) / 2);
+
+                using (var brushAvatar = new SolidBrush(Color.FromArgb(235, 248, 238)))
                 {
-                    colorFondo = Tema.FondoSecundario;
-                    colorTexto = Tema.Advertencia;
+                    e.Graphics.FillEllipse(brushAvatar, avatarX, avatarY, diametro, diametro);
                 }
-                else if (estado == "Confirmada")
+                using (var penAvatar = new Pen(Color.FromArgb(207, 235, 214), 1f))
                 {
-                    colorFondo = Tema.FondoSecundario;
-                    colorTexto = Tema.VerdeOscuro;
-                }
-                else if (estado == "Atendida")
-                {
-                    colorFondo = Tema.FondoSecundario;
-                    colorTexto = Tema.AzulPrimario;
-                }
-                else if (estado == "Cancelada")
-                {
-                    colorFondo = Tema.Fondo;
-                    colorTexto = Tema.ColorError;
-                }
-                else if (estado == "NoAsistio")
-                {
-                    colorFondo = Tema.Fondo;
-                    colorTexto = Tema.TextoSecundario;
+                    e.Graphics.DrawEllipse(penAvatar, avatarX, avatarY, diametro, diametro);
                 }
 
-                Rectangle chipRect = new Rectangle(
-                    e.CellBounds.X + 4,
-                    e.CellBounds.Y + 6,
-                    e.CellBounds.Width - 8,
-                    e.CellBounds.Height - 12
-                );
-
-                using (SolidBrush brushFondo = new SolidBrush(colorFondo))
+                using (var fontIniciales = new Font(Tema.FamiliaFuente, 8.5F, FontStyle.Bold))
+                using (var brushTexto = new SolidBrush(Tema.VerdeOscuro))
+                using (var sf = new StringFormat { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center })
                 {
-                    e.Graphics.FillRectangle(brushFondo, chipRect);
+                    e.Graphics.DrawString(iniciales, fontIniciales, brushTexto, new Rectangle(avatarX, avatarY, diametro, diametro), sf);
                 }
 
-                using (Pen penBorde = new Pen(colorTexto))
-                {
-                    e.Graphics.DrawRectangle(penBorde, chipRect);
-                }
+                int textoX = avatarX + diametro + 10;
+                int textoW = e.CellBounds.Width - (diametro + 24);
+                Rectangle rectTexto = new Rectangle(textoX, e.CellBounds.Y, textoW, e.CellBounds.Height);
 
-                using (Font fuenteEstado = Tema.FuenteLabelCampo)
+                using (var brushNombre = new SolidBrush(Tema.TextoPrincipal))
+                using (var sfTexto = new StringFormat { Alignment = StringAlignment.Near, LineAlignment = StringAlignment.Center, Trimming = StringTrimming.EllipsisCharacter })
                 {
-                    TextRenderer.DrawText(
-                        e.Graphics,
-                        estado,
-                        fuenteEstado,
-                        chipRect,
-                        colorTexto,
-                        TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter
-                    );
+                    e.Graphics.DrawString(paciente, dgvCitas.Font, brushNombre, rectTexto, sfTexto);
                 }
 
                 e.Handled = true;
                 return;
             }
 
-            // Dibujado contextual de botones de acción según el estado de la cita.
+            // 2. Chip badge moderno para la columna Estado.
+            if (nombreColumna == "Estado")
+            {
+                e.PaintBackground(e.CellBounds, true);
+                e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
+
+                Color colorFondo = Tema.Superficie;
+                Color colorBorde = Tema.Borde;
+                Color colorTexto = Tema.TextoPrincipal;
+
+                if (estado == "Pendiente")
+                {
+                    colorFondo = Color.FromArgb(254, 249, 237);
+                    colorBorde = Color.FromArgb(248, 225, 172);
+                    colorTexto = Tema.Advertencia;
+                }
+                else if (estado == "Confirmada")
+                {
+                    colorFondo = Color.FromArgb(235, 247, 238);
+                    colorBorde = Color.FromArgb(190, 230, 202);
+                    colorTexto = Tema.VerdeOscuro;
+                }
+                else if (estado == "Atendida")
+                {
+                    colorFondo = Color.FromArgb(228, 239, 250);
+                    colorBorde = Color.FromArgb(185, 218, 242);
+                    colorTexto = Tema.AzulPrimario;
+                }
+                else if (estado == "Cancelada")
+                {
+                    colorFondo = Color.FromArgb(254, 242, 242);
+                    colorBorde = Color.FromArgb(245, 198, 198);
+                    colorTexto = Tema.Error;
+                }
+                else if (estado == "NoAsistio")
+                {
+                    colorFondo = Color.FromArgb(243, 245, 247);
+                    colorBorde = Color.FromArgb(220, 224, 228);
+                    colorTexto = Tema.TextoSecundario;
+                }
+
+                int chipW = Math.Min(80, e.CellBounds.Width - 10);
+                int chipH = 24;
+                int chipX = e.CellBounds.X + ((e.CellBounds.Width - chipW) / 2);
+                int chipY = e.CellBounds.Y + ((e.CellBounds.Height - chipH) / 2);
+
+                Rectangle chipRect = new Rectangle(chipX, chipY, chipW, chipH);
+                Tema.DibujarTarjetaRedondeada(e.Graphics, chipRect, colorFondo, colorBorde, 6);
+
+                using (Font fuenteEstado = new Font(Tema.FamiliaFuente, 8.2F, FontStyle.Bold))
+                using (var brushTexto = new SolidBrush(colorTexto))
+                using (var sf = new StringFormat { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center })
+                {
+                    string textoAMostrar = estado == "NoAsistio" ? "No asistió" : estado;
+                    e.Graphics.DrawString(textoAMostrar, fuenteEstado, brushTexto, chipRect, sf);
+                }
+
+                e.Handled = true;
+                return;
+            }
+
+            // 3. Dibujado contextual de botones de acción según el estado de la cita.
             if (nombreColumna == "colConfirmar" ||
                 nombreColumna == "colEditar" ||
                 nombreColumna == "colCancelar" ||
                 nombreColumna == "colNoAsistio")
             {
                 e.PaintBackground(e.CellBounds, true);
+                e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
 
                 DateTime fechaProg = DateTime.MaxValue;
                 if (dgvCitas.Rows[e.RowIndex].Cells["FechaHoraProgramada"]?.Value is DateTime dtProg)
@@ -305,64 +476,75 @@ namespace SanarRuralUnan.Views.Citas
                 bool citaYaPaso = fechaProg <= DateTime.Now;
 
                 bool habilitado = false;
-                Color colorBoton = Tema.AzulPrimario;
+                Color colorFondo = Tema.Superficie;
+                Color colorBorde = Tema.Borde;
+                Color colorTexto = Tema.AzulPrimario;
                 string textoBoton = "";
 
                 if (nombreColumna == "colConfirmar")
                 {
                     habilitado = (estado == "Pendiente");
-                    colorBoton = Tema.VerdeOscuro;
+                    colorFondo = Color.FromArgb(235, 247, 238);
+                    colorBorde = Color.FromArgb(190, 230, 202);
+                    colorTexto = Tema.VerdeOscuro;
                     textoBoton = "✓ Confirmar";
                 }
                 else if (nombreColumna == "colEditar")
                 {
                     habilitado = (estado == "Pendiente" || estado == "Confirmada");
-                    colorBoton = Tema.AzulPrimario;
-                    textoBoton = "✏️ Editar";
+                    colorFondo = Tema.BotonEditarFondo;
+                    colorBorde = Tema.BotonEditarBorde;
+                    colorTexto = Tema.AzulPrimario;
+                    textoBoton = "✏ Editar";
                 }
                 else if (nombreColumna == "colCancelar")
                 {
                     habilitado = (estado == "Pendiente" || estado == "Confirmada");
-                    colorBoton = Tema.ColorError;
+                    colorFondo = Tema.BotonPeligroFondo;
+                    colorBorde = Tema.BotonPeligroBorde;
+                    colorTexto = Tema.Error;
                     textoBoton = "✕ Cancelar";
                 }
                 else if (nombreColumna == "colNoAsistio")
                 {
-                    // Regla de negocio: la acción No Asistió solo está disponible para citas cuya fecha/hora ya pasó.
                     habilitado = (estado == "Pendiente" || estado == "Confirmada") && citaYaPaso;
-                    colorBoton = Tema.TextoSecundario;
-                    textoBoton = "⊘ No Asistió";
+                    colorFondo = Color.FromArgb(243, 245, 247);
+                    colorBorde = Color.FromArgb(220, 224, 228);
+                    colorTexto = Tema.TextoSecundario;
+                    textoBoton = "⊘ No asistió";
                 }
 
                 if (habilitado)
                 {
-                    Rectangle btnRect = new Rectangle(
-                        e.CellBounds.X + 4,
-                        e.CellBounds.Y + 4,
-                        e.CellBounds.Width - 8,
-                        e.CellBounds.Height - 8
-                    );
+                    int btnW = Math.Min(e.CellBounds.Width - 8, nombreColumna == "colNoAsistio" ? 82 : (nombreColumna == "colConfirmar" ? 78 : (nombreColumna == "colCancelar" ? 72 : 62)));
+                    int btnH = 26;
+                    int btnX = e.CellBounds.X + ((e.CellBounds.Width - btnW) / 2);
+                    int btnY = e.CellBounds.Y + ((e.CellBounds.Height - btnH) / 2);
 
-                    using (SolidBrush brush = new SolidBrush(colorBoton))
-                    {
-                        e.Graphics.FillRectangle(brush, btnRect);
-                    }
+                    var btnRect = new Rectangle(btnX, btnY, btnW, btnH);
+                    Tema.DibujarTarjetaRedondeada(e.Graphics, btnRect, colorFondo, colorBorde, 6);
 
-                    using (Font fuenteBoton = Tema.FuenteBoton)
+                    using (Font fuenteBoton = new Font(Tema.FamiliaFuente, 8.2F, FontStyle.Bold))
+                    using (var brushTexto = new SolidBrush(colorTexto))
+                    using (var sf = new StringFormat { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center })
                     {
-                        TextRenderer.DrawText(
-                            e.Graphics,
-                            textoBoton,
-                            fuenteBoton,
-                            btnRect,
-                            Tema.Superficie,
-                            TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter
-                        );
+                        e.Graphics.DrawString(textoBoton, fuenteBoton, brushTexto, btnRect, sf);
                     }
                 }
 
                 e.Handled = true;
             }
+        }
+
+        private static string ObtenerIniciales(string nombre)
+        {
+            if (string.IsNullOrWhiteSpace(nombre)) return "CT";
+            string[] partes = nombre.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+            if (partes.Length >= 2)
+            {
+                return (partes[0].Substring(0, 1) + partes[1].Substring(0, 1)).ToUpper();
+            }
+            return partes[0].Substring(0, Math.Min(2, partes[0].Length)).ToUpper();
         }
 
         // ============================================================
@@ -420,7 +602,7 @@ namespace SanarRuralUnan.Views.Citas
                 }
 
                 DialogResult respuesta = MessageBox.Show(
-                    $"¿Desea confirmar la cita médica de {paciente} con {doctor} para el {fechaHora}?",
+                    string.Format("¿Desea confirmar la cita médica de {0} con {1} para el {2}?", paciente, doctor, fechaHora),
                     "Confirmar Cita",
                     MessageBoxButtons.YesNo,
                     MessageBoxIcon.Question
@@ -445,7 +627,7 @@ namespace SanarRuralUnan.Views.Citas
             {
                 if (estado == "Atendida" || estado == "Cancelada" || estado == "NoAsistio")
                 {
-                    MessageBox.Show($"No se puede editar ni reprogramar una cita en estado '{estado}'.", "Operación no permitida", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    MessageBox.Show(string.Format("No se puede editar ni reprogramar una cita en estado '{0}'.", estado), "Operación no permitida", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return;
                 }
 
@@ -462,12 +644,12 @@ namespace SanarRuralUnan.Views.Citas
             {
                 if (estado != "Pendiente" && estado != "Confirmada")
                 {
-                    MessageBox.Show($"No se puede cancelar una cita en estado '{estado}'.", "Operación no permitida", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    MessageBox.Show(string.Format("No se puede cancelar una cita en estado '{0}'.", estado), "Operación no permitida", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return;
                 }
 
                 DialogResult confirmacion = MessageBox.Show(
-                    $"¿Está seguro de que desea cancelar la cita médica de {paciente} con {doctor}?",
+                    string.Format("¿Está seguro de que desea cancelar la cita médica de {0} con {1}?", paciente, doctor),
                     "Confirmar Cancelación",
                     MessageBoxButtons.YesNo,
                     MessageBoxIcon.Warning
@@ -492,7 +674,7 @@ namespace SanarRuralUnan.Views.Citas
             {
                 if (estado != "Pendiente" && estado != "Confirmada")
                 {
-                    MessageBox.Show($"No se puede registrar inasistencia para una cita en estado '{estado}'.", "Operación no permitida", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    MessageBox.Show(string.Format("No se puede registrar inasistencia para una cita en estado '{0}'.", estado), "Operación no permitida", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return;
                 }
 
@@ -509,7 +691,7 @@ namespace SanarRuralUnan.Views.Citas
                 }
 
                 DialogResult confirmacion = MessageBox.Show(
-                    $"¿Confirmar que el paciente {paciente} no se presentó a la cita programada?\n\nEsta acción es definitiva.",
+                    string.Format("¿Confirmar que el paciente {0} no se presentó a la cita programada?\n\nEsta acción es definitiva.", paciente),
                     "Registrar Inasistencia",
                     MessageBoxButtons.YesNo,
                     MessageBoxIcon.Question
@@ -536,7 +718,14 @@ namespace SanarRuralUnan.Views.Citas
         // ============================================================
         private void txtBuscar_TextChanged(object sender, EventArgs e)
         {
+            btnLimpiarBusqueda.Visible = !string.IsNullOrEmpty(txtBuscar.Text);
             CargarCitas();
+        }
+
+        private void btnLimpiarBusqueda_Click(object sender, EventArgs e)
+        {
+            txtBuscar.Clear();
+            txtBuscar.Focus();
         }
 
         private void dtpFechaFiltro_ValueChanged(object sender, EventArgs e)
