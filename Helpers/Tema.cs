@@ -42,6 +42,16 @@ namespace SanarRuralUnan.Helpers
         public static readonly Color BadgeRolAdminFondo = Color.FromArgb(228, 239, 250);
         public static readonly Color BadgeRolDoctorFondo = Color.FromArgb(233, 244, 252);
         public static readonly Color BadgeRolPacienteFondo = Color.FromArgb(235, 248, 238);
+        public static readonly Color BadgePendienteFondo = Color.FromArgb(254, 249, 237);
+        public static readonly Color BadgePendienteBorde = Color.FromArgb(248, 225, 172);
+        public static readonly Color BadgeConfirmadaFondo = Color.FromArgb(235, 247, 238);
+        public static readonly Color BadgeConfirmadaBorde = Color.FromArgb(190, 230, 202);
+        public static readonly Color BadgeAtendidaFondo = Color.FromArgb(228, 239, 250);
+        public static readonly Color BadgeAtendidaBorde = Color.FromArgb(185, 218, 242);
+        public static readonly Color BadgeCanceladaFondo = Color.FromArgb(254, 242, 242);
+        public static readonly Color BadgeCanceladaBorde = Color.FromArgb(245, 198, 198);
+        public static readonly Color BadgeNoAsistioFondo = Color.FromArgb(243, 245, 247);
+        public static readonly Color BadgeNoAsistioBorde = Color.FromArgb(220, 224, 228);
         public static readonly Color BotonPeligroFondo = Color.FromArgb(254, 242, 242);
         public static readonly Color BotonPeligroBorde = Color.FromArgb(245, 198, 198);
         public static readonly Color BotonEditarFondo = Color.FromArgb(240, 247, 253);

@@ -171,6 +171,12 @@
     <Compile Include="Views\Citas\paginaPrincipalCitas.Designer.cs">
       <DependentUpon>paginaPrincipalCitas.cs</DependentUpon>
     </Compile>
+    <Compile Include="Views\Citas\fichaCita.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Views\Citas\fichaCita.Designer.cs">
+      <DependentUpon>fichaCita.cs</DependentUpon>
+    </Compile>
     <Compile Include="Views\ConsultaMedica\atencionConsulta.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -331,6 +337,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Views\Citas\paginaPrincipalCitas.resx">
       <DependentUpon>paginaPrincipalCitas.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\Citas\fichaCita.resx">
+      <DependentUpon>fichaCita.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Views\ConsultaMedica\atencionConsulta.resx">
       <DependentUpon>atencionConsulta.cs</DependentUpon>

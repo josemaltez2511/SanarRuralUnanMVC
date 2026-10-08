@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
@@ -127,6 +127,7 @@ namespace SanarRuralUnan.Views.Citas
             dgvCitas.AllowUserToResizeRows = false;
             dgvCitas.AccessibleName = "Listado de citas médicas";
             dgvCitas.AccessibleDescription = "Use las flechas para recorrer las citas programadas y acceder a sus acciones.";
+            dgvCitas.CellDoubleClick += dgvCitas_CellDoubleClick;
         }
 
         private void CargarFiltrosEstado()
@@ -154,52 +155,54 @@ namespace SanarRuralUnan.Views.Citas
 
                 dgvCitas.DataSource = controlador.listarCitas(busqueda, fecha, estado, idDoctorFiltro);
 
-                // Configuración de encabezados y visibilidad de columnas de datos.
+                // Configuración de encabezados, pesos y orden de columnas esenciales solicitadas por el usuario.
                 if (dgvCitas.Columns["IdCita"] != null)
                 {
                     dgvCitas.Columns["IdCita"].HeaderText = "ID";
-                    dgvCitas.Columns["IdCita"].FillWeight = 35;
-                }
-                if (dgvCitas.Columns["FechaHoraTexto"] != null)
-                {
-                    dgvCitas.Columns["FechaHoraTexto"].HeaderText = "Fecha / Hora";
-                    dgvCitas.Columns["FechaHoraTexto"].FillWeight = 110;
+                    dgvCitas.Columns["IdCita"].FillWeight = 40;
+                    dgvCitas.Columns["IdCita"].DisplayIndex = 0;
                 }
                 if (dgvCitas.Columns["Paciente"] != null)
                 {
                     dgvCitas.Columns["Paciente"].HeaderText = "Paciente";
-                    dgvCitas.Columns["Paciente"].FillWeight = 140;
-                }
-                if (dgvCitas.Columns["Cedula"] != null)
-                {
-                    dgvCitas.Columns["Cedula"].HeaderText = "Cédula";
-                    dgvCitas.Columns["Cedula"].FillWeight = 85;
-                }
-                if (dgvCitas.Columns["Especialidad"] != null)
-                {
-                    dgvCitas.Columns["Especialidad"].HeaderText = "Especialidad";
-                    dgvCitas.Columns["Especialidad"].FillWeight = 100;
+                    dgvCitas.Columns["Paciente"].FillWeight = 160;
+                    dgvCitas.Columns["Paciente"].DisplayIndex = 1;
                 }
                 if (dgvCitas.Columns["Doctor"] != null)
                 {
                     dgvCitas.Columns["Doctor"].HeaderText = "Médico";
-                    dgvCitas.Columns["Doctor"].FillWeight = 130;
+                    dgvCitas.Columns["Doctor"].FillWeight = 135;
+                    dgvCitas.Columns["Doctor"].DisplayIndex = 2;
+                }
+                if (dgvCitas.Columns["Especialidad"] != null)
+                {
+                    dgvCitas.Columns["Especialidad"].HeaderText = "Especialidad";
+                    dgvCitas.Columns["Especialidad"].FillWeight = 115;
+                    dgvCitas.Columns["Especialidad"].DisplayIndex = 3;
                 }
                 if (dgvCitas.Columns["Hospital"] != null)
                 {
                     dgvCitas.Columns["Hospital"].HeaderText = "Hospital / Sede";
-                    dgvCitas.Columns["Hospital"].FillWeight = 110;
+                    dgvCitas.Columns["Hospital"].FillWeight = 120;
+                    dgvCitas.Columns["Hospital"].DisplayIndex = 4;
+                }
+                if (dgvCitas.Columns["FechaHoraTexto"] != null)
+                {
+                    dgvCitas.Columns["FechaHoraTexto"].HeaderText = "Fecha / Hora";
+                    dgvCitas.Columns["FechaHoraTexto"].FillWeight = 115;
+                    dgvCitas.Columns["FechaHoraTexto"].DisplayIndex = 5;
                 }
                 if (dgvCitas.Columns["Estado"] != null)
                 {
                     dgvCitas.Columns["Estado"].HeaderText = "Estado";
-                    dgvCitas.Columns["Estado"].FillWeight = 80;
+                    dgvCitas.Columns["Estado"].FillWeight = 85;
+                    dgvCitas.Columns["Estado"].DisplayIndex = 6;
                 }
-                if (dgvCitas.Columns["Motivo"] != null)
-                {
-                    dgvCitas.Columns["Motivo"].HeaderText = "Motivo";
-                    dgvCitas.Columns["Motivo"].FillWeight = 120;
-                }
+
+                // Ocultar Cédula y Motivo de la tabla principal para evitar sobrelapamiento;
+                // su detalle íntegro se consulta y gestiona en la ventana dedicada (fichaCita).
+                OcultarColumnaSiExiste("Cedula");
+                OcultarColumnaSiExiste("Motivo");
 
                 // Ocultar identificadores técnicos que no deben ser visibles al usuario.
                 OcultarColumnaSiExiste("IdPaciente");
@@ -269,6 +272,26 @@ namespace SanarRuralUnan.Views.Citas
 
         private void AgregarColumnasAcciones()
         {
+            // Remover la columna antigua de inasistencia si existiera en el grid
+            if (dgvCitas.Columns.Contains("colNoAsistio"))
+            {
+                dgvCitas.Columns.Remove("colNoAsistio");
+            }
+
+            if (!dgvCitas.Columns.Contains("colVer"))
+            {
+                var colVer = new DataGridViewButtonColumn
+                {
+                    Name = "colVer",
+                    HeaderText = "Detalle",
+                    Text = "👁 Ver",
+                    UseColumnTextForButtonValue = true,
+                    FlatStyle = FlatStyle.Flat,
+                    FillWeight = 65
+                };
+                dgvCitas.Columns.Add(colVer);
+            }
+
             if (!dgvCitas.Columns.Contains("colConfirmar"))
             {
                 var colConfirmar = new DataGridViewButtonColumn
@@ -278,7 +301,7 @@ namespace SanarRuralUnan.Views.Citas
                     Text = "✓ Confirmar",
                     UseColumnTextForButtonValue = true,
                     FlatStyle = FlatStyle.Flat,
-                    FillWeight = 78
+                    FillWeight = 75
                 };
                 dgvCitas.Columns.Add(colConfirmar);
             }
@@ -292,7 +315,7 @@ namespace SanarRuralUnan.Views.Citas
                     Text = "✏ Editar",
                     UseColumnTextForButtonValue = true,
                     FlatStyle = FlatStyle.Flat,
-                    FillWeight = 62
+                    FillWeight = 65
                 };
                 dgvCitas.Columns.Add(colEditar);
             }
@@ -306,30 +329,16 @@ namespace SanarRuralUnan.Views.Citas
                     Text = "✕ Cancelar",
                     UseColumnTextForButtonValue = true,
                     FlatStyle = FlatStyle.Flat,
-                    FillWeight = 72
+                    FillWeight = 70
                 };
                 dgvCitas.Columns.Add(colCancelar);
             }
 
-            if (!dgvCitas.Columns.Contains("colNoAsistio"))
-            {
-                var colNoAsistio = new DataGridViewButtonColumn
-                {
-                    Name = "colNoAsistio",
-                    HeaderText = "Asistencia",
-                    Text = "⊘ Inasistencia",
-                    UseColumnTextForButtonValue = true,
-                    FlatStyle = FlatStyle.Flat,
-                    FillWeight = 82
-                };
-                dgvCitas.Columns.Add(colNoAsistio);
-            }
-
-            // Ubicar las columnas de acción al final de la tabla.
-            dgvCitas.Columns["colConfirmar"].DisplayIndex = dgvCitas.Columns.Count - 4;
-            dgvCitas.Columns["colEditar"].DisplayIndex = dgvCitas.Columns.Count - 3;
-            dgvCitas.Columns["colCancelar"].DisplayIndex = dgvCitas.Columns.Count - 2;
-            dgvCitas.Columns["colNoAsistio"].DisplayIndex = dgvCitas.Columns.Count - 1;
+            // Ubicar las columnas de acción al final de la tabla en orden de flujo lógico.
+            dgvCitas.Columns["colVer"].DisplayIndex = dgvCitas.Columns.Count - 4;
+            dgvCitas.Columns["colConfirmar"].DisplayIndex = dgvCitas.Columns.Count - 3;
+            dgvCitas.Columns["colEditar"].DisplayIndex = dgvCitas.Columns.Count - 2;
+            dgvCitas.Columns["colCancelar"].DisplayIndex = dgvCitas.Columns.Count - 1;
         }
 
         private void AjustarLayout()
@@ -410,32 +419,32 @@ namespace SanarRuralUnan.Views.Citas
 
                 if (estado == "Pendiente")
                 {
-                    colorFondo = Color.FromArgb(254, 249, 237);
-                    colorBorde = Color.FromArgb(248, 225, 172);
+                    colorFondo = Tema.BadgePendienteFondo;
+                    colorBorde = Tema.BadgePendienteBorde;
                     colorTexto = Tema.Advertencia;
                 }
                 else if (estado == "Confirmada")
                 {
-                    colorFondo = Color.FromArgb(235, 247, 238);
-                    colorBorde = Color.FromArgb(190, 230, 202);
+                    colorFondo = Tema.BadgeConfirmadaFondo;
+                    colorBorde = Tema.BadgeConfirmadaBorde;
                     colorTexto = Tema.VerdeOscuro;
                 }
                 else if (estado == "Atendida")
                 {
-                    colorFondo = Color.FromArgb(228, 239, 250);
-                    colorBorde = Color.FromArgb(185, 218, 242);
+                    colorFondo = Tema.BadgeAtendidaFondo;
+                    colorBorde = Tema.BadgeAtendidaBorde;
                     colorTexto = Tema.AzulPrimario;
                 }
                 else if (estado == "Cancelada")
                 {
-                    colorFondo = Color.FromArgb(254, 242, 242);
-                    colorBorde = Color.FromArgb(245, 198, 198);
+                    colorFondo = Tema.BadgeCanceladaFondo;
+                    colorBorde = Tema.BadgeCanceladaBorde;
                     colorTexto = Tema.Error;
                 }
                 else if (estado == "NoAsistio")
                 {
-                    colorFondo = Color.FromArgb(243, 245, 247);
-                    colorBorde = Color.FromArgb(220, 224, 228);
+                    colorFondo = Tema.BadgeNoAsistioFondo;
+                    colorBorde = Tema.BadgeNoAsistioBorde;
                     colorTexto = Tema.TextoSecundario;
                 }
 
@@ -459,21 +468,38 @@ namespace SanarRuralUnan.Views.Citas
                 return;
             }
 
-            // 3. Dibujado contextual de botones de acción según el estado de la cita.
-            if (nombreColumna == "colConfirmar" ||
-                nombreColumna == "colEditar" ||
-                nombreColumna == "colCancelar" ||
-                nombreColumna == "colNoAsistio")
+            // 3. Botón de Ver Detalle (siempre habilitado y visible para todas las citas).
+            if (nombreColumna == "colVer")
             {
                 e.PaintBackground(e.CellBounds, true);
                 e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
 
-                DateTime fechaProg = DateTime.MaxValue;
-                if (dgvCitas.Rows[e.RowIndex].Cells["FechaHoraProgramada"]?.Value is DateTime dtProg)
+                int btnW = Math.Min(e.CellBounds.Width - 8, 58);
+                int btnH = 26;
+                int btnX = e.CellBounds.X + ((e.CellBounds.Width - btnW) / 2);
+                int btnY = e.CellBounds.Y + ((e.CellBounds.Height - btnH) / 2);
+
+                var btnRect = new Rectangle(btnX, btnY, btnW, btnH);
+                Tema.DibujarTarjetaRedondeada(e.Graphics, btnRect, Tema.BotonEditarFondo, Tema.BotonEditarBorde, 6);
+
+                using (Font fuenteBoton = new Font(Tema.FamiliaFuente, 8.2F, FontStyle.Bold))
+                using (var brushTexto = new SolidBrush(Tema.AzulPrimario))
+                using (var sf = new StringFormat { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center })
                 {
-                    fechaProg = dtProg;
+                    e.Graphics.DrawString("👁 Ver", fuenteBoton, brushTexto, btnRect, sf);
                 }
-                bool citaYaPaso = fechaProg <= DateTime.Now;
+
+                e.Handled = true;
+                return;
+            }
+
+            // 4. Dibujado contextual de botones de acción de ciclo de vida.
+            if (nombreColumna == "colConfirmar" ||
+                nombreColumna == "colEditar" ||
+                nombreColumna == "colCancelar")
+            {
+                e.PaintBackground(e.CellBounds, true);
+                e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
 
                 bool habilitado = false;
                 Color colorFondo = Tema.Superficie;
@@ -484,8 +510,8 @@ namespace SanarRuralUnan.Views.Citas
                 if (nombreColumna == "colConfirmar")
                 {
                     habilitado = (estado == "Pendiente");
-                    colorFondo = Color.FromArgb(235, 247, 238);
-                    colorBorde = Color.FromArgb(190, 230, 202);
+                    colorFondo = Tema.BadgeConfirmadaFondo;
+                    colorBorde = Tema.BadgeConfirmadaBorde;
                     colorTexto = Tema.VerdeOscuro;
                     textoBoton = "✓ Confirmar";
                 }
@@ -505,18 +531,10 @@ namespace SanarRuralUnan.Views.Citas
                     colorTexto = Tema.Error;
                     textoBoton = "✕ Cancelar";
                 }
-                else if (nombreColumna == "colNoAsistio")
-                {
-                    habilitado = (estado == "Pendiente" || estado == "Confirmada") && citaYaPaso;
-                    colorFondo = Color.FromArgb(243, 245, 247);
-                    colorBorde = Color.FromArgb(220, 224, 228);
-                    colorTexto = Tema.TextoSecundario;
-                    textoBoton = "⊘ No asistió";
-                }
 
                 if (habilitado)
                 {
-                    int btnW = Math.Min(e.CellBounds.Width - 8, nombreColumna == "colNoAsistio" ? 82 : (nombreColumna == "colConfirmar" ? 78 : (nombreColumna == "colCancelar" ? 72 : 62)));
+                    int btnW = Math.Min(e.CellBounds.Width - 8, nombreColumna == "colConfirmar" ? 75 : (nombreColumna == "colCancelar" ? 68 : 62));
                     int btnH = 26;
                     int btnX = e.CellBounds.X + ((e.CellBounds.Width - btnW) / 2);
                     int btnY = e.CellBounds.Y + ((e.CellBounds.Height - btnH) / 2);
@@ -529,6 +547,16 @@ namespace SanarRuralUnan.Views.Citas
                     using (var sf = new StringFormat { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center })
                     {
                         e.Graphics.DrawString(textoBoton, fuenteBoton, brushTexto, btnRect, sf);
+                    }
+                }
+                else
+                {
+                    // Cuando la acción no aplica al estado de la cita, se muestra un guión discreto para balancear la tabla
+                    using (Font fuenteDash = new Font(Tema.FamiliaFuente, 9F, FontStyle.Regular))
+                    using (var brushDash = new SolidBrush(Color.FromArgb(170, 185, 192)))
+                    using (var sf = new StringFormat { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center })
+                    {
+                        e.Graphics.DrawString("—", fuenteDash, brushDash, e.CellBounds, sf);
                     }
                 }
 
@@ -557,18 +585,11 @@ namespace SanarRuralUnan.Views.Citas
                 string nombreColumna = dgvCitas.Columns[e.ColumnIndex].Name;
                 string estado = dgvCitas.Rows[e.RowIndex].Cells["Estado"]?.Value?.ToString() ?? "";
 
-                DateTime fechaProg = DateTime.MaxValue;
-                if (dgvCitas.Rows[e.RowIndex].Cells["FechaHoraProgramada"]?.Value is DateTime dtProg)
-                {
-                    fechaProg = dtProg;
-                }
-                bool citaYaPaso = fechaProg <= DateTime.Now;
-
                 bool esBotonAccion =
+                    (nombreColumna == "colVer") ||
                     (nombreColumna == "colConfirmar" && estado == "Pendiente") ||
                     (nombreColumna == "colEditar" && (estado == "Pendiente" || estado == "Confirmada")) ||
-                    (nombreColumna == "colCancelar" && (estado == "Pendiente" || estado == "Confirmada")) ||
-                    (nombreColumna == "colNoAsistio" && (estado == "Pendiente" || estado == "Confirmada") && citaYaPaso);
+                    (nombreColumna == "colCancelar" && (estado == "Pendiente" || estado == "Confirmada"));
 
                 dgvCitas.Cursor = esBotonAccion ? Cursors.Hand : Cursors.Default;
             }
@@ -591,6 +612,13 @@ namespace SanarRuralUnan.Views.Citas
             string paciente = dgvCitas.Rows[e.RowIndex].Cells["Paciente"]?.Value?.ToString() ?? "el paciente";
             string doctor = dgvCitas.Rows[e.RowIndex].Cells["Doctor"]?.Value?.ToString() ?? "el médico";
             string fechaHora = dgvCitas.Rows[e.RowIndex].Cells["FechaHoraTexto"]?.Value?.ToString() ?? "";
+
+            // Acción: VER FICHA DETALLADA DE LA CITA MÉDICA
+            if (nombreColumna == "colVer")
+            {
+                AbrirDetalleCita(idCita);
+                return;
+            }
 
             // Acción: CONFIRMAR CITA (Pendiente -> Confirmada)
             if (nombreColumna == "colConfirmar")
@@ -669,46 +697,27 @@ namespace SanarRuralUnan.Views.Citas
                     }
                 }
             }
-            // Acción: MARCAR NO ASISTIÓ
-            else if (nombreColumna == "colNoAsistio")
+        }
+
+        // Doble clic sobre cualquier fila abre la ficha de detalle de la cita
+        private void dgvCitas_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex < 0) return;
+            if (dgvCitas.Rows[e.RowIndex].Cells["IdCita"]?.Value != null)
             {
-                if (estado != "Pendiente" && estado != "Confirmada")
-                {
-                    MessageBox.Show(string.Format("No se puede registrar inasistencia para una cita en estado '{0}'.", estado), "Operación no permitida", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    return;
-                }
+                int idCita = Convert.ToInt32(dgvCitas.Rows[e.RowIndex].Cells["IdCita"].Value);
+                AbrirDetalleCita(idCita);
+            }
+        }
 
-                DateTime fechaProg = DateTime.MaxValue;
-                if (dgvCitas.Rows[e.RowIndex].Cells["FechaHoraProgramada"]?.Value is DateTime dtProg)
+        // Abre la ventana modal dedicada con la información completa de la cita
+        private void AbrirDetalleCita(int idCita)
+        {
+            using (fichaCita ficha = new fichaCita(idCita, idDoctorFiltro))
+            {
+                if (ficha.ShowDialog(this) == DialogResult.OK)
                 {
-                    fechaProg = dtProg;
-                }
-
-                if (fechaProg > DateTime.Now)
-                {
-                    MessageBox.Show("No se puede marcar la cita como no asistida hasta que haya pasado la fecha y hora programada.", "Operación no permitida", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    return;
-                }
-
-                DialogResult confirmacion = MessageBox.Show(
-                    string.Format("¿Confirmar que el paciente {0} no se presentó a la cita programada?\n\nEsta acción es definitiva.", paciente),
-                    "Registrar Inasistencia",
-                    MessageBoxButtons.YesNo,
-                    MessageBoxIcon.Question
-                );
-
-                if (confirmacion == DialogResult.Yes)
-                {
-                    try
-                    {
-                        controlador.cambiarEstadoCita(idCita, "NoAsistio", idDoctorFiltro);
-                        MessageBox.Show("Se ha registrado la inasistencia del paciente.", "Operación Exitosa", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                        CargarCitas();
-                    }
-                    catch (Exception ex)
-                    {
-                        MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    }
+                    CargarCitas();
                 }
             }
         }
