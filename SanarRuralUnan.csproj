@@ -132,6 +132,8 @@
     <Compile Include="Municipios.cs">
       <DependentUpon>ModelSanarRural.tt</DependentUpon>
     </Compile>
+    <Compile Include="obj\Debug\.NETFramework,Version=v4.7.2.AssemblyAttributes.cs" />
+    <Compile Include="obj\Release\.NETFramework,Version=v4.7.2.AssemblyAttributes.cs" />
     <Compile Include="Pacientes.cs">
       <DependentUpon>ModelSanarRural.tt</DependentUpon>
     </Compile>
@@ -257,6 +259,24 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="obj\Release\SanarRuralUnan.iniciarSesion.resources" />
+    <EmbeddedResource Include="obj\Release\SanarRuralUnan.Properties.Resources.resources" />
+    <EmbeddedResource Include="obj\Release\SanarRuralUnan.Views.Citas.crearCita.resources" />
+    <EmbeddedResource Include="obj\Release\SanarRuralUnan.Views.Citas.paginaPrincipalCitas.resources" />
+    <EmbeddedResource Include="obj\Release\SanarRuralUnan.Views.ConsultaMedica.atencionConsulta.resources" />
+    <EmbeddedResource Include="obj\Release\SanarRuralUnan.Views.ConsultaMedica.paginaPrincipalConsultas.resources" />
+    <EmbeddedResource Include="obj\Release\SanarRuralUnan.Views.ConsultaMedica.seleccionarCitaConsulta.resources" />
+    <EmbeddedResource Include="obj\Release\SanarRuralUnan.Views.crearDoctor.resources" />
+    <EmbeddedResource Include="obj\Release\SanarRuralUnan.Views.crearPaciente.resources" />
+    <EmbeddedResource Include="obj\Release\SanarRuralUnan.Views.crearUsuario.resources" />
+    <EmbeddedResource Include="obj\Release\SanarRuralUnan.Views.Doctores.paginaPrincipalDoctores.resources" />
+    <EmbeddedResource Include="obj\Release\SanarRuralUnan.Views.Hospitales.crearHospital.resources" />
+    <EmbeddedResource Include="obj\Release\SanarRuralUnan.Views.Hospitales.paginaPrincipalHospitales.resources" />
+    <EmbeddedResource Include="obj\Release\SanarRuralUnan.Views.menuPrincipalAdministrativo.resources" />
+    <EmbeddedResource Include="obj\Release\SanarRuralUnan.Views.menuPrincipalMedicos.resources" />
+    <EmbeddedResource Include="obj\Release\SanarRuralUnan.Views.Pacientes.fichaPaciente.resources" />
+    <EmbeddedResource Include="obj\Release\SanarRuralUnan.Views.Pacientes.paginaPrincipalPacientes.resources" />
+    <EmbeddedResource Include="obj\Release\SanarRuralUnan.Views.paginaPrincipalUsuarios.resources" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -329,14 +349,24 @@
     <None Include=".agents\skills\sanar-rural-ui-ux\SKILL.md" />
     <None Include=".agents\workflows\review-change.md" />
     <None Include=".Designer.gitignore" />
+    <None Include=".github\workflows\validar-configuracion.yml" />
     <None Include=".gitignore">
       <SubType>Form</SubType>
     </None>
     <None Include="AGENTS.md" />
+    <None Include="bin\Debug\SanarRuralUnan.exe.config" />
+    <None Include="bin\Release\SanarRuralUnan.exe.config" />
     <None Include="docs\AI\PROJECT_CONTEXT.md" />
     <None Include="ModelSanarRural.edmx.diagram">
       <DependentUpon>ModelSanarRural.edmx</DependentUpon>
     </None>
+    <None Include="obj\Release\edmxResourcesToEmbed\ModelSanarRural.csdl" />
+    <None Include="obj\Release\edmxResourcesToEmbed\ModelSanarRural.msl" />
+    <None Include="obj\Release\edmxResourcesToEmbed\ModelSanarRural.ssdl" />
+    <None Include="obj\Release\SanarRur.584D474E.Up2Date" />
+    <None Include="obj\Release\SanarRuralUnan.csproj.AssemblyReference.cache" />
+    <None Include="obj\Release\SanarRuralUnan.csproj.CoreCompileInputs.cache" />
+    <None Include="obj\Release\SanarRuralUnan.csproj.GenerateResource.cache" />
     <None Include="packages.config" />
     <None Include="packages\EntityFramework.6.5.2\.signature.p7s" />
     <None Include="packages\EntityFramework.6.5.2\buildTransitive\EntityFramework.props" />
@@ -375,12 +405,27 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
     <None Include="README.md" />
+    <None Include="scripts\validar-configuracion.ps1" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
     <None Include="App.config.example" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="bin\Debug\EntityFramework.dll" />
+    <Content Include="bin\Debug\EntityFramework.SqlServer.dll" />
+    <Content Include="bin\Debug\EntityFramework.SqlServer.xml" />
+    <Content Include="bin\Debug\EntityFramework.xml" />
+    <Content Include="bin\Debug\MaterialSkin.dll" />
+    <Content Include="bin\Debug\SanarRuralUnan.exe" />
+    <Content Include="bin\Debug\SanarRuralUnan.pdb" />
+    <Content Include="bin\Release\EntityFramework.dll" />
+    <Content Include="bin\Release\EntityFramework.SqlServer.dll" />
+    <Content Include="bin\Release\EntityFramework.SqlServer.xml" />
+    <Content Include="bin\Release\EntityFramework.xml" />
+    <Content Include="bin\Release\MaterialSkin.dll" />
+    <Content Include="bin\Release\SanarRuralUnan.exe" />
+    <Content Include="bin\Release\SanarRuralUnan.pdb" />
     <Content Include="ModelSanarRural.Context.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <DependentUpon>ModelSanarRural.edmx</DependentUpon>
@@ -391,6 +436,9 @@
       <DependentUpon>ModelSanarRural.edmx</DependentUpon>
       <LastGenOutput>ModelSanarRural.cs</LastGenOutput>
     </Content>
+    <Content Include="obj\Release\SanarRuralUnan.csproj.FileListAbsolute.txt" />
+    <Content Include="obj\Release\SanarRuralUnan.exe" />
+    <Content Include="obj\Release\SanarRuralUnan.pdb" />
     <Content Include="packages\EntityFramework.6.5.2\build\Microsoft.Data.Entity.Build.Tasks.dll" />
     <Content Include="packages\EntityFramework.6.5.2\Icon.png" />
     <Content Include="packages\EntityFramework.6.5.2\lib\net40\EntityFramework.dll" />
@@ -419,9 +467,23 @@
     <Content Include="packages\EntityFramework.6.5.2\tools\net45\win-arm64\ef6.exe" />
     <Content Include="packages\EntityFramework.6.5.2\tools\net45\win-x86\ef6.exe" />
     <Content Include="packages\EntityFramework.6.5.2\tools\net6.0\any\ef6.dll" />
+    <Content Include="UpgradeLog.htm" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Remove="obj\**" />
+    <Compile Remove="bin\**" />
+    <EmbeddedResource Remove="obj\**" />
+    <EmbeddedResource Remove="bin\**" />
+    <None Remove="obj\**" />
+    <None Remove="bin\**" />
+    <Content Remove="obj\**" />
+    <Content Remove="bin\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include=".gemini\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
