@@ -10,7 +10,7 @@ namespace SanarRuralUnan.Views.Pacientes
 {
     /// <summary>
     /// Formulario principal del catálogo de pacientes.
-    /// Permite buscar, filtrar por estado (según rol), consultar ficha, editar y gestionar baja/reactivación.
+    /// Presenta el listado moderno con búsqueda ágil, badges de estado y acciones rápidas de ficha y edición.
     /// </summary>
     public partial class paginaPrincipalPacientes : Form
     {
@@ -33,20 +33,33 @@ namespace SanarRuralUnan.Views.Pacientes
             Tema.ConfigurarTabla(dgvPacientes);
             dgvPacientes.AccessibleName = "Listado de pacientes";
             dgvPacientes.AccessibleDescription = "Use las flechas para recorrer pacientes y Enter o espacio en los botones de acción.";
+            dgvPacientes.RowTemplate.Height = 44;
+            dgvPacientes.ColumnHeadersHeight = 44;
 
-            dgvPacientes.Columns["Nombre"].FillWeight = 140;
+            dgvPacientes.Columns["Nombre"].FillWeight = 150;
             dgvPacientes.Columns["Cedula"].FillWeight = 85;
-            dgvPacientes.Columns["Telefono"].FillWeight = 75;
+            dgvPacientes.Columns["Telefono"].FillWeight = 80;
             dgvPacientes.Columns["Comunidad"].FillWeight = 95;
-            dgvPacientes.Columns["Municipio"].FillWeight = 85;
-            dgvPacientes.Columns["Departamento"].FillWeight = 85;
-            dgvPacientes.Columns["Estado"].FillWeight = 65;
-            dgvPacientes.Columns["colVer"].FillWeight = 50;
-            dgvPacientes.Columns["colEditar"].FillWeight = 50;
+            dgvPacientes.Columns["Municipio"].FillWeight = 90;
+            dgvPacientes.Columns["Departamento"].FillWeight = 90;
+            dgvPacientes.Columns["Estado"].FillWeight = 75;
+            dgvPacientes.Columns["colVer"].FillWeight = 55;
+            dgvPacientes.Columns["colEditar"].FillWeight = 55;
             dgvPacientes.Columns["colBaja"].FillWeight = 75;
 
-            dgvPacientes.Columns["colVer"].DefaultCellStyle.ForeColor = Tema.VerdeOscuro;
-            dgvPacientes.Columns["colEditar"].DefaultCellStyle.ForeColor = Tema.AzulPrimario;
+            colVer.FlatStyle = FlatStyle.Flat;
+            colEditar.FlatStyle = FlatStyle.Flat;
+            colBaja.FlatStyle = FlatStyle.Flat;
+
+            panelBadgeConteo.Paint += PanelBadgeConteo_Paint;
+        }
+
+        private void PanelBadgeConteo_Paint(object sender, PaintEventArgs e)
+        {
+            using (var pen = new Pen(Tema.Borde, 1))
+            {
+                e.Graphics.DrawRectangle(pen, 0, 0, panelBadgeConteo.Width - 1, panelBadgeConteo.Height - 1);
+            }
         }
 
         private void ConfigurarSeguridadPorRol()
@@ -89,18 +102,22 @@ namespace SanarRuralUnan.Views.Pacientes
                         paciente.Comunidad,
                         paciente.Municipio,
                         paciente.Departamento,
-                        paciente.Estado ? "✓ Activo" : "Inactivo");
+                        paciente.Estado ? "● Activo" : "○ Inactivo");
 
                     DataGridViewRow fila = dgvPacientes.Rows[rowIndex];
+                    fila.Cells["colVer"].Value = "◉ Ver";
+                    fila.Cells["colEditar"].Value = "✎ Editar";
                     fila.Cells["colBaja"].Value = paciente.Estado ? "Dar de baja" : "Reactivar";
                 }
 
                 string sufijoEstado = estadoFiltro == "Todos" ? "registrado(s)" : (estadoFiltro == "Inactivos" ? "inactivo(s)" : "activo(s)");
-                lblCantidad.Text = string.Format("{0} paciente(s) {1}", pacientes.Count, sufijoEstado);
+                lblCantidad.Text = string.Format("● {0} paciente(s) {1}", pacientes.Count, sufijoEstado);
+                lblCantidad.ForeColor = estadoFiltro == "Inactivos" ? Tema.Error : Tema.VerdeOscuro;
             }
             catch (Exception ex)
             {
                 lblCantidad.Text = "No se pudo cargar el listado";
+                lblCantidad.ForeColor = Tema.Error;
                 MessageBox.Show("No se pudo cargar el listado de pacientes:\n\n" + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
@@ -210,25 +227,45 @@ namespace SanarRuralUnan.Views.Pacientes
 
         private void dgvPacientes_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
         {
-            if (e.RowIndex < 0)
+            if (e.RowIndex < 0 || e.ColumnIndex < 0)
                 return;
 
             string columna = dgvPacientes.Columns[e.ColumnIndex].Name;
 
             if (columna == "Estado" && e.Value != null)
             {
-                if (e.Value.ToString().StartsWith("✓"))
+                string estadoStr = e.Value.ToString();
+                if (estadoStr.Contains("Activo"))
                 {
                     e.CellStyle.ForeColor = Tema.VerdeOscuro;
+                    e.CellStyle.Font = Tema.FuenteLabelCampo;
                 }
                 else
                 {
-                    e.CellStyle.ForeColor = Tema.Error;
+                    e.CellStyle.ForeColor = Tema.TextoSecundario;
+                    e.CellStyle.Font = Tema.FuenteCuerpo;
                 }
+            }
+            else if (columna == "colVer")
+            {
+                e.CellStyle.ForeColor = Tema.AzulPrimario;
+                e.CellStyle.BackColor = Tema.FondoSecundario;
+                e.CellStyle.SelectionBackColor = Tema.AzulClaro;
+                e.CellStyle.SelectionForeColor = Color.White;
+                e.CellStyle.Font = Tema.FuenteLabelCampo;
+            }
+            else if (columna == "colEditar")
+            {
+                e.CellStyle.ForeColor = Tema.TextoPrincipal;
+                e.CellStyle.BackColor = Tema.FondoSecundario;
+                e.CellStyle.SelectionBackColor = Tema.FondoSecundario;
+                e.CellStyle.SelectionForeColor = Tema.TextoPrincipal;
+                e.CellStyle.Font = Tema.FuenteLabelCampo;
             }
             else if (columna == "colBaja" && e.Value != null)
             {
-                if (e.Value.ToString() == "Reactivar")
+                string accion = e.Value.ToString();
+                if (accion == "Reactivar")
                 {
                     e.CellStyle.ForeColor = Tema.VerdeOscuro;
                 }
@@ -236,6 +273,8 @@ namespace SanarRuralUnan.Views.Pacientes
                 {
                     e.CellStyle.ForeColor = Tema.Error;
                 }
+                e.CellStyle.BackColor = Tema.Superficie;
+                e.CellStyle.Font = Tema.FuenteLabelCampo;
             }
         }
     }
