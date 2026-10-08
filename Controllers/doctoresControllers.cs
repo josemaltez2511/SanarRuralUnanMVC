@@ -151,5 +151,18 @@ namespace SanarRuralUnan.Controllers
                 return false;
             }
         }
+
+        // ============================================================
+        // COMPROBACIONES DE UNICIDAD
+        // ============================================================
+        public bool existeCedula(string cedula, int? idDoctorExcluir = null)
+        {
+            return new doctoresModels().existeCedula(cedula, idDoctorExcluir);
+        }
+
+        public bool existeNumeroLicencia(string numeroLicencia, int? idDoctorExcluir = null)
+        {
+            return new doctoresModels().existeNumeroLicencia(numeroLicencia, idDoctorExcluir);
+        }
     }
 }

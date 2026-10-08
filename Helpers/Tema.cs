@@ -103,5 +103,26 @@ namespace SanarRuralUnan.Helpers
             tabla.AlternatingRowsDefaultCellStyle.BackColor = Fondo;
             tabla.RowTemplate.Height = AltoFilaTabla;
         }
+
+        // Obtiene la imagen del logo institucional desde los recursos del proyecto.
+        public static Image ObtenerLogo()
+        {
+            try
+            {
+                byte[] datos = Properties.Resources.ResourceManager.GetObject("SanarRuralLogo") as byte[];
+                if (datos == null)
+                    return null;
+
+                using (var flujo = new System.IO.MemoryStream(datos))
+                using (var imagen = Image.FromStream(flujo))
+                {
+                    return new Bitmap(imagen);
+                }
+            }
+            catch
+            {
+                return null;
+            }
+        }
     }
 }

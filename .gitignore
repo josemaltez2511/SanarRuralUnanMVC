@@ -1,4 +1,4 @@
-﻿# Visual Studio directories
+# Visual Studio directories
 .vs/
 bin/
 obj/
@@ -8,5 +8,7 @@ obj/
 *.suo
 *.cache
 
-# Ignorar la configuracion local de la base de datos
-App.config
+# Configuracion local de base de datos (ESTRICTAMENTE LOCAL - NO VERSIONAR)
+[Aa]pp.config
+[Aa][Pp][Pp].[Cc][Oo][Nn][Ff][Ii][Gg]
+!App.config.example

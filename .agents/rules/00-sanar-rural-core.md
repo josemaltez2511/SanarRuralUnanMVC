@@ -11,10 +11,10 @@ Este documento establece las directrices técnicas obligatorias para cualquier i
 - **Librería de Componentes:** MaterialSkin 2 (versión 2.3.1).
 - **Sistema de Identidad Visual:** `Helpers/Tema.cs`.
 
-> ⛔ **PROHIBICIÓN ESTRICTA: NO ES ASP.NET**  
+> ⛔ **PROHIBICIÓN ESTRICTA: NO ES ASP.NET**
 > Este proyecto es una aplicación de escritorio WinForms tradicional. Está terminantemente prohibido incorporar Razor (`.cshtml`), controladores MVC web de ASP.NET, inyección de dependencias web, o dependencias de ASP.NET Core.
 
-> ⛔ **CÓDIGO GENERADO POR ENTITY FRAMEWORK**  
+> ⛔ **CÓDIGO GENERADO POR ENTITY FRAMEWORK**
 > Los archivos generados por `ModelSanarRural.tt` (clases POCO como `Doctores.cs`, `Pacientes.cs`, `Citas.cs`, `Consultas.cs`, etc.) y `ModelSanarRural.Context.cs` son código autogenerado. **Nunca deben editarse manualmente**. Toda extensión debe realizarse mediante clases parciales en archivos separados si fuera indispensable.
 
 ---
@@ -111,3 +111,7 @@ La calidad visual y de usabilidad es prioridad de primer nivel:
    - Ejecutar `git diff --check` (cero errores de formato/espaciado).
    - Compilar el proyecto con MSBuild y verificar **cero errores de compilación**.
 5. **Restricción de Git:** No realizar `commit`, `push` ni cambio de rama a menos que el usuario lo solicite de manera explícita en su instrucción.
+6. **Protección Absoluta de Configuración Local (`App.config`):**
+   - `App.config` es un archivo de uso local exclusivo y está ignorado por Git.
+   - Queda estrictamente prohibido a los agentes de IA modificar `App.config` en tareas rutinarias, ejecutar `git add App.config` o `git add -f App.config`, incluirlo en commits o alterar las credenciales locales de los desarrolladores.
+   - Para documentación y soporte, utilizar exclusivamente la plantilla `App.config.example`.

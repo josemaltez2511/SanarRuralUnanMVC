@@ -53,3 +53,8 @@ Las skills alojadas en `.agents/skills/` **no son opcionales** cuando la tarea i
    - **No tocar código fuera de alcance:** No modificar módulos no relacionados ni aplicar refactorizaciones fortuitas.
    - **No Commit / No Push no autorizados:** No realizar commits ni push al repositorio remoto salvo instrucción explícita del usuario.
    - **No merge a main:** Todo trabajo se mantiene en su rama funcional correspondiente.
+5. **Aislamiento Estricto de Configuración Local (`App.config`):**
+   - **`App.config` es de uso exclusivamente local:** Queda terminantemente prohibido editar `App.config` como parte de una tarea rutinaria.
+   - **Prohibición en Git:** Queda estrictamente prohibido ejecutar `git add App.config`, `git add -f App.config` o incluir `App.config` en commits.
+   - **Preservación de entornos individuales:** Prohibido copiar, asumir o sobrescribir la cadena de conexión o nombre de instancia de otro desarrollador (José, Esther, Amarelis).
+   - **Plantilla Oficial:** Cualquier referencia documental, soporte o ejemplo debe basarse única y exclusivamente en `App.config.example`.

@@ -92,7 +92,11 @@ namespace SanarRuralUnan.Models
                 foreach (var asignacion in relaciones.Where(a => a.Item2 == idEspecialidad))
                 {
                     doctorEspecialidad.DoctorHospitalEspecialidad.Add(
-                        new DoctorHospitalEspecialidad { IdHospital = asignacion.Item1 }
+                        new DoctorHospitalEspecialidad
+                        {
+                            IdHospital = asignacion.Item1,
+                            IdEspecialidad = idEspecialidad
+                        }
                     );
                 }
 
@@ -269,7 +273,12 @@ namespace SanarRuralUnan.Models
                     if (!existe)
                     {
                         doctorEspecialidad.DoctorHospitalEspecialidad.Add(
-                            new DoctorHospitalEspecialidad { IdHospital = asignacion.Item1 }
+                            new DoctorHospitalEspecialidad
+                            {
+                                IdDoctor = idDoctor,
+                                IdHospital = asignacion.Item1,
+                                IdEspecialidad = idEspecialidad
+                            }
                         );
                     }
                 }
@@ -304,6 +313,31 @@ namespace SanarRuralUnan.Models
 
             doctor.Estado = false;
             db.SaveChanges();
+        }
+
+        // ============================================================
+        // COMPROBACIONES DE UNICIDAD
+        // ============================================================
+        public bool existeCedula(string cedula, int? idDoctorExcluir = null)
+        {
+            if (string.IsNullOrWhiteSpace(cedula))
+            {
+                return false;
+            }
+
+            string normalizada = cedula.Trim();
+            return db.Doctores.Any(d => d.Cedula == normalizada && (!idDoctorExcluir.HasValue || d.IdDoctor != idDoctorExcluir.Value));
+        }
+
+        public bool existeNumeroLicencia(string numeroLicencia, int? idDoctorExcluir = null)
+        {
+            if (string.IsNullOrWhiteSpace(numeroLicencia))
+            {
+                return false;
+            }
+
+            string normalizada = numeroLicencia.Trim();
+            return db.Doctores.Any(d => d.NumeroLicencia == normalizada && (!idDoctorExcluir.HasValue || d.IdDoctor != idDoctorExcluir.Value));
         }
     }
 }

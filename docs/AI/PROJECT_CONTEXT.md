@@ -10,13 +10,19 @@ Desarrolladores del proyecto: **José, Esther y Amarelis** (UNAN-Managua).
 ## 2. Stack Tecnológico
 - **Plataforma:** Aplicación de escritorio Windows (Windows Forms / WinForms).
 - **Lenguaje:** C# (.NET Framework 4.7.2).
-- **Base de Datos:** Microsoft SQL Server 2022 (instancia local `SQLEXPRESS02`, base de datos `SanarRuralDB` / `SanarRural`).
+- **Base de Datos:** Microsoft SQL Server 2022 (base de datos `SanarRuralDB`; la instancia de SQL Server es local e individual para cada desarrollador, ej. `.\SQLEXPRESS`, `localhost\SQLEXPRESS`, etc.).
 - **ORM / Acceso a Datos:** Entity Framework 6.5.2 (Enfoque **Database First** mediante `ModelSanarRural.edmx`).
 - **Componentes Visuales:** `MaterialSkin 2` (versión 2.3.1).
 - **Sistema de Identidad Visual:** `SanarRuralUnan.Helpers.Tema` (`Helpers/Tema.cs`).
-- **Control de Versiones:** Git / GitHub (rama activa: `feature/modulo-clinico`).
+- **Control de Versiones:** Git / GitHub.
 
-> **Aclaración Arquitectónica Vital:**  
+> **Política Estricta de Configuración Local:**
+> - `App.config` es **exclusivamente local** y está ignorado por Git (`.gitignore`). NUNCA debe ser versionado ni incluido en commits.
+> - `App.config.example` es la **plantilla versionada oficial**.
+> - La instancia de SQL Server puede variar entre las computadoras de José, Esther y Amarelis.
+> - **Regla para IA y desarrolladores:** Nunca asumir, copiar ni hardcodear el nombre de máquina o instancia de otro integrante. Toda documentación debe referirse a `App.config.example`.
+
+> **Aclaración Arquitectónica Vital:**
 > Este proyecto **NO es ASP.NET MVC**, ni aplicación web. No se debe introducir código Razor (`.cshtml`), controladores web de ASP.NET, rutas HTTP, ni dependencias de ASP.NET Core.
 
 ---
@@ -24,16 +30,16 @@ Desarrolladores del proyecto: **José, Esther y Amarelis** (UNAN-Managua).
 ## 3. Arquitectura del Código
 El sistema sigue un patrón arquitectónico **MVC informal** adaptado a Windows Forms:
 ```
-[ Vistas (Views) ] 
+[ Vistas (Views) ]
        │  (Eventos de UI, captura y presentación de datos)
        ▼
-[ Controladores (Controllers) ] 
+[ Controladores (Controllers) ]
        │  (Coordinación, orquestación y validaciones de flujo)
        ▼
-[ Modelos (Models) ] 
+[ Modelos (Models) ]
        │  (Consultas LINQ a EF, reglas de persistencia, transacciones)
        ▼
-[ Entity Framework 6 (SanarRuralDBEntities) ] 
+[ Entity Framework 6 (SanarRuralDBEntities) ]
        │
        ▼
 [ Base de Datos SQL Server ]
@@ -81,7 +87,8 @@ SanarRuralUnan/
 ├── Properties/                  # Recursos, ensamblados y configuraciones
 ├── ModelSanarRural.edmx         # Diagrama y mapeo Entity Framework Database First
 ├── ModelSanarRural.Context.cs   # DbContext generado (SanarRuralDBEntities)
-├── App.config                   # Cadenas de conexión (SanarRuralDB, SanarRuralDBEntities)
+├── App.config.example           # Plantilla versionada de configuracion y cadenas de conexion
+├── App.config                   # Configuracion local y personal (IGNORADO por Git, NO versionar)
 ├── SanarRuralUnan.csproj        # Definición del proyecto .NET Framework 4.7.2
 ├── .agents/                     # Reglas, skills y workflows para agentes de IA
 │   ├── rules/

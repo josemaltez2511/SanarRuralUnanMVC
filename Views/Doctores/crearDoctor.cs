@@ -672,6 +672,20 @@ namespace SanarRuralUnan.Views
                 return;
             }
 
+            if (controladorDoctores.existeCedula(cedula, esModoEdicion ? (int?)idDoctorEdicion : null))
+            {
+                MessageBox.Show("Ya existe un doctor registrado con el número de cédula ingresado.", "Cédula duplicada", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                txtCedula.Focus();
+                return;
+            }
+
+            if (controladorDoctores.existeNumeroLicencia(numeroLicencia, esModoEdicion ? (int?)idDoctorEdicion : null))
+            {
+                MessageBox.Show("Ya existe un doctor registrado con el número de licencia médica ingresado.", "Licencia duplicada", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                txtLicencia.Focus();
+                return;
+            }
+
             try
             {
                 if (esModoEdicion)
@@ -725,7 +739,14 @@ namespace SanarRuralUnan.Views
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Ocurrió un error al guardar el doctor:\n\n" + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                // No mostrar detalles técnicos de base de datos al usuario final.
+                System.Diagnostics.Debug.WriteLine("Error al guardar doctor: " + ex);
+                MessageBox.Show(
+                    "Ocurrió un error al procesar el guardado del doctor. Por favor, intente nuevamente o contacte al administrador si el problema persiste.",
+                    "Error al Guardar",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error
+                );
             }
         }
 

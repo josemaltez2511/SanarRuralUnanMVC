@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<configuration>
+  <startup>
+    <supportedRuntime version="v4.0" sku=".NETFramework,Version=v4.7.2" />
+  </startup>
+  <connectionStrings>
+    <!-- =============================================================================
+         PLANTILLA DE CONFIGURACION LOCAL PARA SQL SERVER (Sanar Rural UNAN)
+         =============================================================================
+         INSTRUCCIONES PARA DESARROLLADORES:
+         1. Copie este archivo en la raiz del proyecto con el nombre exacto 'App.config'.
+         2. Si su instancia local de SQL Server difiere (ej. .\SQLEXPRESS, localhost\SQLEXPRESS, etc.),
+            modifique unicamente la propiedad 'Data Source' en su 'App.config' local.
+         3. 'App.config' es estrictamente personal y esta ignorado por Git (.gitignore).
+            NUNCA agregue 'App.config' al control de versiones ni lo incluya en commits.
+         ============================================================================= -->
+    <add name="SanarRuralDB" connectionString="Data Source=.\SQLEXPRESS;Initial Catalog=SanarRuralDB;Integrated Security=True;" providerName="System.Data.SqlClient" />
+    <add name="SanarRuralDBEntities" connectionString="metadata=res://*/ModelSanarRural.csdl|res://*/ModelSanarRural.ssdl|res://*/ModelSanarRural.msl;provider=System.Data.SqlClient;provider connection string=&quot;data source=.\SQLEXPRESS;initial catalog=SanarRuralDB;integrated security=True;encrypt=True;trustservercertificate=True;MultipleActiveResultSets=True;App=EntityFramework&quot;" providerName="System.Data.EntityClient" />
+  </connectionStrings>
+</configuration>

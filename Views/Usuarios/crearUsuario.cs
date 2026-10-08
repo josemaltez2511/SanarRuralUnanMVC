@@ -9,6 +9,59 @@ using SanarRuralUnan.Views.Doctores;
 
 namespace SanarRuralUnan.Views
 {
+    /// <summary>
+    /// Tarjeta de rol seleccionable mediante teclado, ratón y tecnologías de asistencia.
+    /// </summary>
+    public class TarjetaRolPanel : Panel
+    {
+        public bool Checked { get; set; }
+
+        public TarjetaRolPanel()
+        {
+            SetStyle(ControlStyles.Selectable, true);
+            TabStop = true;
+            AccessibleRole = AccessibleRole.RadioButton;
+        }
+
+        protected override bool IsInputKey(Keys keyData)
+        {
+            if (keyData == Keys.Enter || keyData == Keys.Space ||
+                keyData == Keys.Left || keyData == Keys.Right ||
+                keyData == Keys.Up || keyData == Keys.Down)
+            {
+                return true;
+            }
+            return base.IsInputKey(keyData);
+        }
+
+        protected override AccessibleObject CreateAccessibilityInstance()
+        {
+            return new TarjetaRolAccessibleObject(this);
+        }
+
+        private class TarjetaRolAccessibleObject : ControlAccessibleObject
+        {
+            private readonly TarjetaRolPanel _panel;
+            public TarjetaRolAccessibleObject(TarjetaRolPanel panel) : base(panel)
+            {
+                _panel = panel;
+            }
+
+            public override AccessibleRole Role => AccessibleRole.RadioButton;
+
+            public override AccessibleStates State
+            {
+                get
+                {
+                    AccessibleStates state = base.State | AccessibleStates.Focusable;
+                    if (_panel.Focused) state |= AccessibleStates.Focused;
+                    if (_panel.Checked) state |= AccessibleStates.Checked;
+                    return state;
+                }
+            }
+        }
+    }
+
     public partial class crearUsuario : Form
     {
         private readonly usuariosControllers controlador = new usuariosControllers();
@@ -39,43 +92,52 @@ namespace SanarRuralUnan.Views
 
         private void CentrarPanelCard()
         {
-            panelCard.Width = Math.Max(500, Math.Min(870, ClientSize.Width - 40));
-            panelCard.Height = 570;
+            int cardHeight = 525;
+            if (esRegistroDoctorFijo)
+            {
+                cardHeight = 450;
+            }
+            else if (modoAdministracion)
+            {
+                cardHeight = 510;
+            }
 
-            int anchoCampo = panelCard.Width - 80;
-            txtCorreo.Width = anchoCampo;
-            txtContrasena.Width = panelCard.Width - 125;
-            txtConfirmarContrasena.Width = panelCard.Width - 125;
-            btnVerContrasena.Left = panelCard.Width - 80;
-            btnVerConfirmarContrasena.Left = panelCard.Width - 80;
-            cmbRol.Width = anchoCampo;
-            btnGuardar.Width = anchoCampo;
+            panelCard.Width = 500;
+            panelCard.Height = cardHeight;
 
-            int xTarjetas = (panelCard.Width - 420) / 2;
-            panelTarjetaPaciente.Left = xTarjetas;
-            panelTarjetaMedico.Left = xTarjetas + 220;
-            rbPaciente.Left = xTarjetas;
-            rbMedico.Left = xTarjetas + 220;
-            lnkVolver.Left = (panelCard.Width - lnkVolver.Width) / 2;
-
-            panelCard.Location = new Point(
-                Math.Max(10, (ClientSize.Width - panelCard.Width) / 2),
-                Math.Max(10, (ClientSize.Height - panelCard.Height) / 2));
+            int x = (this.ClientSize.Width - panelCard.Width) / 2;
+            int y = (this.ClientSize.Height - panelCard.Height) / 2;
+            panelCard.Location = new Point(Math.Max(10, x), Math.Max(10, y));
         }
 
         private void crearUsuario_Load(object sender, EventArgs e)
         {
-            CentrarPanelCard();
+            // Comportamiento de pantalla principal ocupando el tamaño completo disponible
+            WindowState = FormWindowState.Maximized;
+
+            // Cargar el logotipo institucional desde los recursos del sistema
+            picLogo.Image = Tema.ObtenerLogo();
+
             lblErrorCorreo.Text = "";
-            lblErrorContrasena.Text = "La contraseña debe ser al menos 5 caracteres";
-            lblErrorContrasena.ForeColor = Tema.TextoAyuda;
+            lblErrorContrasena.Text = "La contraseña debe tener al menos 5 caracteres";
+            lblErrorContrasena.ForeColor = Tema.TextoSecundario;
             lblErrorConfirmar.Text = "";
             btnVerContrasena.Text = "👁";
             btnVerConfirmarContrasena.Text = "👁";
 
+            // Microinteracciones de hover para botones
+            btnGuardar.MouseEnter += (s, ev) => btnGuardar.BackColor = Tema.AzulOscuro;
+            btnGuardar.MouseLeave += (s, ev) => btnGuardar.BackColor = Tema.AzulPrimario;
+            btnVerContrasena.MouseEnter += (s, ev) => btnVerContrasena.BackColor = Tema.FondoSecundario;
+            btnVerContrasena.MouseLeave += (s, ev) => btnVerContrasena.BackColor = Tema.Superficie;
+            btnVerConfirmarContrasena.MouseEnter += (s, ev) => btnVerConfirmarContrasena.BackColor = Tema.FondoSecundario;
+            btnVerConfirmarContrasena.MouseLeave += (s, ev) => btnVerConfirmarContrasena.BackColor = Tema.Superficie;
+
             ConfigurarTarjetaTipoUsuario(panelTarjetaPaciente, rbPaciente, "🧑‍⚕️", "Paciente");
-            ConfigurarTarjetaTipoUsuario(panelTarjetaMedico, rbMedico, "👨‍⚕️", "Médico/Personal de salud");
+            ConfigurarTarjetaTipoUsuario(panelTarjetaMedico, rbMedico, "👨‍⚕️", "Médico / Personal");
             rbPaciente.Checked = true;
+            panelTarjetaPaciente.Checked = true;
+            panelTarjetaMedico.Checked = false;
 
             if (modoAdministracion)
             {
@@ -88,9 +150,14 @@ namespace SanarRuralUnan.Views
                 lblTipoUsuario.Text = "Rol";
                 panelTarjetaPaciente.Visible = false;
                 panelTarjetaMedico.Visible = false;
+                panelTarjetaPaciente.TabStop = false;
+                panelTarjetaMedico.TabStop = false;
+                rbPaciente.Visible = false;
+                rbMedico.Visible = false;
                 btnGuardar.Text = idUsuarioEditar.HasValue ? "Guardar Cambios" : "Crear Usuario";
                 lnkVolver.Text = "Cancelar";
-                lnkVolver.Location = new Point(220, 517);
+                btnGuardar.Location = new Point(40, 415);
+                lnkVolver.Location = new Point(20, 472);
 
                 if (idUsuarioEditar.HasValue)
                 {
@@ -108,14 +175,31 @@ namespace SanarRuralUnan.Views
             {
                 rbMedico.Checked = true;
                 rbPaciente.Checked = false;
+                panelTarjetaMedico.Checked = true;
+                panelTarjetaPaciente.Checked = false;
                 lblTipoUsuario.Visible = false;
                 panelTarjetaPaciente.Visible = false;
                 panelTarjetaMedico.Visible = false;
-                btnGuardar.Location = new Point(40, 375);
-                lnkVolver.Location = new Point(175, 430);
+                panelTarjetaPaciente.TabStop = false;
+                panelTarjetaMedico.TabStop = false;
+                rbPaciente.Visible = false;
+                rbMedico.Visible = false;
+                cmbRol.Visible = false;
+                btnGuardar.Location = new Point(40, 355);
+                lnkVolver.Location = new Point(20, 412);
                 lnkVolver.Text = "Cancelar y Volver";
-                panelCard.Height = 480;
             }
+            else
+            {
+                panelTarjetaPaciente.Visible = true;
+                panelTarjetaMedico.Visible = true;
+                panelTarjetaPaciente.TabStop = true;
+                panelTarjetaMedico.TabStop = true;
+                btnGuardar.Location = new Point(40, 428);
+                lnkVolver.Location = new Point(20, 485);
+            }
+
+            CentrarPanelCard();
         }
 
         private void CargarUsuarioParaEditar()
@@ -134,30 +218,121 @@ namespace SanarRuralUnan.Views
             lblErrorCorreo.Text = "";
         }
 
-        private void ConfigurarTarjetaTipoUsuario(Panel panel, RadioButton radioAsociado, string emoji, string texto)
+        private void ConfigurarTarjetaTipoUsuario(TarjetaRolPanel panel, RadioButton radioAsociado, string emoji, string texto)
         {
-            panel.BorderStyle = BorderStyle.FixedSingle;
-            panel.BackColor = Tema.FondoTarjeta;
+            panel.BorderStyle = BorderStyle.None;
             panel.Cursor = Cursors.Hand;
             panel.Controls.Clear();
+
+            bool mouseSobre = false;
 
             var etiqueta = new Label
             {
                 Text = emoji + "  " + texto,
                 Font = Tema.FuenteLabelCampo,
-                ForeColor = Tema.TextoPrincipal,
                 Dock = DockStyle.Fill,
                 TextAlign = ContentAlignment.MiddleCenter,
-                Cursor = Cursors.Hand
+                Cursor = Cursors.Hand,
+                BackColor = Color.Transparent,
+                AccessibleRole = AccessibleRole.None
             };
             panel.Controls.Add(etiqueta);
-            panel.Click += (s, ev) => radioAsociado.Checked = true;
-            etiqueta.Click += (s, ev) => radioAsociado.Checked = true;
-            radioAsociado.CheckedChanged += (s, ev) =>
+
+            Action actualizarEstadoVisual = () =>
             {
-                panel.BackColor = radioAsociado.Checked ? Tema.FondoTarjetaSeleccionada : Tema.FondoTarjeta;
-                panel.BorderStyle = radioAsociado.Checked ? BorderStyle.Fixed3D : BorderStyle.FixedSingle;
+                panel.Checked = radioAsociado.Checked;
+                if (panel.Checked)
+                {
+                    panel.BackColor = Tema.FondoSecundario;
+                    etiqueta.ForeColor = Tema.AzulOscuro;
+                    etiqueta.Font = new Font(Tema.FamiliaFuente, Tema.TamanoEtiqueta, FontStyle.Bold);
+                }
+                else if (mouseSobre)
+                {
+                    panel.BackColor = Tema.Fondo;
+                    etiqueta.ForeColor = Tema.TextoPrincipal;
+                    etiqueta.Font = new Font(Tema.FamiliaFuente, Tema.TamanoEtiqueta, FontStyle.Regular);
+                }
+                else
+                {
+                    panel.BackColor = Tema.Superficie;
+                    etiqueta.ForeColor = Tema.TextoSecundario;
+                    etiqueta.Font = new Font(Tema.FamiliaFuente, Tema.TamanoEtiqueta, FontStyle.Regular);
+                }
+                panel.Invalidate();
             };
+
+            panel.Paint += (s, e) =>
+            {
+                bool enfocado = panel.Focused;
+                Color colorBorde = (panel.Checked || enfocado) ? Tema.AzulPrimario : (mouseSobre ? Tema.AzulClaro : Tema.Borde);
+                int grosor = (panel.Checked || enfocado) ? 2 : 1;
+                using (Pen pen = new Pen(colorBorde, grosor))
+                {
+                    int offset = grosor > 1 ? 1 : 0;
+                    e.Graphics.DrawRectangle(pen, offset, offset, panel.ClientSize.Width - 1 - offset * 2, panel.ClientSize.Height - 1 - offset * 2);
+                }
+
+                if (enfocado)
+                {
+                    ControlPaint.DrawFocusRectangle(e.Graphics, new Rectangle(3, 3, panel.ClientSize.Width - 6, panel.ClientSize.Height - 6));
+                }
+            };
+
+            panel.MouseEnter += (s, ev) => { mouseSobre = true; actualizarEstadoVisual(); };
+            panel.MouseLeave += (s, ev) => { mouseSobre = false; actualizarEstadoVisual(); };
+            etiqueta.MouseEnter += (s, ev) => { mouseSobre = true; actualizarEstadoVisual(); };
+            etiqueta.MouseLeave += (s, ev) => { mouseSobre = false; actualizarEstadoVisual(); };
+
+            Action seleccionarEstaTarjeta = () =>
+            {
+                panel.Focus();
+                if (!radioAsociado.Checked)
+                {
+                    radioAsociado.Checked = true;
+                }
+                else
+                {
+                    actualizarEstadoVisual();
+                }
+            };
+
+            panel.Click += (s, ev) => seleccionarEstaTarjeta();
+            etiqueta.Click += (s, ev) => seleccionarEstaTarjeta();
+
+            panel.GotFocus += (s, ev) => actualizarEstadoVisual();
+            panel.LostFocus += (s, ev) => actualizarEstadoVisual();
+
+            panel.KeyDown += (s, e) =>
+            {
+                if (e.KeyCode == Keys.Enter || e.KeyCode == Keys.Space)
+                {
+                    seleccionarEstaTarjeta();
+                    e.Handled = true;
+                }
+                else if (e.KeyCode == Keys.Right || e.KeyCode == Keys.Down)
+                {
+                    if (panel == panelTarjetaPaciente)
+                    {
+                        panelTarjetaMedico.Focus();
+                        rbMedico.Checked = true;
+                        e.Handled = true;
+                    }
+                }
+                else if (e.KeyCode == Keys.Left || e.KeyCode == Keys.Up)
+                {
+                    if (panel == panelTarjetaMedico)
+                    {
+                        panelTarjetaPaciente.Focus();
+                        rbPaciente.Checked = true;
+                        e.Handled = true;
+                    }
+                }
+            };
+
+            radioAsociado.CheckedChanged += (s, ev) => actualizarEstadoVisual();
+
+            actualizarEstadoVisual();
         }
 
         private void crearUsuario_Resize(object sender, EventArgs e)
@@ -399,9 +574,22 @@ namespace SanarRuralUnan.Views
             }
         }
 
-        private void panelCard_Paint(object sender, PaintEventArgs e) { }
+        private void panelCard_Paint(object sender, PaintEventArgs e)
+        {
+            // Borde sutil y limpio para la tarjeta de elevación visual
+            using (Pen penBorde = new Pen(Tema.Borde, 1))
+            {
+                e.Graphics.DrawRectangle(penBorde, 0, 0, panelCard.ClientSize.Width - 1, panelCard.ClientSize.Height - 1);
+            }
+        }
+
         private void lblCorreo_Click(object sender, EventArgs e) { }
-        private void panelCard_Paint_1(object sender, PaintEventArgs e) { }
+
+        private void panelCard_Paint_1(object sender, PaintEventArgs e)
+        {
+            panelCard_Paint(sender, e);
+        }
+
         private void crearUsuario_Load_1(object sender, EventArgs e) { }
     }
 }

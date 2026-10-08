@@ -1,0 +1,25 @@
+name: Validar Configuración Local
+
+on:
+  push:
+    branches:
+      - '**'
+  pull_request:
+    branches:
+      - '**'
+
+jobs:
+  validar-configuracion:
+    name: Verificar Exclusión de App.config
+    runs-on: windows-latest
+
+    steps:
+      - name: Descargar repositorio
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Ejecutar validación de configuración
+        shell: pwsh
+        run: |
+          ./scripts/validar-configuracion.ps1

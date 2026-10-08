@@ -34,10 +34,20 @@ namespace SanarRuralUnan
             txtCorreo.Focus();
             CentrarPanelCard();
 
+            // Cargar el logotipo institucional desde los recursos del sistema
+            picLogo.Image = Tema.ObtenerLogo();
+
             btnVerContrasena.Text = "👁";
+
+            // Microinteracciones de hover para botones
+            btnIniciarSesion.MouseEnter += (s, ev) => btnIniciarSesion.BackColor = Tema.AzulOscuro;
+            btnIniciarSesion.MouseLeave += (s, ev) => btnIniciarSesion.BackColor = Tema.AzulPrimario;
+            btnVerContrasena.MouseEnter += (s, ev) => btnVerContrasena.BackColor = Tema.FondoSecundario;
+            btnVerContrasena.MouseLeave += (s, ev) => btnVerContrasena.BackColor = Tema.Superficie;
+
             // Textos de advertencia iniciales
             lblErrorCorreo.Text = "";
-            lblErrorContrasena.Text = "La contraseña debe ser al menos 5 caracteres";
+            lblErrorContrasena.Text = "La contraseña debe tener al menos 5 caracteres";
             lblErrorContrasena.ForeColor = Tema.TextoSecundario;
         }
 
@@ -187,7 +197,14 @@ namespace SanarRuralUnan
         }
 
         private void lblSubtitulo_Click(object sender, EventArgs e) { }
-        private void panelCard_Paint(object sender, PaintEventArgs e) { }
+        private void panelCard_Paint(object sender, PaintEventArgs e)
+        {
+            // Borde sutil y limpio para la tarjeta de elevación visual
+            using (Pen penBorde = new Pen(Tema.Borde, 1))
+            {
+                e.Graphics.DrawRectangle(penBorde, 0, 0, panelCard.ClientSize.Width - 1, panelCard.ClientSize.Height - 1);
+            }
+        }
 
         private void iniciarSesion_Load_1(object sender, EventArgs e)
         {
