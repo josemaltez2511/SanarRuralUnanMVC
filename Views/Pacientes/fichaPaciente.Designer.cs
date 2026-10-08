@@ -90,11 +90,11 @@ namespace SanarRuralUnan.Views.Pacientes
             this.panelEncabezado.Controls.Add(this.panelBadgeEstado);
             this.panelEncabezado.Controls.Add(this.btnCerrarTop);
             this.panelEncabezado.Dock = System.Windows.Forms.DockStyle.Top;
-            this.panelEncabezado.Height = 90;
+            this.panelEncabezado.Height = 100;
             this.panelEncabezado.Location = new System.Drawing.Point(0, 0);
             this.panelEncabezado.Name = "panelEncabezado";
-            this.panelEncabezado.Padding = new System.Windows.Forms.Padding(24, 12, 24, 10);
-            this.panelEncabezado.Size = new System.Drawing.Size(1104, 90);
+            this.panelEncabezado.Padding = new System.Windows.Forms.Padding(24, 12, 24, 12);
+            this.panelEncabezado.Size = new System.Drawing.Size(1104, 100);
             this.panelEncabezado.TabIndex = 0;
             //
             // lblPrefijo
@@ -102,7 +102,7 @@ namespace SanarRuralUnan.Views.Pacientes
             this.lblPrefijo.AutoSize = true;
             this.lblPrefijo.Font = Tema.FuenteAyuda;
             this.lblPrefijo.ForeColor = Tema.AzulPrimario;
-            this.lblPrefijo.Location = new System.Drawing.Point(22, 10);
+            this.lblPrefijo.Location = new System.Drawing.Point(24, 12);
             this.lblPrefijo.Name = "lblPrefijo";
             this.lblPrefijo.Size = new System.Drawing.Size(193, 15);
             this.lblPrefijo.TabIndex = 0;
@@ -113,7 +113,7 @@ namespace SanarRuralUnan.Views.Pacientes
             this.lblTitulo.AutoSize = true;
             this.lblTitulo.Font = Tema.FuenteTitulo;
             this.lblTitulo.ForeColor = Tema.AzulOscuro;
-            this.lblTitulo.Location = new System.Drawing.Point(20, 26);
+            this.lblTitulo.Location = new System.Drawing.Point(22, 28);
             this.lblTitulo.Name = "lblTitulo";
             this.lblTitulo.Size = new System.Drawing.Size(260, 32);
             this.lblTitulo.TabIndex = 1;
@@ -124,7 +124,7 @@ namespace SanarRuralUnan.Views.Pacientes
             this.lblSubtitulo.AutoSize = true;
             this.lblSubtitulo.Font = Tema.FuenteSubtitulo;
             this.lblSubtitulo.ForeColor = Tema.TextoSecundario;
-            this.lblSubtitulo.Location = new System.Drawing.Point(22, 60);
+            this.lblSubtitulo.Location = new System.Drawing.Point(24, 68);
             this.lblSubtitulo.Name = "lblSubtitulo";
             this.lblSubtitulo.Size = new System.Drawing.Size(235, 20);
             this.lblSubtitulo.TabIndex = 2;
@@ -135,7 +135,7 @@ namespace SanarRuralUnan.Views.Pacientes
             this.panelBadgeEstado.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.panelBadgeEstado.BackColor = Tema.FondoSecundario;
             this.panelBadgeEstado.Controls.Add(this.lblEstadoBadge);
-            this.panelBadgeEstado.Location = new System.Drawing.Point(820, 24);
+            this.panelBadgeEstado.Location = new System.Drawing.Point(820, 28);
             this.panelBadgeEstado.Name = "panelBadgeEstado";
             this.panelBadgeEstado.Padding = new System.Windows.Forms.Padding(12, 6, 12, 6);
             this.panelBadgeEstado.Size = new System.Drawing.Size(120, 38);
@@ -163,7 +163,7 @@ namespace SanarRuralUnan.Views.Pacientes
             this.btnCerrarTop.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnCerrarTop.Font = Tema.FuenteLabelCampo;
             this.btnCerrarTop.ForeColor = Tema.TextoSecundario;
-            this.btnCerrarTop.Location = new System.Drawing.Point(954, 24);
+            this.btnCerrarTop.Location = new System.Drawing.Point(954, 28);
             this.btnCerrarTop.Name = "btnCerrarTop";
             this.btnCerrarTop.Size = new System.Drawing.Size(124, 38);
             this.btnCerrarTop.TabIndex = 4;
@@ -180,10 +180,10 @@ namespace SanarRuralUnan.Views.Pacientes
             this.panelContenido.Controls.Add(this.panelUbicacion);
             this.panelContenido.Controls.Add(this.panelDatos);
             this.panelContenido.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panelContenido.Location = new System.Drawing.Point(0, 90);
+            this.panelContenido.Location = new System.Drawing.Point(0, 100);
             this.panelContenido.Name = "panelContenido";
             this.panelContenido.Padding = new System.Windows.Forms.Padding(24, 16, 24, 24);
-            this.panelContenido.Size = new System.Drawing.Size(1104, 651);
+            this.panelContenido.Size = new System.Drawing.Size(1104, 641);
             this.panelContenido.TabIndex = 1;
             //
             // panelDatos
@@ -366,7 +366,7 @@ namespace SanarRuralUnan.Views.Pacientes
             this.panelUbicacion.Location = new System.Drawing.Point(24, 202);
             this.panelUbicacion.Name = "panelUbicacion";
             this.panelUbicacion.Padding = new System.Windows.Forms.Padding(20);
-            this.panelUbicacion.Size = new System.Drawing.Size(1036, 140);
+            this.panelUbicacion.Size = new System.Drawing.Size(1036, 165);
             this.panelUbicacion.TabIndex = 1;
             //
             // lblSecUbicacion
@@ -451,7 +451,7 @@ namespace SanarRuralUnan.Views.Pacientes
             this.lblDireccionT.AutoSize = true;
             this.lblDireccionT.Font = Tema.FuenteAyuda;
             this.lblDireccionT.ForeColor = Tema.TextoSecundario;
-            this.lblDireccionT.Location = new System.Drawing.Point(20, 94);
+            this.lblDireccionT.Location = new System.Drawing.Point(20, 96);
             this.lblDireccionT.Name = "lblDireccionT";
             this.lblDireccionT.Size = new System.Drawing.Size(100, 15);
             this.lblDireccionT.TabIndex = 7;
@@ -459,12 +459,12 @@ namespace SanarRuralUnan.Views.Pacientes
             //
             // lblDireccionVal
             //
-            this.lblDireccionVal.AutoSize = true;
+            this.lblDireccionVal.AutoSize = false;
             this.lblDireccionVal.Font = Tema.FuenteLabelCampo;
             this.lblDireccionVal.ForeColor = Tema.TextoPrincipal;
-            this.lblDireccionVal.Location = new System.Drawing.Point(130, 94);
+            this.lblDireccionVal.Location = new System.Drawing.Point(20, 118);
             this.lblDireccionVal.Name = "lblDireccionVal";
-            this.lblDireccionVal.Size = new System.Drawing.Size(14, 17);
+            this.lblDireccionVal.Size = new System.Drawing.Size(990, 36);
             this.lblDireccionVal.TabIndex = 8;
             this.lblDireccionVal.Text = "-";
             //
@@ -522,7 +522,7 @@ namespace SanarRuralUnan.Views.Pacientes
             this.lblAlergiasT.AutoSize = true;
             this.lblAlergiasT.Font = Tema.FuenteAyuda;
             this.lblAlergiasT.ForeColor = Tema.TextoSecundario;
-            this.lblAlergiasT.Location = new System.Drawing.Point(200, 48);
+            this.lblAlergiasT.Location = new System.Drawing.Point(160, 48);
             this.lblAlergiasT.Name = "lblAlergiasT";
             this.lblAlergiasT.Size = new System.Drawing.Size(117, 15);
             this.lblAlergiasT.TabIndex = 3;
@@ -532,9 +532,9 @@ namespace SanarRuralUnan.Views.Pacientes
             //
             this.lblAlergiasVal.Font = Tema.FuenteLabelCampo;
             this.lblAlergiasVal.ForeColor = Tema.TextoPrincipal;
-            this.lblAlergiasVal.Location = new System.Drawing.Point(200, 68);
+            this.lblAlergiasVal.Location = new System.Drawing.Point(160, 68);
             this.lblAlergiasVal.Name = "lblAlergiasVal";
-            this.lblAlergiasVal.Size = new System.Drawing.Size(350, 50);
+            this.lblAlergiasVal.Size = new System.Drawing.Size(200, 50);
             this.lblAlergiasVal.TabIndex = 4;
             this.lblAlergiasVal.Text = "Ninguna conocida";
             //
@@ -543,7 +543,7 @@ namespace SanarRuralUnan.Views.Pacientes
             this.lblAntecedentesT.AutoSize = true;
             this.lblAntecedentesT.Font = Tema.FuenteAyuda;
             this.lblAntecedentesT.ForeColor = Tema.TextoSecundario;
-            this.lblAntecedentesT.Location = new System.Drawing.Point(580, 48);
+            this.lblAntecedentesT.Location = new System.Drawing.Point(380, 48);
             this.lblAntecedentesT.Name = "lblAntecedentesT";
             this.lblAntecedentesT.Size = new System.Drawing.Size(134, 15);
             this.lblAntecedentesT.TabIndex = 5;
@@ -553,9 +553,9 @@ namespace SanarRuralUnan.Views.Pacientes
             //
             this.lblAntecedentesVal.Font = Tema.FuenteLabelCampo;
             this.lblAntecedentesVal.ForeColor = Tema.TextoPrincipal;
-            this.lblAntecedentesVal.Location = new System.Drawing.Point(580, 68);
+            this.lblAntecedentesVal.Location = new System.Drawing.Point(380, 68);
             this.lblAntecedentesVal.Name = "lblAntecedentesVal";
-            this.lblAntecedentesVal.Size = new System.Drawing.Size(430, 50);
+            this.lblAntecedentesVal.Size = new System.Drawing.Size(630, 50);
             this.lblAntecedentesVal.TabIndex = 6;
             this.lblAntecedentesVal.Text = "Ninguno registrado";
             //

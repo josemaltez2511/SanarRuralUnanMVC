@@ -91,6 +91,13 @@ namespace SanarRuralUnan.Views.Pacientes
             panelPie.Left = margen;
             panelPie.Width = anchoDisponible;
 
+            // Flujo vertical dinámico de tarjetas para evitar cualquier solapamiento
+            panelDatos.Top = 16;
+            panelUbicacion.Top = panelDatos.Bottom + 14;
+            panelSalud.Top = panelUbicacion.Bottom + 14;
+            panelContactos.Top = panelSalud.Bottom + 14;
+            panelPie.Top = panelContactos.Bottom + 14;
+
             // Ajuste estricto del contenedor de la tabla para que quede perfectamente dentro de panelContactos
             panelTablaContactos.Left = 20;
             panelTablaContactos.Width = Math.Max(200, panelContactos.ClientSize.Width - 40);
@@ -99,34 +106,62 @@ namespace SanarRuralUnan.Views.Pacientes
             btnCerrar.Left = Math.Max(0, panelPie.ClientSize.Width - btnCerrar.Width);
 
             // Ajuste del encabezado superior para que el badge y el botón cerrar se alineen a la derecha
+            // y el subtítulo no quede comprimido debajo del nombre
             if (panelEncabezado.ClientSize.Width > 0)
             {
+                lblSubtitulo.Top = lblTitulo.Bottom + 2;
                 btnCerrarTop.Left = Math.Max(300, panelEncabezado.ClientSize.Width - btnCerrarTop.Width - 24);
                 panelBadgeEstado.Left = Math.Max(150, btnCerrarTop.Left - panelBadgeEstado.Width - 16);
             }
 
-            // Ajuste responsivo de columnas dentro de panelDatos
-            int col2 = Math.Max(260, anchoDisponible / 2);
-            lblNacimientoT.Left = col2;
-            lblNacimientoVal.Left = col2;
-            lblGeneroT.Left = col2;
-            lblGeneroVal.Left = col2;
+            // Cuadrícula ordenada de 3 columnas para Datos Personales
+            int c1 = 20;
+            int c2 = Math.Max(240, (anchoDisponible * 34) / 100);
+            int c3 = Math.Max(480, (anchoDisponible * 68) / 100);
 
-            int colTel = Math.Min(anchoDisponible - 180, col2 + 220);
-            if (colTel > col2 + 80)
-            {
-                lblTelefonoT.Left = colTel;
-                lblTelefonoVal.Left = colTel;
-            }
+            lblNombreT.Left = c1;
+            lblNombreVal.Left = c1;
+            lblCedulaT.Left = c1;
+            lblCedulaVal.Left = c1;
 
-            // Ajuste de columnas en panelUbicacion
-            lblComunidadT.Left = col2;
-            lblComunidadVal.Left = col2;
+            lblNacimientoT.Left = c2;
+            lblNacimientoVal.Left = c2;
+            lblInssT.Left = c2;
+            lblInssVal.Left = c2;
 
-            // Ajuste de antecedentes en panelSalud
-            lblAntecedentesT.Left = col2;
-            lblAntecedentesVal.Left = col2;
-            lblAntecedentesVal.Width = Math.Max(200, anchoDisponible - col2 - 30);
+            lblGeneroT.Left = c3;
+            lblGeneroVal.Left = c3;
+            lblTelefonoT.Left = c3;
+            lblTelefonoVal.Left = c3;
+
+            // Ajuste de columnas en panelUbicacion: Depto, Muni y Comunidad en fila 1, Dirección en fila 2 completa
+            lblDeptoT.Left = c1;
+            lblDeptoVal.Left = c1;
+
+            lblMuniT.Left = c2;
+            lblMuniVal.Left = c2;
+
+            lblComunidadT.Left = c3;
+            lblComunidadVal.Left = c3;
+
+            lblDireccionT.Left = c1;
+            lblDireccionVal.Left = c1;
+            lblDireccionVal.Width = Math.Max(200, anchoDisponible - 40);
+
+            // Ajuste de panelSalud: Sangre, Alergias y Antecedentes con límites desacoplados
+            int colAntecedentes = Math.Max(380, (anchoDisponible * 50) / 100);
+
+            lblSangreT.Left = 20;
+            lblSangreVal.Left = 20;
+
+            lblAlergiasT.Left = 160;
+            lblAlergiasVal.Left = 160;
+            // Garantizar que lblAlergiasVal NUNCA se sobreponga a lblAntecedentesVal
+            lblAlergiasVal.Width = Math.Max(120, colAntecedentes - 160 - 20);
+
+            lblAntecedentesT.Left = colAntecedentes;
+            lblAntecedentesVal.Left = colAntecedentes;
+            lblAntecedentesVal.Width = Math.Max(180, anchoDisponible - colAntecedentes - 20);
         }
 
         private void CargarDetalle()
@@ -152,6 +187,7 @@ namespace SanarRuralUnan.Views.Pacientes
                     "Expediente #{0}  •  Cédula: {1}  •  Sanar Rural",
                     detalle.IdPaciente,
                     string.IsNullOrWhiteSpace(detalle.Cedula) ? "Sin cédula registrada" : detalle.Cedula);
+                lblSubtitulo.Top = lblTitulo.Bottom + 2;
 
                 if (detalle.Estado)
                 {
