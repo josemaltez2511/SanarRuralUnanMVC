@@ -440,26 +440,55 @@ namespace SanarRuralUnan
                                 MessageBoxButtons.OK,
                                 MessageBoxIcon.Information);
 
-                // Enrutamiento según el rol asignado
-                if (tipoUsuario == controlador.ObtenerIdRol("Doctor"))
+                // Enrutamiento según el rol asignado, ocultando la pantalla de inicio de sesión
+                this.Hide();
+                bool volverAlLogin = false;
+
+                try
                 {
-                    using (menuPrincipalMedicos menuMedico = new menuPrincipalMedicos())
-                        menuMedico.ShowDialog(this);
+                    if (tipoUsuario == controlador.ObtenerIdRol("Doctor"))
+                    {
+                        using (menuPrincipalMedicos menuMedico = new menuPrincipalMedicos())
+                        {
+                            menuMedico.ShowDialog();
+                            volverAlLogin = menuMedico.SesionCerradaVoluntariamente;
+                        }
+                    }
+                    else if (tipoUsuario == controlador.ObtenerIdRol("Administrativo"))
+                    {
+                        using (var menuAdmin = new SanarRuralUnan.Views.menuPrincipalAdministrativo())
+                        {
+                            menuAdmin.ShowDialog();
+                            volverAlLogin = menuAdmin.SesionCerradaVoluntariamente;
+                        }
+                    }
+                    else if (tipoUsuario == controlador.ObtenerIdRol("Paciente"))
+                    {
+                        MessageBox.Show("Aún no se ha creado el menú principal para Pacientes.", "Aviso");
+                        controlador.CerrarSesion();
+                        volverAlLogin = true;
+                    }
+                    else
+                    {
+                        MessageBox.Show("El rol de esta cuenta no está disponible en la aplicación.", "Aviso");
+                        controlador.CerrarSesion();
+                        volverAlLogin = true;
+                    }
                 }
-                else if (tipoUsuario == controlador.ObtenerIdRol("Administrativo"))
+                finally
                 {
-                    using (var menu = new SanarRuralUnan.Views.menuPrincipalAdministrativo())
-                        menu.ShowDialog(this);
-                }
-                else if (tipoUsuario == controlador.ObtenerIdRol("Paciente"))
-                {
-                    MessageBox.Show("Aún no se ha creado el menú principal para Pacientes.", "Aviso");
-                    controlador.CerrarSesion();
-                }
-                else
-                {
-                    MessageBox.Show("El rol de esta cuenta no está disponible en la aplicación.", "Aviso");
-                    controlador.CerrarSesion();
+                    if (volverAlLogin)
+                    {
+                        txtContrasena.Clear();
+                        txtCorreo.Focus();
+                        this.Show();
+                        this.WindowState = FormWindowState.Maximized;
+                        this.BringToFront();
+                    }
+                    else
+                    {
+                        this.Close();
+                    }
                 }
             }
             else
@@ -477,8 +506,35 @@ namespace SanarRuralUnan
         // Navegación al registro de nuevo usuario
         private void lnkCrearUsuario_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            using (crearUsuario formCrear = new crearUsuario())
-                formCrear.ShowDialog(this);
+            timerSlides.Stop();
+            this.Hide();
+
+            try
+            {
+                using (crearUsuario formCrear = new crearUsuario())
+                {
+                    formCrear.ShowDialog();
+
+                    if (formCrear.DialogResult == DialogResult.OK && !string.IsNullOrWhiteSpace(formCrear.CorreoRegistrado))
+                    {
+                        txtCorreo.Text = formCrear.CorreoRegistrado;
+                        txtContrasena.Clear();
+                        txtContrasena.Focus();
+                    }
+                    else
+                    {
+                        txtContrasena.Clear();
+                        txtCorreo.Focus();
+                    }
+                }
+            }
+            finally
+            {
+                timerSlides.Start();
+                this.Show();
+                this.WindowState = FormWindowState.Maximized;
+                this.BringToFront();
+            }
         }
     }
 }
