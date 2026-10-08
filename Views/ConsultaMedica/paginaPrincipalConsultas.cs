@@ -1,12 +1,19 @@
 using System;
+using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Drawing2D;
+using System.Linq;
 using System.Windows.Forms;
 using SanarRuralUnan.Controllers;
 using SanarRuralUnan.Helpers;
+using SanarRuralUnan.Models;
 
 namespace SanarRuralUnan.Views.ConsultaMedica
 {
-    // Vista principal para consulta, supervisión y seguimiento de consultas médicas.
+    /// <summary>
+    /// Vista principal moderna para consulta, supervisión y seguimiento de consultas médicas.
+    /// Incorpora tarjetas métricas, búsqueda avanzada y tabla estilizada según la identidad Sanar Rural.
+    /// </summary>
     public partial class paginaPrincipalConsultas : Form
     {
         private readonly consultasControllers controlador = new consultasControllers();
@@ -22,6 +29,7 @@ namespace SanarRuralUnan.Views.ConsultaMedica
         {
             this.idDoctorFiltro = idDoctor;
             InitializeComponent();
+            ConfigurarDisenoResponsivo();
         }
 
         // ============================================================
@@ -32,11 +40,11 @@ namespace SanarRuralUnan.Views.ConsultaMedica
             ConfigurarEstiloGrid();
             CargarFiltrosEstado();
 
-            // Los usuarios administradores solo pueden supervisar/leer, no crear nuevas consultas clínicas.
+            // Los usuarios administradores solo pueden supervisar/leer, no iniciar consultas clínicas.
             if (!idDoctorFiltro.HasValue)
             {
                 btnNuevaConsulta.Visible = false;
-                lblSubtitulo.Text = "SUPERVISIÓN DE CONSULTAS MÉDICAS (MODO LECTURA)";
+                lblSubtitulo.Text = "Supervisión de consultas médicas (modo lectura)";
             }
 
             CargarConsultas();
@@ -49,6 +57,93 @@ namespace SanarRuralUnan.Views.ConsultaMedica
                     CargarConsultas();
                 }
             };
+        }
+
+        private void ConfigurarDisenoResponsivo()
+        {
+            panelCardPrincipal.Paint += (s, e) =>
+            {
+                e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
+                using (var pen = new Pen(Tema.Borde, 1f))
+                {
+                    e.Graphics.DrawRectangle(pen, 0, 0, panelCardPrincipal.Width - 1, panelCardPrincipal.Height - 1);
+                }
+            };
+
+            panelIconoModulo.Paint += (s, e) =>
+            {
+                e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
+                using (var path = Tema.CrearRutaRedondeada(new Rectangle(0, 0, panelIconoModulo.Width - 1, panelIconoModulo.Height - 1), 12))
+                {
+                    using (var brush = new SolidBrush(Color.FromArgb(226, 238, 248)))
+                    {
+                        e.Graphics.FillPath(brush, path);
+                    }
+                }
+            };
+
+            ConfigurarBordeControl(panelBuscar);
+            ConfigurarBordeControl(panelFiltroFecha);
+            ConfigurarBordeControl(panelFiltroEstado);
+
+            ConfigurarTarjetaMetrica(cardTotal, Tema.AzulPrimario);
+            ConfigurarTarjetaMetrica(cardEnProceso, Tema.Advertencia);
+            ConfigurarTarjetaMetrica(cardFinalizadas, Tema.VerdeOscuro);
+
+            panelMetricas.Resize += (s, e) => OrganizarTarjetasMetricas();
+            OrganizarTarjetasMetricas();
+        }
+
+        private static void ConfigurarBordeControl(Panel panel)
+        {
+            panel.Paint += (s, e) =>
+            {
+                e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
+                using (var path = Tema.CrearRutaRedondeada(new Rectangle(0, 0, panel.Width - 1, panel.Height - 1), 8))
+                using (var pen = new Pen(Tema.Borde, 1f))
+                {
+                    e.Graphics.DrawPath(pen, path);
+                }
+            };
+        }
+
+        private static void ConfigurarTarjetaMetrica(Panel card, Color colorAcento)
+        {
+            card.Paint += (s, e) =>
+            {
+                e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
+                using (var path = Tema.CrearRutaRedondeada(new Rectangle(0, 0, card.Width - 1, card.Height - 1), 10))
+                {
+                    using (var brush = new SolidBrush(Tema.Superficie))
+                    {
+                        e.Graphics.FillPath(brush, path);
+                    }
+                    using (var pen = new Pen(Tema.Borde, 1f))
+                    {
+                        e.Graphics.DrawPath(pen, path);
+                    }
+                }
+
+                // Línea superior decorativa sutil
+                using (var penTop = new Pen(colorAcento, 3f))
+                {
+                    e.Graphics.DrawLine(penTop, 12, 1, Math.Min(60, card.Width - 12), 1);
+                }
+            };
+        }
+
+        private void OrganizarTarjetasMetricas()
+        {
+            int anchoTotal = panelMetricas.ClientSize.Width;
+            if (anchoTotal <= 0) return;
+
+            int espacio = 16;
+            int cantidad = 3;
+            int anchoTarjeta = Math.Max(180, (anchoTotal - (espacio * (cantidad - 1))) / cantidad);
+
+            cardTotal.SetBounds(0, 4, anchoTarjeta, 62);
+            cardEnProceso.SetBounds(anchoTarjeta + espacio, 4, anchoTarjeta, 62);
+            cardFinalizadas.SetBounds((anchoTarjeta + espacio) * 2, 4, anchoTarjeta, 62);
         }
 
         private void ConfigurarEstiloGrid()
@@ -80,7 +175,20 @@ namespace SanarRuralUnan.Views.ConsultaMedica
                 DateTime? fecha = chkTodasFechas.Checked ? (DateTime?)null : dtpFechaFiltro.Value.Date;
                 string estado = cmbEstadoFiltro.SelectedItem?.ToString() ?? "Todos";
 
-                dgvConsultas.DataSource = controlador.listarConsultas(busqueda, fecha, estado, idDoctorFiltro);
+                var lista = controlador.listarConsultas(busqueda, fecha, estado, idDoctorFiltro) ?? new List<ConsultaItemDto>();
+                dgvConsultas.DataSource = lista;
+
+                // Actualizar métricas dinámicas
+                int total = lista.Count;
+                int enProceso = lista.Count(c => c.EstadoConsulta == "EnProceso");
+                int finalizadas = lista.Count(c => c.EstadoConsulta == "Finalizada");
+
+                lblTotalNum.Text = total.ToString();
+                lblEnProcesoNum.Text = enProceso.ToString();
+                lblFinalizadasNum.Text = finalizadas.ToString();
+                lblConteo.Text = $"Mostrando {total} consulta{(total == 1 ? "" : "s")} médica{(total == 1 ? "" : "s")} registrada{(total == 1 ? "" : "s")}";
+
+                btnLimpiarBusqueda.Visible = !string.IsNullOrWhiteSpace(busqueda);
 
                 // Configuración de encabezados y visibilidad de columnas
                 if (dgvConsultas.Columns["IdConsulta"] != null)
@@ -101,7 +209,7 @@ namespace SanarRuralUnan.Views.ConsultaMedica
                 if (dgvConsultas.Columns["Paciente"] != null)
                 {
                     dgvConsultas.Columns["Paciente"].HeaderText = "Paciente";
-                    dgvConsultas.Columns["Paciente"].FillWeight = 135;
+                    dgvConsultas.Columns["Paciente"].FillWeight = 140;
                 }
                 if (dgvConsultas.Columns["Cedula"] != null)
                 {
@@ -131,7 +239,7 @@ namespace SanarRuralUnan.Views.ConsultaMedica
                 if (dgvConsultas.Columns["EstadoConsulta"] != null)
                 {
                     dgvConsultas.Columns["EstadoConsulta"].HeaderText = "Estado";
-                    dgvConsultas.Columns["EstadoConsulta"].FillWeight = 80;
+                    dgvConsultas.Columns["EstadoConsulta"].FillWeight = 90;
                 }
                 if (dgvConsultas.Columns["MotivoCita"] != null)
                 {
@@ -172,7 +280,7 @@ namespace SanarRuralUnan.Views.ConsultaMedica
                     Text = "👁️ Ver",
                     UseColumnTextForButtonValue = true,
                     FlatStyle = FlatStyle.Flat,
-                    FillWeight = 65
+                    FillWeight = 75
                 };
                 dgvConsultas.Columns.Add(colVer);
             }
@@ -186,7 +294,7 @@ namespace SanarRuralUnan.Views.ConsultaMedica
                     Text = "🩺 Continuar",
                     UseColumnTextForButtonValue = true,
                     FlatStyle = FlatStyle.Flat,
-                    FillWeight = 80
+                    FillWeight = 85
                 };
                 dgvConsultas.Columns.Add(colContinuar);
             }
@@ -215,32 +323,39 @@ namespace SanarRuralUnan.Views.ConsultaMedica
             if (nombreColumna == "EstadoConsulta")
             {
                 e.PaintBackground(e.CellBounds, true);
+                e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
 
-                Color colorFondo = (estado == "Finalizada") ? Tema.FondoSecundario : Tema.FondoSecundario;
-                Color colorTexto = (estado == "Finalizada") ? Tema.VerdeOscuro : Tema.Advertencia;
+                bool finalizada = (estado == "Finalizada");
+                Color colorFondo = finalizada ? Color.FromArgb(235, 247, 238) : Color.FromArgb(254, 249, 237);
+                Color colorTexto = finalizada ? Tema.VerdeOscuro : Tema.Advertencia;
+                Color colorBorde = finalizada ? Color.FromArgb(190, 230, 202) : Color.FromArgb(248, 225, 172);
+                string textoEstado = finalizada ? "✓ Finalizada" : "⏳ En Proceso";
 
                 Rectangle badgeRect = new Rectangle(
                     e.CellBounds.X + 6,
-                    e.CellBounds.Y + 6,
+                    e.CellBounds.Y + 9,
                     e.CellBounds.Width - 12,
-                    e.CellBounds.Height - 12
+                    e.CellBounds.Height - 18
                 );
 
-                using (SolidBrush brushFondo = new SolidBrush(colorFondo))
+                using (var path = Tema.CrearRutaRedondeada(badgeRect, 10))
                 {
-                    e.Graphics.FillRectangle(brushFondo, badgeRect);
+                    using (SolidBrush brushFondo = new SolidBrush(colorFondo))
+                    {
+                        e.Graphics.FillPath(brushFondo, path);
+                    }
+
+                    using (Pen penBorde = new Pen(colorBorde, 1f))
+                    {
+                        e.Graphics.DrawPath(penBorde, path);
+                    }
                 }
 
-                using (Pen penBorde = new Pen(colorTexto, 1f))
-                {
-                    e.Graphics.DrawRectangle(penBorde, badgeRect);
-                }
-
-                using (Font fuente = Tema.FuenteBoton)
+                using (Font fuente = Tema.FuentePequena)
                 {
                     TextRenderer.DrawText(
                         e.Graphics,
-                        estado == "EnProceso" ? "En Proceso" : estado,
+                        textoEstado,
                         fuente,
                         badgeRect,
                         colorTexto,
@@ -249,71 +364,167 @@ namespace SanarRuralUnan.Views.ConsultaMedica
                 }
 
                 e.Handled = true;
+                return;
             }
-            else if (nombreColumna == "colVer")
+
+            // Columna Paciente con avatar circular de iniciales
+            if (nombreColumna == "Paciente")
             {
                 e.PaintBackground(e.CellBounds, true);
+                e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
+
+                string nombrePaciente = e.Value?.ToString() ?? "";
+                string iniciales = ObtenerIniciales(nombrePaciente);
+
+                int tamAvatar = 28;
+                Rectangle avatarRect = new Rectangle(
+                    e.CellBounds.X + 8,
+                    e.CellBounds.Y + (e.CellBounds.Height - tamAvatar) / 2,
+                    tamAvatar,
+                    tamAvatar
+                );
+
+                using (var brushAvatar = new SolidBrush(Color.FromArgb(226, 240, 230)))
+                {
+                    e.Graphics.FillEllipse(brushAvatar, avatarRect);
+                }
+                using (var penAvatar = new Pen(Color.FromArgb(180, 218, 190), 1f))
+                {
+                    e.Graphics.DrawEllipse(penAvatar, avatarRect);
+                }
+
+                using (var fontAvatar = new Font(Tema.FamiliaFuente, 8.5F, FontStyle.Bold))
+                using (var brushTexto = new SolidBrush(Tema.VerdeOscuro))
+                using (var sf = new StringFormat { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center })
+                {
+                    e.Graphics.DrawString(iniciales, fontAvatar, brushTexto, avatarRect, sf);
+                }
+
+                Rectangle textRect = new Rectangle(
+                    avatarRect.Right + 8,
+                    e.CellBounds.Y,
+                    e.CellBounds.Width - tamAvatar - 20,
+                    e.CellBounds.Height
+                );
+
+                TextRenderer.DrawText(
+                    e.Graphics,
+                    nombrePaciente,
+                    Tema.FuenteLabelCampo,
+                    textRect,
+                    Tema.TextoPrincipal,
+                    TextFormatFlags.Left | TextFormatFlags.VerticalCenter | TextFormatFlags.EndEllipsis
+                );
+
+                e.Handled = true;
+                return;
+            }
+
+            // Botón VER EXPEDIENTE
+            if (nombreColumna == "colVer")
+            {
+                e.PaintBackground(e.CellBounds, true);
+                e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
 
                 Rectangle btnRect = new Rectangle(
                     e.CellBounds.X + 4,
-                    e.CellBounds.Y + 4,
+                    e.CellBounds.Y + 8,
                     e.CellBounds.Width - 8,
-                    e.CellBounds.Height - 8
+                    e.CellBounds.Height - 16
                 );
 
-                using (SolidBrush brush = new SolidBrush(Tema.AzulPrimario))
+                using (var path = Tema.CrearRutaRedondeada(btnRect, 10))
                 {
-                    e.Graphics.FillRectangle(brush, btnRect);
+                    using (var brush = new SolidBrush(Tema.BotonEditarFondo))
+                    {
+                        e.Graphics.FillPath(brush, path);
+                    }
+                    using (var pen = new Pen(Tema.BotonEditarBorde, 1f))
+                    {
+                        e.Graphics.DrawPath(pen, path);
+                    }
                 }
 
-                using (Font fuenteBoton = Tema.FuenteBoton)
+                TextRenderer.DrawText(
+                    e.Graphics,
+                    "👁️ Ver",
+                    Tema.FuentePequena,
+                    btnRect,
+                    Tema.AzulPrimario,
+                    TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter
+                );
+
+                e.Handled = true;
+                return;
+            }
+
+            // Botón CONTINUAR ATENCIÓN
+            if (nombreColumna == "colContinuar")
+            {
+                e.PaintBackground(e.CellBounds, true);
+                e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
+
+                bool enProceso = (estado == "EnProceso");
+                Rectangle btnRect = new Rectangle(
+                    e.CellBounds.X + 4,
+                    e.CellBounds.Y + 8,
+                    e.CellBounds.Width - 8,
+                    e.CellBounds.Height - 16
+                );
+
+                if (enProceso)
                 {
+                    using (var path = Tema.CrearRutaRedondeada(btnRect, 10))
+                    {
+                        using (var brush = new SolidBrush(Tema.AzulPrimario))
+                        {
+                            e.Graphics.FillPath(brush, path);
+                        }
+                    }
+
                     TextRenderer.DrawText(
                         e.Graphics,
-                        "👁️ Ver",
-                        fuenteBoton,
+                        "🩺 Continuar",
+                        Tema.FuentePequena,
                         btnRect,
-                        Tema.Superficie,
+                        Color.White,
+                        TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter
+                    );
+                }
+                else
+                {
+                    // Si ya está finalizada, se muestra deshabilitado o tenue
+                    using (var path = Tema.CrearRutaRedondeada(btnRect, 10))
+                    {
+                        using (var brush = new SolidBrush(Tema.FondoSecundario))
+                        {
+                            e.Graphics.FillPath(brush, path);
+                        }
+                    }
+
+                    TextRenderer.DrawText(
+                        e.Graphics,
+                        "✓ Concluida",
+                        Tema.FuentePequena,
+                        btnRect,
+                        Tema.TextoSecundario,
                         TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter
                     );
                 }
 
                 e.Handled = true;
             }
-            else if (nombreColumna == "colContinuar")
+        }
+
+        private static string ObtenerIniciales(string texto)
+        {
+            if (string.IsNullOrWhiteSpace(texto)) return "PA";
+            string[] partes = texto.Trim().Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+            if (partes.Length >= 2)
             {
-                e.PaintBackground(e.CellBounds, true);
-
-                bool esEnProceso = (estado == "EnProceso");
-                if (esEnProceso)
-                {
-                    Rectangle btnRect = new Rectangle(
-                        e.CellBounds.X + 4,
-                        e.CellBounds.Y + 4,
-                        e.CellBounds.Width - 8,
-                        e.CellBounds.Height - 8
-                    );
-
-                    using (SolidBrush brush = new SolidBrush(Tema.VerdeOscuro))
-                    {
-                        e.Graphics.FillRectangle(brush, btnRect);
-                    }
-
-                    using (Font fuenteBoton = Tema.FuenteBoton)
-                    {
-                        TextRenderer.DrawText(
-                            e.Graphics,
-                            "🩺 Continuar",
-                            fuenteBoton,
-                            btnRect,
-                            Tema.Superficie,
-                            TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter
-                        );
-                    }
-                }
-
-                e.Handled = true;
+                return (partes[0].Substring(0, 1) + partes[1].Substring(0, 1)).ToUpper();
             }
+            return texto.Length >= 2 ? texto.Substring(0, 2).ToUpper() : texto.ToUpper();
         }
 
         private void dgvConsultas_CellMouseMove(object sender, DataGridViewCellMouseEventArgs e)
@@ -365,14 +576,8 @@ namespace SanarRuralUnan.Views.ConsultaMedica
 
                 using (atencionConsulta formAtender = new atencionConsulta(idConsulta, idDoctorFiltro))
                 {
-                    if (formAtender.ShowDialog(this) == DialogResult.OK)
-                    {
-                        CargarConsultas();
-                    }
-                    else
-                    {
-                        CargarConsultas();
-                    }
+                    formAtender.ShowDialog(this);
+                    CargarConsultas();
                 }
             }
         }
@@ -383,6 +588,12 @@ namespace SanarRuralUnan.Views.ConsultaMedica
         private void txtBuscar_TextChanged(object sender, EventArgs e)
         {
             CargarConsultas();
+        }
+
+        private void btnLimpiarBusqueda_Click(object sender, EventArgs e)
+        {
+            txtBuscar.Clear();
+            txtBuscar.Focus();
         }
 
         private void dtpFechaFiltro_ValueChanged(object sender, EventArgs e)
