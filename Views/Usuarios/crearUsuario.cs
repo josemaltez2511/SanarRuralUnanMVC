@@ -9,59 +9,6 @@ using SanarRuralUnan.Views.Doctores;
 
 namespace SanarRuralUnan.Views
 {
-    /// <summary>
-    /// Tarjeta de rol seleccionable mediante teclado, ratón y tecnologías de asistencia.
-    /// </summary>
-    public class TarjetaRolPanel : Panel
-    {
-        public bool Checked { get; set; }
-
-        public TarjetaRolPanel()
-        {
-            SetStyle(ControlStyles.Selectable, true);
-            TabStop = true;
-            AccessibleRole = AccessibleRole.RadioButton;
-        }
-
-        protected override bool IsInputKey(Keys keyData)
-        {
-            if (keyData == Keys.Enter || keyData == Keys.Space ||
-                keyData == Keys.Left || keyData == Keys.Right ||
-                keyData == Keys.Up || keyData == Keys.Down)
-            {
-                return true;
-            }
-            return base.IsInputKey(keyData);
-        }
-
-        protected override AccessibleObject CreateAccessibilityInstance()
-        {
-            return new TarjetaRolAccessibleObject(this);
-        }
-
-        private class TarjetaRolAccessibleObject : ControlAccessibleObject
-        {
-            private readonly TarjetaRolPanel _panel;
-            public TarjetaRolAccessibleObject(TarjetaRolPanel panel) : base(panel)
-            {
-                _panel = panel;
-            }
-
-            public override AccessibleRole Role => AccessibleRole.RadioButton;
-
-            public override AccessibleStates State
-            {
-                get
-                {
-                    AccessibleStates state = base.State | AccessibleStates.Focusable;
-                    if (_panel.Focused) state |= AccessibleStates.Focused;
-                    if (_panel.Checked) state |= AccessibleStates.Checked;
-                    return state;
-                }
-            }
-        }
-    }
-
     public partial class crearUsuario : Form
     {
         private readonly usuariosControllers controlador = new usuariosControllers();
@@ -591,5 +538,58 @@ namespace SanarRuralUnan.Views
         }
 
         private void crearUsuario_Load_1(object sender, EventArgs e) { }
+    }
+
+    /// <summary>
+    /// Tarjeta de rol seleccionable mediante teclado, ratón y tecnologías de asistencia.
+    /// </summary>
+    public class TarjetaRolPanel : Panel
+    {
+        public bool Checked { get; set; }
+
+        public TarjetaRolPanel()
+        {
+            SetStyle(ControlStyles.Selectable, true);
+            TabStop = true;
+            AccessibleRole = AccessibleRole.RadioButton;
+        }
+
+        protected override bool IsInputKey(Keys keyData)
+        {
+            if (keyData == Keys.Enter || keyData == Keys.Space ||
+                keyData == Keys.Left || keyData == Keys.Right ||
+                keyData == Keys.Up || keyData == Keys.Down)
+            {
+                return true;
+            }
+            return base.IsInputKey(keyData);
+        }
+
+        protected override AccessibleObject CreateAccessibilityInstance()
+        {
+            return new TarjetaRolAccessibleObject(this);
+        }
+
+        private class TarjetaRolAccessibleObject : ControlAccessibleObject
+        {
+            private readonly TarjetaRolPanel _panel;
+            public TarjetaRolAccessibleObject(TarjetaRolPanel panel) : base(panel)
+            {
+                _panel = panel;
+            }
+
+            public override AccessibleRole Role => AccessibleRole.RadioButton;
+
+            public override AccessibleStates State
+            {
+                get
+                {
+                    AccessibleStates state = base.State | AccessibleStates.Focusable;
+                    if (_panel.Focused) state |= AccessibleStates.Focused;
+                    if (_panel.Checked) state |= AccessibleStates.Checked;
+                    return state;
+                }
+            }
+        }
     }
 }
