@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using SanarRuralUnan.Models;
 
@@ -95,7 +95,7 @@ namespace SanarRuralUnan.Controllers
                 direccion, tipoSangre, alergias, antecedentes, contactos);
         }
 
-        public void editarPaciente(
+        public bool editarPaciente(
             int idPaciente,
             string primerNombre,
             string segundoNombre,
@@ -113,7 +113,7 @@ namespace SanarRuralUnan.Controllers
             string antecedentes,
             List<ContactoEmergenciaDto> contactos = null)
         {
-            modelo.actualizarPaciente(
+            return modelo.actualizarPaciente(
                 idPaciente, primerNombre, segundoNombre, primerApellido, segundoApellido,
                 cedula, numeroINSS, fechaNacimiento, genero, telefono, idComunidad,
                 direccion, tipoSangre, alergias, antecedentes, contactos);
@@ -179,7 +179,7 @@ namespace SanarRuralUnan.Controllers
                 contactoSegundoApellido, contactoParentesco, contactoTelefono, contactoCedula);
         }
 
-        public void editarPaciente(
+        public bool editarPaciente(
             int idPaciente,
             string primerNombre,
             string segundoNombre,
@@ -196,7 +196,7 @@ namespace SanarRuralUnan.Controllers
             string alergias,
             string antecedentes)
         {
-            modelo.actualizarPaciente(
+            return modelo.actualizarPaciente(
                 idPaciente, primerNombre, segundoNombre, primerApellido, segundoApellido,
                 cedula, numeroINSS, fechaNacimiento, genero, telefono, idComunidad,
                 direccion, tipoSangre, alergias, antecedentes);

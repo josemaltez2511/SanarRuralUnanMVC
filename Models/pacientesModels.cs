@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
@@ -162,6 +162,7 @@ namespace SanarRuralUnan.Models
         public List<UbicacionItemDto> listarDepartamentos()
         {
             return db.Departamentos
+                .AsNoTracking()
                 .OrderBy(d => d.Nombre)
                 .Select(d => new UbicacionItemDto
                 {
@@ -174,6 +175,7 @@ namespace SanarRuralUnan.Models
         public List<UbicacionItemDto> listarMunicipios(int idDepartamento)
         {
             return db.Municipios
+                .AsNoTracking()
                 .Where(m => m.IdDepartamento == idDepartamento)
                 .OrderBy(m => m.Nombre)
                 .Select(m => new UbicacionItemDto
@@ -187,6 +189,7 @@ namespace SanarRuralUnan.Models
         public List<UbicacionItemDto> listarComunidades(int idMunicipio)
         {
             return db.Comunidades
+                .AsNoTracking()
                 .Where(c => c.IdMunicipio == idMunicipio)
                 .OrderBy(c => c.Nombre)
                 .Select(c => new UbicacionItemDto
@@ -205,6 +208,7 @@ namespace SanarRuralUnan.Models
             var rol = ValidarSesion("consultar el listado de pacientes");
 
             var consulta = db.Pacientes
+                .AsNoTracking()
                 .Include(p => p.Comunidades.Municipios.Departamentos)
                 .AsQueryable();
 
@@ -278,6 +282,7 @@ namespace SanarRuralUnan.Models
             var rol = ValidarSesion("consultar la ficha del paciente");
 
             var p = db.Pacientes
+                .AsNoTracking()
                 .Include(pac => pac.Comunidades.Municipios.Departamentos)
                 .Include(pac => pac.ContactosEmergencia)
                 .FirstOrDefault(pac => pac.IdPaciente == idPaciente);
@@ -657,7 +662,7 @@ namespace SanarRuralUnan.Models
         // ------------------------------------------------------------
         // ACTUALIZACIÓN ATÓMICA DE PACIENTE Y CONTACTOS (ACID)
         // ------------------------------------------------------------
-        public void actualizarPaciente(
+        public bool actualizarPaciente(
             int idPaciente,
             string primerNombre,
             string segundoNombre,
@@ -683,7 +688,7 @@ namespace SanarRuralUnan.Models
 
             if (paciente == null)
             {
-                throw new InvalidOperationException("El paciente no existe o se encuentra inactivo.");
+                return false;
             }
 
             ValidarDatosPaciente(
@@ -742,6 +747,7 @@ namespace SanarRuralUnan.Models
 
                     db.SaveChanges();
                     tx.Commit();
+                    return true;
                 }
                 catch
                 {
@@ -752,7 +758,7 @@ namespace SanarRuralUnan.Models
         }
 
         // Sobrecarga de compatibilidad
-        public void actualizarPaciente(
+        public bool actualizarPaciente(
             int idPaciente,
             string primerNombre,
             string segundoNombre,
@@ -771,24 +777,25 @@ namespace SanarRuralUnan.Models
         {
             // Mantiene los contactos existentes sin alterarlos
             var paciente = db.Pacientes.Include(p => p.ContactosEmergencia).FirstOrDefault(p => p.IdPaciente == idPaciente && p.Estado);
-            List<ContactoEmergenciaDto> contactosActuales = null;
-            if (paciente != null)
+            if (paciente == null)
             {
-                contactosActuales = paciente.ContactosEmergencia.Select(ce => new ContactoEmergenciaDto
-                {
-                    IdContactoEmergencia = ce.IdContactoEmergencia,
-                    IdPaciente = ce.IdPaciente,
-                    PrimerNombre = ce.PrimerNombre,
-                    SegundoNombre = ce.SegundoNombre,
-                    PrimerApellido = ce.PrimerApellido,
-                    SegundoApellido = ce.SegundoApellido,
-                    Parentesco = ce.Parentesco,
-                    Telefono = ce.Telefono,
-                    Cedula = ce.Cedula
-                }).ToList();
+                return false;
             }
 
-            actualizarPaciente(
+            List<ContactoEmergenciaDto> contactosActuales = paciente.ContactosEmergencia.Select(ce => new ContactoEmergenciaDto
+            {
+                IdContactoEmergencia = ce.IdContactoEmergencia,
+                IdPaciente = ce.IdPaciente,
+                PrimerNombre = ce.PrimerNombre,
+                SegundoNombre = ce.SegundoNombre,
+                PrimerApellido = ce.PrimerApellido,
+                SegundoApellido = ce.SegundoApellido,
+                Parentesco = ce.Parentesco,
+                Telefono = ce.Telefono,
+                Cedula = ce.Cedula
+            }).ToList();
+
+            return actualizarPaciente(
                 idPaciente, primerNombre, segundoNombre, primerApellido, segundoApellido,
                 cedula, numeroINSS, fechaNacimiento, genero, telefono, idComunidad,
                 direccion, tipoSangre, alergias, antecedentes, contactosActuales);
@@ -865,6 +872,7 @@ namespace SanarRuralUnan.Models
         public Pacientes buscarPacientePorId(int idPaciente)
         {
             return db.Pacientes
+                .AsNoTracking()
                 .Include(p => p.Comunidades.Municipios.Departamentos)
                 .Include(p => p.ContactosEmergencia)
                 .FirstOrDefault(p => p.IdPaciente == idPaciente && p.Estado);
@@ -872,7 +880,9 @@ namespace SanarRuralUnan.Models
 
         public Pacientes buscarPaciente(int idUsuario)
         {
-            return db.Pacientes.FirstOrDefault(p => p.IdUsuario == idUsuario && p.Estado);
+            return db.Pacientes
+                .AsNoTracking()
+                .FirstOrDefault(p => p.IdUsuario == idUsuario && p.Estado);
         }
     }
 

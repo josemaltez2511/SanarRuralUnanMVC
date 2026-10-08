@@ -1,4 +1,4 @@
-﻿using SanarRuralUnan.Helpers;
+using SanarRuralUnan.Helpers;
 
 namespace SanarRuralUnan.Views
 {
@@ -613,9 +613,9 @@ namespace SanarRuralUnan.Views
             this.lblSeccionContactos.ForeColor = Tema.AzulOscuro;
             this.lblSeccionContactos.Location = new System.Drawing.Point(18, 220);
             this.lblSeccionContactos.Name = "lblSeccionContactos";
-            this.lblSeccionContactos.Size = new System.Drawing.Size(242, 20);
+            this.lblSeccionContactos.Size = new System.Drawing.Size(200, 20);
             this.lblSeccionContactos.TabIndex = 7;
-            this.lblSeccionContactos.Text = "Contactos de emergencia (1:N)";
+            this.lblSeccionContactos.Text = "Contactos de emergencia";
             //
             // lblContactosAyuda
             //

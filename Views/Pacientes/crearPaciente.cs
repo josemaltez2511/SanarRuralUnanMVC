@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -11,7 +11,7 @@ namespace SanarRuralUnan.Views
 {
     /// <summary>
     /// Formulario para la creación y edición de pacientes, incluyendo
-    /// cascada geográfica y gestión compacta de contactos de emergencia (1:N).
+    /// cascada geográfica y gestión de contactos de emergencia.
     /// </summary>
     public partial class crearPaciente : Form
     {
@@ -216,7 +216,7 @@ namespace SanarRuralUnan.Views
         }
 
         // ============================================================
-        // GESTIÓN DE CONTACTOS DE EMERGENCIA (1:N)
+        // GESTIÓN DE CONTACTOS DE EMERGENCIA
         // ============================================================
 
         private void btnAgregarContacto_Click(object sender, EventArgs e)
@@ -436,7 +436,7 @@ namespace SanarRuralUnan.Views
             {
                 if (idPacienteEditar.HasValue)
                 {
-                    controlador.editarPaciente(
+                    bool actualizado = controlador.editarPaciente(
                         idPacienteEditar.Value,
                         pNombre,
                         sNombre,
@@ -454,7 +454,13 @@ namespace SanarRuralUnan.Views
                         antecedentes,
                         listaContactos);
 
-                    MessageBox.Show("Los datos del paciente y sus contactos se actualizaron correctamente.", "Expediente actualizado", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    if (!actualizado)
+                    {
+                        MessageBox.Show("No se pudo actualizar el paciente porque el registro no fue encontrado o se encuentra inactivo.", "Error al actualizar", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        return;
+                    }
+
+                    MessageBox.Show("Los datos del paciente se actualizaron correctamente.", "Expediente actualizado", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
                 else
                 {
