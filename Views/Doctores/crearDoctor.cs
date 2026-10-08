@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Windows.Forms;
 using SanarRuralUnan.Controllers;
 using SanarRuralUnan.Helpers;
@@ -13,40 +15,17 @@ namespace SanarRuralUnan.Views
     public partial class crearDoctor : Form
     {
         // ============================================================
-        // CONTROLLERS
+        // CONTROLADORES Y ESTADO DE NEGOCIO
         // ============================================================
-        // La Vista nunca accede directamente a la base de datos.
         private readonly doctoresControllers controladorDoctores = new doctoresControllers();
-
-        // ============================================================
-        // PROPIEDADES DE ESTADO
-        // ============================================================
         private int? idUsuario;
         private int idDoctorEdicion;
         private bool esModoEdicion;
-        private bool formularioConfigurado;
         private byte[] foto;
         private string fotoNombre;
         private string fotoMimeType;
         private bool fotoEliminadaExplicita;
 
-        private TextBox txtPrimerNombre;
-        private TextBox txtSegundoNombre;
-        private TextBox txtPrimerApellido;
-        private TextBox txtSegundoApellido;
-        private TextBox txtCedula;
-        private TextBox txtTelefono;
-        private TextBox txtLicencia;
-        private CheckedListBox lstEspecialidades;
-        private ComboBox cmbHospitalAsignacion;
-        private ComboBox cmbEspecialidadHospital;
-        private ListBox lstAsignaciones;
-        private Label lblFoto;
-        private Button btnSeleccionarFoto;
-        private Button btnQuitarFoto;
-        private PictureBox picPreview;
-        private Button btnAgregarAsignacion;
-        private Button btnQuitarAsignacion;
         private readonly List<Tuple<int, int>> asignaciones = new List<Tuple<int, int>>();
         private List<Especialidades> especialidadesDisponibles = new List<Especialidades>();
         private List<SanarRuralUnan.Hospitales> hospitalesDisponibles = new List<SanarRuralUnan.Hospitales>();
@@ -54,41 +33,92 @@ namespace SanarRuralUnan.Views
         // ============================================================
         // CONSTRUCTORES
         // ============================================================
-        // Permite registrar un doctor sin una cuenta de usuario.
-        // Constructor para registro nuevo sin cuenta de usuario.
         public crearDoctor()
         {
             InitializeComponent();
+            ConfigurarOptimizacionesVisuales();
         }
 
-        public crearDoctor(int idUsuarioRecibido)
+        public crearDoctor(int idUsuarioRecibido) : this()
         {
-            InitializeComponent();
-            // Conserva la cuenta creada en el paso anterior del registro.
             idUsuario = idUsuarioRecibido > 0 ? idUsuarioRecibido : (int?)null;
         }
 
-        public crearDoctor(int idDoctor, bool modoEdicion)
+        public crearDoctor(int idDoctor, bool modoEdicion) : this()
         {
-            InitializeComponent();
             idDoctorEdicion = idDoctor;
             esModoEdicion = modoEdicion;
         }
 
+        // Configuración de doble búfer para evitar parpadeos visuales al maximizar o redimensionar
+        private void ConfigurarOptimizacionesVisuales()
+        {
+            this.DoubleBuffered = true;
+            HabilitarDobleBufer(panelHero);
+            HabilitarDobleBufer(panelFormContenedor);
+            HabilitarDobleBufer(panelCard);
+            HabilitarDobleBufer(panelHeroBloque1);
+            HabilitarDobleBufer(panelHeroBloque2);
+            HabilitarDobleBufer(panelHeroBloque3);
+            HabilitarDobleBufer(panelLema);
+        }
+
+        private static void HabilitarDobleBufer(Control control)
+        {
+            try
+            {
+                typeof(Control).InvokeMember(
+                    "DoubleBuffered",
+                    BindingFlags.SetProperty | BindingFlags.Instance | BindingFlags.NonPublic,
+                    null,
+                    control,
+                    new object[] { true }
+                );
+            }
+            catch
+            {
+                // Si la reflexión falla, continuar normalmente
+            }
+        }
+
         // ============================================================
-        // LOAD
+        // LOAD Y CONFIGURACIÓN INICIAL
         // ============================================================
         private void crearDoctor_Load(object sender, EventArgs e)
         {
-            ConfigurarFormulario();
+            WindowState = FormWindowState.Maximized;
+
+            // Cargar logotipo institucional desde los recursos del sistema
+            picLogoHero.Image = Tema.ObtenerLogo();
+
+            // Microinteracciones de hover
+            btnGuardar.MouseEnter += (s, ev) => btnGuardar.BackColor = Tema.AzulOscuro;
+            btnGuardar.MouseLeave += (s, ev) => btnGuardar.BackColor = Tema.AzulPrimario;
+            btnCancelar.MouseEnter += (s, ev) => btnCancelar.BackColor = Tema.FondoSecundario;
+            btnCancelar.MouseLeave += (s, ev) => btnCancelar.BackColor = Tema.Superficie;
+            btnSeleccionarFoto.MouseEnter += (s, ev) => btnSeleccionarFoto.BackColor = Tema.AzulOscuro;
+            btnSeleccionarFoto.MouseLeave += (s, ev) => btnSeleccionarFoto.BackColor = Tema.AzulPrimario;
+            btnAgregarAsignacion.MouseEnter += (s, ev) => btnAgregarAsignacion.BackColor = Tema.AzulOscuro;
+            btnAgregarAsignacion.MouseLeave += (s, ev) => btnAgregarAsignacion.BackColor = Tema.AzulPrimario;
+
+            // Navegación ágil por teclado (Enter)
+            txtPrimerNombre.KeyDown += (s, ev) => { if (ev.KeyCode == Keys.Enter) { txtSegundoNombre.Focus(); ev.SuppressKeyPress = true; } };
+            txtSegundoNombre.KeyDown += (s, ev) => { if (ev.KeyCode == Keys.Enter) { txtPrimerApellido.Focus(); ev.SuppressKeyPress = true; } };
+            txtPrimerApellido.KeyDown += (s, ev) => { if (ev.KeyCode == Keys.Enter) { txtSegundoApellido.Focus(); ev.SuppressKeyPress = true; } };
+            txtSegundoApellido.KeyDown += (s, ev) => { if (ev.KeyCode == Keys.Enter) { txtCedula.Focus(); ev.SuppressKeyPress = true; } };
+            txtCedula.KeyDown += (s, ev) => { if (ev.KeyCode == Keys.Enter) { txtTelefono.Focus(); ev.SuppressKeyPress = true; } };
+            txtTelefono.KeyDown += (s, ev) => { if (ev.KeyCode == Keys.Enter) { txtLicencia.Focus(); ev.SuppressKeyPress = true; } };
+
             try
             {
                 CargarCatalogos();
 
                 if (esModoEdicion)
                 {
-                    lblSubtitulo.Text = "Modificar Datos del Doctor";
-                    btnGuardar.Text = "Guardar Cambios";
+                    lblTitulo.Text = "Modificar Datos del Doctor";
+                    lblSubtitulo.Text = "Actualice los datos profesionales y asignaciones del médico";
+                    lblRegistroTituloHero.Text = "Modificar Doctor";
+                    btnGuardar.Text = "💾 Guardar Cambios";
                     CargarDoctor();
                 }
             }
@@ -102,284 +132,225 @@ namespace SanarRuralUnan.Views
                 );
                 btnGuardar.Enabled = false;
             }
-        }
 
-        // ============================================================
-        // CONFIGURAR FORMULARIO
-        // ============================================================
-        private void ConfigurarFormulario()
-        {
-            if (formularioConfigurado)
-            {
-                return;
-            }
-
-            formularioConfigurado = true;
-            panelCard.Controls.Clear();
-            panelCard.AutoScroll = true;
-            panelCard.AutoScrollMinSize = Size.Empty;
-
-            panelCard.Controls.Add(panelLineaVerde);
-            panelCard.Controls.Add(lblTitulo);
-            panelCard.Controls.Add(lblSubtitulo);
-
-            lblTitulo.Location = new Point(58, 20);
-            lblSubtitulo.Location = new Point(61, 56);
-
-            txtPrimerNombre = AgregarCampo("Primer nombre *", 45, 105, 500, 1);
-            txtSegundoNombre = AgregarCampo("Segundo nombre", 590, 105, 500, 2);
-            txtPrimerApellido = AgregarCampo("Primer apellido *", 45, 180, 500, 3);
-            txtSegundoApellido = AgregarCampo("Segundo apellido", 590, 180, 500, 4);
-            txtCedula = AgregarCampo("Cédula *", 45, 255, 500, 5);
-            txtTelefono = AgregarCampo("Teléfono", 590, 255, 500, 6);
-            txtLicencia = AgregarCampo("Número de licencia *", 45, 330, 500, 7);
-            txtPrimerNombre.MaxLength = 50;
-            txtSegundoNombre.MaxLength = 50;
-            txtPrimerApellido.MaxLength = 50;
-            txtSegundoApellido.MaxLength = 50;
-            txtCedula.MaxLength = 20;
-            txtTelefono.MaxLength = 30;
-            txtLicencia.MaxLength = 50;
-
-            // Vista previa de la foto del doctor
-            AgregarEtiqueta("Foto del doctor", 590, 330);
-            picPreview = new PictureBox
-            {
-                Anchor = AnchorStyles.Top | AnchorStyles.Right,
-                BackColor = Tema.FondoSecundario,
-                BorderStyle = BorderStyle.FixedSingle,
-                Location = new Point(590, 355),
-                Size = new Size(130, 130),
-                SizeMode = PictureBoxSizeMode.Zoom,
-                Tag = "photoPreview",
-                AccessibleName = "Vista previa de la foto del doctor"
-            };
-            panelCard.Controls.Add(picPreview);
-
-            lblFoto = new Label
-            {
-                AutoEllipsis = true,
-                Anchor = AnchorStyles.Top | AnchorStyles.Right,
-                Font = Tema.FuenteAyuda,
-                ForeColor = Tema.TextoSecundario,
-                Location = new Point(730, 360),
-                Size = new Size(360, 20),
-                Tag = "photoLabel",
-                Text = "Sin foto seleccionada",
-                TextAlign = ContentAlignment.MiddleLeft
-            };
-            panelCard.Controls.Add(lblFoto);
-
-            btnSeleccionarFoto = CrearBoton("Seleccionar foto", 730, 385, 140, 32);
-            btnSeleccionarFoto.Tag = "photoButton";
-            btnSeleccionarFoto.Click += btnSeleccionarFoto_Click;
-            panelCard.Controls.Add(btnSeleccionarFoto);
-
-            btnQuitarFoto = CrearBoton("Quitar foto", 730, 425, 140, 32);
-            btnQuitarFoto.Tag = "photoRemoveButton";
-            btnQuitarFoto.BackColor = Tema.Error;
-            btnQuitarFoto.Visible = false;
-            btnQuitarFoto.Click += btnQuitarFoto_Click;
-            panelCard.Controls.Add(btnQuitarFoto);
-
-            // Especialidades y asignaciones hospitalarias
-            AgregarEtiqueta("Especialidades * (puede elegir varias)", 45, 515);
-            lstEspecialidades = new CheckedListBox
-            {
-                CheckOnClick = true,
-                Font = Tema.FuenteCuerpo,
-                Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right,
-                Location = new Point(45, 540),
-                Size = new Size(420, 230),
-                Tag = "specialties"
-            };
-            panelCard.Controls.Add(lstEspecialidades);
-
-            AgregarEtiqueta("Hospital", 500, 515);
-            AgregarEtiqueta("Especialidad que ejerce allí", 790, 515);
-            cmbHospitalAsignacion = CrearCombo(500, 540, 270, 32);
-            cmbHospitalAsignacion.Tag = "assignHospital";
-            cmbEspecialidadHospital = CrearCombo(790, 540, 300, 32);
-            cmbEspecialidadHospital.Tag = "assignSpecialty";
-            panelCard.Controls.Add(cmbHospitalAsignacion);
-            panelCard.Controls.Add(cmbEspecialidadHospital);
-
-            btnAgregarAsignacion = CrearBoton("Agregar", 500, 585, 115, 34);
-            btnAgregarAsignacion.Tag = "addAssignment";
-            btnAgregarAsignacion.Click += btnAgregarAsignacion_Click;
-            panelCard.Controls.Add(btnAgregarAsignacion);
-
-            AgregarEtiqueta("Hospitales y especialidades asignados", 500, 630);
-            lstAsignaciones = new ListBox
-            {
-                Font = Tema.FuenteCuerpo,
-                Anchor = AnchorStyles.Top | AnchorStyles.Right,
-                Location = new Point(500, 655),
-                Size = new Size(590, 115),
-                Tag = "assignments"
-            };
-            panelCard.Controls.Add(lstAsignaciones);
-
-            btnQuitarAsignacion = CrearBoton("Quitar seleccionado", 500, 780, 180, 34);
-            btnQuitarAsignacion.Tag = "removeAssignment";
-            btnQuitarAsignacion.Click += btnQuitarAsignacion_Click;
-            panelCard.Controls.Add(btnQuitarAsignacion);
-
-            btnGuardar.Location = new Point(45, 840);
-            btnGuardar.Size = new Size(1045, 42);
-            btnGuardar.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            btnGuardar.TabIndex = 8;
-            btnGuardar.Text = "Guardar Doctor";
-            panelCard.Controls.Add(btnGuardar);
-
-            lnkVolver.Location = new Point(490, 900);
-            lnkVolver.Tag = "back";
-            lnkVolver.Text = "Completar después / Volver";
-            panelCard.Controls.Add(lnkVolver);
-
-            panelCard.Resize += panelCard_Resize;
             AjustarLayoutDoctor();
+            txtPrimerNombre.Focus();
         }
 
-        private TextBox AgregarCampo(string texto, int x, int y, int ancho, int tabIndex)
-        {
-            AgregarEtiqueta(texto, x, y);
-            var campo = new TextBox
-            {
-                Font = Tema.FuenteInput,
-                Anchor = x < 500 ? AnchorStyles.Top | AnchorStyles.Left : AnchorStyles.Top | AnchorStyles.Right,
-                Location = new Point(x, y + 25),
-                Size = new Size(ancho, 30),
-                Tag = x < 500 ? "leftField" : "rightField",
-                TabIndex = tabIndex,
-                AccessibleName = texto,
-                AccessibleDescription = "Ingrese " + texto.TrimEnd('*', ' ')
-            };
-            panelCard.Controls.Add(campo);
-            return campo;
-        }
-
-        private void AgregarEtiqueta(string texto, int x, int y)
-        {
-            panelCard.Controls.Add(new Label
-            {
-                AutoSize = true,
-                Anchor = x < 500 ? AnchorStyles.Top | AnchorStyles.Left : AnchorStyles.Top | AnchorStyles.Right,
-                Font = Tema.FuenteLabelCampo,
-                Location = new Point(x, y),
-                Tag = x,
-                Text = texto
-            });
-        }
-
-        private ComboBox CrearCombo(int x, int y, int ancho, int alto)
-        {
-            return new ComboBox
-            {
-                DropDownStyle = ComboBoxStyle.DropDownList,
-                Font = Tema.FuenteCuerpo,
-                Anchor = AnchorStyles.Top | AnchorStyles.Right,
-                AccessibleName = x < 700 ? "Hospital" : "Especialidad que ejerce en el hospital",
-                Location = new Point(x, y),
-                Size = new Size(ancho, alto)
-            };
-        }
-
-        private Button CrearBoton(string texto, int x, int y, int ancho, int alto)
-        {
-            return new Button
-            {
-                BackColor = Tema.AzulPrimario,
-                Anchor = x < 500 ? AnchorStyles.Top | AnchorStyles.Left : AnchorStyles.Top | AnchorStyles.Right,
-                Cursor = Cursors.Hand,
-                FlatStyle = FlatStyle.Flat,
-                Font = Tema.FuenteBoton,
-                ForeColor = Tema.Superficie,
-                Location = new Point(x, y),
-                Size = new Size(ancho, alto),
-                Text = texto,
-                UseVisualStyleBackColor = false
-            };
-        }
-
-        private void panelCard_Resize(object sender, EventArgs e)
+        private void crearDoctor_Resize(object sender, EventArgs e)
         {
             AjustarLayoutDoctor();
         }
 
+        // ============================================================
+        // LAYOUT RESPONSIVO DINÁMICO
+        // ============================================================
         private void AjustarLayoutDoctor()
         {
-            int margen = 28;
-            int espacio = 24;
-            int anchoContenido = Math.Max(0, panelCard.ClientSize.Width - margen * 2);
-            int anchoColumna = Math.Max(0, (anchoContenido - espacio) / 2);
-            int xDerecha = margen + anchoColumna + espacio;
-            int anchoMitad = Math.Max(0, (anchoColumna - 16) / 2);
+            int anchoTotal = this.ClientSize.Width;
+            int altoTotal = this.ClientSize.Height;
 
-            foreach (Control control in panelCard.Controls)
+            if (anchoTotal <= 0 || altoTotal <= 0)
+                return;
+
+            // División de pantalla: ~36% Hero a la izquierda y ~64% Formulario a la derecha
+            int anchoHero = (int)(anchoTotal * 0.36f);
+            if (anchoHero < 380)
+                anchoHero = Math.Min(380, anchoTotal / 2);
+
+            int anchoForm = anchoTotal - anchoHero;
+
+            panelHero.SetBounds(0, 0, anchoHero, altoTotal);
+            panelFormContenedor.SetBounds(anchoHero, 0, anchoForm, altoTotal);
+
+            // Ajuste interno del panel Hero
+            int margenHero = Math.Max(25, (anchoHero - 340) / 2);
+            int anchoContenidoHero = Math.Min(340, anchoHero - (margenHero * 2));
+
+            picLogoHero.Location = new Point(margenHero, Math.Max(20, (int)(altoTotal * 0.03f)));
+            lblNombreHero.Location = new Point(margenHero - 3, picLogoHero.Bottom + 8);
+            lblSubtituloHero.Location = new Point(margenHero, lblNombreHero.Bottom + 4);
+            lblRegistroTituloHero.Location = new Point(margenHero, lblSubtituloHero.Bottom + 12);
+            lblDescripcionHero.Location = new Point(margenHero, lblRegistroTituloHero.Bottom + 8);
+            lblDescripcionHero.Width = anchoContenidoHero;
+
+            panelHeroBloque1.Location = new Point(margenHero, lblDescripcionHero.Bottom + 14);
+            panelHeroBloque1.Width = anchoContenidoHero;
+            lblHeroDesc1.Width = panelHeroBloque1.Width - lblHeroDesc1.Left - 10;
+
+            panelHeroBloque2.Location = new Point(margenHero, panelHeroBloque1.Bottom + 10);
+            panelHeroBloque2.Width = anchoContenidoHero;
+            lblHeroDesc2.Width = panelHeroBloque2.Width - lblHeroDesc2.Left - 10;
+
+            panelHeroBloque3.Location = new Point(margenHero, panelHeroBloque2.Bottom + 10);
+            panelHeroBloque3.Width = anchoContenidoHero;
+            lblHeroDesc3.Width = panelHeroBloque3.Width - lblHeroDesc3.Left - 10;
+
+            if (altoTotal >= 680)
             {
-                if (control.Tag is int xEtiqueta)
-                {
-                    int x = xEtiqueta < 500 ? margen : xDerecha;
-                    if (xEtiqueta == 790)
-                        x = xDerecha + anchoMitad + 16;
-                    control.Location = new Point(x, control.Top);
-                    continue;
-                }
-
-                switch (control.Tag as string)
-                {
-                    case "leftField":
-                        control.Location = new Point(margen, control.Top);
-                        control.Width = anchoColumna;
-                        break;
-                    case "rightField":
-                        control.Location = new Point(xDerecha, control.Top);
-                        control.Width = anchoColumna;
-                        break;
-                    case "photoPreview":
-                        control.Location = new Point(xDerecha, control.Top);
-                        break;
-                    case "photoLabel":
-                        control.Location = new Point(xDerecha + 140, control.Top);
-                        control.Width = Math.Max(80, anchoColumna - 155);
-                        break;
-                    case "photoButton":
-                    case "photoRemoveButton":
-                        control.Location = new Point(xDerecha + 140, control.Top);
-                        break;
-                    case "specialties":
-                        control.Location = new Point(margen, control.Top);
-                        control.Width = anchoColumna;
-                        break;
-                    case "assignHospital":
-                        control.Location = new Point(xDerecha, control.Top);
-                        control.Width = anchoMitad;
-                        break;
-                    case "assignSpecialty":
-                        control.Location = new Point(xDerecha + anchoMitad + 16, control.Top);
-                        control.Width = anchoMitad;
-                        break;
-                    case "addAssignment":
-                    case "removeAssignment":
-                        control.Location = new Point(xDerecha, control.Top);
-                        break;
-                    case "assignments":
-                        control.Location = new Point(xDerecha, control.Top);
-                        control.Width = anchoColumna;
-                        break;
-                    case "back":
-                        control.Location = new Point(Math.Max(margen, (panelCard.ClientSize.Width - control.Width) / 2), control.Top);
-                        break;
-                }
+                panelLema.Visible = true;
+                panelLema.Location = new Point(margenHero, panelHeroBloque3.Bottom + 14);
+                panelLema.Width = anchoContenidoHero;
+            }
+            else
+            {
+                panelLema.Visible = false;
             }
 
-            btnGuardar.Location = new Point(margen, btnGuardar.Top);
-            btnGuardar.Width = anchoContenido;
+            // Ajuste interno de la tarjeta de formulario
+            int anchoCard = Math.Min(740, panelFormContenedor.ClientSize.Width - 40);
+            if (anchoCard < 580)
+                anchoCard = Math.Max(500, panelFormContenedor.ClientSize.Width - 20);
+
+            panelCard.Width = anchoCard;
+            panelCard.Left = Math.Max(15, (panelFormContenedor.ClientSize.Width - panelCard.Width) / 2);
+
+            // Reajuste de dos columnas responsivas dentro de panelCard
+            int margenCard = 30;
+            int espacioCol = 24;
+            int anchoCol = (panelCard.Width - (margenCard * 2) - espacioCol) / 2;
+            int xCol1 = margenCard;
+            int xCol2 = margenCard + anchoCol + espacioCol;
+
+            panelSeparadorCabecera.Left = margenCard;
+            panelSeparadorCabecera.Width = panelCard.Width - (margenCard * 2);
+
+            // Columna 1: Primer nombre, Primer apellido, Cédula, Licencia, Especialidades
+            lblPrimerNombre.Left = xCol1;
+            txtPrimerNombre.Left = xCol1;
+            txtPrimerNombre.Width = anchoCol;
+
+            lblPrimerApellido.Left = xCol1;
+            txtPrimerApellido.Left = xCol1;
+            txtPrimerApellido.Width = anchoCol;
+
+            lblCedula.Left = xCol1;
+            txtCedula.Left = xCol1;
+            txtCedula.Width = anchoCol;
+
+            lblNumeroLicencia.Left = xCol1;
+            txtLicencia.Left = xCol1;
+            txtLicencia.Width = anchoCol;
+
+            lblEspecialidadesTitulo.Left = xCol1;
+            lstEspecialidades.Left = xCol1;
+            lstEspecialidades.Width = anchoCol;
+
+            // Columna 2: Segundo nombre, Segundo apellido, Teléfono, Foto, Asignaciones
+            lblSegundoNombre.Left = xCol2;
+            txtSegundoNombre.Left = xCol2;
+            txtSegundoNombre.Width = anchoCol;
+
+            lblSegundoApellido.Left = xCol2;
+            txtSegundoApellido.Left = xCol2;
+            txtSegundoApellido.Width = anchoCol;
+
+            lblTelefono.Left = xCol2;
+            txtTelefono.Left = xCol2;
+            txtTelefono.Width = anchoCol;
+
+            lblFotoTitulo.Left = xCol2;
+            picPreview.Left = xCol2;
+            lblFoto.Left = xCol2 + 95;
+            lblFoto.Width = Math.Max(100, anchoCol - 95);
+            btnSeleccionarFoto.Left = xCol2 + 95;
+            btnQuitarFoto.Left = btnSeleccionarFoto.Right + 8;
+            lblFotoAyuda.Left = xCol2 + 95;
+
+            lblHospitalTitulo.Left = xCol2;
+            int anchoCombo = (anchoCol - 12) / 2;
+            cmbHospitalAsignacion.Left = xCol2;
+            cmbHospitalAsignacion.Width = anchoCombo;
+
+            lblEspecialidadHospTitulo.Left = cmbHospitalAsignacion.Right + 12;
+            cmbEspecialidadHospital.Left = cmbHospitalAsignacion.Right + 12;
+            cmbEspecialidadHospital.Width = anchoCombo;
+
+            btnAgregarAsignacion.Left = xCol2;
+            lblAsignacionesTitulo.Left = xCol2;
+            lstAsignaciones.Left = xCol2;
+            lstAsignaciones.Width = anchoCol;
+            btnQuitarAsignacion.Left = xCol2;
+
+            // Botones inferiores
+            panelSeparadorInferior.Left = margenCard;
+            panelSeparadorInferior.Width = panelCard.Width - (margenCard * 2);
+
+            btnGuardar.Left = panelCard.Width - margenCard - btnGuardar.Width;
+            btnCancelar.Left = btnGuardar.Left - 12 - btnCancelar.Width;
         }
 
         // ============================================================
-        // CARGAR ESPECIALIDADES Y HOSPITALES
+        // PINTADO ESTÉTICO GDI+
+        // ============================================================
+        private void panelHero_Paint(object sender, PaintEventArgs e)
+        {
+            e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
+
+            int w = panelHero.Width;
+            int h = panelHero.Height;
+
+            using (Pen penOnda1 = new Pen(Color.FromArgb(22, Tema.AzulClaro), 38f))
+            using (Pen penOnda2 = new Pen(Color.FromArgb(18, Tema.Verde), 30f))
+            {
+                penOnda1.StartCap = LineCap.Round;
+                penOnda1.EndCap = LineCap.Round;
+                penOnda2.StartCap = LineCap.Round;
+                penOnda2.EndCap = LineCap.Round;
+
+                Point[] puntos1 = new Point[]
+                {
+                    new Point((int)(w * 0.40f), -20),
+                    new Point((int)(w * 0.70f), (int)(h * 0.28f)),
+                    new Point((int)(w * 0.85f), (int)(h * 0.60f)),
+                    new Point(w + 30, (int)(h * 0.80f))
+                };
+                e.Graphics.DrawCurve(penOnda1, puntos1, 0.5f);
+
+                Point[] puntos2 = new Point[]
+                {
+                    new Point(-20, (int)(h * 0.60f)),
+                    new Point((int)(w * 0.30f), (int)(h * 0.76f)),
+                    new Point((int)(w * 0.65f), (int)(h * 0.72f)),
+                    new Point(w + 30, (int)(h * 0.88f))
+                };
+                e.Graphics.DrawCurve(penOnda2, puntos2, 0.5f);
+            }
+        }
+
+        private void panelHeroBloque_Paint(object sender, PaintEventArgs e)
+        {
+            Control c = sender as Control;
+            if (c == null) return;
+            using (Pen pen = new Pen(Tema.Borde, 1f))
+            {
+                e.Graphics.DrawRectangle(pen, 0, 0, c.Width - 1, c.Height - 1);
+            }
+        }
+
+        private void panelLema_Paint(object sender, PaintEventArgs e)
+        {
+            using (Brush brushAcento = new SolidBrush(Tema.VerdeOscuro))
+            {
+                e.Graphics.FillRectangle(brushAcento, 0, 0, 4, panelLema.Height);
+            }
+
+            using (Pen penBorde = new Pen(Tema.Borde, 1f))
+            {
+                e.Graphics.DrawRectangle(penBorde, 0, 0, panelLema.Width - 1, panelLema.Height - 1);
+            }
+        }
+
+        private void panelCard_Paint(object sender, PaintEventArgs e)
+        {
+            using (Pen penBorde = new Pen(Tema.Borde, 1f))
+            {
+                e.Graphics.DrawRectangle(penBorde, 0, 0, panelCard.ClientSize.Width - 1, panelCard.ClientSize.Height - 1);
+            }
+        }
+
+        // ============================================================
+        // CARGA DE CATÁLOGOS Y DATOS
         // ============================================================
         private void CargarCatalogos()
         {
@@ -401,9 +372,6 @@ namespace SanarRuralUnan.Views
             cmbEspecialidadHospital.SelectedIndex = -1;
         }
 
-        // ============================================================
-        // CARGAR DATOS DEL DOCTOR
-        // ============================================================
         private void CargarDoctor()
         {
             var doctor = controladorDoctores.consultarDoctorPorId(idDoctorEdicion);
@@ -451,6 +419,9 @@ namespace SanarRuralUnan.Views
             }
         }
 
+        // ============================================================
+        // GESTIÓN DE FOTOGRAFÍA
+        // ============================================================
         private void btnSeleccionarFoto_Click(object sender, EventArgs e)
         {
             using (var selector = new OpenFileDialog())
@@ -463,7 +434,6 @@ namespace SanarRuralUnan.Views
                     return;
                 }
 
-                // Se leen los bytes directamente para no retener bloqueos sobre el archivo original.
                 byte[] bytesArchivo;
                 try
                 {
@@ -479,13 +449,11 @@ namespace SanarRuralUnan.Views
                     return;
                 }
 
-                // Validar que el archivo corresponda a una imagen legible.
                 Image imagenCargada;
                 try
                 {
                     using (var stream = new MemoryStream(bytesArchivo))
                     {
-                        // Se crea una copia en un nuevo Bitmap para gestionar independientemente el ciclo de vida.
                         using (var temporal = Image.FromStream(stream))
                         {
                             imagenCargada = new Bitmap(temporal);
@@ -502,7 +470,6 @@ namespace SanarRuralUnan.Views
                     return;
                 }
 
-                // Liberar la imagen anterior para evitar fugas de memoria en GDI+.
                 LimpiarPreview();
 
                 foto = bytesArchivo;
@@ -527,16 +494,10 @@ namespace SanarRuralUnan.Views
             btnQuitarFoto.Visible = false;
         }
 
-        // ============================================================
-        // MÉTODOS DE VISTA PREVIA DE FOTO
-        // ============================================================
-        // Genera un Bitmap a partir del arreglo de bytes y lo asigna al PictureBox.
         private void MostrarPreviewDesdeBytes(byte[] bytes)
         {
             if (bytes == null || bytes.Length == 0)
-            {
                 return;
-            }
 
             try
             {
@@ -554,11 +515,10 @@ namespace SanarRuralUnan.Views
             }
             catch (ArgumentException)
             {
-                // Si los bytes almacenados no forman una imagen válida, se deja la vista previa vacía.
+                // Silencioso si los bytes no corresponden a un formato válido
             }
         }
 
-        // Libera la imagen actual del PictureBox para gestionar adecuadamente los recursos GDI+.
         private void LimpiarPreview()
         {
             if (picPreview.Image != null)
@@ -585,6 +545,9 @@ namespace SanarRuralUnan.Views
             }
         }
 
+        // ============================================================
+        // ASIGNACIONES HOSPITALARIAS
+        // ============================================================
         private void btnAgregarAsignacion_Click(object sender, EventArgs e)
         {
             if (cmbHospitalAsignacion.SelectedValue == null || cmbEspecialidadHospital.SelectedValue == null)
@@ -600,7 +563,7 @@ namespace SanarRuralUnan.Views
 
             if (!especialidadSeleccionada)
             {
-                MessageBox.Show("Marque primero esa especialidad en la lista del doctor.", "Especialidad no seleccionada", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Marque primero esa especialidad en la lista de especialidades del doctor.", "Especialidad no seleccionada", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
@@ -610,9 +573,7 @@ namespace SanarRuralUnan.Views
         private void AgregarAsignacion(int idHospital, int idEspecialidad)
         {
             if (asignaciones.Any(a => a.Item1 == idHospital && a.Item2 == idEspecialidad))
-            {
                 return;
-            }
 
             asignaciones.Add(Tuple.Create(idHospital, idEspecialidad));
             lstAsignaciones.Items.Add(FormatearAsignacion(idHospital, idEspecialidad));
@@ -640,7 +601,6 @@ namespace SanarRuralUnan.Views
         // ============================================================
         private void btnGuardar_Click(object sender, EventArgs e)
         {
-            // Validaciones de campos obligatorios.
             string primerNombre = txtPrimerNombre.Text.Trim();
             string primerApellido = txtPrimerApellido.Text.Trim();
             string cedula = txtCedula.Text.Trim();
@@ -690,7 +650,6 @@ namespace SanarRuralUnan.Views
             {
                 if (esModoEdicion)
                 {
-                    // MODO EDICIÓN
                     controladorDoctores.editarDoctor(
                         idDoctorEdicion,
                         primerNombre,
@@ -710,7 +669,6 @@ namespace SanarRuralUnan.Views
                 }
                 else
                 {
-                    // MODO CREACIÓN
                     controladorDoctores.crearDoctor(
                         idUsuario,
                         primerNombre,
@@ -739,7 +697,6 @@ namespace SanarRuralUnan.Views
             }
             catch (Exception ex)
             {
-                // No mostrar detalles técnicos de base de datos al usuario final.
                 System.Diagnostics.Debug.WriteLine("Error al guardar doctor: " + ex);
                 MessageBox.Show(
                     "Ocurrió un error al procesar el guardado del doctor. Por favor, intente nuevamente o contacte al administrador si el problema persiste.",
@@ -751,16 +708,12 @@ namespace SanarRuralUnan.Views
         }
 
         // ============================================================
-        // VOLVER / CANCELAR
+        // CANCELAR Y RETORNO
         // ============================================================
-        private void lnkVolver_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        private void btnCancelar_Click(object sender, EventArgs e)
         {
             DialogResult = DialogResult.Cancel;
             Close();
-        }
-
-        private void panelCard_Paint(object sender, PaintEventArgs e)
-        {
         }
     }
 }

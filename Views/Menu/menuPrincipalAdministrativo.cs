@@ -26,6 +26,7 @@ namespace SanarRuralUnan.Views
         private int inicioIndicador;
         private int destinoIndicador;
         private int tiempoIndicador;
+        public bool SesionCerradaVoluntariamente { get; private set; }
 
         public menuPrincipalAdministrativo()
         {
@@ -162,6 +163,7 @@ namespace SanarRuralUnan.Views
 
         private void btnCerrarSesion_Click(object sender, EventArgs e)
         {
+            SesionCerradaVoluntariamente = true;
             new usuariosControllers().CerrarSesion();
             Close();
         }
