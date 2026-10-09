@@ -102,15 +102,21 @@ namespace SanarRuralUnan.Views
             this.DoubleBuffered = true;
             HabilitarDobleBufer(panelHero);
             HabilitarDobleBufer(panelFormContenedor);
-            HabilitarDobleBufer(panelCard);
-            HabilitarDobleBufer(panelHeroBloque1);
-            HabilitarDobleBufer(panelHeroBloque2);
-            HabilitarDobleBufer(panelHeroBloque3);
+            HabilitarDobleBufer(cardHeader);
+            HabilitarDobleBufer(cardPersonal);
+            HabilitarDobleBufer(cardFoto);
+            HabilitarDobleBufer(cardProfesional);
+            HabilitarDobleBufer(cardAsignaciones);
+            HabilitarDobleBufer(panelAcciones);
+            HabilitarDobleBufer(pnlCedulaInfo);
+            HabilitarDobleBufer(pnlFotoInfo);
+            HabilitarDobleBufer(pnlLicenciaInfo);
             HabilitarDobleBufer(panelLema);
         }
 
         private static void HabilitarDobleBufer(Control control)
         {
+            if (control == null) return;
             try
             {
                 typeof(Control).InvokeMember(
@@ -166,16 +172,18 @@ namespace SanarRuralUnan.Views
             cmbPaisTelefono.SelectedItem = PaisesCentroamerica.First(p => p.Codigo == "+505");
 
             // Configurar placeholders y textos descriptivos
-            AsignarPlaceholder(txtPrimerNombre, "Ej. Carlos");
-            AsignarPlaceholder(txtPrimerApellido, "Ej. Martínez");
+            AsignarPlaceholder(txtPrimerNombre, "Ej. Raul");
+            AsignarPlaceholder(txtSegundoNombre, "Ej. Santiago");
+            AsignarPlaceholder(txtPrimerApellido, "Ej. Rodriguez");
+            AsignarPlaceholder(txtSegundoApellido, "Ej. Salazar");
             AsignarPlaceholder(txtCedula, "001-091101-1042V");
-            AsignarPlaceholder(txtTelefono, "8888-8888");
+            AsignarPlaceholder(txtTelefono, "8888-2222");
             AsignarPlaceholder(txtLicencia, "Código asignado al profesional");
 
             // Textos de etiquetas y ayudas actualizados
             lblNumeroLicencia.Text = "Código sanitario / registro MINSA *";
             lblCedulaAyuda.Text = "Ejemplo: 001-091101-1042V";
-            lblTelefonoAyuda.Text = "Número nacional sin prefijo";
+            lblTelefonoAyuda.Text = "Ingresa solo el número de teléfono (sin el código de país). Ejemplo: 8888-2222";
             lblLicenciaAyuda.Text = "Escribe el código tal como aparece en tu carnet o constancia oficial del MINSA.";
 
             // Eventos de formateo reactivo y restricciones de entrada
@@ -191,6 +199,27 @@ namespace SanarRuralUnan.Views
 
             btnQuitarAsignacion.Enabled = false;
             lstAsignaciones.SelectedIndexChanged += (s, ev) => btnQuitarAsignacion.Enabled = lstAsignaciones.SelectedIndex >= 0;
+
+            // Pintado decorativo de tarjetas y banners
+            cardHeader.Paint += DibujarBordeTarjeta;
+            cardPersonal.Paint += DibujarBordeTarjeta;
+            cardFoto.Paint += DibujarBordeTarjeta;
+            cardProfesional.Paint += DibujarBordeTarjeta;
+            cardAsignaciones.Paint += DibujarBordeTarjeta;
+
+            pnlCedulaInfo.Paint += DibujarBannerInformativo;
+            pnlFotoInfo.Paint += DibujarBannerInformativo;
+            pnlLicenciaInfo.Paint += DibujarBannerInformativo;
+
+            lblIconoDoctor.Paint += (s, ev) => DibujarIconoCircular(s, ev, "👨‍⚕️");
+            lblIconoPersonal.Paint += (s, ev) => DibujarIconoCircular(s, ev, "👤");
+            lblIconoFoto.Paint += (s, ev) => DibujarIconoCircular(s, ev, "📷");
+            lblIconoProfesional.Paint += (s, ev) => DibujarIconoCircular(s, ev, "📄");
+            lblIconoAsignaciones.Paint += (s, ev) => DibujarIconoCircular(s, ev, "🏥");
+
+            picPreview.Paint += picPreview_Paint;
+            panelHero.Paint += panelHero_Paint;
+            panelLema.Paint += panelLema_Paint;
 
             try
             {
@@ -245,10 +274,10 @@ namespace SanarRuralUnan.Views
             if (anchoTotal <= 0 || altoTotal <= 0)
                 return;
 
-            // División de pantalla: ~36% Hero a la izquierda y ~64% Formulario a la derecha
-            int anchoHero = (int)(anchoTotal * 0.36f);
-            if (anchoHero < 380)
-                anchoHero = Math.Min(380, anchoTotal / 2);
+            // Proporción estricta del Hero: 25% del ancho total (en el rango 24-27%)
+            int anchoHero = (int)(anchoTotal * 0.25f);
+            if (anchoHero < 310) anchoHero = 310;
+            if (anchoHero > 500) anchoHero = 500;
 
             int anchoForm = anchoTotal - anchoHero;
 
@@ -256,143 +285,283 @@ namespace SanarRuralUnan.Views
             panelFormContenedor.SetBounds(anchoHero, 0, anchoForm, altoTotal);
 
             // Ajuste interno del panel Hero
-            int margenHero = Math.Max(25, (anchoHero - 340) / 2);
-            int anchoContenidoHero = Math.Min(340, anchoHero - (margenHero * 2));
+            int margenHero = Math.Max(20, (anchoHero - 300) / 2);
+            int anchoContenidoHero = Math.Min(320, anchoHero - (margenHero * 2));
 
-            picLogoHero.Location = new Point(margenHero, Math.Max(20, (int)(altoTotal * 0.03f)));
-            lblNombreHero.Location = new Point(margenHero - 3, picLogoHero.Bottom + 8);
-            lblSubtituloHero.Location = new Point(margenHero, lblNombreHero.Bottom + 4);
+            picLogoHero.Location = new Point(margenHero, Math.Max(18, (int)(altoTotal * 0.025f)));
+            lblNombreHero.Location = new Point(margenHero - 2, picLogoHero.Bottom + 6);
+            lblSubtituloHero.Location = new Point(margenHero, lblNombreHero.Bottom + 3);
             lblRegistroTituloHero.Location = new Point(margenHero, lblSubtituloHero.Bottom + 12);
-            lblDescripcionHero.Location = new Point(margenHero, lblRegistroTituloHero.Bottom + 8);
+            lblDescripcionHero.Location = new Point(margenHero, lblRegistroTituloHero.Bottom + 6);
             lblDescripcionHero.Width = anchoContenidoHero;
 
-            panelHeroBloque1.Location = new Point(margenHero, lblDescripcionHero.Bottom + 14);
+            panelHeroBloque1.Location = new Point(margenHero, lblDescripcionHero.Bottom + 12);
             panelHeroBloque1.Width = anchoContenidoHero;
-            lblHeroDesc1.Width = panelHeroBloque1.Width - lblHeroDesc1.Left - 10;
+            lblHeroDesc1.Width = panelHeroBloque1.Width - lblHeroDesc1.Left - 5;
 
-            panelHeroBloque2.Location = new Point(margenHero, panelHeroBloque1.Bottom + 10);
+            panelHeroBloque2.Location = new Point(margenHero, panelHeroBloque1.Bottom + 8);
             panelHeroBloque2.Width = anchoContenidoHero;
-            lblHeroDesc2.Width = panelHeroBloque2.Width - lblHeroDesc2.Left - 10;
+            lblHeroDesc2.Width = panelHeroBloque2.Width - lblHeroDesc2.Left - 5;
 
-            panelHeroBloque3.Location = new Point(margenHero, panelHeroBloque2.Bottom + 10);
+            panelHeroBloque3.Location = new Point(margenHero, panelHeroBloque2.Bottom + 8);
             panelHeroBloque3.Width = anchoContenidoHero;
-            lblHeroDesc3.Width = panelHeroBloque3.Width - lblHeroDesc3.Left - 10;
+            lblHeroDesc3.Width = panelHeroBloque3.Width - lblHeroDesc3.Left - 5;
 
-            if (altoTotal >= 680)
+            if (altoTotal >= 640)
             {
                 panelLema.Visible = true;
-                panelLema.Location = new Point(margenHero, panelHeroBloque3.Bottom + 14);
+                panelLema.Location = new Point(margenHero, altoTotal - panelLema.Height - 20);
                 panelLema.Width = anchoContenidoHero;
+                lblLemaTexto.Width = panelLema.Width - lblLemaTexto.Left - 36;
+                lblLemaComillasCierre.Left = panelLema.Width - 32;
             }
             else
             {
                 panelLema.Visible = false;
             }
 
-            // Ajuste interno de la tarjeta de formulario
-            int anchoCard = Math.Min(740, panelFormContenedor.ClientSize.Width - 40);
-            if (anchoCard < 580)
-                anchoCard = Math.Max(500, panelFormContenedor.ClientSize.Width - 20);
+            // ============================================================
+            // AJUSTE DE TARJETAS EN EL FORMULARIO DERECHO
+            // ============================================================
+            int margenLateral = 20;
+            int scrollWidth = SystemInformation.VerticalScrollBarWidth;
+            int anchoNeto = panelFormContenedor.ClientSize.Width;
+            int anchoCards = Math.Max(660, anchoNeto - (margenLateral * 2) - scrollWidth);
 
-            panelCard.Width = anchoCard;
-            panelCard.Left = Math.Max(15, (panelFormContenedor.ClientSize.Width - panelCard.Width) / 2);
+            int xCard = margenLateral;
+            int gap = 12;
+            int y = 16;
 
-            // Reajuste de dos columnas responsivas dentro de panelCard
-            int margenCard = 30;
-            int espacioCol = 24;
-            int anchoCol = (panelCard.Width - (margenCard * 2) - espacioCol) / 2;
-            int xCol1 = margenCard;
-            int xCol2 = margenCard + anchoCol + espacioCol;
+            // 1. Tarjeta Encabezado
+            cardHeader.SetBounds(xCard, y, anchoCards, 66);
+            lblIconoDoctor.SetBounds(16, 13, 40, 40);
+            lblTitulo.Location = new Point(64, 11);
+            lblSubtitulo.Location = new Point(66, 37);
+            y += cardHeader.Height + gap;
 
-            panelSeparadorCabecera.Left = margenCard;
-            panelSeparadorCabecera.Width = panelCard.Width - (margenCard * 2);
+            // 2. Fila 1: Información personal (68%) y Foto (32%)
+            int anchoPersonal = (int)((anchoCards - gap) * 0.68f);
+            int anchoFoto = anchoCards - gap - anchoPersonal;
+            int altoRow1 = 290;
 
-            // Columna 1: Primer nombre, Primer apellido, Cédula, Licencia, Especialidades
-            lblPrimerNombre.Left = xCol1;
-            txtPrimerNombre.Left = xCol1;
-            txtPrimerNombre.Width = anchoCol;
+            cardPersonal.SetBounds(xCard, y, anchoPersonal, altoRow1);
+            cardFoto.SetBounds(cardPersonal.Right + gap, y, anchoFoto, altoRow1);
 
-            lblPrimerApellido.Left = xCol1;
-            txtPrimerApellido.Left = xCol1;
-            txtPrimerApellido.Width = anchoCol;
+            // Controles dentro de cardPersonal
+            lblIconoPersonal.SetBounds(14, 12, 34, 34);
+            lblTituloPersonal.Location = new Point(54, 10);
+            lblSubtituloPersonal.Location = new Point(56, 30);
 
-            lblCedula.Left = xCol1;
-            txtCedula.Left = xCol1;
-            txtCedula.Width = anchoCol;
-            lblCedulaAyuda.Left = xCol1;
+            int margenP = 16;
+            int gapColP = 14;
+            int anchoColP = (cardPersonal.Width - (margenP * 2) - gapColP) / 2;
+            int xP1 = margenP;
+            int xP2 = margenP + anchoColP + gapColP;
 
-            lblNumeroLicencia.Left = xCol1;
-            txtLicencia.Left = xCol1;
-            txtLicencia.Width = anchoCol;
-            lblLicenciaAyuda.Left = xCol1;
-            lblLicenciaAyuda.Width = anchoCol;
+            // Fila 1: Primer nombre | Segundo nombre
+            lblPrimerNombre.Location = new Point(xP1, 56);
+            txtPrimerNombre.SetBounds(xP1, 74, anchoColP, 27);
+            lblSegundoNombre.Location = new Point(xP2, 56);
+            txtSegundoNombre.SetBounds(xP2, 74, anchoColP, 27);
 
-            lblEspecialidadesTitulo.Left = xCol1;
-            lstEspecialidades.Left = xCol1;
-            lstEspecialidades.Width = anchoCol;
+            // Fila 2: Primer apellido | Segundo apellido
+            lblPrimerApellido.Location = new Point(xP1, 108);
+            txtPrimerApellido.SetBounds(xP1, 126, anchoColP, 27);
+            lblSegundoApellido.Location = new Point(xP2, 108);
+            txtSegundoApellido.SetBounds(xP2, 126, anchoColP, 27);
 
-            // Columna 2: Segundo nombre, Segundo apellido, Teléfono, Foto, Asignaciones
-            lblSegundoNombre.Left = xCol2;
-            txtSegundoNombre.Left = xCol2;
-            txtSegundoNombre.Width = anchoCol;
+            // Fila 3: Cédula | Teléfono
+            lblCedula.Location = new Point(xP1, 160);
+            txtCedula.SetBounds(xP1, 178, anchoColP, 27);
 
-            lblSegundoApellido.Left = xCol2;
-            txtSegundoApellido.Left = xCol2;
-            txtSegundoApellido.Width = anchoCol;
+            lblTelefono.Location = new Point(xP2, 160);
+            int anchoComboP = Math.Min(170, Math.Max(140, (int)(anchoColP * 0.50f)));
+            int anchoNumeroP = anchoColP - anchoComboP - 8;
+            cmbPaisTelefono.SetBounds(xP2, 178, anchoComboP, 27);
+            txtTelefono.SetBounds(cmbPaisTelefono.Right + 8, 178, anchoNumeroP, 27);
 
-            lblTelefono.Left = xCol2;
-            int anchoComboPais = Math.Min(165, Math.Max(145, (int)(anchoCol * 0.50f)));
-            int anchoNumeroTel = anchoCol - anchoComboPais - 8;
-            cmbPaisTelefono.Left = xCol2;
-            cmbPaisTelefono.Width = anchoComboPais;
-            txtTelefono.Left = cmbPaisTelefono.Right + 8;
-            txtTelefono.Width = anchoNumeroTel;
-            lblTelefonoAyuda.Left = xCol2;
+            // Fila 4: Ayudas y banner informativo
+            lblCedulaAyuda.Location = new Point(xP1, 208);
+            pnlCedulaInfo.SetBounds(xP1, 226, anchoColP, 48);
+            lblCedulaInfo.SetBounds(6, 4, pnlCedulaInfo.Width - 12, 40);
 
-            lblFotoTitulo.Left = xCol2;
-            picPreview.Left = xCol2;
-            int xFotoInfo = xCol2 + 88;
-            int anchoFotoInfo = Math.Max(100, anchoCol - 88);
-            lblFoto.Left = xFotoInfo;
-            lblFoto.Width = anchoFotoInfo;
-            btnSeleccionarFoto.Left = xFotoInfo;
-            btnQuitarFoto.Left = btnSeleccionarFoto.Right + 8;
-            lblFotoAyuda.Left = xFotoInfo;
+            lblTelefonoAyuda.SetBounds(xP2, 208, anchoColP, 66);
 
-            // Hospitales y asignaciones
-            lblHospitalTitulo.Left = xCol2;
-            cmbHospitalAsignacion.Left = xCol2;
-            cmbHospitalAsignacion.Width = anchoCol;
+            // Controles dentro de cardFoto
+            lblIconoFoto.SetBounds(14, 12, 34, 34);
+            lblTituloFoto.Location = new Point(54, 10);
+            lblSubtituloFoto.Location = new Point(56, 30);
 
-            lblEspecialidadHospTitulo.Left = xCol2;
-            int anchoBotonAgregar = 95;
-            int anchoComboEspHosp = anchoCol - anchoBotonAgregar - 10;
-            cmbEspecialidadHospital.Left = xCol2;
-            cmbEspecialidadHospital.Width = anchoComboEspHosp;
-            btnAgregarAsignacion.Left = cmbEspecialidadHospital.Right + 10;
-            btnAgregarAsignacion.Width = anchoBotonAgregar;
+            int sAvatar = 82;
+            picPreview.SetBounds(16, 56, sAvatar, sAvatar);
 
-            lblAsignacionesTitulo.Left = xCol2;
-            lstAsignaciones.Left = xCol2;
-            lstAsignaciones.Width = anchoCol;
-            btnQuitarAsignacion.Left = xCol2;
-            btnQuitarAsignacion.Width = Math.Min(220, anchoCol);
+            int xInfoFoto = picPreview.Right + 12;
+            int anchoInfoFoto = cardFoto.Width - xInfoFoto - 14;
+            int anchoBtnSelFoto = Math.Min(140, anchoInfoFoto);
+            btnSeleccionarFoto.SetBounds(xInfoFoto, 56, anchoBtnSelFoto, 30);
+            btnQuitarFoto.SetBounds(btnSeleccionarFoto.Right + 6, 56, Math.Min(65, anchoInfoFoto - anchoBtnSelFoto - 6), 30);
 
-            // Ajustar el ancho desplegable de los ComboBox según los elementos
+            lblFoto.SetBounds(xInfoFoto, 92, anchoInfoFoto, 16);
+            lblFotoAyuda.SetBounds(xInfoFoto, 112, anchoInfoFoto, 16);
+
+            pnlFotoInfo.SetBounds(16, 226, cardFoto.Width - 32, 48);
+            lblFotoInfo.SetBounds(6, 4, pnlFotoInfo.Width - 12, 40);
+
+            y += altoRow1 + gap;
+
+            // 3. Fila 2: Información profesional
+            int altoRow2 = 215;
+            cardProfesional.SetBounds(xCard, y, anchoCards, altoRow2);
+
+            lblIconoProfesional.SetBounds(14, 12, 34, 34);
+            lblTituloProfesional.Location = new Point(54, 10);
+            lblSubtituloProfesional.Location = new Point(56, 30);
+
+            int margenProf = 16;
+            int gapProf = 16;
+            int anchoColProf1 = (int)((cardProfesional.Width - (margenProf * 2) - gapProf) * 0.44f);
+            int anchoColProf2 = cardProfesional.Width - (margenProf * 2) - gapProf - anchoColProf1;
+            int xProf1 = margenProf;
+            int xProf2 = margenProf + anchoColProf1 + gapProf;
+
+            lblNumeroLicencia.Location = new Point(xProf1, 56);
+            txtLicencia.SetBounds(xProf1, 74, anchoColProf1, 27);
+            lblLicenciaAyuda.SetBounds(xProf1, 104, anchoColProf1, 32);
+            pnlLicenciaInfo.SetBounds(xProf1, 142, anchoColProf1, 48);
+            lblLicenciaInfo.SetBounds(6, 4, pnlLicenciaInfo.Width - 12, 40);
+
+            lblEspecialidadesTitulo.Location = new Point(xProf2, 56);
+            lstEspecialidades.SetBounds(xProf2, 74, anchoColProf2, 126);
+
+            y += altoRow2 + gap;
+
+            // 4. Fila 3: Asignaciones hospitalarias
+            int altoRow3 = 230;
+            cardAsignaciones.SetBounds(xCard, y, anchoCards, altoRow3);
+
+            lblIconoAsignaciones.SetBounds(14, 12, 34, 34);
+            lblTituloAsignaciones.Location = new Point(54, 10);
+            lblSubtituloAsignaciones.Location = new Point(56, 30);
+
+            int margenAsign = 16;
+            int gapAsign = 12;
+            int anchoBtnAgregar = 100;
+            int anchoCombos = (cardAsignaciones.Width - (margenAsign * 2) - (gapAsign * 2) - anchoBtnAgregar) / 2;
+            int xHosp = margenAsign;
+            int xEsp = xHosp + anchoCombos + gapAsign;
+            int xBtn = xEsp + anchoCombos + gapAsign;
+
+            lblHospitalTitulo.Location = new Point(xHosp, 56);
+            cmbHospitalAsignacion.SetBounds(xHosp, 74, anchoCombos, 28);
+
+            lblEspecialidadHospTitulo.Location = new Point(xEsp, 56);
+            cmbEspecialidadHospital.SetBounds(xEsp, 74, anchoCombos, 28);
+
+            btnAgregarAsignacion.SetBounds(xBtn, 73, anchoBtnAgregar, 30);
+
+            lblAsignacionesTitulo.Location = new Point(margenAsign, 110);
+            int anchoBtnQuitar = 95;
+            int anchoListaAsign = cardAsignaciones.Width - (margenAsign * 2) - gapAsign - anchoBtnQuitar;
+            lstAsignaciones.SetBounds(margenAsign, 132, anchoListaAsign, 80);
+            btnQuitarAsignacion.SetBounds(lstAsignaciones.Right + gapAsign, 132, anchoBtnQuitar, 32);
+
             AjustarAnchoDropDown(cmbHospitalAsignacion);
             AjustarAnchoDropDown(cmbEspecialidadHospital);
 
-            // Botones inferiores
-            panelSeparadorInferior.Left = margenCard;
-            panelSeparadorInferior.Width = panelCard.Width - (margenCard * 2);
+            y += altoRow3 + gap;
 
-            btnGuardar.Left = panelCard.Width - margenCard - btnGuardar.Width;
-            btnCancelar.Left = btnGuardar.Left - 12 - btnCancelar.Width;
+            // 5. Fila 4: Botones de Acción (Cancelar y Guardar)
+            panelAcciones.SetBounds(xCard, y, anchoCards, 46);
+            btnGuardar.SetBounds(panelAcciones.Width - 190, 3, 190, 40);
+            btnCancelar.SetBounds(btnGuardar.Left - 12 - 130, 3, 130, 40);
         }
 
         // ============================================================
         // PINTADO ESTÉTICO GDI+
         // ============================================================
+        private void DibujarBordeTarjeta(object sender, PaintEventArgs e)
+        {
+            Control c = sender as Control;
+            if (c == null) return;
+            Tema.DibujarTarjetaRedondeada(e.Graphics, new Rectangle(0, 0, c.Width - 1, c.Height - 1), Tema.Superficie, Tema.Borde, 8);
+        }
+
+        private void DibujarBannerInformativo(object sender, PaintEventArgs e)
+        {
+            Control c = sender as Control;
+            if (c == null) return;
+            Tema.DibujarTarjetaRedondeada(e.Graphics, new Rectangle(0, 0, c.Width - 1, c.Height - 1), Color.FromArgb(235, 245, 252), Color.FromArgb(205, 227, 245), 6);
+        }
+
+        private void DibujarIconoCircular(object sender, PaintEventArgs e, string icono)
+        {
+            Control c = sender as Control;
+            if (c == null) return;
+            e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
+            e.Graphics.Clear(c.Parent?.BackColor ?? Tema.Superficie);
+            using (Brush br = new SolidBrush(Tema.AzulPrimario))
+            {
+                e.Graphics.FillEllipse(br, 1, 1, c.Width - 3, c.Height - 3);
+            }
+            using (Font f = new Font("Segoe UI Emoji", 11.5F))
+            using (Brush brText = new SolidBrush(Color.White))
+            {
+                SizeF sf = e.Graphics.MeasureString(icono, f);
+                e.Graphics.DrawString(icono, f, brText, (c.Width - sf.Width) / 2 + 1, (c.Height - sf.Height) / 2);
+            }
+        }
+
+        private void picPreview_Paint(object sender, PaintEventArgs e)
+        {
+            e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
+            int s = Math.Min(picPreview.Width, picPreview.Height) - 4;
+            int x = (picPreview.Width - s) / 2;
+            int y = (picPreview.Height - s) / 2;
+            Rectangle rectCirculo = new Rectangle(x, y, s, s);
+
+            if (picPreview.Image == null)
+            {
+                using (Brush br = new SolidBrush(Tema.FondoSecundario))
+                {
+                    e.Graphics.FillEllipse(br, rectCirculo);
+                }
+                using (Brush brIcon = new SolidBrush(Color.FromArgb(160, 185, 198)))
+                {
+                    int rHead = s / 3;
+                    e.Graphics.FillEllipse(brIcon, x + (s - rHead) / 2, y + (int)(s * 0.18f), rHead, rHead);
+                    int wBody = (int)(s * 0.65f);
+                    int hBody = (int)(s * 0.40f);
+                    e.Graphics.FillPie(brIcon, x + (s - wBody) / 2, y + (int)(s * 0.48f), wBody, hBody * 2, 180, 180);
+                }
+                int badgeSize = 24;
+                int bx = x + s - badgeSize - 2;
+                int by = y + s - badgeSize - 2;
+                using (Brush brBadge = new SolidBrush(Tema.AzulPrimario))
+                {
+                    e.Graphics.FillEllipse(brBadge, bx, by, badgeSize, badgeSize);
+                }
+                using (Font fCamera = new Font("Segoe UI Emoji", 9F))
+                using (Brush brWhite = new SolidBrush(Color.White))
+                {
+                    e.Graphics.DrawString("📷", fCamera, brWhite, bx + 3, by + 3);
+                }
+            }
+            else
+            {
+                using (GraphicsPath clip = new GraphicsPath())
+                {
+                    clip.AddEllipse(rectCirculo);
+                    e.Graphics.SetClip(clip);
+                    e.Graphics.DrawImage(picPreview.Image, rectCirculo);
+                    e.Graphics.ResetClip();
+                }
+                using (Pen pen = new Pen(Tema.Borde, 2f))
+                {
+                    e.Graphics.DrawEllipse(pen, rectCirculo);
+                }
+            }
+        }
+
         private void panelHero_Paint(object sender, PaintEventArgs e)
         {
             e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
@@ -400,63 +569,147 @@ namespace SanarRuralUnan.Views
             int w = panelHero.Width;
             int h = panelHero.Height;
 
-            using (Pen penOnda1 = new Pen(Color.FromArgb(22, Tema.AzulClaro), 38f))
-            using (Pen penOnda2 = new Pen(Color.FromArgb(18, Tema.Verde), 30f))
+            // Altura del área del paisaje en la parte inferior del Hero
+            int altoPaisaje = Math.Max(220, (int)(h * 0.35f));
+            int yInicio = h - altoPaisaje;
+
+            // Cielo suave en degradé
+            using (LinearGradientBrush brCielo = new LinearGradientBrush(
+                new Rectangle(0, yInicio - 30, w, 50),
+                Tema.Fondo,
+                Color.FromArgb(215, 238, 248),
+                LinearGradientMode.Vertical))
             {
-                penOnda1.StartCap = LineCap.Round;
-                penOnda1.EndCap = LineCap.Round;
-                penOnda2.StartCap = LineCap.Round;
-                penOnda2.EndCap = LineCap.Round;
+                e.Graphics.FillRectangle(brCielo, 0, yInicio - 30, w, 50);
+            }
 
-                Point[] puntos1 = new Point[]
-                {
-                    new Point((int)(w * 0.40f), -20),
-                    new Point((int)(w * 0.70f), (int)(h * 0.28f)),
-                    new Point((int)(w * 0.85f), (int)(h * 0.60f)),
-                    new Point(w + 30, (int)(h * 0.80f))
-                };
-                e.Graphics.DrawCurve(penOnda1, puntos1, 0.5f);
+            // Colina lejana (azul-verdoso suave)
+            using (GraphicsPath pathMontanas = new GraphicsPath())
+            {
+                Point p1 = new Point(0, h);
+                Point p2 = new Point(0, yInicio + 25);
+                Point p3 = new Point((int)(w * 0.35f), yInicio - 12);
+                Point p4 = new Point((int)(w * 0.65f), yInicio + 30);
+                Point p5 = new Point(w, yInicio + 5);
+                Point p6 = new Point(w, h);
 
-                Point[] puntos2 = new Point[]
+                pathMontanas.AddLine(p1, p2);
+                pathMontanas.AddBezier(p2, p3, p4, p5);
+                pathMontanas.AddLine(p5, p6);
+                pathMontanas.CloseFigure();
+                using (SolidBrush brMontanas = new SolidBrush(Color.FromArgb(168, 209, 185)))
                 {
-                    new Point(-20, (int)(h * 0.60f)),
-                    new Point((int)(w * 0.30f), (int)(h * 0.76f)),
-                    new Point((int)(w * 0.65f), (int)(h * 0.72f)),
-                    new Point(w + 30, (int)(h * 0.88f))
+                    e.Graphics.FillPath(brMontanas, pathMontanas);
+                }
+            }
+
+            // Colina media (verde naturaleza)
+            using (GraphicsPath pathColinaMedia = new GraphicsPath())
+            {
+                Point p1 = new Point(0, h);
+                Point p2 = new Point(0, yInicio + 55);
+                Point p3 = new Point((int)(w * 0.40f), yInicio + 20);
+                Point p4 = new Point((int)(w * 0.75f), yInicio + 65);
+                Point p5 = new Point(w, yInicio + 40);
+                Point p6 = new Point(w, h);
+
+                pathColinaMedia.AddLine(p1, p2);
+                pathColinaMedia.AddBezier(p2, p3, p4, p5);
+                pathColinaMedia.AddLine(p5, p6);
+                pathColinaMedia.CloseFigure();
+                using (SolidBrush brColinaMedia = new SolidBrush(Tema.Verde))
+                {
+                    e.Graphics.FillPath(brColinaMedia, pathColinaMedia);
+                }
+            }
+
+            // Casita rural sobre la colina media
+            int xCasa = (int)(w * 0.16f);
+            int yCasa = yInicio + 55;
+            using (SolidBrush brPared = new SolidBrush(Color.FromArgb(250, 248, 240)))
+            using (Pen penPared = new Pen(Color.FromArgb(180, 170, 150), 1f))
+            {
+                e.Graphics.FillRectangle(brPared, xCasa, yCasa, 26, 17);
+                e.Graphics.DrawRectangle(penPared, xCasa, yCasa, 26, 17);
+            }
+            using (SolidBrush brTecho = new SolidBrush(Color.FromArgb(195, 95, 75)))
+            {
+                Point[] puntosTecho = new Point[]
+                {
+                    new Point(xCasa - 2, yCasa),
+                    new Point(xCasa + 13, yCasa - 11),
+                    new Point(xCasa + 28, yCasa)
                 };
-                e.Graphics.DrawCurve(penOnda2, puntos2, 0.5f);
+                e.Graphics.FillPolygon(brTecho, puntosTecho);
+            }
+            using (SolidBrush brPuerta = new SolidBrush(Color.FromArgb(140, 75, 45)))
+            {
+                e.Graphics.FillRectangle(brPuerta, xCasa + 9, yCasa + 6, 7, 11);
+            }
+
+            // Arbolitos rurales
+            DibujarArbolito(e.Graphics, (int)(w * 0.08f), yInicio + 50, 14, 22);
+            DibujarArbolito(e.Graphics, (int)(w * 0.32f), yInicio + 42, 16, 26);
+            DibujarArbolito(e.Graphics, (int)(w * 0.68f), yInicio + 54, 18, 28);
+            DibujarArbolito(e.Graphics, (int)(w * 0.85f), yInicio + 46, 14, 24);
+
+            // Colina frontal ondulada (verde oscuro)
+            using (GraphicsPath pathColinaFrontal = new GraphicsPath())
+            {
+                Point p1 = new Point(0, h);
+                Point p2 = new Point(0, yInicio + 95);
+                Point p3 = new Point((int)(w * 0.30f), yInicio + 120);
+                Point p4 = new Point((int)(w * 0.65f), yInicio + 85);
+                Point p5 = new Point(w, yInicio + 105);
+                Point p6 = new Point(w, h);
+
+                pathColinaFrontal.AddLine(p1, p2);
+                pathColinaFrontal.AddBezier(p2, p3, p4, p5);
+                pathColinaFrontal.AddLine(p5, p6);
+                pathColinaFrontal.CloseFigure();
+                using (SolidBrush brColinaFrontal = new SolidBrush(Tema.VerdeOscuro))
+                {
+                    e.Graphics.FillPath(brColinaFrontal, pathColinaFrontal);
+                }
+            }
+
+            // Olas decorativas transparentes en la base inferior
+            using (GraphicsPath pathOlaTeal = new GraphicsPath())
+            {
+                Point p1 = new Point(0, h);
+                Point p2 = new Point(0, h - 30);
+                Point p3 = new Point((int)(w * 0.35f), h - 10);
+                Point p4 = new Point((int)(w * 0.70f), h - 45);
+                Point p5 = new Point(w, h - 20);
+                Point p6 = new Point(w, h);
+
+                pathOlaTeal.AddLine(p1, p2);
+                pathOlaTeal.AddBezier(p2, p3, p4, p5);
+                pathOlaTeal.AddLine(p5, p6);
+                pathOlaTeal.CloseFigure();
+                using (SolidBrush brOlaTeal = new SolidBrush(Color.FromArgb(80, 165, 215, 215)))
+                {
+                    e.Graphics.FillPath(brOlaTeal, pathOlaTeal);
+                }
             }
         }
 
-        private void panelHeroBloque_Paint(object sender, PaintEventArgs e)
+        private static void DibujarArbolito(Graphics g, int x, int y, int ancho, int alto)
         {
-            Control c = sender as Control;
-            if (c == null) return;
-            using (Pen pen = new Pen(Tema.Borde, 1f))
+            using (SolidBrush brTronco = new SolidBrush(Color.FromArgb(120, 80, 50)))
             {
-                e.Graphics.DrawRectangle(pen, 0, 0, c.Width - 1, c.Height - 1);
+                g.FillRectangle(brTronco, x + (ancho / 2) - 2, y + (alto / 2), 4, alto / 2);
+            }
+            using (SolidBrush brCopa = new SolidBrush(Tema.VerdeOscuro))
+            {
+                g.FillEllipse(brCopa, x, y, ancho, alto * 3 / 4);
             }
         }
 
         private void panelLema_Paint(object sender, PaintEventArgs e)
         {
-            using (Brush brushAcento = new SolidBrush(Tema.VerdeOscuro))
-            {
-                e.Graphics.FillRectangle(brushAcento, 0, 0, 4, panelLema.Height);
-            }
-
-            using (Pen penBorde = new Pen(Tema.Borde, 1f))
-            {
-                e.Graphics.DrawRectangle(penBorde, 0, 0, panelLema.Width - 1, panelLema.Height - 1);
-            }
-        }
-
-        private void panelCard_Paint(object sender, PaintEventArgs e)
-        {
-            using (Pen penBorde = new Pen(Tema.Borde, 1f))
-            {
-                e.Graphics.DrawRectangle(penBorde, 0, 0, panelCard.ClientSize.Width - 1, panelCard.ClientSize.Height - 1);
-            }
+            e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
+            Tema.DibujarTarjetaRedondeada(e.Graphics, new Rectangle(0, 0, panelLema.Width - 1, panelLema.Height - 1), Tema.Superficie, Tema.Borde, 8);
         }
 
         // ============================================================
@@ -542,7 +795,9 @@ namespace SanarRuralUnan.Views
             else
             {
                 lblFoto.Text = "Sin foto seleccionada";
+                btnQuitarFoto.Visible = false;
             }
+            picPreview.Invalidate();
         }
 
         // ============================================================
@@ -618,6 +873,7 @@ namespace SanarRuralUnan.Views
                 picPreview.Image = imagenCargada;
                 lblFoto.Text = fotoNombre;
                 btnQuitarFoto.Visible = true;
+                picPreview.Invalidate();
             }
         }
 
@@ -630,6 +886,7 @@ namespace SanarRuralUnan.Views
             fotoEliminadaExplicita = true;
             lblFoto.Text = "Sin foto seleccionada";
             btnQuitarFoto.Visible = false;
+            picPreview.Invalidate();
         }
 
         private void MostrarPreviewDesdeBytes(byte[] bytes)
@@ -650,6 +907,7 @@ namespace SanarRuralUnan.Views
 
                 LimpiarPreview();
                 picPreview.Image = imagenNueva;
+                picPreview.Invalidate();
             }
             catch (ArgumentException)
             {
