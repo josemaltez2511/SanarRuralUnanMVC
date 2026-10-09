@@ -90,7 +90,7 @@ namespace SanarRuralUnan.Views.Citas
             this.panelEncabezado.Controls.Add(this.panelBadgeEstado);
             this.panelEncabezado.Controls.Add(this.btnCerrarTop);
             this.panelEncabezado.Dock = System.Windows.Forms.DockStyle.Top;
-            this.panelEncabezado.Height = 94;
+            this.panelEncabezado.Height = 105;
             this.panelEncabezado.Location = new System.Drawing.Point(0, 0);
             this.panelEncabezado.Name = "panelEncabezado";
             this.panelEncabezado.Padding = new System.Windows.Forms.Padding(24, 12, 24, 12);
@@ -124,7 +124,7 @@ namespace SanarRuralUnan.Views.Citas
             this.lblSubtitulo.AutoSize = true;
             this.lblSubtitulo.Font = Tema.FuenteSubtitulo;
             this.lblSubtitulo.ForeColor = Tema.TextoSecundario;
-            this.lblSubtitulo.Location = new System.Drawing.Point(24, 64);
+            this.lblSubtitulo.Location = new System.Drawing.Point(24, 70);
             this.lblSubtitulo.Name = "lblSubtitulo";
             this.lblSubtitulo.Size = new System.Drawing.Size(275, 20);
             this.lblSubtitulo.TabIndex = 2;
@@ -135,10 +135,10 @@ namespace SanarRuralUnan.Views.Citas
             this.panelBadgeEstado.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.panelBadgeEstado.BackColor = Tema.FondoSecundario;
             this.panelBadgeEstado.Controls.Add(this.lblEstadoBadge);
-            this.panelBadgeEstado.Location = new System.Drawing.Point(670, 28);
+            this.panelBadgeEstado.Location = new System.Drawing.Point(650, 26);
             this.panelBadgeEstado.Name = "panelBadgeEstado";
             this.panelBadgeEstado.Padding = new System.Windows.Forms.Padding(12, 6, 12, 6);
-            this.panelBadgeEstado.Size = new System.Drawing.Size(130, 36);
+            this.panelBadgeEstado.Size = new System.Drawing.Size(140, 36);
             this.panelBadgeEstado.TabIndex = 3;
             //
             // lblEstadoBadge
@@ -201,7 +201,7 @@ namespace SanarRuralUnan.Views.Citas
             this.panelCardPaciente.Location = new System.Drawing.Point(20, 16);
             this.panelCardPaciente.Name = "panelCardPaciente";
             this.panelCardPaciente.Padding = new System.Windows.Forms.Padding(18, 14, 18, 14);
-            this.panelCardPaciente.Size = new System.Drawing.Size(880, 115);
+            this.panelCardPaciente.Size = new System.Drawing.Size(880, 138);
             this.panelCardPaciente.TabIndex = 0;
             //
             // lblSecPaciente
@@ -286,20 +286,20 @@ namespace SanarRuralUnan.Views.Citas
             this.lblDireccionT.AutoSize = true;
             this.lblDireccionT.Font = Tema.FuentePequena;
             this.lblDireccionT.ForeColor = Tema.TextoSecundario;
-            this.lblDireccionT.Location = new System.Drawing.Point(18, 82);
+            this.lblDireccionT.Location = new System.Drawing.Point(18, 86);
             this.lblDireccionT.Name = "lblDireccionT";
-            this.lblDireccionT.Size = new System.Drawing.Size(130, 15);
+            this.lblDireccionT.Size = new System.Drawing.Size(205, 15);
             this.lblDireccionT.TabIndex = 7;
-            this.lblDireccionT.Text = "Comunidad / Dirección:";
+            this.lblDireccionT.Text = "Comunidad / Dirección Domiciliaria:";
             //
             // lblDireccionVal
             //
-            this.lblDireccionVal.AutoSize = true;
+            this.lblDireccionVal.AutoEllipsis = true;
             this.lblDireccionVal.Font = Tema.FuenteCuerpo;
             this.lblDireccionVal.ForeColor = Tema.TextoPrincipal;
-            this.lblDireccionVal.Location = new System.Drawing.Point(160, 80);
+            this.lblDireccionVal.Location = new System.Drawing.Point(18, 104);
             this.lblDireccionVal.Name = "lblDireccionVal";
-            this.lblDireccionVal.Size = new System.Drawing.Size(15, 20);
+            this.lblDireccionVal.Size = new System.Drawing.Size(840, 22);
             this.lblDireccionVal.TabIndex = 8;
             this.lblDireccionVal.Text = "-";
             //
@@ -456,7 +456,7 @@ namespace SanarRuralUnan.Views.Citas
             this.panelCardProgramacion.Location = new System.Drawing.Point(20, 331);
             this.panelCardProgramacion.Name = "panelCardProgramacion";
             this.panelCardProgramacion.Padding = new System.Windows.Forms.Padding(18, 14, 18, 14);
-            this.panelCardProgramacion.Size = new System.Drawing.Size(880, 85);
+            this.panelCardProgramacion.Size = new System.Drawing.Size(880, 138);
             this.panelCardProgramacion.TabIndex = 3;
             //
             // lblSecProgramacion
@@ -497,7 +497,7 @@ namespace SanarRuralUnan.Views.Citas
             this.lblFechaHoraT.AutoSize = true;
             this.lblFechaHoraT.Font = Tema.FuentePequena;
             this.lblFechaHoraT.ForeColor = Tema.TextoSecundario;
-            this.lblFechaHoraT.Location = new System.Drawing.Point(160, 38);
+            this.lblFechaHoraT.Location = new System.Drawing.Point(180, 38);
             this.lblFechaHoraT.Name = "lblFechaHoraT";
             this.lblFechaHoraT.Size = new System.Drawing.Size(135, 15);
             this.lblFechaHoraT.TabIndex = 3;
@@ -508,7 +508,7 @@ namespace SanarRuralUnan.Views.Citas
             this.lblFechaHoraVal.AutoSize = true;
             this.lblFechaHoraVal.Font = Tema.FuenteLabelCampo;
             this.lblFechaHoraVal.ForeColor = Tema.AzulOscuro;
-            this.lblFechaHoraVal.Location = new System.Drawing.Point(160, 56);
+            this.lblFechaHoraVal.Location = new System.Drawing.Point(180, 56);
             this.lblFechaHoraVal.Name = "lblFechaHoraVal";
             this.lblFechaHoraVal.Size = new System.Drawing.Size(15, 17);
             this.lblFechaHoraVal.TabIndex = 4;
@@ -519,7 +519,7 @@ namespace SanarRuralUnan.Views.Citas
             this.lblFechaRegistroT.AutoSize = true;
             this.lblFechaRegistroT.Font = Tema.FuentePequena;
             this.lblFechaRegistroT.ForeColor = Tema.TextoSecundario;
-            this.lblFechaRegistroT.Location = new System.Drawing.Point(440, 38);
+            this.lblFechaRegistroT.Location = new System.Drawing.Point(18, 86);
             this.lblFechaRegistroT.Name = "lblFechaRegistroT";
             this.lblFechaRegistroT.Size = new System.Drawing.Size(107, 15);
             this.lblFechaRegistroT.TabIndex = 5;
@@ -530,7 +530,7 @@ namespace SanarRuralUnan.Views.Citas
             this.lblFechaRegistroVal.AutoSize = true;
             this.lblFechaRegistroVal.Font = Tema.FuenteLabelCampo;
             this.lblFechaRegistroVal.ForeColor = Tema.TextoPrincipal;
-            this.lblFechaRegistroVal.Location = new System.Drawing.Point(440, 56);
+            this.lblFechaRegistroVal.Location = new System.Drawing.Point(18, 104);
             this.lblFechaRegistroVal.Name = "lblFechaRegistroVal";
             this.lblFechaRegistroVal.Size = new System.Drawing.Size(15, 17);
             this.lblFechaRegistroVal.TabIndex = 6;
@@ -541,7 +541,7 @@ namespace SanarRuralUnan.Views.Citas
             this.lblEstadoDetalleT.AutoSize = true;
             this.lblEstadoDetalleT.Font = Tema.FuentePequena;
             this.lblEstadoDetalleT.ForeColor = Tema.TextoSecundario;
-            this.lblEstadoDetalleT.Location = new System.Drawing.Point(680, 38);
+            this.lblEstadoDetalleT.Location = new System.Drawing.Point(180, 86);
             this.lblEstadoDetalleT.Name = "lblEstadoDetalleT";
             this.lblEstadoDetalleT.Size = new System.Drawing.Size(84, 15);
             this.lblEstadoDetalleT.TabIndex = 7;
@@ -552,7 +552,7 @@ namespace SanarRuralUnan.Views.Citas
             this.lblEstadoDetalleVal.AutoSize = true;
             this.lblEstadoDetalleVal.Font = Tema.FuenteLabelCampo;
             this.lblEstadoDetalleVal.ForeColor = Tema.VerdeOscuro;
-            this.lblEstadoDetalleVal.Location = new System.Drawing.Point(680, 56);
+            this.lblEstadoDetalleVal.Location = new System.Drawing.Point(180, 104);
             this.lblEstadoDetalleVal.Name = "lblEstadoDetalleVal";
             this.lblEstadoDetalleVal.Size = new System.Drawing.Size(15, 17);
             this.lblEstadoDetalleVal.TabIndex = 8;
@@ -710,13 +710,13 @@ namespace SanarRuralUnan.Views.Citas
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = Tema.Fondo;
             this.CancelButton = this.btnCerrar;
-            this.ClientSize = new System.Drawing.Size(940, 700);
+            this.ClientSize = new System.Drawing.Size(980, 750);
             this.Controls.Add(this.panelContenido);
             this.Controls.Add(this.panelEncabezado);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
-            this.MinimumSize = new System.Drawing.Size(860, 600);
+            this.MinimumSize = new System.Drawing.Size(900, 680);
             this.Name = "fichaCita";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Detalle de la Cita Médica";

@@ -89,37 +89,99 @@ namespace SanarRuralUnan.Views.Citas
 
         private void AjustarLayout()
         {
+            if (panelEncabezado.ClientSize.Width > 0)
+            {
+                lblPrefijo.Left = 24;
+                lblPrefijo.Top = 14;
+
+                lblTitulo.Left = 22;
+                lblTitulo.Top = lblPrefijo.Bottom + 4;
+
+                lblSubtitulo.Left = 24;
+                lblSubtitulo.Top = lblTitulo.Bottom + 4;
+
+                panelEncabezado.Height = Math.Max(105, lblSubtitulo.Bottom + 16);
+
+                btnCerrarTop.Top = 26;
+                btnCerrarTop.Left = Math.Max(300, panelEncabezado.ClientSize.Width - btnCerrarTop.Width - 24);
+
+                panelBadgeEstado.Top = 26;
+                panelBadgeEstado.Width = 140;
+                panelBadgeEstado.Height = 36;
+                panelBadgeEstado.Left = Math.Max(150, btnCerrarTop.Left - panelBadgeEstado.Width - 14);
+            }
+
             if (panelContenido.ClientSize.Width <= 0) return;
 
             int margen = 20;
-            int anchoDisponible = Math.Max(400, panelContenido.ClientSize.Width - (margen * 2));
+            int anchoDisponible = Math.Max(480, panelContenido.ClientSize.Width - (margen * 2) - 20);
 
             panelCardPaciente.Left = margen;
             panelCardPaciente.Width = anchoDisponible;
+            panelCardPaciente.Height = 138;
 
             panelCardMedico.Left = margen;
             panelCardMedico.Width = anchoDisponible;
+            panelCardMedico.Height = 88;
 
             panelCardHospital.Left = margen;
             panelCardHospital.Width = anchoDisponible;
+            panelCardHospital.Height = 88;
 
             panelCardProgramacion.Left = margen;
             panelCardProgramacion.Width = anchoDisponible;
+            panelCardProgramacion.Height = 138;
 
             panelCardMotivo.Left = margen;
             panelCardMotivo.Width = anchoDisponible;
-            panelMotivoBox.Width = anchoDisponible - 36;
+            panelCardMotivo.Height = 118;
+            panelMotivoBox.Left = 18;
+            panelMotivoBox.Width = Math.Max(200, anchoDisponible - 36);
 
             panelCardAcciones.Left = margen;
             panelCardAcciones.Width = anchoDisponible;
+            panelCardAcciones.Height = 88;
 
-            // Flujo vertical dinámico
+            // Flujo vertical dinámico sin solapamiento
             panelCardPaciente.Top = 16;
             panelCardMedico.Top = panelCardPaciente.Bottom + 12;
             panelCardHospital.Top = panelCardMedico.Bottom + 12;
             panelCardProgramacion.Top = panelCardHospital.Bottom + 12;
             panelCardMotivo.Top = panelCardProgramacion.Bottom + 12;
             panelCardAcciones.Top = panelCardMotivo.Bottom + 12;
+
+            // Alineación de botón cerrar a la derecha en la tarjeta de acciones
+            btnCerrar.Left = Math.Max(300, panelCardAcciones.ClientSize.Width - btnCerrar.Width - 18);
+
+            // Columnas internas para Datos del Paciente (3 columnas superiores, dirección completa abajo)
+            int c1 = 18;
+            int c2 = Math.Max(240, (anchoDisponible * 36) / 100);
+            int c3 = Math.Max(480, (anchoDisponible * 70) / 100);
+
+            lblPacienteT.Left = c1; lblPacienteVal.Left = c1;
+            lblCedulaT.Left = c2; lblCedulaVal.Left = c2;
+            lblTelefonoT.Left = c3; lblTelefonoVal.Left = c3;
+
+            lblDireccionT.Left = c1;
+            lblDireccionVal.Left = c1;
+            lblDireccionVal.Width = Math.Max(200, anchoDisponible - 36);
+
+            // Columnas internas para Asignación Médica y Sede (2 columnas al 50%)
+            int colMitad = Math.Max(240, (anchoDisponible * 50) / 100);
+            lblDoctorT.Left = c1; lblDoctorVal.Left = c1;
+            lblEspecialidadT.Left = colMitad; lblEspecialidadVal.Left = colMitad;
+
+            lblHospitalT.Left = c1; lblHospitalVal.Left = c1;
+            lblUbicacionT.Left = colMitad; lblUbicacionVal.Left = colMitad;
+
+            // Columnas internas para Programación de la Cita (2 columnas limpias en 2 filas)
+            int colProg = Math.Max(200, (anchoDisponible * 28) / 100);
+            lblIdCitaT.Left = c1; lblIdCitaVal.Left = c1;
+            lblFechaHoraT.Left = colProg; lblFechaHoraVal.Left = colProg;
+            lblFechaHoraVal.Width = Math.Max(240, anchoDisponible - colProg - 20);
+
+            lblFechaRegistroT.Left = c1; lblFechaRegistroVal.Left = c1;
+            lblEstadoDetalleT.Left = colProg; lblEstadoDetalleVal.Left = colProg;
         }
 
         public void CargarDetalle()
@@ -157,7 +219,7 @@ namespace SanarRuralUnan.Views.Citas
                 }.Where(p => !string.IsNullOrWhiteSpace(p)));
 
                 lblTitulo.Text = $"Cita #{citaActual.IdCita} — {nombrePaciente}";
-                lblSubtitulo.Text = $"Programada para el {citaActual.FechaHoraProgramada:dd/MM/yyyy hh:mm tt} | Sede: {hosp?.Nombre ?? "Sin sede"}";
+                lblSubtitulo.Text = $"Programada para el {citaActual.FechaHoraProgramada:dd/MM/yyyy hh:mm tt}  •  Sede: {hosp?.Nombre ?? "Sin sede asignada"}";
 
                 // Datos del Paciente
                 lblPacienteVal.Text = nombrePaciente;
@@ -175,9 +237,14 @@ namespace SanarRuralUnan.Views.Citas
                 string muni = hosp?.Municipios?.Nombre ?? "-";
                 lblUbicacionVal.Text = $"{depto}, {muni}";
 
-                // Datos de Programación
+                // Datos de Programación con formato en español garantizado
                 lblIdCitaVal.Text = $"#{citaActual.IdCita}";
-                lblFechaHoraVal.Text = citaActual.FechaHoraProgramada.ToString("dddd, dd 'de' MMMM 'de' yyyy — hh:mm tt");
+                var culturaEs = new System.Globalization.CultureInfo("es-NI");
+                string fechaProgTexto = citaActual.FechaHoraProgramada.ToString("dddd, dd 'de' MMMM 'de' yyyy — hh:mm tt", culturaEs);
+                if (fechaProgTexto.Length > 0)
+                    fechaProgTexto = char.ToUpper(fechaProgTexto[0]) + fechaProgTexto.Substring(1);
+                lblFechaHoraVal.Text = fechaProgTexto;
+
                 lblFechaRegistroVal.Text = citaActual.FechaCreacion.ToString("dd/MM/yyyy hh:mm tt");
                 lblEstadoDetalleVal.Text = citaActual.Estado;
 
@@ -197,6 +264,8 @@ namespace SanarRuralUnan.Views.Citas
                 btnEditar.Visible = enProcesoOActiva;
                 btnCancelar.Visible = enProcesoOActiva;
                 btnNoAsistio.Visible = enProcesoOActiva && citaYaPaso;
+
+                AjustarLayout();
             }
             catch (Exception ex)
             {
