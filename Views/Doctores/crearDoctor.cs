@@ -5,6 +5,8 @@ using System.Drawing.Drawing2D;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.InteropServices;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using SanarRuralUnan.Controllers;
 using SanarRuralUnan.Helpers;
@@ -29,6 +31,50 @@ namespace SanarRuralUnan.Views
         private readonly List<Tuple<int, int>> asignaciones = new List<Tuple<int, int>>();
         private List<Especialidades> especialidadesDisponibles = new List<Especialidades>();
         private List<SanarRuralUnan.Hospitales> hospitalesDisponibles = new List<SanarRuralUnan.Hospitales>();
+        private bool formateandoCedula = false;
+
+        // Catálogo de países centroamericanos con prefijos oficiales
+        private class PaisTelefonoItem
+        {
+            public string Nombre { get; set; }
+            public string Codigo { get; set; }
+            public string Bandera { get; set; }
+            public int LongitudMinima { get; set; }
+            public int LongitudMaxima { get; set; }
+
+            public string TextoMostrar => $"{Bandera} {Nombre} ({Codigo})";
+
+            public override string ToString() => TextoMostrar;
+        }
+
+        private static readonly List<PaisTelefonoItem> PaisesCentroamerica = new List<PaisTelefonoItem>
+        {
+            new PaisTelefonoItem { Nombre = "Nicaragua", Codigo = "+505", Bandera = "🇳🇮", LongitudMinima = 8, LongitudMaxima = 8 },
+            new PaisTelefonoItem { Nombre = "Costa Rica", Codigo = "+506", Bandera = "🇨🇷", LongitudMinima = 8, LongitudMaxima = 8 },
+            new PaisTelefonoItem { Nombre = "El Salvador", Codigo = "+503", Bandera = "🇸🇻", LongitudMinima = 8, LongitudMaxima = 8 },
+            new PaisTelefonoItem { Nombre = "Guatemala", Codigo = "+502", Bandera = "🇬🇹", LongitudMinima = 8, LongitudMaxima = 8 },
+            new PaisTelefonoItem { Nombre = "Honduras", Codigo = "+504", Bandera = "🇭🇳", LongitudMinima = 8, LongitudMaxima = 8 },
+            new PaisTelefonoItem { Nombre = "Panamá", Codigo = "+507", Bandera = "🇵🇦", LongitudMinima = 7, LongitudMaxima = 8 },
+            new PaisTelefonoItem { Nombre = "Belice", Codigo = "+501", Bandera = "🇧🇿", LongitudMinima = 7, LongitudMaxima = 8 }
+        };
+
+        [DllImport("user32.dll", CharSet = CharSet.Auto)]
+        private static extern int SendMessage(IntPtr hWnd, int msg, int wParam, [MarshalAs(UnmanagedType.LPWStr)] string lParam);
+
+        private const int EM_SETCUEBANNER = 0x1501;
+
+        private static void AsignarPlaceholder(TextBox textBox, string placeholder)
+        {
+            if (textBox == null || string.IsNullOrEmpty(placeholder)) return;
+            if (textBox.IsHandleCreated)
+            {
+                SendMessage(textBox.Handle, EM_SETCUEBANNER, 0, placeholder);
+            }
+            else
+            {
+                textBox.HandleCreated += (s, e) => SendMessage(textBox.Handle, EM_SETCUEBANNER, 0, placeholder);
+            }
+        }
 
         // ============================================================
         // CONSTRUCTORES
@@ -106,8 +152,45 @@ namespace SanarRuralUnan.Views
             txtSegundoNombre.KeyDown += (s, ev) => { if (ev.KeyCode == Keys.Enter) { txtPrimerApellido.Focus(); ev.SuppressKeyPress = true; } };
             txtPrimerApellido.KeyDown += (s, ev) => { if (ev.KeyCode == Keys.Enter) { txtSegundoApellido.Focus(); ev.SuppressKeyPress = true; } };
             txtSegundoApellido.KeyDown += (s, ev) => { if (ev.KeyCode == Keys.Enter) { txtCedula.Focus(); ev.SuppressKeyPress = true; } };
-            txtCedula.KeyDown += (s, ev) => { if (ev.KeyCode == Keys.Enter) { txtTelefono.Focus(); ev.SuppressKeyPress = true; } };
+            txtCedula.KeyDown += (s, ev) => { if (ev.KeyCode == Keys.Enter) { cmbPaisTelefono.Focus(); ev.SuppressKeyPress = true; } };
+            cmbPaisTelefono.KeyDown += (s, ev) => { if (ev.KeyCode == Keys.Enter) { txtTelefono.Focus(); ev.SuppressKeyPress = true; } };
             txtTelefono.KeyDown += (s, ev) => { if (ev.KeyCode == Keys.Enter) { txtLicencia.Focus(); ev.SuppressKeyPress = true; } };
+            txtLicencia.KeyDown += (s, ev) => { if (ev.KeyCode == Keys.Enter) { lstEspecialidades.Focus(); ev.SuppressKeyPress = true; } };
+
+            this.CancelButton = btnCancelar;
+
+            // Configurar selector de países centroamericanos
+            cmbPaisTelefono.DataSource = PaisesCentroamerica;
+            cmbPaisTelefono.DisplayMember = "TextoMostrar";
+            cmbPaisTelefono.ValueMember = "Codigo";
+            cmbPaisTelefono.SelectedItem = PaisesCentroamerica.First(p => p.Codigo == "+505");
+
+            // Configurar placeholders y textos descriptivos
+            AsignarPlaceholder(txtPrimerNombre, "Ej. Carlos");
+            AsignarPlaceholder(txtPrimerApellido, "Ej. Martínez");
+            AsignarPlaceholder(txtCedula, "001-091101-1042V");
+            AsignarPlaceholder(txtTelefono, "8888-8888");
+            AsignarPlaceholder(txtLicencia, "Código asignado al profesional");
+
+            // Textos de etiquetas y ayudas actualizados
+            lblNumeroLicencia.Text = "Código sanitario / registro MINSA *";
+            lblCedulaAyuda.Text = "Ejemplo: 001-091101-1042V";
+            lblTelefonoAyuda.Text = "Número nacional sin prefijo";
+            lblLicenciaAyuda.Text = "Escribe el código tal como aparece en tu carnet o constancia oficial del MINSA.";
+
+            // Eventos de formateo reactivo y restricciones de entrada
+            txtCedula.TextChanged += txtCedula_TextChanged;
+            txtCedula.KeyPress += txtCedula_KeyPress;
+            txtCedula.Leave += txtCedula_Leave;
+
+            txtTelefono.TextChanged += txtTelefono_TextChanged;
+            txtTelefono.KeyPress += txtTelefono_KeyPress;
+
+            cmbHospitalAsignacion.DropDown += (s, ev) => AjustarAnchoDropDown(cmbHospitalAsignacion);
+            cmbEspecialidadHospital.DropDown += (s, ev) => AjustarAnchoDropDown(cmbEspecialidadHospital);
+
+            btnQuitarAsignacion.Enabled = false;
+            lstAsignaciones.SelectedIndexChanged += (s, ev) => btnQuitarAsignacion.Enabled = lstAsignaciones.SelectedIndex >= 0;
 
             try
             {
@@ -115,11 +198,20 @@ namespace SanarRuralUnan.Views
 
                 if (esModoEdicion)
                 {
+                    this.Text = "Sanar Rural - Modificar Doctor";
                     lblTitulo.Text = "Modificar Datos del Doctor";
                     lblSubtitulo.Text = "Actualice los datos profesionales y asignaciones del médico";
                     lblRegistroTituloHero.Text = "Modificar Doctor";
                     btnGuardar.Text = "💾 Guardar Cambios";
                     CargarDoctor();
+                }
+                else
+                {
+                    this.Text = "Sanar Rural - Registro de Doctor";
+                    lblTitulo.Text = "Datos del Doctor";
+                    lblSubtitulo.Text = "Completa la información requerida";
+                    lblRegistroTituloHero.Text = "Registro de Doctor";
+                    btnGuardar.Text = "💾 Guardar Doctor";
                 }
             }
             catch (Exception ex)
@@ -227,10 +319,13 @@ namespace SanarRuralUnan.Views
             lblCedula.Left = xCol1;
             txtCedula.Left = xCol1;
             txtCedula.Width = anchoCol;
+            lblCedulaAyuda.Left = xCol1;
 
             lblNumeroLicencia.Left = xCol1;
             txtLicencia.Left = xCol1;
             txtLicencia.Width = anchoCol;
+            lblLicenciaAyuda.Left = xCol1;
+            lblLicenciaAyuda.Width = anchoCol;
 
             lblEspecialidadesTitulo.Left = xCol1;
             lstEspecialidades.Left = xCol1;
@@ -246,31 +341,46 @@ namespace SanarRuralUnan.Views
             txtSegundoApellido.Width = anchoCol;
 
             lblTelefono.Left = xCol2;
-            txtTelefono.Left = xCol2;
-            txtTelefono.Width = anchoCol;
+            int anchoComboPais = Math.Min(165, Math.Max(145, (int)(anchoCol * 0.50f)));
+            int anchoNumeroTel = anchoCol - anchoComboPais - 8;
+            cmbPaisTelefono.Left = xCol2;
+            cmbPaisTelefono.Width = anchoComboPais;
+            txtTelefono.Left = cmbPaisTelefono.Right + 8;
+            txtTelefono.Width = anchoNumeroTel;
+            lblTelefonoAyuda.Left = xCol2;
 
             lblFotoTitulo.Left = xCol2;
             picPreview.Left = xCol2;
-            lblFoto.Left = xCol2 + 95;
-            lblFoto.Width = Math.Max(100, anchoCol - 95);
-            btnSeleccionarFoto.Left = xCol2 + 95;
+            int xFotoInfo = xCol2 + 88;
+            int anchoFotoInfo = Math.Max(100, anchoCol - 88);
+            lblFoto.Left = xFotoInfo;
+            lblFoto.Width = anchoFotoInfo;
+            btnSeleccionarFoto.Left = xFotoInfo;
             btnQuitarFoto.Left = btnSeleccionarFoto.Right + 8;
-            lblFotoAyuda.Left = xCol2 + 95;
+            lblFotoAyuda.Left = xFotoInfo;
 
+            // Hospitales y asignaciones
             lblHospitalTitulo.Left = xCol2;
-            int anchoCombo = (anchoCol - 12) / 2;
             cmbHospitalAsignacion.Left = xCol2;
-            cmbHospitalAsignacion.Width = anchoCombo;
+            cmbHospitalAsignacion.Width = anchoCol;
 
-            lblEspecialidadHospTitulo.Left = cmbHospitalAsignacion.Right + 12;
-            cmbEspecialidadHospital.Left = cmbHospitalAsignacion.Right + 12;
-            cmbEspecialidadHospital.Width = anchoCombo;
+            lblEspecialidadHospTitulo.Left = xCol2;
+            int anchoBotonAgregar = 95;
+            int anchoComboEspHosp = anchoCol - anchoBotonAgregar - 10;
+            cmbEspecialidadHospital.Left = xCol2;
+            cmbEspecialidadHospital.Width = anchoComboEspHosp;
+            btnAgregarAsignacion.Left = cmbEspecialidadHospital.Right + 10;
+            btnAgregarAsignacion.Width = anchoBotonAgregar;
 
-            btnAgregarAsignacion.Left = xCol2;
             lblAsignacionesTitulo.Left = xCol2;
             lstAsignaciones.Left = xCol2;
             lstAsignaciones.Width = anchoCol;
             btnQuitarAsignacion.Left = xCol2;
+            btnQuitarAsignacion.Width = Math.Min(220, anchoCol);
+
+            // Ajustar el ancho desplegable de los ComboBox según los elementos
+            AjustarAnchoDropDown(cmbHospitalAsignacion);
+            AjustarAnchoDropDown(cmbEspecialidadHospital);
 
             // Botones inferiores
             panelSeparadorInferior.Left = margenCard;
@@ -370,6 +480,9 @@ namespace SanarRuralUnan.Views
             cmbEspecialidadHospital.DisplayMember = "Nombre";
             cmbEspecialidadHospital.ValueMember = "IdEspecialidad";
             cmbEspecialidadHospital.SelectedIndex = -1;
+
+            AjustarAnchoDropDown(cmbHospitalAsignacion);
+            AjustarAnchoDropDown(cmbEspecialidadHospital);
         }
 
         private void CargarDoctor()
@@ -385,8 +498,21 @@ namespace SanarRuralUnan.Views
             txtSegundoNombre.Text = doctor.SegundoNombre;
             txtPrimerApellido.Text = doctor.PrimerApellido;
             txtSegundoApellido.Text = doctor.SegundoApellido;
-            txtCedula.Text = doctor.Cedula;
-            txtTelefono.Text = doctor.Telefono;
+
+            // Formatear cédula si corresponde al estándar tradicional, preservando el valor original
+            if (EsCedulaTradicional(doctor.Cedula, out string cedulaFormateada))
+            {
+                txtCedula.Text = cedulaFormateada;
+            }
+            else
+            {
+                txtCedula.Text = doctor.Cedula;
+            }
+
+            // Identificar prefijo internacional de país y asignar número nacional separado
+            CargarTelefonoDoctor(doctor.Telefono);
+
+            // Cargar código sanitario o registro MINSA tal como está registrado
             txtLicencia.Text = doctor.NumeroLicencia;
 
             foreach (var doctorEspecialidad in doctor.DoctorEspecialidad)
@@ -431,6 +557,18 @@ namespace SanarRuralUnan.Views
 
                 if (selector.ShowDialog() != DialogResult.OK)
                 {
+                    return;
+                }
+
+                var infoArchivo = new FileInfo(selector.FileName);
+                if (infoArchivo.Length > 2 * 1024 * 1024)
+                {
+                    MessageBox.Show(
+                        "El archivo seleccionado excede el tamaño máximo permitido de 2 MB.\nPor favor, seleccione una imagen más liviana.",
+                        "Tamaño excedido",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Warning
+                    );
                     return;
                 }
 
@@ -593,7 +731,275 @@ namespace SanarRuralUnan.Views
             {
                 asignaciones.RemoveAt(indice);
                 lstAsignaciones.Items.RemoveAt(indice);
+                btnQuitarAsignacion.Enabled = lstAsignaciones.SelectedIndex >= 0;
             }
+        }
+
+        // ============================================================
+        // MÉTODOS AUXILIARES: CÉDULA NICARAGÜENSE
+        // ============================================================
+        private static bool EsCedulaTradicional(string texto, out string cedulaFormateada)
+        {
+            cedulaFormateada = null;
+            if (string.IsNullOrWhiteSpace(texto))
+                return false;
+
+            string limpio = texto.Replace("-", "").Replace(" ", "").Trim();
+
+            // Formato tradicional nicaragüense: 13 dígitos y 1 letra final
+            if (limpio.Length == 14 && Regex.IsMatch(limpio, @"^\d{13}[a-zA-Z]$"))
+            {
+                string dpto = limpio.Substring(0, 3);
+                string fecha = limpio.Substring(3, 6);
+                string consecutivo = limpio.Substring(9, 4);
+                char letra = char.ToUpperInvariant(limpio[13]);
+                cedulaFormateada = $"{dpto}-{fecha}-{consecutivo}{letra}";
+                return true;
+            }
+
+            return false;
+        }
+
+        private void txtCedula_TextChanged(object sender, EventArgs e)
+        {
+            if (formateandoCedula) return;
+
+            string actual = txtCedula.Text;
+            if (string.IsNullOrEmpty(actual)) return;
+
+            // Formatear inmediatamente si se completaron los 14 caracteres tradicionales o al pegar
+            if (EsCedulaTradicional(actual, out string formateada))
+            {
+                if (actual != formateada)
+                {
+                    formateandoCedula = true;
+                    txtCedula.Text = formateada;
+                    txtCedula.SelectionStart = formateada.Length;
+                    formateandoCedula = false;
+                }
+                return;
+            }
+
+            // Convertir letra minúscula a mayúscula al final sin desplazar el cursor incómodamente
+            if (actual.Length > 0 && char.IsLower(actual[actual.Length - 1]))
+            {
+                formateandoCedula = true;
+                int posicion = txtCedula.SelectionStart;
+                txtCedula.Text = actual.Substring(0, actual.Length - 1) + char.ToUpperInvariant(actual[actual.Length - 1]);
+                txtCedula.SelectionStart = posicion;
+                formateandoCedula = false;
+            }
+        }
+
+        private void txtCedula_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (char.IsControl(e.KeyChar))
+                return;
+
+            if (!char.IsLetterOrDigit(e.KeyChar) && e.KeyChar != '-')
+            {
+                e.Handled = true;
+                return;
+            }
+
+            if (e.KeyChar == '-' && txtCedula.Text.EndsWith("-"))
+            {
+                e.Handled = true;
+                return;
+            }
+        }
+
+        private void txtCedula_Leave(object sender, EventArgs e)
+        {
+            string texto = txtCedula.Text.Trim();
+            if (EsCedulaTradicional(texto, out string formateada))
+            {
+                txtCedula.Text = formateada;
+            }
+        }
+
+        private static bool ValidarIdentificadorCedula(string cedula, out string mensajeError)
+        {
+            mensajeError = string.Empty;
+            if (string.IsNullOrWhiteSpace(cedula))
+            {
+                mensajeError = "Ingrese el número de cédula del doctor.";
+                return false;
+            }
+
+            string limpio = cedula.Replace("-", "").Replace(" ", "").Trim();
+
+            // Si coincide con la longitud tradicional de 14 caracteres
+            if (limpio.Length == 14)
+            {
+                if (!Regex.IsMatch(limpio, @"^\d{13}[a-zA-Z]$"))
+                {
+                    mensajeError = "La cédula en formato tradicional debe contener 13 dígitos y una letra final (Ejemplo: 001-091101-1042V).";
+                    return false;
+                }
+                return true;
+            }
+
+            // Si es emitido bajo otro formato válido (p. ej. nuevo formato CSE 2026 o alfanumérico)
+            if (cedula.Length < 6 || cedula.Length > 20 || !Regex.IsMatch(cedula, @"^[a-zA-Z0-9\-]+$"))
+            {
+                mensajeError = "El número de cédula ingresado no es válido. Debe tener entre 6 y 20 caracteres alfanuméricos.";
+                return false;
+            }
+
+            return true;
+        }
+
+        // ============================================================
+        // MÉTODOS AUXILIARES: TELÉFONO Y PREFIJOS INTERNACIONALES
+        // ============================================================
+        private void txtTelefono_TextChanged(object sender, EventArgs e)
+        {
+            string texto = txtTelefono.Text;
+            if (string.IsNullOrWhiteSpace(texto)) return;
+
+            string textoLimpio = texto.Trim();
+
+            foreach (var pais in PaisesCentroamerica)
+            {
+                if (textoLimpio.StartsWith(pais.Codigo))
+                {
+                    cmbPaisTelefono.SelectedItem = pais;
+                    string restante = textoLimpio.Substring(pais.Codigo.Length).Trim();
+                    txtTelefono.Text = restante;
+                    txtTelefono.SelectionStart = txtTelefono.Text.Length;
+                    return;
+                }
+
+                string codigoSinMas = pais.Codigo.Replace("+", "");
+                if (textoLimpio.StartsWith(codigoSinMas) && textoLimpio.Length > codigoSinMas.Length + 4)
+                {
+                    cmbPaisTelefono.SelectedItem = pais;
+                    string restante = textoLimpio.Substring(codigoSinMas.Length).Trim();
+                    txtTelefono.Text = restante;
+                    txtTelefono.SelectionStart = txtTelefono.Text.Length;
+                    return;
+                }
+            }
+        }
+
+        private void txtTelefono_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (char.IsControl(e.KeyChar)) return;
+
+            if (!char.IsDigit(e.KeyChar) && e.KeyChar != '-' && e.KeyChar != ' ')
+            {
+                e.Handled = true;
+            }
+        }
+
+        private void CargarTelefonoDoctor(string telefonoGuardado)
+        {
+            if (string.IsNullOrWhiteSpace(telefonoGuardado))
+            {
+                cmbPaisTelefono.SelectedItem = PaisesCentroamerica.FirstOrDefault(p => p.Codigo == "+505");
+                txtTelefono.Clear();
+                return;
+            }
+
+            string t = telefonoGuardado.Trim();
+            bool identificado = false;
+
+            foreach (var pais in PaisesCentroamerica)
+            {
+                if (t.StartsWith(pais.Codigo))
+                {
+                    cmbPaisTelefono.SelectedItem = pais;
+                    txtTelefono.Text = t.Substring(pais.Codigo.Length).Trim();
+                    identificado = true;
+                    break;
+                }
+
+                string codigoSinMas = pais.Codigo.Replace("+", "");
+                if (t.StartsWith(codigoSinMas) && t.Length > codigoSinMas.Length + 4)
+                {
+                    cmbPaisTelefono.SelectedItem = pais;
+                    txtTelefono.Text = t.Substring(codigoSinMas.Length).Trim();
+                    identificado = true;
+                    break;
+                }
+            }
+
+            if (!identificado)
+            {
+                // Si el formato histórico no coincide con certeza, no descartar información:
+                // mostrar el valor completo para permitir su corrección explícita.
+                cmbPaisTelefono.SelectedItem = PaisesCentroamerica.FirstOrDefault(p => p.Codigo == "+505");
+                txtTelefono.Text = t;
+            }
+        }
+
+        private bool ObtenerTelefonoCombinado(out string telefonoResultado, out string mensajeError)
+        {
+            telefonoResultado = null;
+            mensajeError = string.Empty;
+
+            string numeroNacional = txtTelefono.Text.Trim();
+            if (string.IsNullOrEmpty(numeroNacional))
+            {
+                telefonoResultado = string.Empty;
+                return true;
+            }
+
+            var pais = cmbPaisTelefono.SelectedItem as PaisTelefonoItem;
+            if (pais == null)
+            {
+                pais = PaisesCentroamerica.First(p => p.Codigo == "+505");
+            }
+
+            string soloDigitos = Regex.Replace(numeroNacional, @"\D", "");
+            if (soloDigitos.Length < pais.LongitudMinima || soloDigitos.Length > pais.LongitudMaxima)
+            {
+                string rango = pais.LongitudMinima == pais.LongitudMaxima
+                    ? $"{pais.LongitudMinima} dígitos"
+                    : $"{pais.LongitudMinima} a {pais.LongitudMaxima} dígitos";
+                mensajeError = $"El número de teléfono para {pais.Nombre} debe contener {rango} (sin incluir el prefijo {pais.Codigo}).";
+                return false;
+            }
+
+            string nacionalFormateado;
+            if (soloDigitos.Length == 8)
+            {
+                nacionalFormateado = $"{soloDigitos.Substring(0, 4)}-{soloDigitos.Substring(4, 4)}";
+            }
+            else if (soloDigitos.Length == 7)
+            {
+                nacionalFormateado = $"{soloDigitos.Substring(0, 3)}-{soloDigitos.Substring(3, 4)}";
+            }
+            else
+            {
+                nacionalFormateado = soloDigitos;
+            }
+
+            telefonoResultado = $"{pais.Codigo} {nacionalFormateado}";
+            return true;
+        }
+
+        // ============================================================
+        // MÉTODOS AUXILIARES: COMBOBOX AUTO-DIMENSIONADO
+        // ============================================================
+        private static void AjustarAnchoDropDown(ComboBox combo)
+        {
+            if (combo == null || combo.Items.Count == 0) return;
+
+            int maxAncho = combo.Width;
+            using (Graphics g = combo.CreateGraphics())
+            {
+                int scrollbarWidth = SystemInformation.VerticalScrollBarWidth;
+                foreach (var item in combo.Items)
+                {
+                    string texto = combo.GetItemText(item);
+                    int anchoItem = (int)g.MeasureString(texto, combo.Font).Width + scrollbarWidth + 24;
+                    if (anchoItem > maxAncho)
+                        maxAncho = anchoItem;
+                }
+            }
+            combo.DropDownWidth = maxAncho;
         }
 
         // ============================================================
@@ -613,22 +1019,52 @@ namespace SanarRuralUnan.Views
                 .Where(asignacion => idEspecialidades.Contains(asignacion.Item2))
                 .ToList();
 
-            if (string.IsNullOrWhiteSpace(primerNombre) || string.IsNullOrWhiteSpace(primerApellido) ||
-                string.IsNullOrWhiteSpace(cedula) || string.IsNullOrWhiteSpace(numeroLicencia))
+            if (string.IsNullOrWhiteSpace(primerNombre) || string.IsNullOrWhiteSpace(primerApellido))
             {
-                MessageBox.Show("Complete primer nombre, primer apellido, cédula y número de licencia.", "Campos requeridos", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Complete el primer nombre y el primer apellido.", "Campos requeridos", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                if (string.IsNullOrWhiteSpace(primerNombre)) txtPrimerNombre.Focus(); else txtPrimerApellido.Focus();
+                return;
+            }
+
+            if (!ValidarIdentificadorCedula(cedula, out string mensajeErrorCedula))
+            {
+                MessageBox.Show(mensajeErrorCedula, "Cédula no válida", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                txtCedula.Focus();
+                return;
+            }
+
+            // Si es formato tradicional, asegurar presentación normalizada con guiones
+            if (EsCedulaTradicional(cedula, out string cedulaNormalizada))
+            {
+                cedula = cedulaNormalizada;
+                txtCedula.Text = cedulaNormalizada;
+            }
+
+            if (string.IsNullOrWhiteSpace(numeroLicencia))
+            {
+                MessageBox.Show("Complete el código sanitario / registro MINSA.", "Campo requerido", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                txtLicencia.Focus();
+                return;
+            }
+
+            if (!ObtenerTelefonoCombinado(out string telefonoFinal, out string mensajeErrorTelefono))
+            {
+                MessageBox.Show(mensajeErrorTelefono, "Teléfono no válido", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                txtTelefono.Focus();
                 return;
             }
 
             if (idEspecialidades.Count == 0)
             {
                 MessageBox.Show("Seleccione al menos una especialidad para el doctor.", "Especialidad requerida", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                lstEspecialidades.Focus();
                 return;
             }
 
             if (asignacionesSeleccionadas.Count == 0)
             {
                 MessageBox.Show("Asigne el doctor al menos a un hospital.", "Hospital requerido", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                cmbHospitalAsignacion.Focus();
                 return;
             }
 
@@ -641,7 +1077,7 @@ namespace SanarRuralUnan.Views
 
             if (controladorDoctores.existeNumeroLicencia(numeroLicencia, esModoEdicion ? (int?)idDoctorEdicion : null))
             {
-                MessageBox.Show("Ya existe un doctor registrado con el número de licencia médica ingresado.", "Licencia duplicada", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Ya existe un doctor registrado con el código sanitario / registro MINSA ingresado.", "Registro duplicado", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 txtLicencia.Focus();
                 return;
             }
@@ -658,7 +1094,7 @@ namespace SanarRuralUnan.Views
                         txtSegundoApellido.Text.Trim(),
                         cedula,
                         numeroLicencia,
-                        txtTelefono.Text.Trim(),
+                        telefonoFinal,
                         foto,
                         fotoNombre,
                         fotoMimeType,
@@ -677,7 +1113,7 @@ namespace SanarRuralUnan.Views
                         txtSegundoApellido.Text.Trim(),
                         cedula,
                         numeroLicencia,
-                        txtTelefono.Text.Trim(),
+                        telefonoFinal,
                         foto,
                         fotoNombre,
                         fotoMimeType,

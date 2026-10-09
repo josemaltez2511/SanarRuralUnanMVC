@@ -68,10 +68,14 @@ namespace SanarRuralUnan.Views
             this.txtSegundoApellido = new System.Windows.Forms.TextBox();
             this.lblCedula = new System.Windows.Forms.Label();
             this.txtCedula = new System.Windows.Forms.TextBox();
+            this.lblCedulaAyuda = new System.Windows.Forms.Label();
             this.lblTelefono = new System.Windows.Forms.Label();
+            this.cmbPaisTelefono = new System.Windows.Forms.ComboBox();
             this.txtTelefono = new System.Windows.Forms.TextBox();
+            this.lblTelefonoAyuda = new System.Windows.Forms.Label();
             this.lblNumeroLicencia = new System.Windows.Forms.Label();
             this.txtLicencia = new System.Windows.Forms.TextBox();
+            this.lblLicenciaAyuda = new System.Windows.Forms.Label();
             this.lblFotoTitulo = new System.Windows.Forms.Label();
             this.picPreview = new System.Windows.Forms.PictureBox();
             this.lblFoto = new System.Windows.Forms.Label();
@@ -377,10 +381,14 @@ namespace SanarRuralUnan.Views
             this.panelCard.Controls.Add(this.txtSegundoApellido);
             this.panelCard.Controls.Add(this.lblCedula);
             this.panelCard.Controls.Add(this.txtCedula);
+            this.panelCard.Controls.Add(this.lblCedulaAyuda);
             this.panelCard.Controls.Add(this.lblTelefono);
+            this.panelCard.Controls.Add(this.cmbPaisTelefono);
             this.panelCard.Controls.Add(this.txtTelefono);
+            this.panelCard.Controls.Add(this.lblTelefonoAyuda);
             this.panelCard.Controls.Add(this.lblNumeroLicencia);
             this.panelCard.Controls.Add(this.txtLicencia);
+            this.panelCard.Controls.Add(this.lblLicenciaAyuda);
             this.panelCard.Controls.Add(this.lblFotoTitulo);
             this.panelCard.Controls.Add(this.picPreview);
             this.panelCard.Controls.Add(this.lblFoto);
@@ -540,12 +548,25 @@ namespace SanarRuralUnan.Views
             //
             // txtCedula
             //
+            this.txtCedula.AccessibleDescription = "Cédula de identidad en formato tradicional o formato oficial";
+            this.txtCedula.AccessibleName = "Cédula del doctor";
             this.txtCedula.Font = Tema.FuenteInput;
             this.txtCedula.Location = new System.Drawing.Point(30, 220);
             this.txtCedula.MaxLength = 20;
             this.txtCedula.Name = "txtCedula";
             this.txtCedula.Size = new System.Drawing.Size(295, 27);
             this.txtCedula.TabIndex = 5;
+            //
+            // lblCedulaAyuda
+            //
+            this.lblCedulaAyuda.AutoSize = true;
+            this.lblCedulaAyuda.Font = Tema.FuenteAyuda;
+            this.lblCedulaAyuda.ForeColor = Tema.TextoSecundario;
+            this.lblCedulaAyuda.Location = new System.Drawing.Point(30, 250);
+            this.lblCedulaAyuda.Name = "lblCedulaAyuda";
+            this.lblCedulaAyuda.Size = new System.Drawing.Size(155, 15);
+            this.lblCedulaAyuda.TabIndex = 20;
+            this.lblCedulaAyuda.Text = "Ejemplo: 001-091101-1042V";
             //
             // lblTelefono
             //
@@ -560,12 +581,37 @@ namespace SanarRuralUnan.Views
             //
             // txtTelefono
             //
+            this.txtTelefono.AccessibleDescription = "Número de teléfono nacional";
+            this.txtTelefono.AccessibleName = "Número de teléfono";
             this.txtTelefono.Font = Tema.FuenteInput;
-            this.txtTelefono.Location = new System.Drawing.Point(350, 220);
-            this.txtTelefono.MaxLength = 30;
+            this.txtTelefono.Location = new System.Drawing.Point(513, 220);
+            this.txtTelefono.MaxLength = 15;
             this.txtTelefono.Name = "txtTelefono";
-            this.txtTelefono.Size = new System.Drawing.Size(300, 27);
-            this.txtTelefono.TabIndex = 6;
+            this.txtTelefono.Size = new System.Drawing.Size(137, 27);
+            this.txtTelefono.TabIndex = 7;
+            //
+            // cmbPaisTelefono
+            //
+            this.cmbPaisTelefono.AccessibleDescription = "Prefijo internacional de países centroamericanos";
+            this.cmbPaisTelefono.AccessibleName = "Selector de código de país";
+            this.cmbPaisTelefono.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbPaisTelefono.Font = Tema.FuenteInput;
+            this.cmbPaisTelefono.FormattingEnabled = true;
+            this.cmbPaisTelefono.Location = new System.Drawing.Point(350, 220);
+            this.cmbPaisTelefono.Name = "cmbPaisTelefono";
+            this.cmbPaisTelefono.Size = new System.Drawing.Size(155, 27);
+            this.cmbPaisTelefono.TabIndex = 6;
+            //
+            // lblTelefonoAyuda
+            //
+            this.lblTelefonoAyuda.AutoSize = true;
+            this.lblTelefonoAyuda.Font = Tema.FuenteAyuda;
+            this.lblTelefonoAyuda.ForeColor = Tema.TextoSecundario;
+            this.lblTelefonoAyuda.Location = new System.Drawing.Point(350, 250);
+            this.lblTelefonoAyuda.Name = "lblTelefonoAyuda";
+            this.lblTelefonoAyuda.Size = new System.Drawing.Size(155, 15);
+            this.lblTelefonoAyuda.TabIndex = 21;
+            this.lblTelefonoAyuda.Text = "Número nacional sin prefijo";
             //
             // lblNumeroLicencia
             //
@@ -580,12 +626,24 @@ namespace SanarRuralUnan.Views
             //
             // txtLicencia
             //
+            this.txtLicencia.AccessibleDescription = "Código sanitario o número de registro profesional otorgado por el MINSA";
+            this.txtLicencia.AccessibleName = "Código sanitario o registro MINSA";
             this.txtLicencia.Font = Tema.FuenteInput;
-            this.txtLicencia.Location = new System.Drawing.Point(30, 278);
+            this.txtLicencia.Location = new System.Drawing.Point(30, 294);
             this.txtLicencia.MaxLength = 50;
             this.txtLicencia.Name = "txtLicencia";
             this.txtLicencia.Size = new System.Drawing.Size(295, 27);
-            this.txtLicencia.TabIndex = 7;
+            this.txtLicencia.TabIndex = 8;
+            //
+            // lblLicenciaAyuda
+            //
+            this.lblLicenciaAyuda.Font = Tema.FuenteAyuda;
+            this.lblLicenciaAyuda.ForeColor = Tema.TextoSecundario;
+            this.lblLicenciaAyuda.Location = new System.Drawing.Point(30, 324);
+            this.lblLicenciaAyuda.Name = "lblLicenciaAyuda";
+            this.lblLicenciaAyuda.Size = new System.Drawing.Size(295, 32);
+            this.lblLicenciaAyuda.TabIndex = 22;
+            this.lblLicenciaAyuda.Text = "Escribe el código tal como aparece en tu carnet o constancia oficial del MINSA.";
             //
             // lblFotoTitulo
             //
@@ -895,10 +953,14 @@ namespace SanarRuralUnan.Views
         private System.Windows.Forms.TextBox txtSegundoApellido;
         private System.Windows.Forms.Label lblCedula;
         private System.Windows.Forms.TextBox txtCedula;
+        private System.Windows.Forms.Label lblCedulaAyuda;
         private System.Windows.Forms.Label lblTelefono;
+        private System.Windows.Forms.ComboBox cmbPaisTelefono;
         private System.Windows.Forms.TextBox txtTelefono;
+        private System.Windows.Forms.Label lblTelefonoAyuda;
         private System.Windows.Forms.Label lblNumeroLicencia;
         private System.Windows.Forms.TextBox txtLicencia;
+        private System.Windows.Forms.Label lblLicenciaAyuda;
         private System.Windows.Forms.Label lblFotoTitulo;
         private System.Windows.Forms.PictureBox picPreview;
         private System.Windows.Forms.Label lblFoto;
