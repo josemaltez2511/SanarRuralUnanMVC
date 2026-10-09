@@ -137,6 +137,8 @@
     <Compile Include="obj\Debug\.NETFramework,Version=v4.7.2.AssemblyAttributes.cs" />
     <Compile Include="obj\Debug\.NETFramework,Version=v4.7.2.AssemblyAttributes.cs" />
     <Compile Include="obj\Debug\.NETFramework,Version=v4.7.2.AssemblyAttributes.cs" />
+    <Compile Include="obj\Debug\.NETFramework,Version=v4.7.2.AssemblyAttributes.cs" />
+    <Compile Include="obj\Release\.NETFramework,Version=v4.7.2.AssemblyAttributes.cs" />
     <Compile Include="obj\Release\.NETFramework,Version=v4.7.2.AssemblyAttributes.cs" />
     <Compile Include="obj\Release\.NETFramework,Version=v4.7.2.AssemblyAttributes.cs" />
     <Compile Include="obj\Release\.NETFramework,Version=v4.7.2.AssemblyAttributes.cs" />
@@ -199,6 +201,12 @@
     <Compile Include="Views\ConsultaMedica\seleccionarCitaConsulta.Designer.cs">
       <DependentUpon>seleccionarCitaConsulta.cs</DependentUpon>
     </Compile>
+    <Compile Include="Views\HistorialClinico\paginaPrincipalHistorial.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Views\HistorialClinico\paginaPrincipalHistorial.Designer.cs">
+      <DependentUpon>paginaPrincipalHistorial.cs</DependentUpon>
+    </Compile>
     <Compile Include="Views\Doctores\crearDoctor.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -235,6 +243,12 @@
     <Compile Include="Views\Menu\menuPrincipalAdministrativo.Designer.cs">
       <DependentUpon>menuPrincipalAdministrativo.cs</DependentUpon>
     </Compile>
+    <Compile Include="Views\Menu\menuPrincipalPacientes.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Views\Menu\menuPrincipalPacientes.Designer.cs">
+      <DependentUpon>menuPrincipalPacientes.cs</DependentUpon>
+    </Compile>
     <Compile Include="Views\Pacientes\crearPaciente.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -252,6 +266,12 @@
     </Compile>
     <Compile Include="Views\Pacientes\paginaPrincipalPacientes.Designer.cs">
       <DependentUpon>paginaPrincipalPacientes.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Pacientes\perfilPaciente.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Views\Pacientes\perfilPaciente.Designer.cs">
+      <DependentUpon>perfilPaciente.cs</DependentUpon>
     </Compile>
     <Compile Include="Views\Usuarios\crearUsuario.cs">
       <SubType>Form</SubType>
@@ -278,11 +298,14 @@
     <EmbeddedResource Include="obj\Release\SanarRuralUnan.iniciarSesion.resources" />
     <EmbeddedResource Include="obj\Release\SanarRuralUnan.iniciarSesion.resources" />
     <EmbeddedResource Include="obj\Release\SanarRuralUnan.iniciarSesion.resources" />
+    <EmbeddedResource Include="obj\Release\SanarRuralUnan.iniciarSesion.resources" />
     <EmbeddedResource Include="obj\Release\SanarRuralUnan.Properties.Resources.resources" />
     <EmbeddedResource Include="obj\Release\SanarRuralUnan.Properties.Resources.resources" />
     <EmbeddedResource Include="obj\Release\SanarRuralUnan.Properties.Resources.resources" />
     <EmbeddedResource Include="obj\Release\SanarRuralUnan.Properties.Resources.resources" />
     <EmbeddedResource Include="obj\Release\SanarRuralUnan.Properties.Resources.resources" />
+    <EmbeddedResource Include="obj\Release\SanarRuralUnan.Properties.Resources.resources" />
+    <EmbeddedResource Include="obj\Release\SanarRuralUnan.Views.Citas.crearCita.resources" />
     <EmbeddedResource Include="obj\Release\SanarRuralUnan.Views.Citas.crearCita.resources" />
     <EmbeddedResource Include="obj\Release\SanarRuralUnan.Views.Citas.crearCita.resources" />
     <EmbeddedResource Include="obj\Release\SanarRuralUnan.Views.Citas.crearCita.resources" />
@@ -290,6 +313,8 @@
     <EmbeddedResource Include="obj\Release\SanarRuralUnan.Views.Citas.crearCita.resources" />
     <EmbeddedResource Include="obj\Release\SanarRuralUnan.Views.Citas.fichaCita.resources" />
     <EmbeddedResource Include="obj\Release\SanarRuralUnan.Views.Citas.fichaCita.resources" />
+    <EmbeddedResource Include="obj\Release\SanarRuralUnan.Views.Citas.fichaCita.resources" />
+    <EmbeddedResource Include="obj\Release\SanarRuralUnan.Views.Citas.paginaPrincipalCitas.resources" />
     <EmbeddedResource Include="obj\Release\SanarRuralUnan.Views.Citas.paginaPrincipalCitas.resources" />
     <EmbeddedResource Include="obj\Release\SanarRuralUnan.Views.Citas.paginaPrincipalCitas.resources" />
     <EmbeddedResource Include="obj\Release\SanarRuralUnan.Views.Citas.paginaPrincipalCitas.resources" />
@@ -300,6 +325,8 @@
     <EmbeddedResource Include="obj\Release\SanarRuralUnan.Views.ConsultaMedica.atencionConsulta.resources" />
     <EmbeddedResource Include="obj\Release\SanarRuralUnan.Views.ConsultaMedica.atencionConsulta.resources" />
     <EmbeddedResource Include="obj\Release\SanarRuralUnan.Views.ConsultaMedica.atencionConsulta.resources" />
+    <EmbeddedResource Include="obj\Release\SanarRuralUnan.Views.ConsultaMedica.atencionConsulta.resources" />
+    <EmbeddedResource Include="obj\Release\SanarRuralUnan.Views.ConsultaMedica.paginaPrincipalConsultas.resources" />
     <EmbeddedResource Include="obj\Release\SanarRuralUnan.Views.ConsultaMedica.paginaPrincipalConsultas.resources" />
     <EmbeddedResource Include="obj\Release\SanarRuralUnan.Views.ConsultaMedica.paginaPrincipalConsultas.resources" />
     <EmbeddedResource Include="obj\Release\SanarRuralUnan.Views.ConsultaMedica.paginaPrincipalConsultas.resources" />
@@ -310,6 +337,8 @@
     <EmbeddedResource Include="obj\Release\SanarRuralUnan.Views.ConsultaMedica.seleccionarCitaConsulta.resources" />
     <EmbeddedResource Include="obj\Release\SanarRuralUnan.Views.ConsultaMedica.seleccionarCitaConsulta.resources" />
     <EmbeddedResource Include="obj\Release\SanarRuralUnan.Views.ConsultaMedica.seleccionarCitaConsulta.resources" />
+    <EmbeddedResource Include="obj\Release\SanarRuralUnan.Views.ConsultaMedica.seleccionarCitaConsulta.resources" />
+    <EmbeddedResource Include="obj\Release\SanarRuralUnan.Views.crearDoctor.resources" />
     <EmbeddedResource Include="obj\Release\SanarRuralUnan.Views.crearDoctor.resources" />
     <EmbeddedResource Include="obj\Release\SanarRuralUnan.Views.crearDoctor.resources" />
     <EmbeddedResource Include="obj\Release\SanarRuralUnan.Views.crearDoctor.resources" />
@@ -320,6 +349,8 @@
     <EmbeddedResource Include="obj\Release\SanarRuralUnan.Views.crearPaciente.resources" />
     <EmbeddedResource Include="obj\Release\SanarRuralUnan.Views.crearPaciente.resources" />
     <EmbeddedResource Include="obj\Release\SanarRuralUnan.Views.crearPaciente.resources" />
+    <EmbeddedResource Include="obj\Release\SanarRuralUnan.Views.crearPaciente.resources" />
+    <EmbeddedResource Include="obj\Release\SanarRuralUnan.Views.crearUsuario.resources" />
     <EmbeddedResource Include="obj\Release\SanarRuralUnan.Views.crearUsuario.resources" />
     <EmbeddedResource Include="obj\Release\SanarRuralUnan.Views.crearUsuario.resources" />
     <EmbeddedResource Include="obj\Release\SanarRuralUnan.Views.crearUsuario.resources" />
@@ -330,6 +361,8 @@
     <EmbeddedResource Include="obj\Release\SanarRuralUnan.Views.Doctores.paginaPrincipalDoctores.resources" />
     <EmbeddedResource Include="obj\Release\SanarRuralUnan.Views.Doctores.paginaPrincipalDoctores.resources" />
     <EmbeddedResource Include="obj\Release\SanarRuralUnan.Views.Doctores.paginaPrincipalDoctores.resources" />
+    <EmbeddedResource Include="obj\Release\SanarRuralUnan.Views.Doctores.paginaPrincipalDoctores.resources" />
+    <EmbeddedResource Include="obj\Release\SanarRuralUnan.Views.Hospitales.crearHospital.resources" />
     <EmbeddedResource Include="obj\Release\SanarRuralUnan.Views.Hospitales.crearHospital.resources" />
     <EmbeddedResource Include="obj\Release\SanarRuralUnan.Views.Hospitales.crearHospital.resources" />
     <EmbeddedResource Include="obj\Release\SanarRuralUnan.Views.Hospitales.crearHospital.resources" />
@@ -340,6 +373,8 @@
     <EmbeddedResource Include="obj\Release\SanarRuralUnan.Views.Hospitales.paginaPrincipalHospitales.resources" />
     <EmbeddedResource Include="obj\Release\SanarRuralUnan.Views.Hospitales.paginaPrincipalHospitales.resources" />
     <EmbeddedResource Include="obj\Release\SanarRuralUnan.Views.Hospitales.paginaPrincipalHospitales.resources" />
+    <EmbeddedResource Include="obj\Release\SanarRuralUnan.Views.Hospitales.paginaPrincipalHospitales.resources" />
+    <EmbeddedResource Include="obj\Release\SanarRuralUnan.Views.menuPrincipalAdministrativo.resources" />
     <EmbeddedResource Include="obj\Release\SanarRuralUnan.Views.menuPrincipalAdministrativo.resources" />
     <EmbeddedResource Include="obj\Release\SanarRuralUnan.Views.menuPrincipalAdministrativo.resources" />
     <EmbeddedResource Include="obj\Release\SanarRuralUnan.Views.menuPrincipalAdministrativo.resources" />
@@ -350,6 +385,8 @@
     <EmbeddedResource Include="obj\Release\SanarRuralUnan.Views.menuPrincipalMedicos.resources" />
     <EmbeddedResource Include="obj\Release\SanarRuralUnan.Views.menuPrincipalMedicos.resources" />
     <EmbeddedResource Include="obj\Release\SanarRuralUnan.Views.menuPrincipalMedicos.resources" />
+    <EmbeddedResource Include="obj\Release\SanarRuralUnan.Views.menuPrincipalMedicos.resources" />
+    <EmbeddedResource Include="obj\Release\SanarRuralUnan.Views.Pacientes.fichaPaciente.resources" />
     <EmbeddedResource Include="obj\Release\SanarRuralUnan.Views.Pacientes.fichaPaciente.resources" />
     <EmbeddedResource Include="obj\Release\SanarRuralUnan.Views.Pacientes.fichaPaciente.resources" />
     <EmbeddedResource Include="obj\Release\SanarRuralUnan.Views.Pacientes.fichaPaciente.resources" />
@@ -360,6 +397,8 @@
     <EmbeddedResource Include="obj\Release\SanarRuralUnan.Views.Pacientes.paginaPrincipalPacientes.resources" />
     <EmbeddedResource Include="obj\Release\SanarRuralUnan.Views.Pacientes.paginaPrincipalPacientes.resources" />
     <EmbeddedResource Include="obj\Release\SanarRuralUnan.Views.Pacientes.paginaPrincipalPacientes.resources" />
+    <EmbeddedResource Include="obj\Release\SanarRuralUnan.Views.Pacientes.paginaPrincipalPacientes.resources" />
+    <EmbeddedResource Include="obj\Release\SanarRuralUnan.Views.paginaPrincipalUsuarios.resources" />
     <EmbeddedResource Include="obj\Release\SanarRuralUnan.Views.paginaPrincipalUsuarios.resources" />
     <EmbeddedResource Include="obj\Release\SanarRuralUnan.Views.paginaPrincipalUsuarios.resources" />
     <EmbeddedResource Include="obj\Release\SanarRuralUnan.Views.paginaPrincipalUsuarios.resources" />
@@ -392,6 +431,9 @@
     <EmbeddedResource Include="Views\ConsultaMedica\seleccionarCitaConsulta.resx">
       <DependentUpon>seleccionarCitaConsulta.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Views\HistorialClinico\paginaPrincipalHistorial.resx">
+      <DependentUpon>paginaPrincipalHistorial.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Views\Doctores\crearDoctor.resx">
       <DependentUpon>crearDoctor.cs</DependentUpon>
     </EmbeddedResource>
@@ -410,6 +452,9 @@
     <EmbeddedResource Include="Views\Menu\menuPrincipalAdministrativo.resx">
       <DependentUpon>menuPrincipalAdministrativo.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Views\Menu\menuPrincipalPacientes.resx">
+      <DependentUpon>menuPrincipalPacientes.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Views\Pacientes\crearPaciente.resx">
       <DependentUpon>crearPaciente.cs</DependentUpon>
     </EmbeddedResource>
@@ -418,6 +463,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Views\Pacientes\paginaPrincipalPacientes.resx">
       <DependentUpon>paginaPrincipalPacientes.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\Pacientes\perfilPaciente.resx">
+      <DependentUpon>perfilPaciente.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Views\Usuarios\crearUsuario.resx">
       <DependentUpon>crearUsuario.cs</DependentUpon>
@@ -450,6 +498,8 @@
     <None Include="bin\Debug\SanarRuralUnan.exe.config" />
     <None Include="bin\Debug\SanarRuralUnan.exe.config" />
     <None Include="bin\Debug\SanarRuralUnan.exe.config" />
+    <None Include="bin\Debug\SanarRuralUnan.exe.config" />
+    <None Include="bin\Release\SanarRuralUnan.exe.config" />
     <None Include="bin\Release\SanarRuralUnan.exe.config" />
     <None Include="bin\Release\SanarRuralUnan.exe.config" />
     <None Include="bin\Release\SanarRuralUnan.exe.config" />
@@ -464,6 +514,8 @@
     <None Include="obj\Release\edmxResourcesToEmbed\ModelSanarRural.csdl" />
     <None Include="obj\Release\edmxResourcesToEmbed\ModelSanarRural.csdl" />
     <None Include="obj\Release\edmxResourcesToEmbed\ModelSanarRural.csdl" />
+    <None Include="obj\Release\edmxResourcesToEmbed\ModelSanarRural.csdl" />
+    <None Include="obj\Release\edmxResourcesToEmbed\ModelSanarRural.msl" />
     <None Include="obj\Release\edmxResourcesToEmbed\ModelSanarRural.msl" />
     <None Include="obj\Release\edmxResourcesToEmbed\ModelSanarRural.msl" />
     <None Include="obj\Release\edmxResourcesToEmbed\ModelSanarRural.msl" />
@@ -474,6 +526,8 @@
     <None Include="obj\Release\edmxResourcesToEmbed\ModelSanarRural.ssdl" />
     <None Include="obj\Release\edmxResourcesToEmbed\ModelSanarRural.ssdl" />
     <None Include="obj\Release\edmxResourcesToEmbed\ModelSanarRural.ssdl" />
+    <None Include="obj\Release\edmxResourcesToEmbed\ModelSanarRural.ssdl" />
+    <None Include="obj\Release\SanarRur.584D474E.Up2Date" />
     <None Include="obj\Release\SanarRur.584D474E.Up2Date" />
     <None Include="obj\Release\SanarRur.584D474E.Up2Date" />
     <None Include="obj\Release\SanarRur.584D474E.Up2Date" />
@@ -484,11 +538,14 @@
     <None Include="obj\Release\SanarRuralUnan.csproj.AssemblyReference.cache" />
     <None Include="obj\Release\SanarRuralUnan.csproj.AssemblyReference.cache" />
     <None Include="obj\Release\SanarRuralUnan.csproj.AssemblyReference.cache" />
+    <None Include="obj\Release\SanarRuralUnan.csproj.AssemblyReference.cache" />
     <None Include="obj\Release\SanarRuralUnan.csproj.CoreCompileInputs.cache" />
     <None Include="obj\Release\SanarRuralUnan.csproj.CoreCompileInputs.cache" />
     <None Include="obj\Release\SanarRuralUnan.csproj.CoreCompileInputs.cache" />
     <None Include="obj\Release\SanarRuralUnan.csproj.CoreCompileInputs.cache" />
     <None Include="obj\Release\SanarRuralUnan.csproj.CoreCompileInputs.cache" />
+    <None Include="obj\Release\SanarRuralUnan.csproj.CoreCompileInputs.cache" />
+    <None Include="obj\Release\SanarRuralUnan.csproj.GenerateResource.cache" />
     <None Include="obj\Release\SanarRuralUnan.csproj.GenerateResource.cache" />
     <None Include="obj\Release\SanarRuralUnan.csproj.GenerateResource.cache" />
     <None Include="obj\Release\SanarRuralUnan.csproj.GenerateResource.cache" />
@@ -546,6 +603,8 @@
     <Content Include="bin\Debug\EntityFramework.dll" />
     <Content Include="bin\Debug\EntityFramework.dll" />
     <Content Include="bin\Debug\EntityFramework.dll" />
+    <Content Include="bin\Debug\EntityFramework.dll" />
+    <Content Include="bin\Debug\EntityFramework.SqlServer.dll" />
     <Content Include="bin\Debug\EntityFramework.SqlServer.dll" />
     <Content Include="bin\Debug\EntityFramework.SqlServer.dll" />
     <Content Include="bin\Debug\EntityFramework.SqlServer.dll" />
@@ -556,6 +615,8 @@
     <Content Include="bin\Debug\EntityFramework.SqlServer.xml" />
     <Content Include="bin\Debug\EntityFramework.SqlServer.xml" />
     <Content Include="bin\Debug\EntityFramework.SqlServer.xml" />
+    <Content Include="bin\Debug\EntityFramework.SqlServer.xml" />
+    <Content Include="bin\Debug\EntityFramework.xml" />
     <Content Include="bin\Debug\EntityFramework.xml" />
     <Content Include="bin\Debug\EntityFramework.xml" />
     <Content Include="bin\Debug\EntityFramework.xml" />
@@ -566,6 +627,8 @@
     <Content Include="bin\Debug\MaterialSkin.dll" />
     <Content Include="bin\Debug\MaterialSkin.dll" />
     <Content Include="bin\Debug\MaterialSkin.dll" />
+    <Content Include="bin\Debug\MaterialSkin.dll" />
+    <Content Include="bin\Debug\SanarRuralUnan.exe" />
     <Content Include="bin\Debug\SanarRuralUnan.exe" />
     <Content Include="bin\Debug\SanarRuralUnan.exe" />
     <Content Include="bin\Debug\SanarRuralUnan.exe" />
@@ -576,6 +639,8 @@
     <Content Include="bin\Debug\SanarRuralUnan.pdb" />
     <Content Include="bin\Debug\SanarRuralUnan.pdb" />
     <Content Include="bin\Debug\SanarRuralUnan.pdb" />
+    <Content Include="bin\Debug\SanarRuralUnan.pdb" />
+    <Content Include="bin\Release\EntityFramework.dll" />
     <Content Include="bin\Release\EntityFramework.dll" />
     <Content Include="bin\Release\EntityFramework.dll" />
     <Content Include="bin\Release\EntityFramework.dll" />
@@ -586,6 +651,8 @@
     <Content Include="bin\Release\EntityFramework.SqlServer.dll" />
     <Content Include="bin\Release\EntityFramework.SqlServer.dll" />
     <Content Include="bin\Release\EntityFramework.SqlServer.dll" />
+    <Content Include="bin\Release\EntityFramework.SqlServer.dll" />
+    <Content Include="bin\Release\EntityFramework.SqlServer.xml" />
     <Content Include="bin\Release\EntityFramework.SqlServer.xml" />
     <Content Include="bin\Release\EntityFramework.SqlServer.xml" />
     <Content Include="bin\Release\EntityFramework.SqlServer.xml" />
@@ -596,6 +663,8 @@
     <Content Include="bin\Release\EntityFramework.xml" />
     <Content Include="bin\Release\EntityFramework.xml" />
     <Content Include="bin\Release\EntityFramework.xml" />
+    <Content Include="bin\Release\EntityFramework.xml" />
+    <Content Include="bin\Release\MaterialSkin.dll" />
     <Content Include="bin\Release\MaterialSkin.dll" />
     <Content Include="bin\Release\MaterialSkin.dll" />
     <Content Include="bin\Release\MaterialSkin.dll" />
@@ -606,6 +675,8 @@
     <Content Include="bin\Release\SanarRuralUnan.exe" />
     <Content Include="bin\Release\SanarRuralUnan.exe" />
     <Content Include="bin\Release\SanarRuralUnan.exe" />
+    <Content Include="bin\Release\SanarRuralUnan.exe" />
+    <Content Include="bin\Release\SanarRuralUnan.pdb" />
     <Content Include="bin\Release\SanarRuralUnan.pdb" />
     <Content Include="bin\Release\SanarRuralUnan.pdb" />
     <Content Include="bin\Release\SanarRuralUnan.pdb" />
@@ -626,11 +697,14 @@
     <Content Include="obj\Release\SanarRuralUnan.csproj.FileListAbsolute.txt" />
     <Content Include="obj\Release\SanarRuralUnan.csproj.FileListAbsolute.txt" />
     <Content Include="obj\Release\SanarRuralUnan.csproj.FileListAbsolute.txt" />
+    <Content Include="obj\Release\SanarRuralUnan.csproj.FileListAbsolute.txt" />
     <Content Include="obj\Release\SanarRuralUnan.exe" />
     <Content Include="obj\Release\SanarRuralUnan.exe" />
     <Content Include="obj\Release\SanarRuralUnan.exe" />
     <Content Include="obj\Release\SanarRuralUnan.exe" />
     <Content Include="obj\Release\SanarRuralUnan.exe" />
+    <Content Include="obj\Release\SanarRuralUnan.exe" />
+    <Content Include="obj\Release\SanarRuralUnan.pdb" />
     <Content Include="obj\Release\SanarRuralUnan.pdb" />
     <Content Include="obj\Release\SanarRuralUnan.pdb" />
     <Content Include="obj\Release\SanarRuralUnan.pdb" />

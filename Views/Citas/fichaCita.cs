@@ -18,13 +18,15 @@ namespace SanarRuralUnan.Views.Citas
     {
         private readonly int idCita;
         private readonly int? idDoctorFiltro;
+        private readonly int? idPacienteFiltro;
         private readonly citasControllers controlador = new citasControllers();
         private SanarRuralUnan.Citas citaActual;
 
-        public fichaCita(int idCita, int? idDoctor = null)
+        public fichaCita(int idCita, int? idDoctor = null, int? idPaciente = null)
         {
             this.idCita = idCita;
             this.idDoctorFiltro = idDoctor;
+            this.idPacienteFiltro = idPaciente;
             InitializeComponent();
         }
 
@@ -188,7 +190,7 @@ namespace SanarRuralUnan.Views.Citas
         {
             try
             {
-                citaActual = controlador.obtenerCitaPorId(idCita, idDoctorFiltro);
+                citaActual = controlador.obtenerCitaPorId(idCita, idDoctorFiltro, idPacienteFiltro);
                 if (citaActual == null)
                 {
                     MessageBox.Show("No se encontró la cita médica solicitada o no tiene permisos para consultarla.", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -256,14 +258,24 @@ namespace SanarRuralUnan.Views.Citas
                 // Badge de Estado
                 ActualizarBadgeEstado(citaActual.Estado);
 
-                // Botones de acción disponibles según el estado
+                // Botones de acción disponibles según el estado y rol
                 bool enProcesoOActiva = (citaActual.Estado == "Pendiente" || citaActual.Estado == "Confirmada");
                 bool citaYaPaso = citaActual.FechaHoraProgramada <= DateTime.Now;
 
-                btnConfirmar.Visible = (citaActual.Estado == "Pendiente");
-                btnEditar.Visible = enProcesoOActiva;
-                btnCancelar.Visible = enProcesoOActiva;
-                btnNoAsistio.Visible = enProcesoOActiva && citaYaPaso;
+                if (idPacienteFiltro.HasValue)
+                {
+                    btnConfirmar.Visible = false;
+                    btnEditar.Visible = false;
+                    btnNoAsistio.Visible = false;
+                    btnCancelar.Visible = (citaActual.Estado == "Pendiente");
+                }
+                else
+                {
+                    btnConfirmar.Visible = (citaActual.Estado == "Pendiente");
+                    btnEditar.Visible = enProcesoOActiva;
+                    btnCancelar.Visible = enProcesoOActiva;
+                    btnNoAsistio.Visible = enProcesoOActiva && citaYaPaso;
+                }
 
                 AjustarLayout();
             }
@@ -351,7 +363,7 @@ namespace SanarRuralUnan.Views.Citas
             {
                 try
                 {
-                    controlador.cambiarEstadoCita(idCita, "Confirmada", idDoctorFiltro);
+                    controlador.cambiarEstadoCita(idCita, "Confirmada", idDoctorFiltro, idPacienteFiltro);
                     MessageBox.Show("La cita ha sido confirmada correctamente.", "Operación Exitosa", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     CargarDetalle();
                     this.DialogResult = DialogResult.OK;
@@ -365,7 +377,7 @@ namespace SanarRuralUnan.Views.Citas
 
         private void btnEditar_Click(object sender, EventArgs e)
         {
-            using (var formEditar = new crearCita(idCita, idDoctorFiltro))
+            using (var formEditar = new crearCita(idCita, idDoctorFiltro, idPacienteFiltro))
             {
                 if (formEditar.ShowDialog(this) == DialogResult.OK)
                 {
@@ -388,7 +400,7 @@ namespace SanarRuralUnan.Views.Citas
             {
                 try
                 {
-                    controlador.cambiarEstadoCita(idCita, "Cancelada", idDoctorFiltro);
+                    controlador.cambiarEstadoCita(idCita, "Cancelada", idDoctorFiltro, idPacienteFiltro);
                     MessageBox.Show("La cita médica ha sido cancelada.", "Cita Cancelada", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     CargarDetalle();
                     this.DialogResult = DialogResult.OK;
@@ -413,7 +425,7 @@ namespace SanarRuralUnan.Views.Citas
             {
                 try
                 {
-                    controlador.cambiarEstadoCita(idCita, "NoAsistio", idDoctorFiltro);
+                    controlador.cambiarEstadoCita(idCita, "NoAsistio", idDoctorFiltro, idPacienteFiltro);
                     MessageBox.Show("Se ha registrado la inasistencia del paciente.", "Inasistencia Registrada", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     CargarDetalle();
                     this.DialogResult = DialogResult.OK;

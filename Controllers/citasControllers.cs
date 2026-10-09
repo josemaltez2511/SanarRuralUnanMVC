@@ -14,16 +14,16 @@ namespace SanarRuralUnan.Controllers
         // CONSULTAS DE LISTADO Y DETALLE
         // ============================================================
 
-        // Lista citas aplicando búsqueda textual y filtros opcionales de fecha, estado y doctor.
-        public List<CitaItemDto> listarCitas(string busqueda = "", DateTime? fecha = null, string estado = "", int? idDoctor = null)
+        // Lista citas aplicando búsqueda textual y filtros opcionales de fecha, estado, doctor y paciente.
+        public List<CitaItemDto> listarCitas(string busqueda = "", DateTime? fecha = null, string estado = "", int? idDoctor = null, int? idPaciente = null)
         {
-            return modelo.listarCitas(busqueda, fecha, estado, idDoctor);
+            return modelo.listarCitas(busqueda, fecha, estado, idDoctor, idPaciente);
         }
 
-        // Obtiene una cita específica con sus datos relacionados para edición, validando el doctor si aplica.
-        public Citas obtenerCitaPorId(int idCita, int? idDoctor = null)
+        // Obtiene una cita específica con sus datos relacionados para edición, validando el doctor o paciente si aplica.
+        public Citas obtenerCitaPorId(int idCita, int? idDoctor = null, int? idPaciente = null)
         {
-            return modelo.obtenerCitaPorId(idCita, idDoctor);
+            return modelo.obtenerCitaPorId(idCita, idDoctor, idPaciente);
         }
 
         // ============================================================
@@ -66,7 +66,8 @@ namespace SanarRuralUnan.Controllers
             int idEspecialidad,
             DateTime fechaHora,
             string motivo,
-            int? idDoctorAutenticado = null)
+            int? idDoctorAutenticado = null,
+            int? idPacienteAutenticado = null)
         {
             return modelo.guardarCita(
                 idPaciente,
@@ -75,7 +76,8 @@ namespace SanarRuralUnan.Controllers
                 idEspecialidad,
                 fechaHora,
                 motivo,
-                idDoctorAutenticado
+                idDoctorAutenticado,
+                idPacienteAutenticado
             );
         }
 
@@ -103,9 +105,9 @@ namespace SanarRuralUnan.Controllers
         }
 
         // Ejecuta la transición de estado de una cita médica validando las reglas permitidas y alcance.
-        public void cambiarEstadoCita(int idCita, string nuevoEstado, int? idDoctorAutenticado = null)
+        public void cambiarEstadoCita(int idCita, string nuevoEstado, int? idDoctorAutenticado = null, int? idPacienteAutenticado = null)
         {
-            modelo.cambiarEstadoCita(idCita, nuevoEstado, idDoctorAutenticado);
+            modelo.cambiarEstadoCita(idCita, nuevoEstado, idDoctorAutenticado, idPacienteAutenticado);
         }
     }
 }

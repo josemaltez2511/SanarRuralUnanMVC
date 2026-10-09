@@ -236,5 +236,16 @@ namespace SanarRuralUnan.Models
                 return doctor != null ? doctor.IdDoctor : (int?)null;
             }
         }
+
+        // Resuelve el IdPaciente asociado al usuario autenticado actualmente en la sesión.
+        public int? ObtenerIdPacienteActual()
+        {
+            if (!IdUsuarioActual.HasValue) return null;
+            using (var db = new SanarRuralDBEntities())
+            {
+                var paciente = db.Pacientes.FirstOrDefault(p => p.IdUsuario == IdUsuarioActual.Value && p.Estado);
+                return paciente != null ? paciente.IdPaciente : (int?)null;
+            }
+        }
     }
 }

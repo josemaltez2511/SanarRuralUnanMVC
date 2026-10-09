@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
@@ -128,12 +128,14 @@ namespace SanarRuralUnan.Views.Pacientes
                 panelFiltroEstado.Visible = true;
                 cmbFiltroEstado.SelectedIndex = 0; // "Activos" por defecto
                 dgvPacientes.Columns["colBaja"].Visible = true;
+                dgvPacientes.Columns["colEditar"].Visible = true;
             }
             else
             {
                 // El rol Doctor únicamente puede consultar y dar de alta pacientes activos
                 panelFiltroEstado.Visible = false;
                 dgvPacientes.Columns["colBaja"].Visible = false;
+                dgvPacientes.Columns["colEditar"].Visible = false;
             }
         }
 
@@ -452,6 +454,12 @@ namespace SanarRuralUnan.Views.Pacientes
             }
             else if (columna == "colEditar")
             {
+                if (!controlador.EsAdministrativo())
+                {
+                    MessageBox.Show("Solo los usuarios con rol Administrativo pueden editar los datos legales e institucionales del paciente.", "Acceso restringido", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
                 using (crearPaciente formulario = new crearPaciente(idPaciente, true))
                 {
                     if (formulario.ShowDialog(this) == DialogResult.OK)

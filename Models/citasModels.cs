@@ -40,7 +40,7 @@ namespace SanarRuralUnan.Models
         // ============================================================
         // LISTAR CITAS CON BÚSQUEDA Y FILTROS
         // ============================================================
-        public List<CitaItemDto> listarCitas(string busqueda = "", DateTime? fecha = null, string estado = "", int? idDoctor = null)
+        public List<CitaItemDto> listarCitas(string busqueda = "", DateTime? fecha = null, string estado = "", int? idDoctor = null, int? idPaciente = null)
         {
             var consulta = db.Citas
                 .Include(c => c.Pacientes)
@@ -53,6 +53,12 @@ namespace SanarRuralUnan.Models
             if (idDoctor.HasValue)
             {
                 consulta = consulta.Where(c => c.IdDoctor == idDoctor.Value);
+            }
+
+            // Restricción por paciente (para pacientes autenticados o historial acotado).
+            if (idPaciente.HasValue)
+            {
+                consulta = consulta.Where(c => c.IdPaciente == idPaciente.Value);
             }
 
             // Filtro por fecha programada (mismo día calendario).
@@ -137,14 +143,16 @@ namespace SanarRuralUnan.Models
         // ============================================================
         // OBTENER CITA POR ID
         // ============================================================
-        public Citas obtenerCitaPorId(int idCita, int? idDoctor = null)
+        public Citas obtenerCitaPorId(int idCita, int? idDoctor = null, int? idPaciente = null)
         {
             return db.Citas
                 .Include(c => c.Pacientes)
                 .Include(c => c.DoctorHospitalEspecialidad.DoctorEspecialidad.Doctores)
                 .Include(c => c.DoctorHospitalEspecialidad.DoctorEspecialidad.Especialidades)
                 .Include(c => c.DoctorHospitalEspecialidad.Hospitales)
-                .FirstOrDefault(c => c.IdCita == idCita && (!idDoctor.HasValue || c.IdDoctor == idDoctor.Value));
+                .FirstOrDefault(c => c.IdCita == idCita &&
+                    (!idDoctor.HasValue || c.IdDoctor == idDoctor.Value) &&
+                    (!idPaciente.HasValue || c.IdPaciente == idPaciente.Value));
         }
 
         // ============================================================
@@ -299,12 +307,19 @@ namespace SanarRuralUnan.Models
             int idEspecialidad,
             DateTime fechaHora,
             string motivo,
-            int? idDoctorAutenticado = null)
+            int? idDoctorAutenticado = null,
+            int? idPacienteAutenticado = null)
         {
             // Restricción de alcance: un médico autenticado solo puede registrar citas para sí mismo.
             if (idDoctorAutenticado.HasValue && idDoctor != idDoctorAutenticado.Value)
             {
                 throw new InvalidOperationException("Un médico solo puede registrar citas asignadas a su propio perfil.");
+            }
+
+            // Restricción de alcance: un paciente autenticado solo puede registrar citas para su propio expediente.
+            if (idPacienteAutenticado.HasValue && idPaciente != idPacienteAutenticado.Value)
+            {
+                throw new InvalidOperationException("Un paciente solo puede registrar citas asignadas a su propio expediente.");
             }
 
             if (string.IsNullOrWhiteSpace(motivo))
@@ -418,7 +433,7 @@ namespace SanarRuralUnan.Models
         // ============================================================
         // CAMBIOS DE ESTADO DE CITA
         // ============================================================
-        public void cambiarEstadoCita(int idCita, string nuevoEstado, int? idDoctorAutenticado = null)
+        public void cambiarEstadoCita(int idCita, string nuevoEstado, int? idDoctorAutenticado = null, int? idPacienteAutenticado = null)
         {
             var cita = db.Citas.FirstOrDefault(c => c.IdCita == idCita);
             if (cita == null)
@@ -430,6 +445,23 @@ namespace SanarRuralUnan.Models
             if (idDoctorAutenticado.HasValue && cita.IdDoctor != idDoctorAutenticado.Value)
             {
                 throw new InvalidOperationException("Un médico solo puede cambiar el estado de citas asignadas a su propio perfil.");
+            }
+
+            // Restricción de alcance: un paciente autenticado solo puede cancelar sus propias citas pendientes.
+            if (idPacienteAutenticado.HasValue)
+            {
+                if (cita.IdPaciente != idPacienteAutenticado.Value)
+                {
+                    throw new InvalidOperationException("Un paciente solo tiene autorización para gestionar citas de su propio expediente.");
+                }
+                if (nuevoEstado != "Cancelada")
+                {
+                    throw new InvalidOperationException("Un paciente solo puede solicitar la cancelación de sus citas.");
+                }
+                if (cita.Estado != "Pendiente")
+                {
+                    throw new InvalidOperationException("Solo es posible cancelar citas que se encuentren en estado 'Pendiente'.");
+                }
             }
 
             // Regla 4.6: Este módulo no debe marcar citas como 'Atendida'.

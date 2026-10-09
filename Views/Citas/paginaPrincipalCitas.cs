@@ -14,16 +14,18 @@ namespace SanarRuralUnan.Views.Citas
     {
         private readonly citasControllers controlador = new citasControllers();
         private readonly int? idDoctorFiltro;
+        private readonly int? idPacienteFiltro;
 
         // Constructor para modo administrativo (visualiza y gestiona todas las citas).
-        public paginaPrincipalCitas() : this(null)
+        public paginaPrincipalCitas() : this(null, null)
         {
         }
 
-        // Constructor con filtro opcional de doctor (para cuando inicia sesión un médico).
-        public paginaPrincipalCitas(int? idDoctor)
+        // Constructor con filtro opcional de doctor o paciente.
+        public paginaPrincipalCitas(int? idDoctor, int? idPaciente = null)
         {
             this.idDoctorFiltro = idDoctor;
+            this.idPacienteFiltro = idPaciente;
             InitializeComponent();
         }
 
@@ -153,7 +155,7 @@ namespace SanarRuralUnan.Views.Citas
                 DateTime? fecha = chkTodasFechas.Checked ? (DateTime?)null : dtpFechaFiltro.Value.Date;
                 string estado = cmbEstadoFiltro.SelectedItem?.ToString() ?? "Todos";
 
-                dgvCitas.DataSource = controlador.listarCitas(busqueda, fecha, estado, idDoctorFiltro);
+                dgvCitas.DataSource = controlador.listarCitas(busqueda, fecha, estado, idDoctorFiltro, idPacienteFiltro);
 
                 // Configuración de encabezados, pesos y orden de columnas esenciales solicitadas por el usuario.
                 if (dgvCitas.Columns["IdCita"] != null)
@@ -212,6 +214,14 @@ namespace SanarRuralUnan.Views.Citas
                 OcultarColumnaSiExiste("FechaHoraProgramada");
 
                 AgregarColumnasAcciones();
+
+                if (idPacienteFiltro.HasValue)
+                {
+                    OcultarColumnaSiExiste("colConfirmar");
+                    OcultarColumnaSiExiste("colEditar");
+                    OcultarColumnaSiExiste("Paciente");
+                }
+
                 CalcularMetricas();
             }
             catch (Exception ex)
@@ -224,7 +234,7 @@ namespace SanarRuralUnan.Views.Citas
         {
             try
             {
-                var todas = controlador.listarCitas("", null, "Todos", idDoctorFiltro) as System.Collections.IList;
+                var todas = controlador.listarCitas("", null, "Todos", idDoctorFiltro, idPacienteFiltro) as System.Collections.IList;
                 int total = todas != null ? todas.Count : 0;
                 int atendidasConfirmadas = 0;
                 int pendientes = 0;
@@ -587,9 +597,9 @@ namespace SanarRuralUnan.Views.Citas
 
                 bool esBotonAccion =
                     (nombreColumna == "colVer") ||
-                    (nombreColumna == "colConfirmar" && estado == "Pendiente") ||
-                    (nombreColumna == "colEditar" && (estado == "Pendiente" || estado == "Confirmada")) ||
-                    (nombreColumna == "colCancelar" && (estado == "Pendiente" || estado == "Confirmada"));
+                    (!idPacienteFiltro.HasValue && nombreColumna == "colConfirmar" && estado == "Pendiente") ||
+                    (!idPacienteFiltro.HasValue && nombreColumna == "colEditar" && (estado == "Pendiente" || estado == "Confirmada")) ||
+                    (nombreColumna == "colCancelar" && (estado == "Pendiente" || (!idPacienteFiltro.HasValue && estado == "Confirmada")));
 
                 dgvCitas.Cursor = esBotonAccion ? Cursors.Hand : Cursors.Default;
             }
@@ -623,6 +633,12 @@ namespace SanarRuralUnan.Views.Citas
             // Acción: CONFIRMAR CITA (Pendiente -> Confirmada)
             if (nombreColumna == "colConfirmar")
             {
+                if (idPacienteFiltro.HasValue)
+                {
+                    MessageBox.Show("Solo el personal administrativo o médico puede confirmar citas.", "Operación no permitida", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
                 if (estado != "Pendiente")
                 {
                     MessageBox.Show("Solo se pueden confirmar citas que se encuentren en estado 'Pendiente'.", "Operación no permitida", MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -640,7 +656,7 @@ namespace SanarRuralUnan.Views.Citas
                 {
                     try
                     {
-                        controlador.cambiarEstadoCita(idCita, "Confirmada", idDoctorFiltro);
+                        controlador.cambiarEstadoCita(idCita, "Confirmada", idDoctorFiltro, idPacienteFiltro);
                         MessageBox.Show("La cita ha sido confirmada exitosamente.", "Operación Exitosa", MessageBoxButtons.OK, MessageBoxIcon.Information);
                         CargarCitas();
                     }
@@ -653,13 +669,19 @@ namespace SanarRuralUnan.Views.Citas
             // Acción: EDITAR / REPROGRAMAR CITA
             else if (nombreColumna == "colEditar")
             {
+                if (idPacienteFiltro.HasValue)
+                {
+                    MessageBox.Show("Para reprogramar su cita médica, consulte con el personal administrativo o cancele su cita pendiente y solicite una nueva.", "Información", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    return;
+                }
+
                 if (estado == "Atendida" || estado == "Cancelada" || estado == "NoAsistio")
                 {
                     MessageBox.Show(string.Format("No se puede editar ni reprogramar una cita en estado '{0}'.", estado), "Operación no permitida", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return;
                 }
 
-                using (crearCita formEditar = new crearCita(idCita, idDoctorFiltro))
+                using (crearCita formEditar = new crearCita(idCita, idDoctorFiltro, idPacienteFiltro))
                 {
                     if (formEditar.ShowDialog(this) == DialogResult.OK)
                     {
@@ -670,7 +692,7 @@ namespace SanarRuralUnan.Views.Citas
             // Acción: CANCELAR CITA
             else if (nombreColumna == "colCancelar")
             {
-                if (estado != "Pendiente" && estado != "Confirmada")
+                if (estado != "Pendiente" && (idPacienteFiltro.HasValue || estado != "Confirmada"))
                 {
                     MessageBox.Show(string.Format("No se puede cancelar una cita en estado '{0}'.", estado), "Operación no permitida", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return;
@@ -687,7 +709,7 @@ namespace SanarRuralUnan.Views.Citas
                 {
                     try
                     {
-                        controlador.cambiarEstadoCita(idCita, "Cancelada", idDoctorFiltro);
+                        controlador.cambiarEstadoCita(idCita, "Cancelada", idDoctorFiltro, idPacienteFiltro);
                         MessageBox.Show("La cita ha sido cancelada correctamente.", "Operación Exitosa", MessageBoxButtons.OK, MessageBoxIcon.Information);
                         CargarCitas();
                     }
@@ -713,7 +735,7 @@ namespace SanarRuralUnan.Views.Citas
         // Abre la ventana modal dedicada con la información completa de la cita
         private void AbrirDetalleCita(int idCita)
         {
-            using (fichaCita ficha = new fichaCita(idCita, idDoctorFiltro))
+            using (fichaCita ficha = new fichaCita(idCita, idDoctorFiltro, idPacienteFiltro))
             {
                 if (ficha.ShowDialog(this) == DialogResult.OK)
                 {
@@ -761,7 +783,7 @@ namespace SanarRuralUnan.Views.Citas
         // ============================================================
         private void btnNuevo_Click(object sender, EventArgs e)
         {
-            using (crearCita formCrear = new crearCita(idDoctorFiltro))
+            using (crearCita formCrear = new crearCita(idDoctorFiltro, idPacienteFiltro))
             {
                 if (formCrear.ShowDialog(this) == DialogResult.OK)
                 {

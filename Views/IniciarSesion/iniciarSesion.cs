@@ -464,9 +464,11 @@ namespace SanarRuralUnan
                     }
                     else if (tipoUsuario == controlador.ObtenerIdRol("Paciente"))
                     {
-                        MessageBox.Show("Aún no se ha creado el menú principal para Pacientes.", "Aviso");
-                        controlador.CerrarSesion();
-                        volverAlLogin = true;
+                        using (var menuPaciente = new menuPrincipalPacientes())
+                        {
+                            menuPaciente.ShowDialog();
+                            volverAlLogin = menuPaciente.SesionCerradaVoluntariamente;
+                        }
                     }
                     else
                     {

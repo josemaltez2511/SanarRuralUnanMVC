@@ -198,6 +198,13 @@ namespace SanarRuralUnan.Views
 
         private void EjecutarTransicion(Form formulario)
         {
+            if (formularioActual == null)
+            {
+                panelContenido.Controls.Clear();
+                MostrarFormulario(formulario);
+                return;
+            }
+
             formularioEntrante = formulario;
             pasoAnimacion = 0;
             timerTransicion.Start();

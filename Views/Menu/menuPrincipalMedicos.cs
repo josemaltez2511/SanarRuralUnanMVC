@@ -8,6 +8,7 @@ using SanarRuralUnan.Helpers;
 using SanarRuralUnan.Models;
 using SanarRuralUnan.Views.Citas;
 using SanarRuralUnan.Views.ConsultaMedica;
+using SanarRuralUnan.Views.HistorialClinico;
 using SanarRuralUnan.Views.Pacientes;
 
 namespace SanarRuralUnan.Views
@@ -22,6 +23,7 @@ namespace SanarRuralUnan.Views
         private paginaPrincipalPacientes paginaPacientes;
         private paginaPrincipalCitas paginaCitas;
         private paginaPrincipalConsultas paginaConsultas;
+        private paginaPrincipalHistorial paginaHistorial;
 
         private readonly int? idDoctorActual;
         private Button botonActivo;
@@ -169,12 +171,8 @@ namespace SanarRuralUnan.Views
             }
             else if (nombre == "Historial")
             {
+                formulario = paginaHistorial ?? (paginaHistorial = new paginaPrincipalHistorial(idDoctorActual, null));
                 nuevoBoton = btnHistorial;
-                ActualizarEstadoBotones(nuevoBoton);
-                MostrarSeccionEnPreparacion(
-                    "Historial Clínico Integral",
-                    "El módulo de trazabilidad y consulta cronológica de atenciones clínicas se incorporará en la siguiente fase de desarrollo.");
-                return;
             }
 
             ActualizarEstadoBotones(nuevoBoton);
@@ -213,6 +211,13 @@ namespace SanarRuralUnan.Views
 
         private void EjecutarTransicion(Form formulario)
         {
+            if (formularioActual == null)
+            {
+                panelContenido.Controls.Clear();
+                MostrarFormulario(formulario);
+                return;
+            }
+
             formularioEntrante = formulario;
             pasoAnimacion = 0;
             timerTransicion.Start();

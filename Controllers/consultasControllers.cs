@@ -39,9 +39,20 @@ namespace SanarRuralUnan.Controllers
         }
 
         // Obtiene el expediente clínico completo de una consulta médica específica.
-        public ConsultaDetalleDto obtenerConsultaDetalle(int idConsulta, int? idDoctorAutenticado = null)
+        public ConsultaDetalleDto obtenerConsultaDetalle(int idConsulta, int? idDoctorAutenticado = null, int? idPacienteAutenticado = null)
         {
-            return modelo.obtenerConsultaDetalle(idConsulta, idDoctorAutenticado);
+            return modelo.obtenerConsultaDetalle(idConsulta, idDoctorAutenticado, idPacienteAutenticado);
+        }
+
+        // Lista el historial cronológico de atenciones médicas finalizadas con filtros de fecha, búsqueda y paciente.
+        public List<ConsultaItemDto> listarHistorialClinico(
+            int? idPaciente = null,
+            string busqueda = "",
+            DateTime? fechaDesde = null,
+            DateTime? fechaHasta = null,
+            int? idDoctorAutenticado = null)
+        {
+            return modelo.listarHistorialClinico(idPaciente, busqueda, fechaDesde, fechaHasta, idDoctorAutenticado);
         }
 
         // ============================================================

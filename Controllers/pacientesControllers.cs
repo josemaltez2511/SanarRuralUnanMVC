@@ -119,6 +119,17 @@ namespace SanarRuralUnan.Controllers
                 direccion, tipoSangre, alergias, antecedentes, contactos);
         }
 
+        // Permite la actualización de datos residenciales y de contacto por parte del paciente.
+        public bool editarPerfilDemograficoPaciente(
+            int idPaciente,
+            string telefono,
+            int idComunidad,
+            string direccion,
+            List<ContactoEmergenciaDto> contactos)
+        {
+            return modelo.actualizarPerfilDemograficoPaciente(idPaciente, telefono, idComunidad, direccion, contactos);
+        }
+
         // ============================================================
         // BAJA LÓGICA Y REACTIVACIÓN
         // ============================================================

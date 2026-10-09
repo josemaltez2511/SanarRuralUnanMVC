@@ -15,16 +15,18 @@ namespace SanarRuralUnan.Views.ConsultaMedica
         private readonly consultasControllers controlador = new consultasControllers();
         private readonly int idConsulta;
         private readonly int? idDoctorAutenticado;
+        private readonly int? idPacienteAutenticado;
 
         private ConsultaDetalleDto consultaActual;
         private readonly List<DiagnosticoItemDto> listaDiagnosticos = new List<DiagnosticoItemDto>();
         private readonly List<PrescripcionItemDto> listaPrescripciones = new List<PrescripcionItemDto>();
         private bool esSoloLectura = false;
 
-        public atencionConsulta(int idConsulta, int? idDoctorAutenticado = null)
+        public atencionConsulta(int idConsulta, int? idDoctorAutenticado = null, int? idPacienteAutenticado = null)
         {
             this.idConsulta = idConsulta;
             this.idDoctorAutenticado = idDoctorAutenticado;
+            this.idPacienteAutenticado = idPacienteAutenticado;
             InitializeComponent();
         }
 
@@ -92,7 +94,7 @@ namespace SanarRuralUnan.Views.ConsultaMedica
         {
             try
             {
-                consultaActual = controlador.obtenerConsultaDetalle(idConsulta, idDoctorAutenticado);
+                consultaActual = controlador.obtenerConsultaDetalle(idConsulta, idDoctorAutenticado, idPacienteAutenticado);
                 if (consultaActual == null)
                 {
                     MessageBox.Show("No se encontró la consulta médica especificada.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -102,8 +104,9 @@ namespace SanarRuralUnan.Views.ConsultaMedica
 
                 // Determinación de modo solo lectura
                 bool esFinalizada = consultaActual.EstadoConsulta == "Finalizada";
-                bool esSupervisionAdmin = !idDoctorAutenticado.HasValue;
-                esSoloLectura = esFinalizada || esSupervisionAdmin;
+                bool esSupervisionAdmin = !idDoctorAutenticado.HasValue && !idPacienteAutenticado.HasValue;
+                bool esPaciente = idPacienteAutenticado.HasValue;
+                esSoloLectura = esFinalizada || esSupervisionAdmin || esPaciente;
 
                 // 1. Banner superior
                 ActualizarBanner(esFinalizada, esSupervisionAdmin);

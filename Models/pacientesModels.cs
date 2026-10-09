@@ -277,10 +277,43 @@ namespace SanarRuralUnan.Models
         // ------------------------------------------------------------
         // CONSULTA DE EXPEDIENTE / DETALLE DEL PACIENTE
         // ------------------------------------------------------------
+        private Roles ValidarSesionLecturaPaciente(Pacientes paciente)
+        {
+            if (!usuariosModels.IdRolActual.HasValue)
+            {
+                throw new InvalidOperationException("No se detectó una sesión activa con un rol válido para consultar la ficha del paciente.");
+            }
+
+            var rolActual = db.Roles.FirstOrDefault(r => r.IdRol == usuariosModels.IdRolActual.Value);
+            if (rolActual == null)
+            {
+                throw new InvalidOperationException("El rol de la sesión actual no es válido para consultar la ficha del paciente.");
+            }
+
+            if (rolActual.Nombre == "Paciente")
+            {
+                if (paciente == null || !paciente.IdUsuario.HasValue || paciente.IdUsuario.Value != usuariosModels.IdUsuarioActual.Value)
+                {
+                    throw new InvalidOperationException("Un paciente solo tiene autorización para consultar su propia ficha médica.");
+                }
+            }
+            else if (rolActual.Nombre == "Doctor")
+            {
+                if (paciente != null && !paciente.Estado)
+                {
+                    throw new InvalidOperationException("No tiene permisos para consultar el expediente de un paciente inactivo.");
+                }
+            }
+            else if (rolActual.Nombre != "Administrativo")
+            {
+                throw new InvalidOperationException("No tiene permisos para consultar la ficha del paciente.");
+            }
+
+            return rolActual;
+        }
+
         public PacienteDetalleDto obtenerPacienteDetalle(int idPaciente)
         {
-            var rol = ValidarSesion("consultar la ficha del paciente");
-
             var p = db.Pacientes
                 .AsNoTracking()
                 .Include(pac => pac.Comunidades.Municipios.Departamentos)
@@ -292,11 +325,7 @@ namespace SanarRuralUnan.Models
                 return null;
             }
 
-            // Si es doctor y el paciente está inactivo, no permitir acceso
-            if (rol.Nombre == "Doctor" && !p.Estado)
-            {
-                throw new InvalidOperationException("No tiene permisos para consultar el expediente de un paciente inactivo.");
-            }
+            ValidarSesionLecturaPaciente(p);
 
             var detalle = new PacienteDetalleDto
             {
@@ -543,6 +572,11 @@ namespace SanarRuralUnan.Models
         {
             ValidarSesion("registrar pacientes");
 
+            if (idUsuario.HasValue && db.Pacientes.Any(p => p.IdUsuario == idUsuario.Value && p.Estado))
+            {
+                throw new InvalidOperationException("El usuario especificado ya tiene un perfil de paciente activo registrado en el sistema.");
+            }
+
             ValidarDatosPaciente(
                 primerNombre, primerApellido, fechaNacimiento, idComunidad,
                 cedula, numeroINSS, telefono, direccion, tipoSangre, alergias, antecedentes);
@@ -680,7 +714,31 @@ namespace SanarRuralUnan.Models
             string antecedentes,
             List<ContactoEmergenciaDto> contactos = null)
         {
-            ValidarSesion("editar pacientes");
+            if (!usuariosModels.IdRolActual.HasValue)
+            {
+                throw new InvalidOperationException("No se detectó una sesión activa con un rol válido para editar pacientes.");
+            }
+
+            var rolActual = db.Roles.FirstOrDefault(r => r.IdRol == usuariosModels.IdRolActual.Value);
+            if (rolActual == null)
+            {
+                throw new InvalidOperationException("El rol de la sesión actual no es válido para editar pacientes.");
+            }
+
+            if (rolActual.Nombre == "Doctor")
+            {
+                throw new InvalidOperationException("El rol Doctor no tiene autorización para modificar el expediente maestro civil o institucional del paciente. Solo el rol Administrativo puede gestionar datos legales e institucionales.");
+            }
+
+            if (rolActual.Nombre == "Paciente")
+            {
+                throw new InvalidOperationException("Un usuario con rol Paciente no tiene autorización para editar el expediente maestro de pacientes. Solo el rol Administrativo puede gestionar datos legales e institucionales.");
+            }
+
+            if (rolActual.Nombre != "Administrativo")
+            {
+                throw new InvalidOperationException($"El rol '{rolActual.Nombre}' no tiene autorización para editar pacientes.");
+            }
 
             var paciente = db.Pacientes
                 .Include(p => p.ContactosEmergencia)
@@ -799,6 +857,118 @@ namespace SanarRuralUnan.Models
                 idPaciente, primerNombre, segundoNombre, primerApellido, segundoApellido,
                 cedula, numeroINSS, fechaNacimiento, genero, telefono, idComunidad,
                 direccion, tipoSangre, alergias, antecedentes, contactosActuales);
+        }
+
+        // ------------------------------------------------------------
+        // ACTUALIZACIÓN DE PERFIL DEMOGRÁFICO POR EL PACIENTE
+        // ------------------------------------------------------------
+        // Permite al paciente autenticado actualizar sus datos demográficos de contacto y residencia
+        // manteniendo inmutables los datos legales (nombres, cédula, nacimiento) y los antecedentes clínicos.
+        public bool actualizarPerfilDemograficoPaciente(
+            int idPaciente,
+            string telefono,
+            int idComunidad,
+            string direccion,
+            List<ContactoEmergenciaDto> contactos)
+        {
+            if (!usuariosModels.IdUsuarioActual.HasValue || !usuariosModels.IdRolActual.HasValue)
+            {
+                throw new InvalidOperationException("No se detectó una sesión activa para actualizar los datos demográficos.");
+            }
+
+            var paciente = db.Pacientes
+                .Include(p => p.ContactosEmergencia)
+                .FirstOrDefault(p => p.IdPaciente == idPaciente && p.Estado);
+
+            if (paciente == null)
+            {
+                throw new InvalidOperationException("El paciente no existe o se encuentra inactivo.");
+            }
+
+            var rolActual = db.Roles.FirstOrDefault(r => r.IdRol == usuariosModels.IdRolActual.Value);
+            if (rolActual == null)
+            {
+                throw new InvalidOperationException("El rol de la sesión actual no es válido.");
+            }
+
+            if (rolActual.Nombre == "Doctor")
+            {
+                throw new InvalidOperationException("El rol Doctor no tiene autorización para modificar los datos demográficos personales del paciente a través de este método.");
+            }
+
+            bool esAdmin = rolActual.Nombre == "Administrativo";
+            bool esPaciente = rolActual.Nombre == "Paciente";
+            bool esMismoPaciente = paciente.IdUsuario.HasValue && paciente.IdUsuario.Value == usuariosModels.IdUsuarioActual.Value;
+
+            if (!esAdmin && (!esPaciente || !esMismoPaciente))
+            {
+                throw new InvalidOperationException("Un paciente solo tiene autorización para actualizar sus propios datos demográficos.");
+            }
+
+            if (!db.Comunidades.Any(c => c.IdComunidad == idComunidad))
+            {
+                throw new InvalidOperationException("La comunidad seleccionada no es válida o no existe en la base de datos.");
+            }
+
+            if (!string.IsNullOrWhiteSpace(telefono) && telefono.Trim().Length > 30)
+            {
+                throw new InvalidOperationException("El teléfono no puede exceder los 30 caracteres.");
+            }
+
+            if (!string.IsNullOrWhiteSpace(direccion) && direccion.Trim().Length > 300)
+            {
+                throw new InvalidOperationException("La dirección no puede exceder los 300 caracteres.");
+            }
+
+            if (contactos != null)
+            {
+                foreach (var c in contactos)
+                {
+                    ValidarContactoEmergencia(c);
+                }
+            }
+
+            using (var tx = db.Database.BeginTransaction())
+            {
+                try
+                {
+                    paciente.Telefono = string.IsNullOrWhiteSpace(telefono) ? null : telefono.Trim();
+                    paciente.IdComunidad = idComunidad;
+                    paciente.Direccion = string.IsNullOrWhiteSpace(direccion) ? null : direccion.Trim();
+
+                    // Sincronización completa de contactos de emergencia
+                    var contactosActuales = paciente.ContactosEmergencia.ToList();
+                    db.ContactosEmergencia.RemoveRange(contactosActuales);
+
+                    if (contactos != null && contactos.Count > 0)
+                    {
+                        foreach (var c in contactos)
+                        {
+                            var nuevoContacto = new ContactosEmergencia
+                            {
+                                IdPaciente = idPaciente,
+                                PrimerNombre = c.PrimerNombre.Trim(),
+                                SegundoNombre = string.IsNullOrWhiteSpace(c.SegundoNombre) ? null : c.SegundoNombre.Trim(),
+                                PrimerApellido = c.PrimerApellido.Trim(),
+                                SegundoApellido = string.IsNullOrWhiteSpace(c.SegundoApellido) ? null : c.SegundoApellido.Trim(),
+                                Parentesco = c.Parentesco.Trim(),
+                                Telefono = c.Telefono.Trim(),
+                                Cedula = string.IsNullOrWhiteSpace(c.Cedula) ? null : c.Cedula.Trim()
+                            };
+                            db.ContactosEmergencia.Add(nuevoContacto);
+                        }
+                    }
+
+                    db.SaveChanges();
+                    tx.Commit();
+                    return true;
+                }
+                catch
+                {
+                    tx.Rollback();
+                    throw;
+                }
+            }
         }
 
         // ------------------------------------------------------------

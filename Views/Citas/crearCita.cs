@@ -12,28 +12,35 @@ namespace SanarRuralUnan.Views.Citas
     {
         private readonly citasControllers controlador = new citasControllers();
         private readonly int? idDoctorAutenticado;
+        private readonly int? idPacienteAutenticado;
         private int? idCitaEdicion;
         private bool cargando = false;
 
         // Constructor para agendar una nueva cita médica (modo administrativo o general).
-        public crearCita() : this(null, null)
+        public crearCita() : this(null, null, null)
         {
         }
 
         // Constructor para agendar cita restringida al médico autenticado.
-        public crearCita(int? idDoctorAutenticado) : this(null, idDoctorAutenticado)
+        public crearCita(int? idDoctorAutenticado) : this(null, idDoctorAutenticado, null)
         {
         }
 
-        // Constructor para reprogramar una cita médica existente (con restricción opcional de médico).
-        public crearCita(int idCita, int? idDoctorAutenticado = null) : this((int?)idCita, idDoctorAutenticado)
+        // Constructor para agendar cita por médico o paciente autenticado.
+        public crearCita(int? idDoctorAutenticado, int? idPacienteAutenticado) : this(null, idDoctorAutenticado, idPacienteAutenticado)
         {
         }
 
-        private crearCita(int? idCita, int? idDoctorAutenticado)
+        // Constructor para reprogramar una cita médica existente (con restricción opcional de médico o paciente).
+        public crearCita(int idCita, int? idDoctorAutenticado = null, int? idPacienteAutenticado = null) : this((int?)idCita, idDoctorAutenticado, idPacienteAutenticado)
+        {
+        }
+
+        private crearCita(int? idCita, int? idDoctorAutenticado, int? idPacienteAutenticado)
         {
             this.idCitaEdicion = idCita;
             this.idDoctorAutenticado = idDoctorAutenticado;
+            this.idPacienteAutenticado = idPacienteAutenticado;
             InitializeComponent();
         }
 
@@ -75,7 +82,15 @@ namespace SanarRuralUnan.Views.Citas
             cmbPaciente.DataSource = pacientes;
             cmbPaciente.DisplayMember = "NombreCompleto";
             cmbPaciente.ValueMember = "IdPaciente";
-            cmbPaciente.SelectedIndex = -1;
+            if (idPacienteAutenticado.HasValue)
+            {
+                cmbPaciente.SelectedValue = idPacienteAutenticado.Value;
+                cmbPaciente.Enabled = false;
+            }
+            else
+            {
+                cmbPaciente.SelectedIndex = -1;
+            }
         }
 
         private void CargarEspecialidades()
@@ -96,7 +111,7 @@ namespace SanarRuralUnan.Views.Citas
         // ============================================================
         private void CargarDatosParaEdicion(int idCita)
         {
-            var cita = controlador.obtenerCitaPorId(idCita, idDoctorAutenticado);
+            var cita = controlador.obtenerCitaPorId(idCita, idDoctorAutenticado, idPacienteAutenticado);
             if (cita == null)
             {
                 MessageBox.Show("No se encontró la cita solicitada o no tiene permisos para gestionarla.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -307,7 +322,8 @@ namespace SanarRuralUnan.Views.Citas
                         idEspecialidad,
                         fechaHora,
                         motivo,
-                        idDoctorAutenticado
+                        idDoctorAutenticado,
+                        idPacienteAutenticado
                     );
 
                     MessageBox.Show(

@@ -596,7 +596,7 @@ namespace SanarRuralUnan.Models
         // ------------------------------------------------------------
         // OBTENER DETALLE COMPLETO DE UNA CONSULTA
         // ------------------------------------------------------------
-        public ConsultaDetalleDto obtenerConsultaDetalle(int idConsulta, int? idDoctorAutenticado = null)
+        public ConsultaDetalleDto obtenerConsultaDetalle(int idConsulta, int? idDoctorAutenticado = null, int? idPacienteAutenticado = null)
         {
             var c = db.Consultas
                 .Include(cons => cons.Citas)
@@ -626,37 +626,45 @@ namespace SanarRuralUnan.Models
                 throw new InvalidOperationException("El rol de la sesión actual no es válido para consultar el expediente clínico.");
             }
 
-            if (!idDoctorAutenticado.HasValue)
+            if (rolActual.Nombre == "Paciente")
             {
-                // Cuando idDoctorAutenticado es null, solo el rol Administrativo puede consultar globalmente en solo lectura
-                if (rolActual.Nombre != "Administrativo")
+                var idPacienteSesion = new usuariosModels().ObtenerIdPacienteActual();
+                if (!idPacienteSesion.HasValue || c.Citas.IdPaciente != idPacienteSesion.Value)
                 {
-                    throw new InvalidOperationException("La consulta global del expediente clínico está reservada únicamente para usuarios con rol administrativo.");
+                    throw new InvalidOperationException("Un paciente solo tiene autorización para consultar atenciones médicas de su propio expediente.");
+                }
+                if (c.EstadoConsulta != "Finalizada")
+                {
+                    throw new InvalidOperationException("Un paciente solo puede consultar atenciones médicas que hayan sido finalizadas formalmente.");
                 }
             }
-            else
+            else if (rolActual.Nombre == "Doctor")
             {
-                // Cuando idDoctorAutenticado tiene valor, debe ser Doctor y pertenecer al titular de la consulta
-                if (rolActual.Nombre != "Doctor")
-                {
-                    throw new InvalidOperationException("Solo un usuario con rol 'Doctor' puede consultar consultas mediante credenciales de facultativo.");
-                }
-
                 var idDoctorSesion = new usuariosModels().ObtenerIdDoctorActual();
                 if (!idDoctorSesion.HasValue)
                 {
                     throw new InvalidOperationException("No se encontró un perfil facultativo activo asociado a la sesión actual.");
                 }
 
-                if (idDoctorSesion.Value != idDoctorAutenticado.Value)
+                if (idDoctorAutenticado.HasValue && idDoctorSesion.Value != idDoctorAutenticado.Value)
                 {
                     throw new InvalidOperationException("El identificador del facultativo no coincide con el médico autenticado en la sesión.");
                 }
 
-                if (c.Citas.IdDoctor != idDoctorAutenticado.Value)
+                // Si la consulta está en proceso, únicamente el médico titular asignado puede abrirla
+                if (c.EstadoConsulta == "EnProceso" && c.Citas.IdDoctor != idDoctorSesion.Value)
                 {
-                    throw new InvalidOperationException("No tiene permisos para acceder a una consulta médica de otro facultativo.");
+                    throw new InvalidOperationException("No tiene permisos para acceder a una consulta médica en proceso de otro facultativo.");
                 }
+                // Si la consulta está Finalizada, el médico tiene acceso de lectura para trazabilidad y continuidad asistencial
+            }
+            else if (rolActual.Nombre == "Administrativo")
+            {
+                // El rol Administrativo tiene acceso de supervisión y auditoría en modo de solo lectura
+            }
+            else
+            {
+                throw new InvalidOperationException("El rol de la sesión actual no está autorizado para consultar expedientes clínicos.");
             }
 
             var p = c.Citas.Pacientes;
@@ -1075,6 +1083,136 @@ namespace SanarRuralUnan.Models
                     IdRecomendacion = r.IdRecomendacion,
                     IdEnfermedad = r.IdEnfermedad,
                     Descripcion = r.Descripcion
+                })
+                .ToList();
+        }
+
+        // ------------------------------------------------------------
+        // HISTORIAL CLÍNICO INTEGRAL (CONSULTAS FINALIZADAS)
+        // ------------------------------------------------------------
+        public List<ConsultaItemDto> listarHistorialClinico(
+            int? idPaciente = null,
+            string busqueda = "",
+            DateTime? fechaDesde = null,
+            DateTime? fechaHasta = null,
+            int? idDoctorAutenticado = null)
+        {
+            if (!usuariosModels.IdRolActual.HasValue)
+            {
+                throw new InvalidOperationException("No se detectó una sesión activa con un rol válido para consultar el historial clínico.");
+            }
+
+            var rolActual = db.Roles.FirstOrDefault(r => r.IdRol == usuariosModels.IdRolActual.Value);
+            if (rolActual == null)
+            {
+                throw new InvalidOperationException("El rol de la sesión actual no es válido para consultar el historial clínico.");
+            }
+
+            // Aislamiento estricto para pacientes
+            if (rolActual.Nombre == "Paciente")
+            {
+                var idPacienteSesion = new usuariosModels().ObtenerIdPacienteActual();
+                if (!idPacienteSesion.HasValue)
+                {
+                    throw new InvalidOperationException("No se encontró un expediente de paciente vinculado a la sesión actual.");
+                }
+                idPaciente = idPacienteSesion.Value;
+            }
+
+            var consulta = db.Consultas
+                .Include(c => c.Citas)
+                .Include(c => c.Citas.Pacientes)
+                .Include(c => c.Citas.DoctorHospitalEspecialidad.DoctorEspecialidad.Doctores)
+                .Include(c => c.Citas.DoctorHospitalEspecialidad.DoctorEspecialidad.Especialidades)
+                .Include(c => c.Citas.DoctorHospitalEspecialidad.Hospitales)
+                .Include(c => c.Diagnosticos)
+                .Where(c => c.EstadoConsulta == "Finalizada");
+
+            // Filtro por paciente específico
+            if (idPaciente.HasValue)
+            {
+                consulta = consulta.Where(c => c.Citas.IdPaciente == idPaciente.Value);
+            }
+
+            // Filtro de rango de fechas
+            if (fechaDesde.HasValue)
+            {
+                DateTime fDesde = fechaDesde.Value.Date;
+                consulta = consulta.Where(c => DbFunctions.TruncateTime(c.FechaHoraInicio) >= fDesde);
+            }
+            if (fechaHasta.HasValue)
+            {
+                DateTime fHasta = fechaHasta.Value.Date;
+                consulta = consulta.Where(c => DbFunctions.TruncateTime(c.FechaHoraInicio) <= fHasta);
+            }
+
+            // Búsqueda textual por paciente, cédula, doctor, hospital o diagnóstico
+            if (!string.IsNullOrWhiteSpace(busqueda))
+            {
+                string texto = busqueda.Trim();
+                consulta = consulta.Where(c =>
+                    c.Citas.Pacientes.PrimerNombre.Contains(texto) ||
+                    (c.Citas.Pacientes.SegundoNombre != null && c.Citas.Pacientes.SegundoNombre.Contains(texto)) ||
+                    c.Citas.Pacientes.PrimerApellido.Contains(texto) ||
+                    (c.Citas.Pacientes.SegundoApellido != null && c.Citas.Pacientes.SegundoApellido.Contains(texto)) ||
+                    (c.Citas.Pacientes.Cedula != null && c.Citas.Pacientes.Cedula.Contains(texto)) ||
+                    c.Citas.DoctorHospitalEspecialidad.DoctorEspecialidad.Doctores.PrimerNombre.Contains(texto) ||
+                    c.Citas.DoctorHospitalEspecialidad.DoctorEspecialidad.Doctores.PrimerApellido.Contains(texto) ||
+                    c.Citas.DoctorHospitalEspecialidad.DoctorEspecialidad.Especialidades.Nombre.Contains(texto) ||
+                    c.Citas.DoctorHospitalEspecialidad.Hospitales.Nombre.Contains(texto) ||
+                    c.Diagnosticos.Any(d => d.Descripcion.Contains(texto) || (d.Enfermedades != null && d.Enfermedades.NombreEnfermedad.Contains(texto)))
+                );
+            }
+
+            return consulta
+                .OrderByDescending(c => c.FechaHoraInicio)
+                .ToList()
+                .Select(c =>
+                {
+                    var p = c.Citas.Pacientes;
+                    var doc = c.Citas.DoctorHospitalEspecialidad.DoctorEspecialidad.Doctores;
+                    var esp = c.Citas.DoctorHospitalEspecialidad.DoctorEspecialidad.Especialidades;
+                    var hosp = c.Citas.DoctorHospitalEspecialidad.Hospitales;
+
+                    string nombrePaciente = string.Join(" ", new[]
+                    {
+                        p.PrimerApellido,
+                        p.SegundoApellido,
+                        p.PrimerNombre,
+                        p.SegundoNombre
+                    }.Where(parte => !string.IsNullOrWhiteSpace(parte)));
+
+                    string nombreDoctor = string.Join(" ", new[]
+                    {
+                        doc.PrimerNombre,
+                        doc.SegundoNombre,
+                        doc.PrimerApellido,
+                        doc.SegundoApellido
+                    }.Where(parte => !string.IsNullOrWhiteSpace(parte)));
+
+                    var diagPrincipal = c.Diagnosticos.FirstOrDefault(d => d.TipoDiagnostico == "Principal");
+                    string diagTexto = diagPrincipal != null
+                        ? (!string.IsNullOrWhiteSpace(diagPrincipal.Descripcion) ? diagPrincipal.Descripcion : (diagPrincipal.Enfermedades != null ? diagPrincipal.Enfermedades.NombreEnfermedad : "Sin descripción"))
+                        : "Sin diagnóstico";
+
+                    return new ConsultaItemDto
+                    {
+                        IdConsulta = c.IdConsulta,
+                        IdCita = c.IdCita,
+                        FechaHoraInicio = c.FechaHoraInicio,
+                        FechaHoraInicioTexto = c.FechaHoraInicio.ToString("dd/MM/yyyy hh:mm tt"),
+                        FechaHoraFinTexto = c.FechaHoraFin.HasValue ? c.FechaHoraFin.Value.ToString("dd/MM/yyyy hh:mm tt") : "Finalizada",
+                        EstadoConsulta = c.EstadoConsulta,
+                        IdPaciente = c.Citas.IdPaciente,
+                        Paciente = nombrePaciente,
+                        Cedula = string.IsNullOrWhiteSpace(p.Cedula) ? "Sin cédula" : p.Cedula,
+                        IdDoctor = c.Citas.IdDoctor,
+                        Doctor = "Dr(a). " + nombreDoctor,
+                        Hospital = hosp != null ? hosp.Nombre : "Sin sede",
+                        Especialidad = esp != null ? esp.Nombre : "Sin especialidad",
+                        DiagnosticoPrincipal = diagTexto,
+                        MotivoCita = c.Citas.Motivo
+                    };
                 })
                 .ToList();
         }
