@@ -66,21 +66,28 @@ El sistema sigue un patrón arquitectónico **MVC informal** adaptado a Windows 
 ```
 SanarRuralUnan/
 ├── Controllers/                 # Controladores del sistema
+│   ├── citasControllers.cs
+│   ├── consultasControllers.cs
 │   ├── doctoresControllers.cs
 │   ├── hospitalesController.cs
 │   ├── pacientesControllers.cs
 │   └── usuariosController.cs
 ├── Models/                      # Lógica de acceso a datos y persistencia
+│   ├── citasModels.cs
+│   ├── consultasModels.cs
 │   ├── doctoresModels.cs
 │   ├── hospitalesModels.cs
 │   ├── pacientesModels.cs
 │   └── usuariosModels.cs
 ├── Views/                       # Formularios organizados por módulo
+│   ├── Citas/                   # crearCita, fichaCita, paginaPrincipalCitas
+│   ├── ConsultaMedica/          # atencionConsulta, paginaPrincipalConsultas, seleccionarCitaConsulta
 │   ├── Doctores/                # crearDoctor, paginaPrincipalDoctores
+│   ├── HistorialClinico/        # paginaPrincipalHistorial
 │   ├── Hospitales/              # crearHospital, paginaPrincipalHospitales
 │   ├── IniciarSesion/           # iniciarSesion
-│   ├── Menu/                    # menuPrincipalAdministrativo, menuPrincipalMedicos
-│   ├── Pacientes/               # crearPaciente, paginaPrincipalPacientes
+│   ├── Menu/                    # menuPrincipalAdministrativo, menuPrincipalMedicos, menuPrincipalPacientes
+│   ├── Pacientes/               # crearPaciente, fichaPaciente, paginaPrincipalPacientes, perfilPaciente
 │   └── Usuarios/                # crearUsuario, paginaPrincipalUsuarios
 ├── Helpers/                     # Utilidades transversales
 │   └── Tema.cs                  # Identidad visual centralizada (colores, fuentes, medidas)
@@ -95,6 +102,7 @@ SanarRuralUnan/
 │   ├── skills/
 │   └── workflows/
 └── docs/AI/                     # Documentación de contexto para IA
+    ├── IMPLEMENTATION_STATUS.md
     └── PROJECT_CONTEXT.md
 ```
 
@@ -105,28 +113,26 @@ El acceso al sistema se realiza a través de `iniciarSesion.cs` (`Program.cs` in
 
 1. **Administrativo (Rol Id = `ObtenerIdRol("Administrativo")`):**
    - **Shell Principal:** `Views/Menu/menuPrincipalAdministrativo.cs` (`MaterialForm`).
-   - **Módulos accesibles:** Usuarios, Doctores, Pacientes, Hospitales.
-   - Navegación embebida: El shell conmuta los formularios secundarios (`paginaPrincipalUsuarios`, `paginaPrincipalDoctores`, `paginaPrincipalHospitales`, `paginaPrincipalPacientes`) dentro de su contenedor `panelContenido`.
+   - **Módulos accesibles:** Usuarios, Doctores, Pacientes, Hospitales, Citas.
+   - Navegación embebida: El shell conmuta los formularios secundarios (`paginaPrincipalUsuarios`, `paginaPrincipalDoctores`, `paginaPrincipalHospitales`, `paginaPrincipalPacientes`, `paginaPrincipalCitas`) dentro de su contenedor `panelContenido`.
 2. **Doctor / Médico (Rol Id = `ObtenerIdRol("Doctor")`):**
    - **Shell Principal:** `Views/Menu/menuPrincipalMedicos.cs` (`MaterialForm`).
-   - **Módulos:** Pacientes (activo), Citas, Consultas, Historial Clínico (en desarrollo dentro de `feature/modulo-clinico`).
-3. **Paciente:**
-   - Rol contemplado en base de datos; interfaz propia en etapa posterior.
+   - **Módulos:** Pacientes (consulta y alta), Citas (asignadas a su perfil), Consultas (atención médica), Historial Clínico Integral.
+3. **Paciente (Rol Id = `ObtenerIdRol("Paciente")`):**
+   - **Shell Principal:** `Views/Menu/menuPrincipalPacientes.cs` (`MaterialForm`).
+   - **Módulos:** Mi Perfil (`perfilPaciente.cs` - autogestión de datos demográficos y contactos), Mis Citas (solicitud y cancelación), Mi Historial Clínico (consultas finalizadas en modo solo lectura).
 
 ---
 
 ## 6. Módulos del Sistema y Estado Actual
-- **Autenticación (`Views/IniciarSesion`):** Implementado con validación en tiempo real y enrutamiento por rol.
-- **Usuarios (`Views/Usuarios`):** Implementado (listado, búsqueda, creación con rol asignado).
-- **Hospitales (`Views/Hospitales`):** Implementado (listado y creación con departamentos/municipios).
-- **Doctores (`Views/Doctores`):** Implementado (gestión completa, especialidades múltiples, asignaciones hospital-especialidad, foto con previsualización).
-- **Pacientes (`Views/Pacientes`):** Implementado (listado, búsqueda, registro con datos demográficos, contactos de emergencia y comunidad).
-- **Módulo Clínico (`feature/modulo-clinico` - En curso):**
-  - **Citas:** Planificación de citas médicas (`Citas.cs`).
-  - **Consultas:** Registro de la atención médica (`Consultas.cs`).
-  - **Signos Vitales:** Captura de presión, frecuencia, temperatura, peso, talla (`SignosVitales.cs`).
-  - **Diagnósticos y Prescripciones:** Diagnósticos CIE/enfermedad (`Diagnosticos.cs`) y medicación (`Prescripciones.cs`).
-  - **Historial Médico:** Visualización cronológica e integrada del paciente.
+- **Autenticación (`Views/IniciarSesion`):** Implementado y verificado con PBKDF2-SHA256, sal aleatoria y enrutamiento por rol.
+- **Usuarios (`Views/Usuarios`):** Implementado y verificado. Auto-registro público restringido a Paciente; gestión de cuentas protegida por rol Administrativo.
+- **Hospitales (`Views/Hospitales`):** Implementado y verificado. Gestión de sedes protegida por rol Administrativo con cascada geográfica.
+- **Doctores (`Views/Doctores`):** Implementado y verificado. Gestión de facultativos protegida por rol Administrativo con transacciones explícitas.
+- **Pacientes (`Views/Pacientes`):** Implementado y verificado. Gestión clínica/maestra para Administrativo; consulta para Doctor; autogestión demográfica para Paciente.
+- **Citas (`Views/Citas`):** Implementado y verificado. Resolución de identidad por sesión en el modelo, solapamiento horario, transiciones seguras y prohibición de paso a `Atendida` fuera del módulo clínico.
+- **Consultas (`Views/ConsultaMedica`):** Implementado y verificado. Atención clínica con concurrencia controlada (`UQ_Consultas_IdCita`), borradores recurrentes, diagnóstico principal obligatorio y cierre atómico ACID.
+- **Historial Clínico (`Views/HistorialClinico`):** Implementado y verificado. Visualización integral para Doctor, auditoría para Administrativo y vista acotada a atenciones finalizadas para Paciente.
 
 ---
 

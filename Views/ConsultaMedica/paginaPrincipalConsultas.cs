@@ -159,7 +159,7 @@ namespace SanarRuralUnan.Views.ConsultaMedica
         {
             cmbEstadoFiltro.Items.Clear();
             cmbEstadoFiltro.Items.Add("Todos");
-            cmbEstadoFiltro.Items.Add("EnProceso");
+            cmbEstadoFiltro.Items.Add("En curso");
             cmbEstadoFiltro.Items.Add("Finalizada");
             cmbEstadoFiltro.SelectedIndex = 0;
         }
@@ -180,7 +180,7 @@ namespace SanarRuralUnan.Views.ConsultaMedica
 
                 // Actualizar métricas dinámicas
                 int total = lista.Count;
-                int enProceso = lista.Count(c => c.EstadoConsulta == "EnProceso");
+                int enProceso = lista.Count(c => c.EstadoConsulta == "En curso" || c.EstadoConsulta == "EnProceso");
                 int finalizadas = lista.Count(c => c.EstadoConsulta == "Finalizada");
 
                 lblTotalNum.Text = total.ToString();
@@ -464,7 +464,7 @@ namespace SanarRuralUnan.Views.ConsultaMedica
                 e.PaintBackground(e.CellBounds, true);
                 e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
 
-                bool enProceso = (estado == "EnProceso");
+                bool enProceso = (estado == "En curso" || estado == "EnProceso");
                 Rectangle btnRect = new Rectangle(
                     e.CellBounds.X + 4,
                     e.CellBounds.Y + 8,
@@ -535,7 +535,7 @@ namespace SanarRuralUnan.Views.ConsultaMedica
                 string estado = dgvConsultas.Rows[e.RowIndex].Cells["EstadoConsulta"]?.Value?.ToString() ?? "";
 
                 bool esBoton = (nombreColumna == "colVer") ||
-                               (nombreColumna == "colContinuar" && estado == "EnProceso");
+                               (nombreColumna == "colContinuar" && (estado == "En curso" || estado == "EnProceso"));
 
                 dgvConsultas.Cursor = esBoton ? Cursors.Hand : Cursors.Default;
             }
@@ -568,7 +568,7 @@ namespace SanarRuralUnan.Views.ConsultaMedica
             // Acción: CONTINUAR ATENCIÓN EN PROCESO
             else if (nombreColumna == "colContinuar")
             {
-                if (estado != "EnProceso")
+                if (estado != "En curso" && estado != "EnProceso")
                 {
                     MessageBox.Show("Esta consulta médica ya ha sido finalizada y se encuentra en modo de sólo lectura.", "Consulta Finalizada", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     return;

@@ -130,16 +130,13 @@ namespace SanarRuralUnan.Models
         // ------------------------------------------------------------
         private Roles ValidarSesion(string operacion)
         {
-            if (!usuariosModels.IdRolActual.HasValue)
+            if (!usuariosModels.EsUsuarioSesionActivo(db))
             {
                 throw new InvalidOperationException($"No se detectó una sesión activa con un rol válido para {operacion}.");
             }
 
-            var rolActual = db.Roles.FirstOrDefault(r => r.IdRol == usuariosModels.IdRolActual.Value);
-            if (rolActual == null)
-            {
-                throw new InvalidOperationException($"El rol de la sesión actual no es válido para {operacion}.");
-            }
+            var usuarioSesion = db.Usuarios.Include(u => u.Roles).First(u => u.IdUsuario == usuariosModels.IdUsuarioActual.Value);
+            var rolActual = usuarioSesion.Roles;
 
             if (rolActual.Nombre == "Paciente")
             {
@@ -151,9 +148,7 @@ namespace SanarRuralUnan.Models
 
         public bool EsAdministrativo()
         {
-            if (!usuariosModels.IdRolActual.HasValue) return false;
-            var rol = db.Roles.FirstOrDefault(r => r.IdRol == usuariosModels.IdRolActual.Value);
-            return rol != null && rol.Nombre == "Administrativo";
+            return usuariosModels.EsSesionAdministrativa(db);
         }
 
         // ------------------------------------------------------------
@@ -279,16 +274,13 @@ namespace SanarRuralUnan.Models
         // ------------------------------------------------------------
         private Roles ValidarSesionLecturaPaciente(Pacientes paciente)
         {
-            if (!usuariosModels.IdRolActual.HasValue)
+            if (!usuariosModels.EsUsuarioSesionActivo(db))
             {
                 throw new InvalidOperationException("No se detectó una sesión activa con un rol válido para consultar la ficha del paciente.");
             }
 
-            var rolActual = db.Roles.FirstOrDefault(r => r.IdRol == usuariosModels.IdRolActual.Value);
-            if (rolActual == null)
-            {
-                throw new InvalidOperationException("El rol de la sesión actual no es válido para consultar la ficha del paciente.");
-            }
+            var usuarioSesion = db.Usuarios.Include(u => u.Roles).First(u => u.IdUsuario == usuariosModels.IdUsuarioActual.Value);
+            var rolActual = usuarioSesion.Roles;
 
             if (rolActual.Nombre == "Paciente")
             {
@@ -714,16 +706,13 @@ namespace SanarRuralUnan.Models
             string antecedentes,
             List<ContactoEmergenciaDto> contactos = null)
         {
-            if (!usuariosModels.IdRolActual.HasValue)
+            if (!usuariosModels.EsUsuarioSesionActivo(db))
             {
                 throw new InvalidOperationException("No se detectó una sesión activa con un rol válido para editar pacientes.");
             }
 
-            var rolActual = db.Roles.FirstOrDefault(r => r.IdRol == usuariosModels.IdRolActual.Value);
-            if (rolActual == null)
-            {
-                throw new InvalidOperationException("El rol de la sesión actual no es válido para editar pacientes.");
-            }
+            var usuarioSesion = db.Usuarios.Include(u => u.Roles).First(u => u.IdUsuario == usuariosModels.IdUsuarioActual.Value);
+            var rolActual = usuarioSesion.Roles;
 
             if (rolActual.Nombre == "Doctor")
             {
@@ -996,7 +985,7 @@ namespace SanarRuralUnan.Models
             }
 
             // Validar que no tenga consultas clínicas en proceso de atención
-            bool tieneConsultasEnProceso = db.Consultas.Any(cons => cons.Citas.IdPaciente == idPaciente && cons.EstadoConsulta == "EnProceso");
+            bool tieneConsultasEnProceso = db.Consultas.Any(cons => cons.Citas.IdPaciente == idPaciente && (cons.EstadoConsulta == "EnProceso" || cons.EstadoConsulta == "En curso"));
             if (tieneConsultasEnProceso)
             {
                 throw new InvalidOperationException("No se puede dar de baja al paciente porque tiene una consulta médica en proceso de atención. Debe finalizar la consulta antes de darlo de baja.");

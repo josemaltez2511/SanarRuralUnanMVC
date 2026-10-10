@@ -37,11 +37,83 @@ namespace SanarRuralUnan.Models
         // La instancia del contexto de base de datos reside únicamente en el Modelo.
         private readonly SanarRuralDBEntities db = new SanarRuralDBEntities();
 
+        private void ResolverSesion(
+            out int? idRolActual,
+            out int? idDoctorSesion,
+            out int? idPacienteSesion,
+            out bool esAdmin,
+            out bool esDoctor,
+            out bool esPaciente)
+        {
+            idRolActual = null;
+            idDoctorSesion = null;
+            idPacienteSesion = null;
+            esAdmin = false;
+            esDoctor = false;
+            esPaciente = false;
+
+            if (!usuariosModels.IdUsuarioActual.HasValue || !usuariosModels.IdRolActual.HasValue)
+                return;
+
+            var usuario = db.Usuarios.Include(u => u.Roles)
+                .FirstOrDefault(u => u.IdUsuario == usuariosModels.IdUsuarioActual.Value && u.Estado);
+
+            if (usuario == null || usuario.IdRol != usuariosModels.IdRolActual.Value || usuario.Roles == null)
+                return;
+
+            idRolActual = usuario.IdRol;
+            string nombreRol = usuario.Roles.Nombre;
+            esAdmin = nombreRol == "Administrativo";
+            esDoctor = nombreRol == "Doctor";
+            esPaciente = nombreRol == "Paciente";
+
+            var uModel = new usuariosModels();
+            idDoctorSesion = esDoctor ? uModel.ObtenerIdDoctorActual(db) : null;
+            idPacienteSesion = esPaciente ? uModel.ObtenerIdPacienteActual(db) : null;
+        }
+
         // ============================================================
         // LISTAR CITAS CON BÚSQUEDA Y FILTROS
         // ============================================================
         public List<CitaItemDto> listarCitas(string busqueda = "", DateTime? fecha = null, string estado = "", int? idDoctor = null, int? idPaciente = null)
         {
+            ResolverSesion(out var idRolActual, out var idDoctorSesion, out var idPacienteSesion, out var esAdmin, out var esDoctor, out var esPaciente);
+
+            if (!idRolActual.HasValue)
+            {
+                throw new UnauthorizedAccessException("Se requiere una sesión activa para consultar el listado de citas médicas.");
+            }
+
+            if (esPaciente)
+            {
+                if (!idPacienteSesion.HasValue)
+                {
+                    throw new UnauthorizedAccessException("No se encontró un perfil de paciente activo asociado a la sesión.");
+                }
+                if (idPaciente.HasValue && idPaciente.Value != idPacienteSesion.Value)
+                {
+                    throw new UnauthorizedAccessException("Un paciente solo tiene autorización para consultar citas de su propio expediente.");
+                }
+                idPaciente = idPacienteSesion.Value;
+                idDoctor = null;
+            }
+            else if (esDoctor)
+            {
+                if (!idDoctorSesion.HasValue)
+                {
+                    throw new UnauthorizedAccessException("No se encontró un perfil facultativo activo asociado a la sesión.");
+                }
+                if (idDoctor.HasValue && idDoctor.Value != idDoctorSesion.Value)
+                {
+                    throw new UnauthorizedAccessException("Un médico solo tiene autorización para consultar citas asignadas a su perfil.");
+                }
+                idDoctor = idDoctorSesion.Value;
+            }
+            else if (!esAdmin)
+            {
+                throw new UnauthorizedAccessException("El rol de la sesión actual no tiene permisos para consultar citas médicas.");
+            }
+
             var consulta = db.Citas
                 .Include(c => c.Pacientes)
                 .Include(c => c.DoctorHospitalEspecialidad.DoctorEspecialidad.Doctores)
@@ -145,14 +217,79 @@ namespace SanarRuralUnan.Models
         // ============================================================
         public Citas obtenerCitaPorId(int idCita, int? idDoctor = null, int? idPaciente = null)
         {
-            return db.Citas
+            ResolverSesion(out var idRolActual, out var idDoctorSesion, out var idPacienteSesion, out var esAdmin, out var esDoctor, out var esPaciente);
+
+            if (!idRolActual.HasValue)
+            {
+                throw new UnauthorizedAccessException("Se requiere una sesión activa para consultar el detalle de una cita médica.");
+            }
+
+            if (esPaciente)
+            {
+                if (!idPacienteSesion.HasValue)
+                {
+                    throw new UnauthorizedAccessException("No se encontró un perfil de paciente activo asociado a la sesión.");
+                }
+                if (idPaciente.HasValue && idPaciente.Value != idPacienteSesion.Value)
+                {
+                    throw new UnauthorizedAccessException("Un paciente solo tiene autorización para consultar citas de su propio expediente.");
+                }
+            }
+            else if (esDoctor)
+            {
+                if (!idDoctorSesion.HasValue)
+                {
+                    throw new UnauthorizedAccessException("No se encontró un perfil facultativo activo asociado a la sesión.");
+                }
+                if (idDoctor.HasValue && idDoctor.Value != idDoctorSesion.Value)
+                {
+                    throw new UnauthorizedAccessException("Un médico solo tiene autorización para consultar citas asignadas a su propio perfil.");
+                }
+            }
+
+            var consulta = db.Citas
                 .Include(c => c.Pacientes)
                 .Include(c => c.DoctorHospitalEspecialidad.DoctorEspecialidad.Doctores)
                 .Include(c => c.DoctorHospitalEspecialidad.DoctorEspecialidad.Especialidades)
                 .Include(c => c.DoctorHospitalEspecialidad.Hospitales)
-                .FirstOrDefault(c => c.IdCita == idCita &&
-                    (!idDoctor.HasValue || c.IdDoctor == idDoctor.Value) &&
-                    (!idPaciente.HasValue || c.IdPaciente == idPaciente.Value));
+                .Where(c => c.IdCita == idCita);
+
+            // Filtrado estricto a nivel de consulta en base de datos:
+            if (esPaciente)
+            {
+                consulta = consulta.Where(c => c.IdPaciente == idPacienteSesion.Value);
+            }
+            else if (esDoctor)
+            {
+                consulta = consulta.Where(c => c.IdDoctor == idDoctorSesion.Value);
+            }
+            else if (!esAdmin)
+            {
+                throw new UnauthorizedAccessException("El rol de la sesión actual no tiene permisos para consultar citas médicas.");
+            }
+
+            var cita = consulta.FirstOrDefault();
+
+            if (cita == null)
+            {
+                // Si la cita existe en la base de datos pero no coincide con los permisos del propietario:
+                bool existeCita = db.Citas.Any(c => c.IdCita == idCita);
+                if (existeCita)
+                {
+                    if (esPaciente)
+                    {
+                        throw new UnauthorizedAccessException("Un paciente solo tiene autorización para consultar citas de su propio expediente.");
+                    }
+                    if (esDoctor)
+                    {
+                        throw new UnauthorizedAccessException("Un médico solo tiene autorización para consultar citas asignadas a su propio perfil.");
+                    }
+                    throw new UnauthorizedAccessException("No tiene autorización para consultar el detalle de esta cita médica.");
+                }
+                return null;
+            }
+
+            return cita;
         }
 
         // ============================================================
@@ -282,6 +419,7 @@ namespace SanarRuralUnan.Models
                 c.IdDoctor == idDoctor &&
                 c.FechaHoraProgramada == fechaHora &&
                 c.Estado != "Cancelada" &&
+                c.Estado != "NoAsistio" &&
                 (!idCitaExcluir.HasValue || c.IdCita != idCitaExcluir.Value)
             );
         }
@@ -293,6 +431,7 @@ namespace SanarRuralUnan.Models
                 c.IdPaciente == idPaciente &&
                 c.FechaHoraProgramada == fechaHora &&
                 c.Estado != "Cancelada" &&
+                c.Estado != "NoAsistio" &&
                 (!idCitaExcluir.HasValue || c.IdCita != idCitaExcluir.Value)
             );
         }
@@ -310,6 +449,40 @@ namespace SanarRuralUnan.Models
             int? idDoctorAutenticado = null,
             int? idPacienteAutenticado = null)
         {
+            ResolverSesion(out var idRolActual, out var idDoctorSesion, out var idPacienteSesion, out var esAdmin, out var esDoctor, out var esPaciente);
+
+            if (!idRolActual.HasValue)
+            {
+                throw new UnauthorizedAccessException("Se requiere una sesión activa para registrar citas médicas.");
+            }
+
+            if (esPaciente)
+            {
+                if (!idPacienteSesion.HasValue)
+                {
+                    throw new UnauthorizedAccessException("No se encontró un perfil de paciente activo asociado a la sesión.");
+                }
+                if (idPaciente != idPacienteSesion.Value)
+                {
+                    throw new UnauthorizedAccessException("Un paciente solo puede registrar citas asignadas a su propio expediente.");
+                }
+            }
+            else if (esDoctor)
+            {
+                if (!idDoctorSesion.HasValue)
+                {
+                    throw new UnauthorizedAccessException("No se encontró un perfil facultativo activo asociado a la sesión.");
+                }
+                if (idDoctor != idDoctorSesion.Value)
+                {
+                    throw new UnauthorizedAccessException("Un médico solo puede registrar citas asignadas a su propio perfil.");
+                }
+            }
+            else if (!esAdmin)
+            {
+                throw new UnauthorizedAccessException("No tiene autorización para registrar citas médicas.");
+            }
+
             // Restricción de alcance: un médico autenticado solo puede registrar citas para sí mismo.
             if (idDoctorAutenticado.HasValue && idDoctor != idDoctorAutenticado.Value)
             {
@@ -378,10 +551,34 @@ namespace SanarRuralUnan.Models
             string motivo,
             int? idDoctorAutenticado = null)
         {
+            ResolverSesion(out var idRolActual, out var idDoctorSesion, out var idPacienteSesion, out var esAdmin, out var esDoctor, out var esPaciente);
+
+            if (!idRolActual.HasValue)
+            {
+                throw new UnauthorizedAccessException("Se requiere una sesión activa para actualizar citas médicas.");
+            }
+
+            if (esPaciente)
+            {
+                throw new UnauthorizedAccessException("Un paciente no tiene autorización para modificar directamente citas; debe cancelar y solicitar una nueva cita.");
+            }
+
             var cita = db.Citas.FirstOrDefault(c => c.IdCita == idCita);
             if (cita == null)
             {
                 throw new InvalidOperationException("La cita que intenta editar no fue encontrada.");
+            }
+
+            if (esDoctor)
+            {
+                if (!idDoctorSesion.HasValue || cita.IdDoctor != idDoctorSesion.Value || idDoctor != idDoctorSesion.Value)
+                {
+                    throw new UnauthorizedAccessException("Un médico solo puede modificar citas asignadas a su propio perfil.");
+                }
+            }
+            else if (!esAdmin)
+            {
+                throw new UnauthorizedAccessException("No tiene autorización para actualizar citas médicas.");
             }
 
             // Restricción de alcance: un médico autenticado solo puede modificar citas propias y no transferirlas a otro doctor.
@@ -435,10 +632,55 @@ namespace SanarRuralUnan.Models
         // ============================================================
         public void cambiarEstadoCita(int idCita, string nuevoEstado, int? idDoctorAutenticado = null, int? idPacienteAutenticado = null)
         {
+            ResolverSesion(out var idRolActual, out var idDoctorSesion, out var idPacienteSesion, out var esAdmin, out var esDoctor, out var esPaciente);
+
+            if (!idRolActual.HasValue)
+            {
+                throw new UnauthorizedAccessException("Se requiere una sesión activa para cambiar el estado de una cita médica.");
+            }
+
             var cita = db.Citas.FirstOrDefault(c => c.IdCita == idCita);
             if (cita == null)
             {
                 throw new InvalidOperationException("La cita seleccionada no existe en el sistema.");
+            }
+
+            // Regla 4.6: Este módulo no debe marcar citas como 'Atendida'.
+            if (nuevoEstado == "Atendida")
+            {
+                throw new InvalidOperationException("El estado 'Atendida' solo puede establecerse desde el módulo de Consulta Médica.");
+            }
+
+            if (cita.Estado == "Atendida" || cita.Estado == "Cancelada" || cita.Estado == "NoAsistio")
+            {
+                throw new InvalidOperationException($"Una cita en estado '{cita.Estado}' es definitiva y no puede cambiar de estado.");
+            }
+
+            if (esPaciente)
+            {
+                if (!idPacienteSesion.HasValue || cita.IdPaciente != idPacienteSesion.Value)
+                {
+                    throw new UnauthorizedAccessException("Un paciente solo tiene autorización para gestionar citas de su propio expediente.");
+                }
+                if (nuevoEstado != "Cancelada")
+                {
+                    throw new InvalidOperationException("Un paciente solo puede solicitar la cancelación de sus citas.");
+                }
+                if (cita.Estado != "Pendiente")
+                {
+                    throw new InvalidOperationException("Solo es posible cancelar citas que se encuentren en estado 'Pendiente'.");
+                }
+            }
+            else if (esDoctor)
+            {
+                if (!idDoctorSesion.HasValue || cita.IdDoctor != idDoctorSesion.Value)
+                {
+                    throw new UnauthorizedAccessException("Un médico solo puede cambiar el estado de citas asignadas a su propio perfil.");
+                }
+            }
+            else if (!esAdmin)
+            {
+                throw new UnauthorizedAccessException("No tiene autorización para cambiar el estado de una cita médica.");
             }
 
             // Restricción de alcance: un médico autenticado solo puede cambiar el estado de sus propias citas.
@@ -464,12 +706,6 @@ namespace SanarRuralUnan.Models
                 }
             }
 
-            // Regla 4.6: Este módulo no debe marcar citas como 'Atendida'.
-            if (nuevoEstado == "Atendida")
-            {
-                throw new InvalidOperationException("El estado 'Atendida' solo puede establecerse desde el módulo de Consulta Médica.");
-            }
-
             // Regla de negocio: Una cita solo puede pasar a 'NoAsistio' cuando la fecha y hora programada ya haya pasado.
             if (nuevoEstado == "NoAsistio" && cita.FechaHoraProgramada > DateTime.Now)
             {
@@ -490,10 +726,6 @@ namespace SanarRuralUnan.Models
                 {
                     throw new InvalidOperationException($"Transición no permitida de 'Confirmada' a '{nuevoEstado}'.");
                 }
-            }
-            else if (cita.Estado == "Atendida" || cita.Estado == "Cancelada" || cita.Estado == "NoAsistio")
-            {
-                throw new InvalidOperationException($"Una cita en estado '{cita.Estado}' es definitiva y no puede cambiar de estado.");
             }
             else
             {

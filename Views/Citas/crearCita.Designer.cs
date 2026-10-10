@@ -115,7 +115,7 @@ namespace SanarRuralUnan.Views.Citas
             this.lblTitulo.Name = "lblTitulo";
             this.lblTitulo.Size = new System.Drawing.Size(260, 28);
             this.lblTitulo.TabIndex = 1;
-            this.lblTitulo.Text = "Programar Cita MÃ©dica";
+            this.lblTitulo.Text = "Programar Cita Médica";
             //
             // lblSubtitulo
             //
@@ -126,7 +126,7 @@ namespace SanarRuralUnan.Views.Citas
             this.lblSubtitulo.Name = "lblSubtitulo";
             this.lblSubtitulo.Size = new System.Drawing.Size(370, 17);
             this.lblSubtitulo.TabIndex = 2;
-            this.lblSubtitulo.Text = "Seleccione paciente, especialidad, mÃ©dico y horario convenido.";
+            this.lblSubtitulo.Text = "Seleccione paciente, especialidad, médico y horario convenido.";
             //
             // lblBadgeModo
             //
@@ -187,7 +187,7 @@ namespace SanarRuralUnan.Views.Citas
             this.lblTituloAtencion.Name = "lblTituloAtencion";
             this.lblTituloAtencion.Size = new System.Drawing.Size(242, 20);
             this.lblTituloAtencion.TabIndex = 1;
-            this.lblTituloAtencion.Text = "AtenciÃ³n MÃ©dica y Profesionales";
+            this.lblTituloAtencion.Text = "Atención Médica y Profesionales";
             //
             // lblSubtituloAtencion
             //
@@ -198,7 +198,7 @@ namespace SanarRuralUnan.Views.Citas
             this.lblSubtituloAtencion.Name = "lblSubtituloAtencion";
             this.lblSubtituloAtencion.Size = new System.Drawing.Size(325, 15);
             this.lblSubtituloAtencion.TabIndex = 2;
-            this.lblSubtituloAtencion.Text = "Seleccione el paciente, especialidad, mÃ©dico y sede asistencial.";
+            this.lblSubtituloAtencion.Text = "Seleccione el paciente, especialidad, médico y sede asistencial.";
             //
             // lblPaciente
             //
@@ -239,7 +239,7 @@ namespace SanarRuralUnan.Views.Citas
             this.lblEspecialidad.Name = "lblEspecialidad";
             this.lblEspecialidad.Size = new System.Drawing.Size(155, 17);
             this.lblEspecialidad.TabIndex = 6;
-            this.lblEspecialidad.Text = "Especialidad MÃ©dica (*):";
+            this.lblEspecialidad.Text = "Especialidad Médica (*):";
             //
             // cmbEspecialidad
             //
@@ -272,7 +272,7 @@ namespace SanarRuralUnan.Views.Citas
             this.lblDoctor.Name = "lblDoctor";
             this.lblDoctor.Size = new System.Drawing.Size(137, 17);
             this.lblDoctor.TabIndex = 9;
-            this.lblDoctor.Text = "MÃ©dico Tratante (*):";
+            this.lblDoctor.Text = "Médico Tratante (*):";
             //
             // cmbDoctor
             //
@@ -357,7 +357,7 @@ namespace SanarRuralUnan.Views.Citas
             this.lblIconoProgramacion.Name = "lblIconoProgramacion";
             this.lblIconoProgramacion.Size = new System.Drawing.Size(32, 32);
             this.lblIconoProgramacion.TabIndex = 0;
-            this.lblIconoProgramacion.Text = "â±ï¸";
+            this.lblIconoProgramacion.Text = "⏱️";
             this.lblIconoProgramacion.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             //
             // lblTituloProgramacion
@@ -369,7 +369,7 @@ namespace SanarRuralUnan.Views.Citas
             this.lblTituloProgramacion.Name = "lblTituloProgramacion";
             this.lblTituloProgramacion.Size = new System.Drawing.Size(262, 20);
             this.lblTituloProgramacion.TabIndex = 1;
-            this.lblTituloProgramacion.Text = "ProgramaciÃ³n y Motivo de Consulta";
+            this.lblTituloProgramacion.Text = "Programación y Motivo de Consulta";
             //
             // lblSubtituloProgramacion
             //
@@ -380,7 +380,7 @@ namespace SanarRuralUnan.Views.Citas
             this.lblSubtituloProgramacion.Name = "lblSubtituloProgramacion";
             this.lblSubtituloProgramacion.Size = new System.Drawing.Size(315, 15);
             this.lblSubtituloProgramacion.TabIndex = 2;
-            this.lblSubtituloProgramacion.Text = "Defina la fecha, el horario y la causa mÃ©dica de la cita.";
+            this.lblSubtituloProgramacion.Text = "Defina la fecha, el horario y la causa médica de la cita.";
             //
             // lblFecha
             //
@@ -493,7 +493,7 @@ namespace SanarRuralUnan.Views.Citas
             this.lnkVolver.Size = new System.Drawing.Size(175, 19);
             this.lnkVolver.TabIndex = 0;
             this.lnkVolver.TabStop = true;
-            this.lnkVolver.Text = "â† Volver al listado de citas";
+            this.lnkVolver.Text = "← Volver al listado de citas";
             this.lnkVolver.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.lnkVolver_LinkClicked);
             //
             // btnCancelar
@@ -509,7 +509,7 @@ namespace SanarRuralUnan.Views.Citas
             this.btnCancelar.Name = "btnCancelar";
             this.btnCancelar.Size = new System.Drawing.Size(135, 42);
             this.btnCancelar.TabIndex = 1;
-            this.btnCancelar.Text = "âœ• Cancelar";
+            this.btnCancelar.Text = "✕ Cancelar";
             this.btnCancelar.UseVisualStyleBackColor = false;
             //
             // btnGuardar
@@ -543,7 +543,7 @@ namespace SanarRuralUnan.Views.Citas
             this.MinimumSize = new System.Drawing.Size(730, 600);
             this.Name = "crearCita";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "Sanar Rural - Programar Cita MÃ©dica";
+            this.Text = "Sanar Rural - Programar Cita Médica";
             this.Load += new System.EventHandler(this.crearCita_Load);
             this.panelScroll.ResumeLayout(false);
             this.cardHeader.ResumeLayout(false);

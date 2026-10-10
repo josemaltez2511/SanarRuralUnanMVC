@@ -32,11 +32,62 @@ namespace SanarRuralUnan.Models
             }
         }
 
+        public static bool EsUsuarioSesionActivo(SanarRuralDBEntities db, string rolEsperado = null)
+        {
+            if (!IdUsuarioActual.HasValue || !IdRolActual.HasValue) return false;
+            var usuario = db.Usuarios.Include(u => u.Roles).FirstOrDefault(u => u.IdUsuario == IdUsuarioActual.Value && u.Estado);
+            if (usuario == null || usuario.IdRol != IdRolActual.Value || usuario.Roles == null) return false;
+            if (!string.IsNullOrEmpty(rolEsperado))
+            {
+                return usuario.Roles.Nombre == rolEsperado;
+            }
+            return true;
+        }
+
+        public static bool EsUsuarioSesionActivo(string rolEsperado = null)
+        {
+            using (var db = new SanarRuralDBEntities())
+            {
+                return EsUsuarioSesionActivo(db, rolEsperado);
+            }
+        }
+
+        public static bool EsSesionAdministrativa()
+        {
+            return EsUsuarioSesionActivo("Administrativo");
+        }
+
+        public static bool EsSesionAdministrativa(SanarRuralDBEntities db)
+        {
+            return EsUsuarioSesionActivo(db, "Administrativo");
+        }
+
+        public static void ExigirRolAdministrativo(string operacion)
+        {
+            if (!EsSesionAdministrativa())
+            {
+                throw new UnauthorizedAccessException("Se requiere rol Administrativo para " + operacion + ".");
+            }
+        }
+
+        public static void ExigirRolAdministrativo(SanarRuralDBEntities db, string operacion)
+        {
+            if (!EsSesionAdministrativa(db))
+            {
+                throw new UnauthorizedAccessException("Se requiere rol Administrativo para " + operacion + ".");
+            }
+        }
+
         public List<Roles> ListarRoles()
         {
             using (var db = new SanarRuralDBEntities())
             {
-                return db.Roles.OrderBy(r => r.Nombre).ToList();
+                if (EsSesionAdministrativa())
+                {
+                    return db.Roles.OrderBy(r => r.Nombre).ToList();
+                }
+
+                return db.Roles.Where(r => r.Nombre == "Paciente").ToList();
             }
         }
 
@@ -51,6 +102,8 @@ namespace SanarRuralUnan.Models
 
         public List<Usuarios> ListarUsuarios(string filtro)
         {
+            ExigirRolAdministrativo("listar los usuarios del sistema");
+
             using (var db = new SanarRuralDBEntities())
             {
                 var consulta = db.Usuarios.Include(u => u.Roles).Where(u => u.Estado);
@@ -66,6 +119,11 @@ namespace SanarRuralUnan.Models
 
         public Usuarios ConsultarUsuario(int idUsuario)
         {
+            if (!EsSesionAdministrativa() && (!IdUsuarioActual.HasValue || IdUsuarioActual.Value != idUsuario))
+            {
+                throw new UnauthorizedAccessException("No tiene autorización para consultar los datos de esta cuenta de usuario.");
+            }
+
             using (var db = new SanarRuralDBEntities())
             {
                 return db.Usuarios.Include(u => u.Roles)
@@ -79,6 +137,23 @@ namespace SanarRuralUnan.Models
         {
             using (var db = new SanarRuralDBEntities())
             {
+                int idRolPaciente = ObtenerIdRolEnContexto(db, "Paciente");
+
+                // Distinción estricta de flujos:
+                // 1. Si no hay sesión iniciada (registro público): ÚNICAMENTE se permite registrar cuentas de Paciente.
+                if (!IdUsuarioActual.HasValue)
+                {
+                    if (idRol != idRolPaciente)
+                    {
+                        throw new UnauthorizedAccessException("El registro público de cuentas solo permite el rol 'Paciente'. Para registrar usuarios con otros roles debe iniciar sesión un administrador.");
+                    }
+                }
+                else
+                {
+                    // 2. Si hay sesión iniciada: SOLO el rol Administrativo puede crear cuentas en el sistema.
+                    ExigirRolAdministrativo("crear cuentas de usuario en el sistema");
+                }
+
                 Usuarios usuarioNuevo = new Usuarios
                 {
                     IdRol = idRol,
@@ -96,11 +171,19 @@ namespace SanarRuralUnan.Models
 
         public bool Actualizar(int idUsuario, int idRol, string correo, string nuevaContrasena)
         {
+            ExigirRolAdministrativo("modificar cuentas y roles de usuario");
+
             using (var db = new SanarRuralDBEntities())
             {
                 Usuarios usuario = db.Usuarios.FirstOrDefault(u => u.IdUsuario == idUsuario && u.Estado);
                 if (usuario == null)
                     return false;
+
+                // Impedir cambiar el rol de la cuenta administrativa activa en la sesión actual
+                if (IdUsuarioActual.HasValue && IdUsuarioActual.Value == idUsuario && idRol != usuario.IdRol)
+                {
+                    throw new InvalidOperationException("No se permite cambiar el rol de la propia cuenta administrativa activa en la sesión actual.");
+                }
 
                 bool tieneDoctor = db.Doctores.Any(d => d.IdUsuario == idUsuario);
                 bool tienePaciente = db.Pacientes.Any(p => p.IdUsuario == idUsuario);
@@ -108,7 +191,7 @@ namespace SanarRuralUnan.Models
                     (!tienePaciente || idRol == ObtenerIdRolEnContexto(db, "Paciente"));
 
                 if (idRol != usuario.IdRol && !rolCompatible)
-                    throw new InvalidOperationException("No se puede cambiar el rol porque el usuario tiene un perfil relacionado.");
+                    throw new InvalidOperationException("No se puede cambiar el rol porque el usuario tiene un perfil clínico o institucional incompatible.");
 
                 usuario.IdRol = idRol;
                 usuario.Correo = correo;
@@ -134,6 +217,13 @@ namespace SanarRuralUnan.Models
 
         public bool DarDeBaja(int idUsuario)
         {
+            ExigirRolAdministrativo("dar de baja cuentas de usuario");
+
+            if (IdUsuarioActual.HasValue && IdUsuarioActual.Value == idUsuario)
+            {
+                throw new InvalidOperationException("No se permite dar de baja a la cuenta de usuario actualmente activa en la sesión.");
+            }
+
             using (var db = new SanarRuralDBEntities())
             {
                 Usuarios usuario = db.Usuarios.FirstOrDefault(u => u.IdUsuario == idUsuario && u.Estado);
@@ -142,8 +232,6 @@ namespace SanarRuralUnan.Models
 
                 usuario.Estado = false;
                 db.SaveChanges();
-                if (IdUsuarioActual == idUsuario)
-                    CerrarSesion();
                 return true;
             }
         }
@@ -229,23 +317,35 @@ namespace SanarRuralUnan.Models
         // Resuelve el IdDoctor asociado al usuario autenticado actualmente en la sesión.
         public int? ObtenerIdDoctorActual()
         {
-            if (!IdUsuarioActual.HasValue) return null;
             using (var db = new SanarRuralDBEntities())
             {
-                var doctor = db.Doctores.FirstOrDefault(d => d.IdUsuario == IdUsuarioActual.Value && d.Estado);
-                return doctor != null ? doctor.IdDoctor : (int?)null;
+                return ObtenerIdDoctorActual(db);
             }
+        }
+
+        public int? ObtenerIdDoctorActual(SanarRuralDBEntities db)
+        {
+            if (!IdUsuarioActual.HasValue) return null;
+            if (!EsUsuarioSesionActivo(db, "Doctor")) return null;
+            var doctor = db.Doctores.FirstOrDefault(d => d.IdUsuario == IdUsuarioActual.Value && d.Estado);
+            return doctor != null ? doctor.IdDoctor : (int?)null;
         }
 
         // Resuelve el IdPaciente asociado al usuario autenticado actualmente en la sesión.
         public int? ObtenerIdPacienteActual()
         {
-            if (!IdUsuarioActual.HasValue) return null;
             using (var db = new SanarRuralDBEntities())
             {
-                var paciente = db.Pacientes.FirstOrDefault(p => p.IdUsuario == IdUsuarioActual.Value && p.Estado);
-                return paciente != null ? paciente.IdPaciente : (int?)null;
+                return ObtenerIdPacienteActual(db);
             }
+        }
+
+        public int? ObtenerIdPacienteActual(SanarRuralDBEntities db)
+        {
+            if (!IdUsuarioActual.HasValue) return null;
+            if (!EsUsuarioSesionActivo(db, "Paciente")) return null;
+            var paciente = db.Pacientes.FirstOrDefault(p => p.IdUsuario == IdUsuarioActual.Value && p.Estado);
+            return paciente != null ? paciente.IdPaciente : (int?)null;
         }
     }
 }

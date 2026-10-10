@@ -184,10 +184,10 @@ namespace SanarRuralUnan.Views.ConsultaMedica
             this.panelHeader.Controls.Add(this.lblTitulo);
             this.panelHeader.Controls.Add(this.panelIconoModulo);
             this.panelHeader.Dock = System.Windows.Forms.DockStyle.Top;
-            this.panelHeader.Height = 52;
+            this.panelHeader.Height = 58;
             this.panelHeader.Location = new System.Drawing.Point(20, 16);
             this.panelHeader.Name = "panelHeader";
-            this.panelHeader.Size = new System.Drawing.Size(920, 52);
+            this.panelHeader.Size = new System.Drawing.Size(920, 58);
             this.panelHeader.TabIndex = 0;
             //
             // btnCerrar
@@ -214,7 +214,7 @@ namespace SanarRuralUnan.Views.ConsultaMedica
             this.lblSubtitulo.AutoSize = true;
             this.lblSubtitulo.Font = Tema.FuenteAyuda;
             this.lblSubtitulo.ForeColor = Tema.TextoSecundario;
-            this.lblSubtitulo.Location = new System.Drawing.Point(54, 30);
+            this.lblSubtitulo.Location = new System.Drawing.Point(52, 34);
             this.lblSubtitulo.Name = "lblSubtitulo";
             this.lblSubtitulo.Size = new System.Drawing.Size(410, 15);
             this.lblSubtitulo.TabIndex = 2;

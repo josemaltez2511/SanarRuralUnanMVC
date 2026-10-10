@@ -112,36 +112,56 @@ Todas las pruebas fueron ejecutadas contra la base de datos real `SanarRuralDB` 
 | **CP-20** | Inmutabilidad Consulta Finalizada | Doctor | Intentar modificar borrador de consulta finalizada | `InvalidOperationException` lanzada: consulta finalizada inmutable | **PASS** |
 | **CP-21** | Prevención Cita Duplicada en Consulta | Doctor | Intentar iniciar consulta sobre cita ya atendida/registrada | `InvalidOperationException` lanzada: cita ya cuenta con consulta | **PASS** |
 | **CP-22** | Preservación de Nulos en Signos Vitales | Doctor | Leer signos vitales de consulta sin datos numéricos falsos | Nulos preservados sin ceros engañosos | **PASS** |
+| **CP-23** | Protección Administrativa de Cuentas de Usuario | Paciente | Intentar invocar `ListarUsuarios`, `ConsultarUsuario`, `Actualizar` y `DarDeBaja` | `UnauthorizedAccessException` en todas las operaciones | **PASS** |
+| **CP-24** | Bloqueo de Auto-registro Público No Paciente | Público (Sin sesión) | Intentar registrarse con rol `Doctor` mediante formulario público | `UnauthorizedAccessException`: registro público limitado a Paciente | **PASS** |
+| **CP-25** | Aislamiento de Citas por Paciente | Paciente | Intentar consultar o registrar citas con `IdPaciente` ajeno | `UnauthorizedAccessException`: acceso limitado al propio expediente | **PASS** |
+| **CP-26** | Prohibición de Estado Atendida en Citas | Administrativo / Doctor | Intentar pasar cita a `Atendida` desde `cambiarEstadoCita` | `InvalidOperationException`: estado reservado al módulo clínico | **PASS** |
+| **CP-27** | Protección Administrativa en Doctores y Hospitales | Paciente / Doctor | Mutaciones en `hospitalesModels` y `doctoresModels` sin rol administrativo | `UnauthorizedAccessException` en altas, ediciones y bajas | **PASS** |
+| **CP-28** | Detección de Concurrencia en `iniciarConsulta` | Doctor | Iniciar consulta sobre cita ya vinculada o en proceso concurrente | `InvalidOperationException`: conflicto de concurrencia detectado | **PASS** |
+| **CP-29** | Diagnóstico Principal Obligatorio | Doctor | Finalizar consulta sin diagnóstico de tipo 'Principal' | `InvalidOperationException`: exige al menos un diagnóstico principal | **PASS** |
+| **CP-30** | Bloqueo de Modificación Directa por Paciente | Paciente | Intentar ejecutar `actualizarCita` directamente | `UnauthorizedAccessException`: paciente debe cancelar y reprogramar | **PASS** |
+| **CP-31** | Inmutabilidad de Estados Terminales en Citas | Administrativo | Intentar cambiar estado de cita en `Atendida` o `Cancelada` | `InvalidOperationException`: citas terminales son definitivas | **PASS** |
+| **CP-32** | Atomicidad Transaccional de Cierre Clínico | Doctor | Fallo en cierre clínico (datos inválidos) revierte cambios | `InvalidOperationException` y rollback completo verificado | **PASS** |
+| **CP-33** | Solapamiento Horario en Citas | Administrativo / Doctor / Paciente | Detección de solapamiento excluyendo citas canceladas o no asistidas | `InvalidOperationException` si colisiona; permite si cita previa fue cancelada | **PASS** |
+| **CP-34** | Revocación Inmediata por Baja en BD | Usuario desactivado | Intentar autenticar o usar sesión con `Estado == false` | `UnauthorizedAccessException` inmediata respaldada en BD | **PASS** |
+| **CP-35** | Guardado Recurrente de Borrador Clínico | Doctor | Guardar y reabrir borrador manteniendo `'En curso'` sin alterar estado de cita | Cita permanece intacta y consulta se reanuda en `'En curso'` | **PASS** |
+| **CP-36** | Persistencia Foto Doctor y Ausencia en Pacientes | Doctor / Esquema SQL | Persistir `VARBINARY` en `Doctores` y verificar que `Pacientes` carece de foto | `Doctores.Foto` persistido; catálogo SQL confirma 0 columnas de foto en `Pacientes` | **PASS** |
 
-**Total de Pruebas Automatizadas:** 22  
-**Pruebas Exitosas:** 22 (100 %)  
-**Pruebas Fallidas:** 0  
+**Total de Pruebas Automatizadas:** 36<br/>
+**Pruebas Exitosas:** 36 (100 %)<br/>
+**Pruebas Fallidas:** 0<br/>
 
 ---
 
 ## 4. Deficiencias Detectadas y Corregidas durante la Auditoría
 
-1. **Separación Estricta de Roles en `Models/pacientesModels.cs` (`actualizarPaciente`):**
+1. **Control de Autorización Centralizado en `Models/usuariosModels.cs` y `Views/Usuarios/crearUsuario.cs`:**
+   - *Deficiencia:* No se discriminaba si la creación de usuario era un auto-registro público o una gestión administrativa; un usuario público podía forzar la creación de cuentas `Doctor` o `Administrativo`. Asimismo, `ListarUsuarios`, `ConsultarUsuario`, `Actualizar` y `DarDeBaja` no validaban sesión administrativa ni el estado activo en base de datos.
+   - *Corrección:* Implementación de `EsUsuarioSesionActivo(db, rol)` y `EsSesionAdministrativa(db)` con verificación en vivo contra `db.Usuarios.Estado`. En `Guardar()`, el auto-registro público sin sesión solo admite `Paciente`; para cualquier otro rol exige sesión administrativa. En `crearUsuario.cs`, el modo público bloquea y oculta roles no autorizados. `Actualizar()` impide auto-degradación de rol administrativo en sesión y valida compatibilidad clínica con perfiles existentes. `DarDeBaja()` impide auto-desactivación del usuario activo.
+2. **Resolución de Identidad por Sesión y Filtrado SQL en `Models/citasModels.cs`:**
+   - *Deficiencia:* `listarCitas`, `obtenerCitaPorId`, `guardarCita` y `actualizarCita` confiaban en parámetros provistos por la vista o el llamador sin resolver estrictamente la sesión ni acotar el predicado SQL en BD.
+   - *Corrección:* Se implementó `ResolverSesion()` con verificación de usuario en base de datos. En `obtenerCitaPorId()`, los filtros de pertenencia del paciente y del facultativo se empujan directamente a la consulta SQL/LINQ (`.Where(...)`), evitando cargar registros ajenos en memoria y arrojando `UnauthorizedAccessException` o `InvalidOperationException` si existe bajo otro propietario. Los médicos solo ven citas de su propio `IdDoctor`. Se prohíbe `actualizarCita` para pacientes (deben cancelar y agendar nueva cita). Se bloquea la transición a `Atendida` desde Citas (reservado al cierre clínico). Se protegen estados terminales (`Atendida`, `Cancelada`, `NoAsistio`). En `existeSolapamientoDoctor` y `existeSolapamientoPaciente`, se excluyen citas con `Estado != "Cancelada"` y `Estado != "NoAsistio"`.
+3. **Protección Administrativa y Transacciones en `Models/doctoresModels.cs` y `Models/hospitalesModels.cs`:**
+   - *Deficiencia:* Operaciones de mutación carecían de verificación de rol administrativo en base de datos. `actualizarDoctor` iniciaba la transacción antes de verificar la existencia del doctor.
+   - *Corrección:* Se invocó `usuariosModels.ExigirRolAdministrativo(db)` en cada mutación. En `actualizarDoctor`, se verifica primero la existencia del doctor en la base de datos antes de abrir `db.Database.BeginTransaction()`. Se envolvieron las creaciones y actualizaciones de doctores en transacciones explícitas.
+4. **Manejo de Concurrencia y Unificación de Estados en `Models/consultasModels.cs` y `Views/ConsultaMedica`:**
+   - *Deficiencia:* En base de datos el check constraint `CK_Consultas_Estado` solo admite `'Finalizada'` o `'En curso'`. La vista `paginaPrincipalConsultas.cs` solo buscaba el string literal `'EnProceso'`, lo que provocaba que consultas legítimas en curso fueran pintadas como concluidas (`✓ Concluida`) y bloqueadas.
+   - *Corrección:* Se envolvió la creación en transacción `BeginTransaction()` y se capturó `DbUpdateException` verificando la restricción única `UQ_Consultas_IdCita` (códigos 2601/2627 de SQL Server), devolviendo `InvalidOperationException` controlada. Se armonizó `listarConsultas` y la vista `paginaPrincipalConsultas.cs` para admitir bidireccionalmente `'En curso'` y `'EnProceso'`, corrigiendo el filtrado, las tarjetas métricas y los botones de acción del DataGridView.
+5. **Investigación y Resolución de la Fotografía del Paciente en `Views/Pacientes/crearPaciente.cs`:**
+   - *Deficiencia:* En la vista `crearPaciente.cs` existía una tarjeta visual `cardFoto` que permitía seleccionar una imagen de paciente, pero la tabla física `Pacientes` en SQL Server 2022 **no posee columna de fotografía** (`Foto`, `FotoNombre`, `FotoMimeType` solo existen en `Doctores`). La imagen seleccionada se mantenía en memoria y se descartaba silenciosamente al guardar.
+   - *Corrección:* Se investigó exhaustivamente el catálogo físico `INFORMATION_SCHEMA.COLUMNS`. Confirmado que `Pacientes` carece de soporte de persistencia binaria y que alterar el esquema implicaría migración no autorizada y regeneración de `ModelSanarRural.tt`, se procedió a ocultar quirúrgicamente `cardFoto.Visible = false;` en el código de la vista y expandir `cardPersonal` al 100% del ancho disponible (`anchoCards`), eliminando la interfaz fantasma sin tocar el archivo del diseñador ni quebrar la compilación.
+6. **Separación Estricta de Roles en `Models/pacientesModels.cs` (`actualizarPaciente`):**
    - *Deficiencia:* Anteriormente solo se comprobaba si el rol era `Paciente`. El rol `Doctor` podía invocar la actualización civil/maestra de pacientes.
-   - *Corrección:* Se implementó validación exhaustiva de los tres roles: se permite únicamente `Administrativo`, y se rechaza explícitamente al rol `Doctor` ("El rol Doctor no tiene autorización para modificar el expediente maestro civil o institucional del paciente...") y al rol `Paciente`.
-2. **Protección de `actualizarPerfilDemograficoPaciente` contra Rol Doctor:**
+   - *Corrección:* Se implementó validación exhaustiva de los tres roles consultando la base de datos: se permite únicamente `Administrativo`, y se rechaza explícitamente al rol `Doctor` y al rol `Paciente`.
+7. **Protección de `actualizarPerfilDemograficoPaciente` contra Rol Doctor:**
    - *Deficiencia:* No se discriminaba si el solicitante era un médico intentando invocar la autogestión demográfica.
    - *Corrección:* Rechazo inmediato si el rol de sesión es `Doctor`. Se exige rol `Administrativo` o rol `Paciente` con coincidencia exacta de `IdUsuario`.
-3. **Control de Perfiles Duplicados en `guardarPaciente`:**
+8. **Control de Perfiles Duplicados en `guardarPaciente`:**
    - *Deficiencia:* No se verificaba si el `IdUsuario` ya estaba vinculado a otro paciente activo.
    - *Corrección:* Se agregó comprobación `if (idUsuario.HasValue && db.Pacientes.Any(p => p.IdUsuario == idUsuario.Value && p.Estado))` lanzando excepción descriptiva.
-4. **Defensa en Profundidad en Interfaz Gráfica (`paginaPrincipalPacientes.cs`):**
-   - *Deficiencia:* La columna `colEditar` permanecía visible y activa para usuarios médicos.
-   - *Corrección:* Se ocultó la columna `colEditar` para roles no administrativos en `ConfigurarSeguridadPorRol()` y se protegió el manejador de clics en celda con validación `controlador.EsAdministrativo()`.
-5. **Compatibilidad con .NET Framework 4.7.2 (Placeholders WinForms):**
-   - *Deficiencia:* Uso inicial de `TextBox.PlaceholderText` (característica de .NET Core/.NET 5+).
-   - *Corrección:* Implementación de API nativa Win32 `EM_SETCUEBANNER` (`SendMessage`) garantizando compatibilidad 100% nativa con .NET Framework 4.7.2.
-6. **Paridad Visual y Ergonómica de `Views/Hospitales/crearHospital` (P5):**
-   - *Deficiencia:* El formulario de alta y edición de hospitales presentaba un diseño plano simple que no se ajustaba al estándar institucional aprobado en `crearDoctor` y `crearPaciente`.
-   - *Corrección:* Rediseño completo con panel Hero izquierdo de 275px (logotipo, lema, bloques informativos), tarjetas redondeadas independientes para ubicación geográfica y datos de la sede, doble búfer contra parpadeos, placeholders nativos y layout responsivo.
-7. **Homogeneización de Filtros y Autorización en `fichaCita`:**
-   - *Deficiencia:* Algunas acciones modales en `fichaCita` no propagaban `idPacienteFiltro` hacia el controlador.
-   - *Corrección:* Propagación consistente de `idPacienteFiltro` en todas las acciones de ciclo de vida (`cambiarEstadoCita`, `crearCita`), garantizando aislamiento multi-rol en modales.
+9. **Diagnóstico del Fallo de GitHub Actions CI:**
+   - *Causa raíz:* Consulta a la API de GitHub (`check-runs/114089830391/annotations`): `"The job was not started because your account is locked due to a billing issue."`.
+   - *Evidencia técnica:* El script local `scripts/validar-configuracion.ps1` corre limpiamente con código de salida 0. El workflow `.github/workflows/validar-configuracion.yml` es plenamente válido. El fallo se debe exclusivamente a un bloqueo de facturación / límite de minutos en la cuenta de GitHub del usuario.
 
 ---
 
@@ -153,3 +173,4 @@ Todas las pruebas fueron ejecutadas contra la base de datos real `SanarRuralDB` 
 - **Validación de Entorno Local:** Script `scripts/validar-configuracion.ps1` ejecutado con resultado `[OK]`. `App.config` excluido de Git y preservado localmente.
 - **Protección de Base de Datos:** Ningún archivo autogenerado por Entity Framework (`ModelSanarRural.tt`, `ModelSanarRural.Context.cs`) fue alterado.
 - **Identidad Visual:** 100% de cumplimiento con `Helpers/Tema.cs` y paleta `#EDF7F0` (prohibición estricta de fondos `#FFFFFF` planos).
+- **Suite de Auditoría Automatizada:** 36 de 36 pruebas exitosas (100% de aprobación) contra `localhost\SQLEXPRESS02`.

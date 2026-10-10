@@ -359,16 +359,12 @@ namespace SanarRuralUnan.Views
             lblBadgeModo.Location = new Point(cardHeader.Width - lblBadgeModo.Width - 18, 18);
             y += cardHeader.Height + gap;
 
-            // Fila 1: Información personal (68%) y Foto (32%)
-            int anchoPersonal = (int)((anchoCards - gap) * 0.68f);
-            int anchoFoto = anchoCards - gap - anchoPersonal;
+            // Fila 1: Información personal (100% de ancho disponible)
             int altoRow1 = 360;
-
-            cardPersonal.SetBounds(xCard, y, anchoPersonal, altoRow1);
-            cardFoto.SetBounds(cardPersonal.Right + gap, y, anchoFoto, altoRow1);
+            cardPersonal.SetBounds(xCard, y, anchoCards, altoRow1);
+            cardFoto.Visible = false;
 
             AjustarControlesCardPersonal(cardPersonal.Width);
-            AjustarControlesCardFoto(cardFoto.Width);
             y += altoRow1 + gap;
 
             // Fila 2: Ubicación y dirección (100%)

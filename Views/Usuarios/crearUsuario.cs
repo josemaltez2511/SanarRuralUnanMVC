@@ -257,15 +257,17 @@ namespace SanarRuralUnan.Views
             else
             {
                 lblTipoUsuario.Visible = true;
-                lblTipoUsuario.Text = "Tipo de usuario";
+                lblTipoUsuario.Text = "Tipo de cuenta";
                 panelTarjetaPaciente.Visible = true;
-                panelTarjetaMedico.Visible = true;
                 panelTarjetaPaciente.TabStop = true;
-                panelTarjetaMedico.TabStop = true;
+                panelTarjetaMedico.Visible = false;
+                panelTarjetaMedico.TabStop = false;
+                rbPaciente.Checked = true;
+                rbMedico.Checked = false;
                 cmbRol.Visible = false;
 
                 panelTarjetaPaciente.Location = new Point(35, 311);
-                panelTarjetaMedico.Location = new Point(240, 311);
+                panelTarjetaPaciente.Width = 390;
                 btnGuardar.Location = new Point(35, 375);
                 panelSeparadorInferior.Location = new Point(35, 435);
                 lnkVolver.Location = new Point(35, 448);
@@ -765,9 +767,13 @@ namespace SanarRuralUnan.Views
                 }
                 idRol = Convert.ToInt32(cmbRol.SelectedValue);
             }
+            else if (esRegistroDoctorFijo)
+            {
+                idRol = controlador.ObtenerIdRol("Doctor");
+            }
             else
             {
-                idRol = controlador.ObtenerIdRol(esRegistroDoctorFijo || rbMedico.Checked ? "Doctor" : "Paciente");
+                idRol = controlador.ObtenerIdRol("Paciente");
             }
 
             if (idRol <= 0)
@@ -844,6 +850,10 @@ namespace SanarRuralUnan.Views
 
                 DialogResult = DialogResult.OK;
                 Close();
+            }
+            catch (UnauthorizedAccessException uex)
+            {
+                MessageBox.Show("Operación no autorizada: " + uex.Message, "Acceso Denegado", MessageBoxButtons.OK, MessageBoxIcon.Stop);
             }
             catch (InvalidOperationException ex)
             {

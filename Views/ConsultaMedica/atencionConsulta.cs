@@ -36,6 +36,7 @@ namespace SanarRuralUnan.Views.ConsultaMedica
         private void atencionConsulta_Load(object sender, EventArgs e)
         {
             ConfigurarEstiloTablas();
+            ConfigurarComportamientoSignosVitales();
             CargarCatalogos();
             CargarExpedienteConsulta();
         }
@@ -176,6 +177,33 @@ namespace SanarRuralUnan.Views.ConsultaMedica
             }
         }
 
+        private void ConfigurarComportamientoSignosVitales()
+        {
+            var controles = new[]
+            {
+                numSistolica, numDiastolica, numPulso, numRespiracion,
+                numTemperatura, numSaturacion, numPeso, numTalla
+            };
+
+            foreach (var num in controles)
+            {
+                num.Enter += (s, e) =>
+                {
+                    if (num.Value == 0)
+                    {
+                        num.Select(0, num.Text.Length);
+                    }
+                };
+                num.Leave += (s, e) =>
+                {
+                    if (num.Value == 0)
+                    {
+                        num.Text = string.Empty;
+                    }
+                };
+            }
+        }
+
         private void CargarSignosVitales()
         {
             var sv = consultaActual.SignosVitales;
@@ -190,7 +218,37 @@ namespace SanarRuralUnan.Views.ConsultaMedica
                 numPeso.Value = sv.PesoKg ?? 0;
                 numTalla.Value = sv.TallaCm ?? 0;
             }
+            else
+            {
+                numSistolica.Value = 0;
+                numDiastolica.Value = 0;
+                numPulso.Value = 0;
+                numRespiracion.Value = 0;
+                numTemperatura.Value = 0;
+                numSaturacion.Value = 0;
+                numPeso.Value = 0;
+                numTalla.Value = 0;
+            }
+
+            ActualizarVisualizacionSignosNoRegistrados();
             CalcularImcEnTiempoReal(this, EventArgs.Empty);
+        }
+
+        private void ActualizarVisualizacionSignosNoRegistrados()
+        {
+            var controles = new[]
+            {
+                numSistolica, numDiastolica, numPulso, numRespiracion,
+                numTemperatura, numSaturacion, numPeso, numTalla
+            };
+
+            foreach (var num in controles)
+            {
+                if (num.Value == 0)
+                {
+                    num.Text = string.Empty;
+                }
+            }
         }
 
         private void AplicarModoSoloLectura(bool esSupervisionAdmin)
@@ -208,6 +266,7 @@ namespace SanarRuralUnan.Views.ConsultaMedica
             numSaturacion.Enabled = false;
             numPeso.Enabled = false;
             numTalla.Enabled = false;
+            ActualizarVisualizacionSignosNoRegistrados();
 
             txtPadecimientoActual.ReadOnly = true;
             txtExamenFisico.ReadOnly = true;
@@ -273,7 +332,7 @@ namespace SanarRuralUnan.Views.ConsultaMedica
             else
             {
                 lblImcValor.Text = "-- kg/m²";
-                lblImcClasificacion.Text = "Ingrese Peso (kg) y Talla (cm)";
+                lblImcClasificacion.Text = "Sin registrar (Ingrese Peso y Talla)";
                 lblImcClasificacion.ForeColor = Tema.TextoSecundario;
             }
         }

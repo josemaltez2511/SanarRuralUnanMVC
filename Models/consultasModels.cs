@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
+using System.Data.Entity.Infrastructure;
 using System.Linq;
 
 namespace SanarRuralUnan.Models
@@ -198,17 +199,14 @@ namespace SanarRuralUnan.Models
         // ------------------------------------------------------------
         public List<ConsultaItemDto> listarConsultas(string busqueda = "", DateTime? fecha = null, string estado = "", int? idDoctor = null)
         {
-            // 1. Validar existencia de sesión activa y rol
-            if (!usuariosModels.IdRolActual.HasValue)
+            // 1. Validar existencia de sesión activa y rol en base de datos
+            if (!usuariosModels.EsUsuarioSesionActivo(db))
             {
                 throw new InvalidOperationException("No se detectó una sesión activa con un rol válido para consultar el listado de consultas médicas.");
             }
 
-            var rolActual = db.Roles.FirstOrDefault(r => r.IdRol == usuariosModels.IdRolActual.Value);
-            if (rolActual == null)
-            {
-                throw new InvalidOperationException("El rol de la sesión actual no es válido para consultar el listado de consultas médicas.");
-            }
+            var usuarioSesion = db.Usuarios.Include(u => u.Roles).First(u => u.IdUsuario == usuariosModels.IdUsuarioActual.Value);
+            var rolActual = usuarioSesion.Roles;
 
             // 2. Si idDoctor es null: únicamente rol Administrativo puede utilizar el listado global
             if (!idDoctor.HasValue)
@@ -226,7 +224,7 @@ namespace SanarRuralUnan.Models
                     throw new InvalidOperationException("La consulta de atenciones médicas acotada por facultativo solo está permitida para usuarios con rol 'Doctor'.");
                 }
 
-                var idDoctorAutenticado = new usuariosModels().ObtenerIdDoctorActual();
+                var idDoctorAutenticado = new usuariosModels().ObtenerIdDoctorActual(db);
                 if (!idDoctorAutenticado.HasValue || idDoctor.Value != idDoctorAutenticado.Value)
                 {
                     throw new InvalidOperationException("Un médico solo puede consultar las atenciones clínicas asignadas a su propio perfil.");
@@ -255,11 +253,18 @@ namespace SanarRuralUnan.Models
                 consulta = consulta.Where(c => DbFunctions.TruncateTime(c.FechaHoraInicio) == fechaFiltro);
             }
 
-            // Filtro por estado de consulta (EnProceso / Finalizada)
+            // Filtro por estado de consulta (En curso / EnProceso / Finalizada)
             if (!string.IsNullOrWhiteSpace(estado) && estado != "Todos")
             {
                 string estadoFiltro = estado.Trim();
-                consulta = consulta.Where(c => c.EstadoConsulta == estadoFiltro);
+                if (estadoFiltro == "En curso" || estadoFiltro == "EnProceso")
+                {
+                    consulta = consulta.Where(c => c.EstadoConsulta == "En curso" || c.EstadoConsulta == "EnProceso");
+                }
+                else
+                {
+                    consulta = consulta.Where(c => c.EstadoConsulta == estadoFiltro);
+                }
             }
 
             // Búsqueda textual por paciente, cédula, doctor, hospital o diagnóstico
@@ -338,17 +343,14 @@ namespace SanarRuralUnan.Models
         // ------------------------------------------------------------
         public List<CitaElegibleConsultaDto> listarCitasElegiblesParaConsulta(string busqueda = "", int? idDoctor = null)
         {
-            // 1. Validar existencia de sesión activa y rol
-            if (!usuariosModels.IdRolActual.HasValue)
+            // 1. Validar existencia de sesión activa y rol en base de datos
+            if (!usuariosModels.EsUsuarioSesionActivo(db))
             {
                 throw new InvalidOperationException("No se detectó una sesión activa con un rol válido para listar citas elegibles para consulta.");
             }
 
-            var rolActual = db.Roles.FirstOrDefault(r => r.IdRol == usuariosModels.IdRolActual.Value);
-            if (rolActual == null)
-            {
-                throw new InvalidOperationException("El rol de la sesión actual no es válido para listar citas elegibles para consulta.");
-            }
+            var usuarioSesion = db.Usuarios.Include(u => u.Roles).First(u => u.IdUsuario == usuariosModels.IdUsuarioActual.Value);
+            var rolActual = usuarioSesion.Roles;
 
             // 2. La selección de citas elegibles pertenece exclusivamente al flujo clínico del Doctor
             if (rolActual.Nombre != "Doctor")
@@ -362,7 +364,7 @@ namespace SanarRuralUnan.Models
                 throw new InvalidOperationException("Se requiere el identificador del facultativo médico autenticado para listar las citas elegibles.");
             }
 
-            var idDoctorAutenticado = new usuariosModels().ObtenerIdDoctorActual();
+            var idDoctorAutenticado = new usuariosModels().ObtenerIdDoctorActual(db);
             if (!idDoctorAutenticado.HasValue || idDoctor.Value != idDoctorAutenticado.Value)
             {
                 throw new InvalidOperationException("Un médico solo puede consultar las citas asignadas a su propio perfil.");
@@ -443,16 +445,13 @@ namespace SanarRuralUnan.Models
         // Se rechazan de forma estricta el rol Paciente o sesiones no autenticadas.
         private void ValidarPermisosLecturaCita(string operacion)
         {
-            if (!usuariosModels.IdRolActual.HasValue)
+            if (!usuariosModels.EsUsuarioSesionActivo(db))
             {
                 throw new InvalidOperationException($"No se detectó una sesión activa con un rol válido para {operacion}.");
             }
 
-            var rolActual = db.Roles.FirstOrDefault(r => r.IdRol == usuariosModels.IdRolActual.Value);
-            if (rolActual == null)
-            {
-                throw new InvalidOperationException($"El rol de la sesión actual no es válido para {operacion}.");
-            }
+            var usuarioSesion = db.Usuarios.Include(u => u.Roles).First(u => u.IdUsuario == usuariosModels.IdUsuarioActual.Value);
+            var rolActual = usuarioSesion.Roles;
 
             if (rolActual.Nombre == "Paciente")
             {
@@ -486,54 +485,44 @@ namespace SanarRuralUnan.Models
         // Los roles Administrativo, Paciente o sesiones sin rol válido son estrictamente rechazados.
         private void ValidarPermisosEscrituraClinica(int? idDoctorAutenticado, int idDoctorPropietario, string operacion)
         {
-            // 1. Sin rol válido -> rechazar
-            if (!usuariosModels.IdRolActual.HasValue)
+            if (!usuariosModels.EsUsuarioSesionActivo(db, "Doctor"))
             {
-                throw new InvalidOperationException($"No se detectó una sesión activa con un rol válido para {operacion}.");
-            }
+                if (!usuariosModels.IdUsuarioActual.HasValue || !usuariosModels.IdRolActual.HasValue)
+                {
+                    throw new InvalidOperationException($"No se detectó una sesión activa con un rol válido para {operacion}.");
+                }
 
-            var rolActual = db.Roles.FirstOrDefault(r => r.IdRol == usuariosModels.IdRolActual.Value);
-            if (rolActual == null)
-            {
-                throw new InvalidOperationException($"El rol de la sesión actual no es válido para {operacion}.");
-            }
+                var usuarioSesion = db.Usuarios.Include(u => u.Roles).FirstOrDefault(u => u.IdUsuario == usuariosModels.IdUsuarioActual.Value && u.Estado);
+                if (usuarioSesion == null || usuarioSesion.IdRol != usuariosModels.IdRolActual.Value || usuarioSesion.Roles == null)
+                {
+                    throw new InvalidOperationException($"El rol de la sesión actual no es válido para {operacion}.");
+                }
 
-            // 2. Administrativo -> rechazar
-            if (rolActual.Nombre == "Administrativo")
-            {
-                throw new InvalidOperationException($"Un usuario con rol administrativo no tiene autorización para {operacion}. Su perfil es estrictamente de solo lectura.");
-            }
+                if (usuarioSesion.Roles.Nombre == "Administrativo")
+                {
+                    throw new InvalidOperationException($"Un usuario con rol administrativo no tiene autorización para {operacion}. Su perfil es estrictamente de solo lectura.");
+                }
 
-            // 3. Paciente -> rechazar
-            if (rolActual.Nombre == "Paciente")
-            {
-                throw new InvalidOperationException($"Un usuario con rol paciente no tiene autorización para realizar operaciones clínicas como {operacion}.");
-            }
+                if (usuarioSesion.Roles.Nombre == "Paciente")
+                {
+                    throw new InvalidOperationException($"Un usuario con rol paciente no tiene autorización para realizar operaciones clínicas como {operacion}.");
+                }
 
-            // 4. Si no es Doctor -> rechazar
-            if (rolActual.Nombre != "Doctor")
-            {
                 throw new InvalidOperationException($"Solo un usuario con rol 'Doctor' está autorizado para {operacion}.");
             }
 
-            // 5. Doctor -> validar correspondencia de sesión y propiedad de la consulta
-            if (!idDoctorAutenticado.HasValue)
-            {
-                throw new InvalidOperationException($"Se requiere la identificación de un facultativo médico autorizado para {operacion}.");
-            }
-
-            var idDoctorSesion = new usuariosModels().ObtenerIdDoctorActual();
+            var idDoctorSesion = new usuariosModels().ObtenerIdDoctorActual(db);
             if (!idDoctorSesion.HasValue)
             {
                 throw new InvalidOperationException($"No se encontró un perfil facultativo activo asociado a la sesión actual para {operacion}.");
             }
 
-            if (idDoctorSesion.Value != idDoctorAutenticado.Value)
+            if (idDoctorAutenticado.HasValue && idDoctorSesion.Value != idDoctorAutenticado.Value)
             {
                 throw new InvalidOperationException("El identificador del facultativo no coincide con el médico autenticado en la sesión.");
             }
 
-            if (idDoctorPropietario != idDoctorAutenticado.Value)
+            if (idDoctorPropietario != idDoctorSesion.Value)
             {
                 throw new InvalidOperationException("Un médico solo puede gestionar las atenciones clínicas asignadas a su propio perfil.");
             }
@@ -570,27 +559,49 @@ namespace SanarRuralUnan.Models
                 throw new InvalidOperationException("Esta cita ya fue marcada como atendida previamente.");
             }
 
-            if (db.Consultas.Any(c => c.IdCita == idCita))
+            using (var tx = db.Database.BeginTransaction())
             {
-                throw new InvalidOperationException("Esta cita ya cuenta con una consulta médica registrada en el sistema.");
+                try
+                {
+                    if (db.Consultas.Any(c => c.IdCita == idCita))
+                    {
+                        throw new InvalidOperationException("Esta cita ya cuenta con una consulta médica registrada en el sistema.");
+                    }
+
+                    Consultas nuevaConsulta = new Consultas
+                    {
+                        IdCita = idCita,
+                        FechaHoraInicio = DateTime.Now,
+                        FechaHoraFin = null,
+                        EstadoConsulta = "En curso",
+                        PadecimientoActual = string.Empty,
+                        ExamenFisico = string.Empty,
+                        Observaciones = string.Empty,
+                        PlanSeguimiento = string.Empty
+                    };
+
+                    db.Consultas.Add(nuevaConsulta);
+                    db.SaveChanges();
+                    tx.Commit();
+
+                    return nuevaConsulta.IdConsulta;
+                }
+                catch (DbUpdateException ex)
+                {
+                    tx.Rollback();
+                    string detalle = ex.ToString();
+                    if (detalle.Contains("UQ_Consultas_IdCita") || detalle.Contains("2627") || detalle.Contains("2601"))
+                    {
+                        throw new InvalidOperationException("Esta cita ya cuenta con una consulta médica iniciada en el sistema (conflicto de concurrencia detectado).", ex);
+                    }
+                    throw;
+                }
+                catch
+                {
+                    tx.Rollback();
+                    throw;
+                }
             }
-
-            Consultas nuevaConsulta = new Consultas
-            {
-                IdCita = idCita,
-                FechaHoraInicio = DateTime.Now,
-                FechaHoraFin = null,
-                EstadoConsulta = "EnProceso",
-                PadecimientoActual = string.Empty,
-                ExamenFisico = string.Empty,
-                Observaciones = string.Empty,
-                PlanSeguimiento = string.Empty
-            };
-
-            db.Consultas.Add(nuevaConsulta);
-            db.SaveChanges();
-
-            return nuevaConsulta.IdConsulta;
         }
 
         // ------------------------------------------------------------
@@ -598,49 +609,28 @@ namespace SanarRuralUnan.Models
         // ------------------------------------------------------------
         public ConsultaDetalleDto obtenerConsultaDetalle(int idConsulta, int? idDoctorAutenticado = null, int? idPacienteAutenticado = null)
         {
-            var c = db.Consultas
-                .Include(cons => cons.Citas)
-                .Include(cons => cons.Citas.Pacientes)
-                .Include(cons => cons.Citas.DoctorHospitalEspecialidad.DoctorEspecialidad.Doctores)
-                .Include(cons => cons.Citas.DoctorHospitalEspecialidad.DoctorEspecialidad.Especialidades)
-                .Include(cons => cons.Citas.DoctorHospitalEspecialidad.Hospitales)
-                .Include(cons => cons.SignosVitales)
-                .Include(cons => cons.Diagnosticos.Select(d => d.Enfermedades))
-                .Include(cons => cons.Prescripciones.Select(pr => pr.Medicamentos))
-                .FirstOrDefault(cons => cons.IdConsulta == idConsulta);
-
-            if (c == null)
-            {
-                return null;
-            }
-
-            // Validación de permisos de lectura según rol y sesión activa
-            if (!usuariosModels.IdRolActual.HasValue)
+            if (!usuariosModels.EsUsuarioSesionActivo(db))
             {
                 throw new InvalidOperationException("No se detectó una sesión activa con un rol válido para consultar el expediente clínico.");
             }
 
-            var rolActual = db.Roles.FirstOrDefault(r => r.IdRol == usuariosModels.IdRolActual.Value);
-            if (rolActual == null)
-            {
-                throw new InvalidOperationException("El rol de la sesión actual no es válido para consultar el expediente clínico.");
-            }
+            var usuarioSesion = db.Usuarios.Include(u => u.Roles).First(u => u.IdUsuario == usuariosModels.IdUsuarioActual.Value);
+            var rolActual = usuarioSesion.Roles;
+
+            int? idPacienteSesion = null;
+            int? idDoctorSesion = null;
 
             if (rolActual.Nombre == "Paciente")
             {
-                var idPacienteSesion = new usuariosModels().ObtenerIdPacienteActual();
-                if (!idPacienteSesion.HasValue || c.Citas.IdPaciente != idPacienteSesion.Value)
+                idPacienteSesion = new usuariosModels().ObtenerIdPacienteActual(db);
+                if (!idPacienteSesion.HasValue)
                 {
-                    throw new InvalidOperationException("Un paciente solo tiene autorización para consultar atenciones médicas de su propio expediente.");
-                }
-                if (c.EstadoConsulta != "Finalizada")
-                {
-                    throw new InvalidOperationException("Un paciente solo puede consultar atenciones médicas que hayan sido finalizadas formalmente.");
+                    throw new InvalidOperationException("No se encontró un perfil de paciente activo asociado a la sesión.");
                 }
             }
             else if (rolActual.Nombre == "Doctor")
             {
-                var idDoctorSesion = new usuariosModels().ObtenerIdDoctorActual();
+                idDoctorSesion = new usuariosModels().ObtenerIdDoctorActual(db);
                 if (!idDoctorSesion.HasValue)
                 {
                     throw new InvalidOperationException("No se encontró un perfil facultativo activo asociado a la sesión actual.");
@@ -650,21 +640,62 @@ namespace SanarRuralUnan.Models
                 {
                     throw new InvalidOperationException("El identificador del facultativo no coincide con el médico autenticado en la sesión.");
                 }
-
-                // Si la consulta está en proceso, únicamente el médico titular asignado puede abrirla
-                if (c.EstadoConsulta == "EnProceso" && c.Citas.IdDoctor != idDoctorSesion.Value)
-                {
-                    throw new InvalidOperationException("No tiene permisos para acceder a una consulta médica en proceso de otro facultativo.");
-                }
-                // Si la consulta está Finalizada, el médico tiene acceso de lectura para trazabilidad y continuidad asistencial
             }
-            else if (rolActual.Nombre == "Administrativo")
-            {
-                // El rol Administrativo tiene acceso de supervisión y auditoría en modo de solo lectura
-            }
-            else
+            else if (rolActual.Nombre != "Administrativo")
             {
                 throw new InvalidOperationException("El rol de la sesión actual no está autorizado para consultar expedientes clínicos.");
+            }
+
+            var query = db.Consultas
+                .Include(cons => cons.Citas)
+                .Include(cons => cons.Citas.Pacientes)
+                .Include(cons => cons.Citas.DoctorHospitalEspecialidad.DoctorEspecialidad.Doctores)
+                .Include(cons => cons.Citas.DoctorHospitalEspecialidad.DoctorEspecialidad.Especialidades)
+                .Include(cons => cons.Citas.DoctorHospitalEspecialidad.Hospitales)
+                .Include(cons => cons.SignosVitales)
+                .Include(cons => cons.Diagnosticos.Select(d => d.Enfermedades))
+                .Include(cons => cons.Prescripciones.Select(pr => pr.Medicamentos))
+                .Where(cons => cons.IdConsulta == idConsulta);
+
+            // Filtrado estricto a nivel de base de datos
+            if (rolActual.Nombre == "Paciente")
+            {
+                query = query.Where(cons => cons.Citas.IdPaciente == idPacienteSesion.Value && cons.EstadoConsulta == "Finalizada");
+            }
+            else if (rolActual.Nombre == "Doctor")
+            {
+                query = query.Where(cons => cons.EstadoConsulta == "Finalizada" || cons.Citas.IdDoctor == idDoctorSesion.Value);
+            }
+
+            var c = query.FirstOrDefault();
+
+            if (c == null)
+            {
+                // Si la consulta existe en base de datos pero no pasó los filtros de acceso:
+                var existeEnBd = db.Consultas.Include(cons => cons.Citas).FirstOrDefault(cons => cons.IdConsulta == idConsulta);
+                if (existeEnBd != null)
+                {
+                    if (rolActual.Nombre == "Paciente")
+                    {
+                        if (existeEnBd.Citas.IdPaciente != idPacienteSesion.Value)
+                        {
+                            throw new InvalidOperationException("Un paciente solo tiene autorización para consultar atenciones médicas de su propio expediente.");
+                        }
+                        if (existeEnBd.EstadoConsulta != "Finalizada")
+                        {
+                            throw new InvalidOperationException("Un paciente solo puede consultar atenciones médicas que hayan sido finalizadas formalmente.");
+                        }
+                    }
+                    else if (rolActual.Nombre == "Doctor")
+                    {
+                        if ((existeEnBd.EstadoConsulta == "En curso" || existeEnBd.EstadoConsulta == "EnProceso") && existeEnBd.Citas.IdDoctor != idDoctorSesion.Value)
+                        {
+                            throw new InvalidOperationException("No tiene permisos para acceder a una consulta médica en proceso de otro facultativo.");
+                        }
+                    }
+                    throw new InvalidOperationException("No tiene permisos para consultar este expediente clínico.");
+                }
+                return null;
             }
 
             var p = c.Citas.Pacientes;
@@ -801,7 +832,7 @@ namespace SanarRuralUnan.Models
 
             ValidarPermisosEscrituraClinica(idDoctorAutenticado, consulta.Citas.IdDoctor, "modificar el expediente clínico");
 
-            if (consulta.EstadoConsulta != "EnProceso")
+            if (consulta.EstadoConsulta != "En curso" && consulta.EstadoConsulta != "EnProceso")
             {
                 throw new InvalidOperationException("No se puede modificar una consulta médica que ya ha sido finalizada.");
             }
@@ -864,9 +895,9 @@ namespace SanarRuralUnan.Models
 
             ValidarPermisosEscrituraClinica(idDoctorAutenticado, consulta.Citas.IdDoctor, "finalizar la consulta médica");
 
-            if (consulta.EstadoConsulta != "EnProceso")
+            if (consulta.EstadoConsulta != "En curso" && consulta.EstadoConsulta != "EnProceso")
             {
-                throw new InvalidOperationException("Solo se pueden finalizar consultas médicas que se encuentren en estado 'EnProceso'.");
+                throw new InvalidOperationException("Solo se pueden finalizar consultas médicas que se encuentren en estado 'En curso' o 'EnProceso'.");
             }
 
             // Validaciones estrictas de finalización clínica
@@ -1097,21 +1128,18 @@ namespace SanarRuralUnan.Models
             DateTime? fechaHasta = null,
             int? idDoctorAutenticado = null)
         {
-            if (!usuariosModels.IdRolActual.HasValue)
+            if (!usuariosModels.EsUsuarioSesionActivo(db))
             {
                 throw new InvalidOperationException("No se detectó una sesión activa con un rol válido para consultar el historial clínico.");
             }
 
-            var rolActual = db.Roles.FirstOrDefault(r => r.IdRol == usuariosModels.IdRolActual.Value);
-            if (rolActual == null)
-            {
-                throw new InvalidOperationException("El rol de la sesión actual no es válido para consultar el historial clínico.");
-            }
+            var usuarioSesion = db.Usuarios.Include(u => u.Roles).First(u => u.IdUsuario == usuariosModels.IdUsuarioActual.Value);
+            var rolActual = usuarioSesion.Roles;
 
             // Aislamiento estricto para pacientes
             if (rolActual.Nombre == "Paciente")
             {
-                var idPacienteSesion = new usuariosModels().ObtenerIdPacienteActual();
+                var idPacienteSesion = new usuariosModels().ObtenerIdPacienteActual(db);
                 if (!idPacienteSesion.HasValue)
                 {
                     throw new InvalidOperationException("No se encontró un expediente de paciente vinculado a la sesión actual.");

@@ -137,7 +137,11 @@ namespace SanarRuralUnan.Views.Citas
             cmbPaciente.DataSource = pacientes;
             cmbPaciente.DisplayMember = "NombreCompleto";
             cmbPaciente.ValueMember = "IdPaciente";
-            if (idPacienteAutenticado.HasValue)
+            if (pacientes.Count == 0)
+            {
+                lblErrorPaciente.Text = "No hay pacientes registrados activos.";
+            }
+            else if (idPacienteAutenticado.HasValue)
             {
                 cmbPaciente.SelectedValue = idPacienteAutenticado.Value;
                 cmbPaciente.Enabled = false;
@@ -159,6 +163,11 @@ namespace SanarRuralUnan.Views.Citas
             cmbDoctor.Enabled = false;
             cmbHospital.DataSource = null;
             cmbHospital.Enabled = false;
+
+            if (especialidades.Count == 0)
+            {
+                lblErrorEspecialidad.Text = "No hay especialidades médicas disponibles.";
+            }
         }
 
         // ============================================================
@@ -232,6 +241,8 @@ namespace SanarRuralUnan.Views.Citas
             if (cargando) return;
 
             LimpiarError(lblErrorEspecialidad);
+            LimpiarError(lblErrorDoctor);
+            LimpiarError(lblErrorHospital);
             cmbDoctor.DataSource = null;
             cmbDoctor.Enabled = false;
             cmbHospital.DataSource = null;
@@ -243,6 +254,12 @@ namespace SanarRuralUnan.Views.Citas
                 cmbDoctor.DataSource = doctores;
                 cmbDoctor.DisplayMember = "NombreCompleto";
                 cmbDoctor.ValueMember = "IdDoctor";
+
+                if (doctores.Count == 0)
+                {
+                    lblErrorDoctor.Text = "No hay médicos disponibles para esta especialidad.";
+                    return;
+                }
 
                 if (idDoctorAutenticado.HasValue)
                 {
@@ -257,11 +274,16 @@ namespace SanarRuralUnan.Views.Citas
                     cmbHospital.ValueMember = "IdHospital";
                     cmbHospital.SelectedIndex = -1;
                     cmbHospital.Enabled = hospitales.Count > 0;
+
+                    if (hospitales.Count == 0)
+                    {
+                        lblErrorHospital.Text = "No hay sedes asignadas para este médico en la especialidad seleccionada.";
+                    }
                 }
                 else
                 {
                     cmbDoctor.SelectedIndex = -1;
-                    cmbDoctor.Enabled = doctores.Count > 0;
+                    cmbDoctor.Enabled = true;
                 }
             }
         }
@@ -271,6 +293,7 @@ namespace SanarRuralUnan.Views.Citas
             if (cargando) return;
 
             LimpiarError(lblErrorDoctor);
+            LimpiarError(lblErrorHospital);
             cmbHospital.DataSource = null;
             cmbHospital.Enabled = false;
 
@@ -282,6 +305,11 @@ namespace SanarRuralUnan.Views.Citas
                 cmbHospital.ValueMember = "IdHospital";
                 cmbHospital.SelectedIndex = -1;
                 cmbHospital.Enabled = hospitales.Count > 0;
+
+                if (hospitales.Count == 0)
+                {
+                    lblErrorHospital.Text = "El médico seleccionado no tiene sedes asignadas para esta especialidad.";
+                }
             }
         }
 

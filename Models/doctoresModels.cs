@@ -58,6 +58,8 @@ namespace SanarRuralUnan.Models
             IList<int> idEspecialidades,
             IList<Tuple<int, int>> asignaciones)
         {
+            usuariosModels.ExigirRolAdministrativo("registrar un doctor");
+
             // Crear una nueva entidad Doctor con sus relaciones.
             var especialidades = (idEspecialidades ?? new List<int>()).Distinct().ToList();
             var relaciones = (asignaciones ?? new List<Tuple<int, int>>())
@@ -65,46 +67,58 @@ namespace SanarRuralUnan.Models
                 .Distinct()
                 .ToList();
 
-            var doctor = new Doctores
+            using (var tx = db.Database.BeginTransaction())
             {
-                IdUsuario = idUsuario.GetValueOrDefault() > 0 ? idUsuario : null,
-                PrimerNombre = primerNombre,
-                SegundoNombre = segundoNombre,
-                PrimerApellido = primerApellido,
-                SegundoApellido = segundoApellido,
-                Cedula = cedula,
-                NumeroLicencia = numeroLicencia,
-                Telefono = telefono,
-                Foto = foto,
-                FotoNombre = fotoNombre,
-                FotoMimeType = fotoMimeType,
-                // Todo doctor nuevo se crea como Activo.
-                Estado = true
-            };
-
-            foreach (int idEspecialidad in especialidades)
-            {
-                var doctorEspecialidad = new DoctorEspecialidad
+                try
                 {
-                    IdEspecialidad = idEspecialidad
-                };
+                    var doctor = new Doctores
+                    {
+                        IdUsuario = idUsuario.GetValueOrDefault() > 0 ? idUsuario : null,
+                        PrimerNombre = primerNombre,
+                        SegundoNombre = segundoNombre,
+                        PrimerApellido = primerApellido,
+                        SegundoApellido = segundoApellido,
+                        Cedula = cedula,
+                        NumeroLicencia = numeroLicencia,
+                        Telefono = telefono,
+                        Foto = foto,
+                        FotoNombre = fotoNombre,
+                        FotoMimeType = fotoMimeType,
+                        // Todo doctor nuevo se crea como Activo.
+                        Estado = true
+                    };
 
-                foreach (var asignacion in relaciones.Where(a => a.Item2 == idEspecialidad))
-                {
-                    doctorEspecialidad.DoctorHospitalEspecialidad.Add(
-                        new DoctorHospitalEspecialidad
+                    foreach (int idEspecialidad in especialidades)
+                    {
+                        var doctorEspecialidad = new DoctorEspecialidad
                         {
-                            IdHospital = asignacion.Item1,
                             IdEspecialidad = idEspecialidad
+                        };
+
+                        foreach (var asignacion in relaciones.Where(a => a.Item2 == idEspecialidad))
+                        {
+                            doctorEspecialidad.DoctorHospitalEspecialidad.Add(
+                                new DoctorHospitalEspecialidad
+                                {
+                                    IdHospital = asignacion.Item1,
+                                    IdEspecialidad = idEspecialidad
+                                }
+                            );
                         }
-                    );
+
+                        doctor.DoctorEspecialidad.Add(doctorEspecialidad);
+                    }
+
+                    db.Doctores.Add(doctor);
+                    db.SaveChanges();
+                    tx.Commit();
                 }
-
-                doctor.DoctorEspecialidad.Add(doctorEspecialidad);
+                catch
+                {
+                    tx.Rollback();
+                    throw;
+                }
             }
-
-            db.Doctores.Add(doctor);
-            db.SaveChanges();
         }
 
         // ============================================================
@@ -187,7 +201,9 @@ namespace SanarRuralUnan.Models
             IList<int> idEspecialidades,
             IList<Tuple<int, int>> asignaciones)
         {
-            // Solo se pueden editar doctores que estén activos.
+            usuariosModels.ExigirRolAdministrativo("actualizar un doctor");
+
+            // Solo se pueden editar doctores que existan y estén activos.
             var doctor = db.Doctores
                 .Include(d => d.DoctorEspecialidad.Select(de => de.DoctorHospitalEspecialidad))
                 .FirstOrDefault(d => d.IdDoctor == idDoctor && d.Estado);
@@ -197,94 +213,106 @@ namespace SanarRuralUnan.Models
                 return;
             }
 
-            var especialidades = (idEspecialidades ?? new List<int>()).Distinct().ToList();
-            var relaciones = (asignaciones ?? new List<Tuple<int, int>>())
-                .Where(a => especialidades.Contains(a.Item2))
-                .Distinct()
-                .ToList();
-
-            doctor.PrimerNombre = primerNombre;
-            doctor.SegundoNombre = segundoNombre;
-            doctor.PrimerApellido = primerApellido;
-            doctor.SegundoApellido = segundoApellido;
-            doctor.Cedula = cedula;
-            doctor.NumeroLicencia = numeroLicencia;
-            doctor.Telefono = telefono;
-            if (foto != null)
+            using (var tx = db.Database.BeginTransaction())
             {
-                // Si se seleccionó una nueva foto, se actualizan los datos de imagen.
-                doctor.Foto = foto;
-                doctor.FotoNombre = fotoNombre;
-                doctor.FotoMimeType = fotoMimeType;
-            }
-            else if (fotoEliminada)
-            {
-                // Si el usuario quitó la foto explícitamente, se limpian los campos.
-                doctor.Foto = null;
-                doctor.FotoNombre = null;
-                doctor.FotoMimeType = null;
-            }
-
-            foreach (var existente in doctor.DoctorEspecialidad.ToList())
-            {
-                foreach (var asignacionExistente in existente.DoctorHospitalEspecialidad.ToList())
+                try
                 {
-                    bool seleccionada = relaciones.Any(a =>
-                        a.Item1 == asignacionExistente.IdHospital &&
-                        a.Item2 == asignacionExistente.IdEspecialidad);
+                    var especialidades = (idEspecialidades ?? new List<int>()).Distinct().ToList();
+                    var relaciones = (asignaciones ?? new List<Tuple<int, int>>())
+                        .Where(a => especialidades.Contains(a.Item2))
+                        .Distinct()
+                        .ToList();
 
-                    bool tieneCitas = db.Citas.Any(c =>
-                        c.IdDoctor == asignacionExistente.IdDoctor &&
-                        c.IdHospital == asignacionExistente.IdHospital &&
-                        c.IdEspecialidad == asignacionExistente.IdEspecialidad);
-
-                    if (!seleccionada && !tieneCitas)
+                    doctor.PrimerNombre = primerNombre;
+                    doctor.SegundoNombre = segundoNombre;
+                    doctor.PrimerApellido = primerApellido;
+                    doctor.SegundoApellido = segundoApellido;
+                    doctor.Cedula = cedula;
+                    doctor.NumeroLicencia = numeroLicencia;
+                    doctor.Telefono = telefono;
+                    if (foto != null)
                     {
-                        db.DoctorHospitalEspecialidad.Remove(asignacionExistente);
+                        // Si se seleccionó una nueva foto, se actualizan los datos de imagen.
+                        doctor.Foto = foto;
+                        doctor.FotoNombre = fotoNombre;
+                        doctor.FotoMimeType = fotoMimeType;
                     }
-                }
-
-                bool conservaAsignacion = existente.DoctorHospitalEspecialidad.Any(a =>
-                    db.Entry(a).State != EntityState.Deleted);
-
-                if (!especialidades.Contains(existente.IdEspecialidad) && !conservaAsignacion)
-                {
-                    db.DoctorEspecialidad.Remove(existente);
-                }
-            }
-
-            foreach (int idEspecialidad in especialidades)
-            {
-                var doctorEspecialidad = doctor.DoctorEspecialidad
-                    .FirstOrDefault(de => de.IdEspecialidad == idEspecialidad);
-
-                if (doctorEspecialidad == null)
-                {
-                    doctorEspecialidad = new DoctorEspecialidad { IdEspecialidad = idEspecialidad };
-                    doctor.DoctorEspecialidad.Add(doctorEspecialidad);
-                }
-
-                foreach (var asignacion in relaciones.Where(a => a.Item2 == idEspecialidad))
-                {
-                    bool existe = doctorEspecialidad.DoctorHospitalEspecialidad.Any(dhe =>
-                        dhe.IdHospital == asignacion.Item1 &&
-                        db.Entry(dhe).State != EntityState.Deleted);
-
-                    if (!existe)
+                    else if (fotoEliminada)
                     {
-                        doctorEspecialidad.DoctorHospitalEspecialidad.Add(
-                            new DoctorHospitalEspecialidad
+                        // Si el usuario quitó la foto explícitamente, se limpian los campos.
+                        doctor.Foto = null;
+                        doctor.FotoNombre = null;
+                        doctor.FotoMimeType = null;
+                    }
+
+                    foreach (var existente in doctor.DoctorEspecialidad.ToList())
+                    {
+                        foreach (var asignacionExistente in existente.DoctorHospitalEspecialidad.ToList())
+                        {
+                            bool seleccionada = relaciones.Any(a =>
+                                a.Item1 == asignacionExistente.IdHospital &&
+                                a.Item2 == asignacionExistente.IdEspecialidad);
+
+                            bool tieneCitas = db.Citas.Any(c =>
+                                c.IdDoctor == asignacionExistente.IdDoctor &&
+                                c.IdHospital == asignacionExistente.IdHospital &&
+                                c.IdEspecialidad == asignacionExistente.IdEspecialidad);
+
+                            if (!seleccionada && !tieneCitas)
                             {
-                                IdDoctor = idDoctor,
-                                IdHospital = asignacion.Item1,
-                                IdEspecialidad = idEspecialidad
+                                db.DoctorHospitalEspecialidad.Remove(asignacionExistente);
                             }
-                        );
+                        }
+
+                        bool conservaAsignacion = existente.DoctorHospitalEspecialidad.Any(a =>
+                            db.Entry(a).State != EntityState.Deleted);
+
+                        if (!especialidades.Contains(existente.IdEspecialidad) && !conservaAsignacion)
+                        {
+                            db.DoctorEspecialidad.Remove(existente);
+                        }
                     }
+
+                    foreach (int idEspecialidad in especialidades)
+                    {
+                        var doctorEspecialidad = doctor.DoctorEspecialidad
+                            .FirstOrDefault(de => de.IdEspecialidad == idEspecialidad);
+
+                        if (doctorEspecialidad == null)
+                        {
+                            doctorEspecialidad = new DoctorEspecialidad { IdEspecialidad = idEspecialidad };
+                            doctor.DoctorEspecialidad.Add(doctorEspecialidad);
+                        }
+
+                        foreach (var asignacion in relaciones.Where(a => a.Item2 == idEspecialidad))
+                        {
+                            bool existe = doctorEspecialidad.DoctorHospitalEspecialidad.Any(dhe =>
+                                dhe.IdHospital == asignacion.Item1 &&
+                                db.Entry(dhe).State != EntityState.Deleted);
+
+                            if (!existe)
+                            {
+                                doctorEspecialidad.DoctorHospitalEspecialidad.Add(
+                                    new DoctorHospitalEspecialidad
+                                    {
+                                        IdDoctor = idDoctor,
+                                        IdHospital = asignacion.Item1,
+                                        IdEspecialidad = idEspecialidad
+                                    }
+                                );
+                            }
+                        }
+                    }
+
+                    db.SaveChanges();
+                    tx.Commit();
+                }
+                catch
+                {
+                    tx.Rollback();
+                    throw;
                 }
             }
-
-            db.SaveChanges();
         }
 
         // ============================================================
@@ -295,6 +323,8 @@ namespace SanarRuralUnan.Models
         // el historial del doctor únicamente si nunca ha tenido citas.
         public void eliminarDoctor(int idDoctor)
         {
+            usuariosModels.ExigirRolAdministrativo("dar de baja a un doctor");
+
             // Buscar únicamente un doctor que esté activo.
             var doctor = db.Doctores.FirstOrDefault(
                 d => d.IdDoctor == idDoctor && d.Estado
