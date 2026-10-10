@@ -112,6 +112,8 @@ namespace SanarRuralUnan.Views
             HabilitarDobleBufer(pnlFotoInfo);
             HabilitarDobleBufer(pnlLicenciaInfo);
             HabilitarDobleBufer(panelLema);
+            lstEspecialidades.IntegralHeight = false;
+            lstAsignaciones.IntegralHeight = false;
         }
 
         private static void HabilitarDobleBufer(Control control)

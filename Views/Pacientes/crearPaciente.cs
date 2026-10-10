@@ -289,10 +289,10 @@ namespace SanarRuralUnan.Views
             btnGuardar.Text = "💾 Guardar Paciente";
             btnCancelar.Text = "✕ Cancelar";
 
-            btnModoCrear.BackColor = Color.FromArgb(236, 245, 252);
-            btnModoCrear.ForeColor = Tema.AzulPrimario;
-            btnModoEditar.BackColor = Tema.Superficie;
-            btnModoEditar.ForeColor = Tema.TextoSecundario;
+            lblBadgeModo.Text = "+ Nuevo Paciente";
+            lblBadgeModo.BackColor = Color.FromArgb(236, 248, 238);
+            lblBadgeModo.ForeColor = Tema.VerdeOscuro;
+            lblBadgeModo.Visible = true;
         }
 
         // ============================================================
@@ -356,6 +356,7 @@ namespace SanarRuralUnan.Views
             lblIconoPaciente.SetBounds(16, 13, 40, 40);
             lblTitulo.Location = new Point(64, 11);
             lblSubtitulo.Location = new Point(66, 38);
+            lblBadgeModo.Location = new Point(cardHeader.Width - lblBadgeModo.Width - 18, 18);
             y += cardHeader.Height + gap;
 
             // Fila 1: Información personal (68%) y Foto (32%)
@@ -1017,10 +1018,10 @@ namespace SanarRuralUnan.Views
                 btnGuardar.Text = "💾 Guardar cambios";
                 btnCancelar.Text = "✕ Cancelar";
 
-                btnModoCrear.BackColor = Tema.Superficie;
-                btnModoCrear.ForeColor = Tema.TextoSecundario;
-                btnModoEditar.BackColor = Color.FromArgb(236, 245, 252);
-                btnModoEditar.ForeColor = Tema.AzulPrimario;
+                lblBadgeModo.Text = "✎ Modo Edición";
+                lblBadgeModo.BackColor = Color.FromArgb(235, 245, 252);
+                lblBadgeModo.ForeColor = Tema.AzulPrimario;
+                lblBadgeModo.Visible = true;
 
                 txtNombres.Text = paciente.PrimerNombre;
                 txtSegundoNombre.Text = paciente.SegundoNombre;

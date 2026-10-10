@@ -133,7 +133,7 @@ namespace SanarRuralUnan.Views.Hospitales
             cardHeader.Paint += (s, ev) => Tema.DibujarTarjetaRedondeada(ev.Graphics, new Rectangle(0, 0, cardHeader.Width - 1, cardHeader.Height - 1), Tema.Superficie, Tema.Borde, 10);
             cardUbicacion.Paint += (s, ev) => Tema.DibujarTarjetaRedondeada(ev.Graphics, new Rectangle(0, 0, cardUbicacion.Width - 1, cardUbicacion.Height - 1), Tema.Superficie, Tema.Borde, 10);
             cardDatos.Paint += (s, ev) => Tema.DibujarTarjetaRedondeada(ev.Graphics, new Rectangle(0, 0, cardDatos.Width - 1, cardDatos.Height - 1), Tema.Superficie, Tema.Borde, 10);
-            panelLema.Paint += (s, ev) => Tema.DibujarTarjetaRedondeada(ev.Graphics, new Rectangle(0, 0, panelLema.Width - 1, panelLema.Height - 1), Color.FromArgb(25, 255, 255, 255), Color.FromArgb(60, 255, 255, 255), 10);
+            panelLema.Paint += (s, ev) => Tema.DibujarTarjetaRedondeada(ev.Graphics, new Rectangle(0, 0, panelLema.Width - 1, panelLema.Height - 1), Tema.Superficie, Tema.Borde, 8);
 
             // Microinteracciones de botones
             btnGuardar.MouseEnter += (s, ev) => btnGuardar.BackColor = Tema.AzulOscuro;
@@ -145,9 +145,144 @@ namespace SanarRuralUnan.Views.Hospitales
         private void panelHero_Paint(object sender, PaintEventArgs e)
         {
             e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
-            using (LinearGradientBrush brush = new LinearGradientBrush(panelHero.ClientRectangle, Tema.AzulOscuro, Color.FromArgb(20, 50, 85), LinearGradientMode.Vertical))
+
+            int w = panelHero.Width;
+            int h = panelHero.Height;
+
+            // Altura del área del paisaje en la parte inferior del Hero
+            int altoPaisaje = Math.Max(220, (int)(h * 0.35f));
+            int yInicio = h - altoPaisaje;
+
+            // Cielo suave en degradé
+            using (LinearGradientBrush brCielo = new LinearGradientBrush(
+                new Rectangle(0, yInicio - 30, w, 50),
+                Tema.Fondo,
+                Color.FromArgb(215, 238, 248),
+                LinearGradientMode.Vertical))
             {
-                e.Graphics.FillRectangle(brush, panelHero.ClientRectangle);
+                e.Graphics.FillRectangle(brCielo, 0, yInicio - 30, w, 50);
+            }
+
+            // Colina lejana (azul-verdoso suave)
+            using (GraphicsPath pathMontanas = new GraphicsPath())
+            {
+                Point p1 = new Point(0, h);
+                Point p2 = new Point(0, yInicio + 25);
+                Point p3 = new Point((int)(w * 0.35f), yInicio - 12);
+                Point p4 = new Point((int)(w * 0.65f), yInicio + 30);
+                Point p5 = new Point(w, yInicio + 5);
+                Point p6 = new Point(w, h);
+
+                pathMontanas.AddLine(p1, p2);
+                pathMontanas.AddBezier(p2, p3, p4, p5);
+                pathMontanas.AddLine(p5, p6);
+                pathMontanas.CloseFigure();
+                using (SolidBrush brMontanas = new SolidBrush(Color.FromArgb(168, 209, 185)))
+                {
+                    e.Graphics.FillPath(brMontanas, pathMontanas);
+                }
+            }
+
+            // Colina media (verde naturaleza)
+            using (GraphicsPath pathColinaMedia = new GraphicsPath())
+            {
+                Point p1 = new Point(0, h);
+                Point p2 = new Point(0, yInicio + 55);
+                Point p3 = new Point((int)(w * 0.40f), yInicio + 20);
+                Point p4 = new Point((int)(w * 0.75f), yInicio + 65);
+                Point p5 = new Point(w, yInicio + 40);
+                Point p6 = new Point(w, h);
+
+                pathColinaMedia.AddLine(p1, p2);
+                pathColinaMedia.AddBezier(p2, p3, p4, p5);
+                pathColinaMedia.AddLine(p5, p6);
+                pathColinaMedia.CloseFigure();
+                using (SolidBrush brColinaMedia = new SolidBrush(Tema.Verde))
+                {
+                    e.Graphics.FillPath(brColinaMedia, pathColinaMedia);
+                }
+            }
+
+            // Casita / Centro médico rural sobre la colina media
+            int xCasa = (int)(w * 0.16f);
+            int yCasa = yInicio + 55;
+            using (SolidBrush brPared = new SolidBrush(Color.FromArgb(250, 248, 240)))
+            using (Pen penPared = new Pen(Color.FromArgb(180, 170, 150), 1f))
+            {
+                e.Graphics.FillRectangle(brPared, xCasa, yCasa, 26, 17);
+                e.Graphics.DrawRectangle(penPared, xCasa, yCasa, 26, 17);
+            }
+            using (SolidBrush brTecho = new SolidBrush(Color.FromArgb(195, 95, 75)))
+            {
+                Point[] puntosTecho = new Point[]
+                {
+                    new Point(xCasa - 2, yCasa),
+                    new Point(xCasa + 13, yCasa - 11),
+                    new Point(xCasa + 28, yCasa)
+                };
+                e.Graphics.FillPolygon(brTecho, puntosTecho);
+            }
+            using (SolidBrush brPuerta = new SolidBrush(Color.FromArgb(140, 75, 45)))
+            {
+                e.Graphics.FillRectangle(brPuerta, xCasa + 9, yCasa + 6, 7, 11);
+            }
+
+            // Arbolitos rurales
+            DibujarArbolito(e.Graphics, (int)(w * 0.08f), yInicio + 50, 14, 22);
+            DibujarArbolito(e.Graphics, (int)(w * 0.32f), yInicio + 42, 16, 26);
+            DibujarArbolito(e.Graphics, (int)(w * 0.68f), yInicio + 54, 18, 28);
+            DibujarArbolito(e.Graphics, (int)(w * 0.85f), yInicio + 46, 14, 24);
+
+            // Colina frontal ondulada (verde oscuro)
+            using (GraphicsPath pathColinaFrontal = new GraphicsPath())
+            {
+                Point p1 = new Point(0, h);
+                Point p2 = new Point(0, yInicio + 95);
+                Point p3 = new Point((int)(w * 0.30f), yInicio + 120);
+                Point p4 = new Point((int)(w * 0.65f), yInicio + 85);
+                Point p5 = new Point(w, yInicio + 105);
+                Point p6 = new Point(w, h);
+
+                pathColinaFrontal.AddLine(p1, p2);
+                pathColinaFrontal.AddBezier(p2, p3, p4, p5);
+                pathColinaFrontal.AddLine(p5, p6);
+                pathColinaFrontal.CloseFigure();
+                using (SolidBrush brColinaFrontal = new SolidBrush(Tema.VerdeOscuro))
+                {
+                    e.Graphics.FillPath(brColinaFrontal, pathColinaFrontal);
+                }
+            }
+
+            // Olas decorativas transparentes en la base inferior
+            using (GraphicsPath pathOlaTeal = new GraphicsPath())
+            {
+                Point p1 = new Point(0, h);
+                Point p2 = new Point(0, h - 30);
+                Point p3 = new Point((int)(w * 0.35f), h - 10);
+                Point p4 = new Point((int)(w * 0.70f), h - 45);
+                Point p5 = new Point(w, h - 20);
+                Point p6 = new Point(w, h);
+
+                pathOlaTeal.AddLine(p1, p2);
+                pathOlaTeal.AddBezier(p2, p3, p4, p5);
+                pathOlaTeal.AddLine(p5, p6);
+                pathOlaTeal.CloseFigure();
+                using (SolidBrush brOlaTeal = new SolidBrush(Color.FromArgb(80, 165, 215, 215)))
+                {
+                    e.Graphics.FillPath(brOlaTeal, pathOlaTeal);
+                }
+            }
+        }
+
+        private static void DibujarArbolito(Graphics g, int x, int y, int ancho, int alto)
+        {
+            using (SolidBrush brTronco = new SolidBrush(Color.FromArgb(120, 80, 50)))
+            {
+                g.FillRectangle(brTronco, x + (ancho / 2) - 2, y + (alto / 2), 4, alto / 2);
+            }
+            using (SolidBrush brCopa = new SolidBrush(Tema.VerdeOscuro))
+            {
+                g.FillEllipse(brCopa, x, y, ancho, alto * 3 / 4);
             }
         }
 

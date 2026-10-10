@@ -53,6 +53,7 @@ namespace SanarRuralUnan.Views.Citas
             {
                 cargando = true;
 
+                ConfigurarEstilosVisuales();
                 LimpiarErrores();
                 ConfigurarRestriccionesFechas();
                 CargarPacientes();
@@ -62,10 +63,64 @@ namespace SanarRuralUnan.Views.Citas
                 {
                     CargarDatosParaEdicion(idCitaEdicion.Value);
                 }
+                else
+                {
+                    ConfigurarModoCreacion();
+                }
             }
             finally
             {
                 cargando = false;
+            }
+        }
+
+        private void ConfigurarModoCreacion()
+        {
+            this.Text = "Sanar Rural - Programar Cita Médica";
+            lblTitulo.Text = "Programar Cita Médica";
+            lblSubtitulo.Text = "Seleccione paciente, especialidad, médico y horario convenido.";
+            lblBadgeModo.Text = "+ Nueva Cita";
+            lblBadgeModo.BackColor = Color.FromArgb(236, 248, 238);
+            lblBadgeModo.ForeColor = Tema.VerdeOscuro;
+            btnGuardar.Text = "💾 Agendar Cita";
+        }
+
+        private void ConfigurarEstilosVisuales()
+        {
+            this.DoubleBuffered = true;
+            btnCancelar.Click += (s, ev) => { DialogResult = DialogResult.Cancel; Close(); };
+            this.CancelButton = btnCancelar;
+
+            // Microinteracciones de botones
+            btnGuardar.MouseEnter += (s, ev) => btnGuardar.BackColor = Tema.AzulOscuro;
+            btnGuardar.MouseLeave += (s, ev) => btnGuardar.BackColor = Tema.AzulPrimario;
+            btnCancelar.MouseEnter += (s, ev) => btnCancelar.BackColor = Tema.FondoSecundario;
+            btnCancelar.MouseLeave += (s, ev) => btnCancelar.BackColor = Tema.Superficie;
+
+            // Dibujado suave de tarjetas
+            cardHeader.Paint += (s, ev) => Tema.DibujarTarjetaRedondeada(ev.Graphics, new Rectangle(0, 0, cardHeader.Width - 1, cardHeader.Height - 1), Tema.Superficie, Tema.Borde, 10);
+            cardAtencion.Paint += (s, ev) => Tema.DibujarTarjetaRedondeada(ev.Graphics, new Rectangle(0, 0, cardAtencion.Width - 1, cardAtencion.Height - 1), Tema.Superficie, Tema.Borde, 10);
+            cardProgramacion.Paint += (s, ev) => Tema.DibujarTarjetaRedondeada(ev.Graphics, new Rectangle(0, 0, cardProgramacion.Width - 1, cardProgramacion.Height - 1), Tema.Superficie, Tema.Borde, 10);
+
+            // Iconos circulares suaves
+            lblIconoHeader.Paint += (s, ev) => DibujarBadgeCircular(lblIconoHeader, ev, "📅");
+            lblIconoAtencion.Paint += (s, ev) => DibujarBadgeCircular(lblIconoAtencion, ev, "🩺");
+            lblIconoProgramacion.Paint += (s, ev) => DibujarBadgeCircular(lblIconoProgramacion, ev, "⏱️");
+        }
+
+        private static void DibujarBadgeCircular(Control c, PaintEventArgs e, string icono)
+        {
+            e.Graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
+            e.Graphics.Clear(c.Parent?.BackColor ?? Tema.Superficie);
+            using (Brush br = new SolidBrush(Tema.AzulPrimario))
+            {
+                e.Graphics.FillEllipse(br, 1, 1, c.Width - 3, c.Height - 3);
+            }
+            using (Font f = new Font("Segoe UI Emoji", 11F))
+            using (Brush brText = new SolidBrush(Color.White))
+            {
+                SizeF sf = e.Graphics.MeasureString(icono, f);
+                e.Graphics.DrawString(icono, f, brText, (c.Width - sf.Width) / 2 + 1, (c.Height - sf.Height) / 2);
             }
         }
 
@@ -130,7 +185,11 @@ namespace SanarRuralUnan.Views.Citas
 
             // Adecuación de textos de encabezado para modo de reprogramación.
             this.Text = "Sanar Rural - Reprogramar Cita Médica";
-            lblSubtitulo.Text = "Reprogramación de Cita Médica";
+            lblTitulo.Text = "Reprogramar Cita Médica";
+            lblSubtitulo.Text = string.Format("Reprogramación de cita #{0} | Actualice horario o sede", idCita);
+            lblBadgeModo.Text = "✎ Reprogramación";
+            lblBadgeModo.BackColor = Color.FromArgb(235, 245, 252);
+            lblBadgeModo.ForeColor = Tema.AzulPrimario;
             btnGuardar.Text = "💾 Guardar Cambios";
 
             // Si la cita tenía una fecha anterior a hoy (por ej. si se reprograma hoy), ajustar MinDate para evitar excepción de WinForms.

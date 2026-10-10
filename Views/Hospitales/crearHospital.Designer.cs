@@ -1,4 +1,4 @@
-﻿using System.Drawing;
+using System.Drawing;
 using System.Windows.Forms;
 using SanarRuralUnan.Helpers;
 
@@ -79,7 +79,7 @@ namespace SanarRuralUnan.Views.Hospitales
             //
             // panelHero
             //
-            this.panelHero.BackColor = Tema.AzulOscuro;
+            this.panelHero.BackColor = Tema.Fondo;
             this.panelHero.Controls.Add(this.picLogoHero);
             this.panelHero.Controls.Add(this.lblBrandBadge);
             this.panelHero.Controls.Add(this.lblHeroTitulo);
@@ -110,7 +110,7 @@ namespace SanarRuralUnan.Views.Hospitales
             this.lblBrandBadge.AutoSize = true;
             this.lblBrandBadge.BackColor = System.Drawing.Color.Transparent;
             this.lblBrandBadge.Font = new System.Drawing.Font(Tema.FamiliaFuente, 7.5F, System.Drawing.FontStyle.Bold);
-            this.lblBrandBadge.ForeColor = Tema.VerdeAcento;
+            this.lblBrandBadge.ForeColor = Tema.VerdeOscuro;
             this.lblBrandBadge.Location = new System.Drawing.Point(24, 96);
             this.lblBrandBadge.Name = "lblBrandBadge";
             this.lblBrandBadge.Size = new System.Drawing.Size(95, 15);
@@ -122,7 +122,7 @@ namespace SanarRuralUnan.Views.Hospitales
             this.lblHeroTitulo.AutoSize = true;
             this.lblHeroTitulo.BackColor = System.Drawing.Color.Transparent;
             this.lblHeroTitulo.Font = new System.Drawing.Font(Tema.FamiliaFuente, 16F, System.Drawing.FontStyle.Bold);
-            this.lblHeroTitulo.ForeColor = System.Drawing.Color.White;
+            this.lblHeroTitulo.ForeColor = Tema.AzulOscuro;
             this.lblHeroTitulo.Location = new System.Drawing.Point(22, 118);
             this.lblHeroTitulo.Name = "lblHeroTitulo";
             this.lblHeroTitulo.Size = new System.Drawing.Size(217, 31);
@@ -133,7 +133,7 @@ namespace SanarRuralUnan.Views.Hospitales
             //
             this.lblHeroSubtitulo.BackColor = System.Drawing.Color.Transparent;
             this.lblHeroSubtitulo.Font = new System.Drawing.Font(Tema.FamiliaFuente, 9F);
-            this.lblHeroSubtitulo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(200)))), ((int)(((byte)(225)))), ((int)(((byte)(245)))));
+            this.lblHeroSubtitulo.ForeColor = Tema.TextoSecundario;
             this.lblHeroSubtitulo.Location = new System.Drawing.Point(24, 156);
             this.lblHeroSubtitulo.Name = "lblHeroSubtitulo";
             this.lblHeroSubtitulo.Size = new System.Drawing.Size(227, 52);
@@ -154,7 +154,7 @@ namespace SanarRuralUnan.Views.Hospitales
             // lblHeroIcono1
             //
             this.lblHeroIcono1.Font = new System.Drawing.Font("Segoe UI Emoji", 14F);
-            this.lblHeroIcono1.ForeColor = System.Drawing.Color.White;
+            this.lblHeroIcono1.ForeColor = Tema.AzulPrimario;
             this.lblHeroIcono1.Location = new System.Drawing.Point(4, 8);
             this.lblHeroIcono1.Name = "lblHeroIcono1";
             this.lblHeroIcono1.Size = new System.Drawing.Size(32, 32);
@@ -166,7 +166,7 @@ namespace SanarRuralUnan.Views.Hospitales
             //
             this.lblHeroTitulo1.AutoSize = true;
             this.lblHeroTitulo1.Font = new System.Drawing.Font(Tema.FamiliaFuente, 9F, System.Drawing.FontStyle.Bold);
-            this.lblHeroTitulo1.ForeColor = System.Drawing.Color.White;
+            this.lblHeroTitulo1.ForeColor = Tema.TextoPrincipal;
             this.lblHeroTitulo1.Location = new System.Drawing.Point(40, 6);
             this.lblHeroTitulo1.Name = "lblHeroTitulo1";
             this.lblHeroTitulo1.Size = new System.Drawing.Size(149, 19);
@@ -176,7 +176,7 @@ namespace SanarRuralUnan.Views.Hospitales
             // lblHeroDesc1
             //
             this.lblHeroDesc1.Font = new System.Drawing.Font(Tema.FamiliaFuente, 8F);
-            this.lblHeroDesc1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(190)))), ((int)(((byte)(215)))), ((int)(((byte)(235)))));
+            this.lblHeroDesc1.ForeColor = Tema.TextoSecundario;
             this.lblHeroDesc1.Location = new System.Drawing.Point(40, 26);
             this.lblHeroDesc1.Name = "lblHeroDesc1";
             this.lblHeroDesc1.Size = new System.Drawing.Size(185, 30);
@@ -197,7 +197,7 @@ namespace SanarRuralUnan.Views.Hospitales
             // lblHeroIcono2
             //
             this.lblHeroIcono2.Font = new System.Drawing.Font("Segoe UI Emoji", 14F);
-            this.lblHeroIcono2.ForeColor = System.Drawing.Color.White;
+            this.lblHeroIcono2.ForeColor = Tema.AzulPrimario;
             this.lblHeroIcono2.Location = new System.Drawing.Point(4, 8);
             this.lblHeroIcono2.Name = "lblHeroIcono2";
             this.lblHeroIcono2.Size = new System.Drawing.Size(32, 32);
@@ -209,7 +209,7 @@ namespace SanarRuralUnan.Views.Hospitales
             //
             this.lblHeroTitulo2.AutoSize = true;
             this.lblHeroTitulo2.Font = new System.Drawing.Font(Tema.FamiliaFuente, 9F, System.Drawing.FontStyle.Bold);
-            this.lblHeroTitulo2.ForeColor = System.Drawing.Color.White;
+            this.lblHeroTitulo2.ForeColor = Tema.TextoPrincipal;
             this.lblHeroTitulo2.Location = new System.Drawing.Point(40, 6);
             this.lblHeroTitulo2.Name = "lblHeroTitulo2";
             this.lblHeroTitulo2.Size = new System.Drawing.Size(155, 19);
@@ -219,7 +219,7 @@ namespace SanarRuralUnan.Views.Hospitales
             // lblHeroDesc2
             //
             this.lblHeroDesc2.Font = new System.Drawing.Font(Tema.FamiliaFuente, 8F);
-            this.lblHeroDesc2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(190)))), ((int)(((byte)(215)))), ((int)(((byte)(235)))));
+            this.lblHeroDesc2.ForeColor = Tema.TextoSecundario;
             this.lblHeroDesc2.Location = new System.Drawing.Point(40, 26);
             this.lblHeroDesc2.Name = "lblHeroDesc2";
             this.lblHeroDesc2.Size = new System.Drawing.Size(185, 30);
@@ -240,7 +240,7 @@ namespace SanarRuralUnan.Views.Hospitales
             // lblHeroIcono3
             //
             this.lblHeroIcono3.Font = new System.Drawing.Font("Segoe UI Emoji", 14F);
-            this.lblHeroIcono3.ForeColor = System.Drawing.Color.White;
+            this.lblHeroIcono3.ForeColor = Tema.AzulPrimario;
             this.lblHeroIcono3.Location = new System.Drawing.Point(4, 8);
             this.lblHeroIcono3.Name = "lblHeroIcono3";
             this.lblHeroIcono3.Size = new System.Drawing.Size(32, 32);
@@ -252,7 +252,7 @@ namespace SanarRuralUnan.Views.Hospitales
             //
             this.lblHeroTitulo3.AutoSize = true;
             this.lblHeroTitulo3.Font = new System.Drawing.Font(Tema.FamiliaFuente, 9F, System.Drawing.FontStyle.Bold);
-            this.lblHeroTitulo3.ForeColor = System.Drawing.Color.White;
+            this.lblHeroTitulo3.ForeColor = Tema.TextoPrincipal;
             this.lblHeroTitulo3.Location = new System.Drawing.Point(40, 6);
             this.lblHeroTitulo3.Name = "lblHeroTitulo3";
             this.lblHeroTitulo3.Size = new System.Drawing.Size(125, 19);
@@ -262,7 +262,7 @@ namespace SanarRuralUnan.Views.Hospitales
             // lblHeroDesc3
             //
             this.lblHeroDesc3.Font = new System.Drawing.Font(Tema.FamiliaFuente, 8F);
-            this.lblHeroDesc3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(190)))), ((int)(((byte)(215)))), ((int)(((byte)(235)))));
+            this.lblHeroDesc3.ForeColor = Tema.TextoSecundario;
             this.lblHeroDesc3.Location = new System.Drawing.Point(40, 26);
             this.lblHeroDesc3.Name = "lblHeroDesc3";
             this.lblHeroDesc3.Size = new System.Drawing.Size(185, 30);
@@ -272,7 +272,7 @@ namespace SanarRuralUnan.Views.Hospitales
             // panelLema
             //
             this.panelLema.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.panelLema.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(25)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
+            this.panelLema.BackColor = Tema.Superficie;
             this.panelLema.Controls.Add(this.lblLemaTexto);
             this.panelLema.Location = new System.Drawing.Point(20, 580);
             this.panelLema.Name = "panelLema";
@@ -285,7 +285,7 @@ namespace SanarRuralUnan.Views.Hospitales
             this.lblLemaTexto.BackColor = System.Drawing.Color.Transparent;
             this.lblLemaTexto.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lblLemaTexto.Font = new System.Drawing.Font(Tema.FamiliaFuente, 8.5F, System.Drawing.FontStyle.Italic);
-            this.lblLemaTexto.ForeColor = System.Drawing.Color.White;
+            this.lblLemaTexto.ForeColor = Tema.VerdeOscuro;
             this.lblLemaTexto.Location = new System.Drawing.Point(12, 12);
             this.lblLemaTexto.Name = "lblLemaTexto";
             this.lblLemaTexto.Size = new System.Drawing.Size(211, 51);
@@ -582,43 +582,44 @@ namespace SanarRuralUnan.Views.Hospitales
             //
             // btnGuardar
             //
+            this.btnGuardar.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnGuardar.BackColor = Tema.AzulPrimario;
             this.btnGuardar.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnGuardar.FlatAppearance.BorderSize = 0;
             this.btnGuardar.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnGuardar.Font = Tema.FuenteBoton;
             this.btnGuardar.ForeColor = System.Drawing.Color.White;
-            this.btnGuardar.Location = new System.Drawing.Point(0, 4);
+            this.btnGuardar.Location = new System.Drawing.Point(462, 4);
             this.btnGuardar.Name = "btnGuardar";
-            this.btnGuardar.Size = new System.Drawing.Size(200, 44);
+            this.btnGuardar.Size = new System.Drawing.Size(195, 44);
             this.btnGuardar.TabIndex = 0;
-            this.btnGuardar.Text = "Guardar Hospital";
+            this.btnGuardar.Text = "💾 Guardar Hospital";
             this.btnGuardar.UseVisualStyleBackColor = false;
             this.btnGuardar.Click += new System.EventHandler(this.btnGuardar_Click);
             //
             // btnCancelar
             //
+            this.btnCancelar.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnCancelar.BackColor = Tema.Superficie;
             this.btnCancelar.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnCancelar.FlatAppearance.BorderColor = Tema.Borde;
             this.btnCancelar.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnCancelar.Font = Tema.FuenteBoton;
             this.btnCancelar.ForeColor = Tema.TextoPrincipal;
-            this.btnCancelar.Location = new System.Drawing.Point(215, 4);
+            this.btnCancelar.Location = new System.Drawing.Point(312, 4);
             this.btnCancelar.Name = "btnCancelar";
-            this.btnCancelar.Size = new System.Drawing.Size(150, 44);
+            this.btnCancelar.Size = new System.Drawing.Size(140, 44);
             this.btnCancelar.TabIndex = 1;
-            this.btnCancelar.Text = "Cancelar";
+            this.btnCancelar.Text = "✕ Cancelar";
             this.btnCancelar.UseVisualStyleBackColor = false;
             this.btnCancelar.Click += new System.EventHandler(this.lnkVolver_LinkClicked);
             //
             // lnkVolver
             //
-            this.lnkVolver.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.lnkVolver.AutoSize = true;
             this.lnkVolver.Font = Tema.FuenteSubtitulo;
             this.lnkVolver.LinkColor = Tema.AzulPrimario;
-            this.lnkVolver.Location = new System.Drawing.Point(525, 16);
+            this.lnkVolver.Location = new System.Drawing.Point(4, 16);
             this.lnkVolver.Name = "lnkVolver";
             this.lnkVolver.Size = new System.Drawing.Size(123, 19);
             this.lnkVolver.TabIndex = 2;

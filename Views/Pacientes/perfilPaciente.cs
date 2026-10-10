@@ -62,6 +62,8 @@ namespace SanarRuralUnan.Views.Pacientes
             }
 
             CargarDatosPerfil();
+            AjustarLayoutResponsive();
+            this.Resize += (s, ev) => AjustarLayoutResponsive();
         }
 
         // ============================================================
@@ -74,12 +76,12 @@ namespace SanarRuralUnan.Views.Pacientes
             panelContenido.BackColor = Tema.Fondo;
 
             cardEncabezado.BackColor = Tema.Superficie;
-            cardDatosLegales.BackColor = Tema.Superficie;
+            cardDatosLegales.BackColor = Color.FromArgb(248, 250, 252);
             cardDemograficos.BackColor = Tema.Superficie;
             cardEmergencia.BackColor = Tema.Superficie;
 
             cardEncabezado.Paint += (s, ev) => Tema.DibujarTarjetaRedondeada(ev.Graphics, new Rectangle(0, 0, cardEncabezado.Width - 1, cardEncabezado.Height - 1), Tema.Superficie, Tema.Borde, 8);
-            cardDatosLegales.Paint += (s, ev) => Tema.DibujarTarjetaRedondeada(ev.Graphics, new Rectangle(0, 0, cardDatosLegales.Width - 1, cardDatosLegales.Height - 1), Tema.Superficie, Tema.Borde, 8);
+            cardDatosLegales.Paint += (s, ev) => Tema.DibujarTarjetaRedondeada(ev.Graphics, new Rectangle(0, 0, cardDatosLegales.Width - 1, cardDatosLegales.Height - 1), Color.FromArgb(248, 250, 252), Color.FromArgb(218, 228, 238), 8);
             cardDemograficos.Paint += (s, ev) => Tema.DibujarTarjetaRedondeada(ev.Graphics, new Rectangle(0, 0, cardDemograficos.Width - 1, cardDemograficos.Height - 1), Tema.Superficie, Tema.Borde, 8);
             cardEmergencia.Paint += (s, ev) => Tema.DibujarTarjetaRedondeada(ev.Graphics, new Rectangle(0, 0, cardEmergencia.Width - 1, cardEmergencia.Height - 1), Tema.Superficie, Tema.Borde, 8);
 
@@ -127,6 +129,108 @@ namespace SanarRuralUnan.Views.Pacientes
             btnAgregarContacto.BackColor = Tema.AzulPrimario;
             btnAgregarContacto.ForeColor = Color.White;
             btnAgregarContacto.FlatAppearance.BorderSize = 0;
+        }
+
+        private void AjustarLayoutResponsive()
+        {
+            if (panelScroll == null || panelContenido == null) return;
+
+            int scrollWidth = SystemInformation.VerticalScrollBarWidth;
+            int anchoDisponible = Math.Max(660, panelScroll.ClientSize.Width - 40 - scrollWidth);
+
+            panelContenido.Width = anchoDisponible;
+            cardEncabezado.Width = anchoDisponible;
+            cardDatosLegales.Width = anchoDisponible;
+            cardDemograficos.Width = anchoDisponible;
+            cardEmergencia.Width = anchoDisponible;
+            pnlAcciones.Width = anchoDisponible;
+
+            // Encabezado
+            lblBadgeRol.Left = cardEncabezado.Width - lblBadgeRol.Width - 18;
+
+            // Tarjeta de datos legales y clínicos (protegidos)
+            lblAvisoPrivacidad.Width = cardDatosLegales.Width - 40;
+            int colWidthLegal = (cardDatosLegales.Width - 40) / 4;
+            int xL1 = 20;
+            int xL2 = 20 + colWidthLegal;
+            int xL3 = 20 + colWidthLegal * 2;
+            int xL4 = 20 + colWidthLegal * 3;
+
+            lblCedulaEtiqueta.Left = xL1;
+            lblCedulaValor.Left = xL1;
+
+            lblINSSEtiqueta.Left = xL2;
+            lblINSSValor.Left = xL2;
+
+            lblNacimientoEtiqueta.Left = xL3;
+            lblNacimientoValor.Left = xL3;
+
+            lblGeneroEtiqueta.Left = xL4;
+            lblGeneroValor.Left = xL4;
+
+            lblTipoSangreEtiqueta.Left = xL1;
+            lblTipoSangreValor.Left = xL1;
+
+            lblAlergiasEtiqueta.Left = xL2;
+            lblAlergiasValor.Left = xL2;
+            lblAlergiasValor.Width = Math.Max(120, colWidthLegal - 10);
+
+            lblAntecedentesEtiqueta.Left = xL3;
+            lblAntecedentesValor.Left = xL3;
+            lblAntecedentesValor.Width = Math.Max(200, (cardDatosLegales.Width - xL3 - 20));
+
+            // Tarjeta demográfica editable
+            int gapDemo = 10;
+            int colWidthDemo = (cardDemograficos.Width - 40 - (gapDemo * 3)) / 4;
+            int xD1 = 20;
+            int xD2 = xD1 + colWidthDemo + gapDemo;
+            int xD3 = xD2 + colWidthDemo + gapDemo;
+            int xD4 = xD3 + colWidthDemo + gapDemo;
+
+            lblTelefonoEtiqueta.Left = xD1;
+            txtTelefono.SetBounds(xD1, 72, colWidthDemo, 25);
+
+            lblDepartamentoEtiqueta.Left = xD2;
+            cmbDepartamento.SetBounds(xD2, 72, colWidthDemo, 25);
+
+            lblMunicipioEtiqueta.Left = xD3;
+            cmbMunicipio.SetBounds(xD3, 72, colWidthDemo, 25);
+
+            lblComunidadEtiqueta.Left = xD4;
+            cmbComunidad.SetBounds(xD4, 72, colWidthDemo, 25);
+
+            txtDireccion.Width = cardDemograficos.Width - 40;
+
+            // Tarjeta de contactos de emergencia
+            int anchoBtnAgregar = 100;
+            int gapEmerg = 8;
+            int anchoColsEmerg = (cardEmergencia.Width - 40 - anchoBtnAgregar - (gapEmerg * 4)) / 4;
+            int xE1 = 20;
+            int xE2 = xE1 + anchoColsEmerg + gapEmerg;
+            int xE3 = xE2 + anchoColsEmerg + gapEmerg;
+            int xE4 = xE3 + anchoColsEmerg + gapEmerg;
+            int xEBtn = xE4 + anchoColsEmerg + gapEmerg;
+
+            lblContNombre.Left = xE1;
+            txtContPrimerNombre.SetBounds(xE1, 68, anchoColsEmerg, 24);
+
+            lblContApellido.Left = xE2;
+            txtContPrimerApellido.SetBounds(xE2, 68, anchoColsEmerg, 24);
+
+            lblContParentesco.Left = xE3;
+            cmbContParentesco.SetBounds(xE3, 68, anchoColsEmerg, 25);
+
+            lblContTelefono.Left = xE4;
+            txtContTelefono.SetBounds(xE4, 68, anchoColsEmerg, 24);
+
+            btnAgregarContacto.SetBounds(xEBtn, 67, anchoBtnAgregar, 27);
+
+            dgvContactos.Width = cardEmergencia.Width - 40;
+
+            // Panel de acciones
+            btnGuardar.Left = pnlAcciones.Width - btnGuardar.Width - 18;
+            btnRestablecer.Left = btnGuardar.Left - btnRestablecer.Width - 10;
+            lblMensajeEstado.Width = btnRestablecer.Left - 30;
         }
 
         private void ConfigurarTablaContactos()

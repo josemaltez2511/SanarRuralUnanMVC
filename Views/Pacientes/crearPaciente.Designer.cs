@@ -60,7 +60,7 @@ namespace SanarRuralUnan.Views
             this.lblIconoPaciente = new System.Windows.Forms.Label();
             this.lblTitulo = new System.Windows.Forms.Label();
             this.lblSubtitulo = new System.Windows.Forms.Label();
-            this.btnModoCrear = new System.Windows.Forms.Label();
+            this.lblBadgeModo = new System.Windows.Forms.Label();
             this.btnModoEditar = new System.Windows.Forms.Label();
             this.cardPersonal = new System.Windows.Forms.Panel();
             this.lblIconoPersonal = new System.Windows.Forms.Label();
@@ -489,8 +489,7 @@ namespace SanarRuralUnan.Views
             this.cardHeader.Controls.Add(this.lblIconoPaciente);
             this.cardHeader.Controls.Add(this.lblTitulo);
             this.cardHeader.Controls.Add(this.lblSubtitulo);
-            this.cardHeader.Controls.Add(this.btnModoCrear);
-            this.cardHeader.Controls.Add(this.btnModoEditar);
+            this.cardHeader.Controls.Add(this.lblBadgeModo);
             this.cardHeader.Location = new System.Drawing.Point(20, 16);
             this.cardHeader.Name = "cardHeader";
             this.cardHeader.Size = new System.Drawing.Size(900, 66);
@@ -532,17 +531,17 @@ namespace SanarRuralUnan.Views
             //
             // btnModoCrear
             //
-            this.btnModoCrear.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnModoCrear.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(236)))), ((int)(((byte)(245)))), ((int)(((byte)(252)))));
-            this.btnModoCrear.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.btnModoCrear.Font = new System.Drawing.Font(Tema.FamiliaFuente, 9F, System.Drawing.FontStyle.Bold);
-            this.btnModoCrear.ForeColor = Tema.AzulPrimario;
-            this.btnModoCrear.Location = new System.Drawing.Point(620, 18);
-            this.btnModoCrear.Name = "btnModoCrear";
-            this.btnModoCrear.Size = new System.Drawing.Size(130, 32);
-            this.btnModoCrear.TabIndex = 3;
-            this.btnModoCrear.Text = "👤+ Crear Paciente";
-            this.btnModoCrear.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.lblBadgeModo.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.lblBadgeModo.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(236)))), ((int)(((byte)(248)))), ((int)(((byte)(238)))));
+            this.lblBadgeModo.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.lblBadgeModo.Font = new System.Drawing.Font(Tema.FamiliaFuente, 9F, System.Drawing.FontStyle.Bold);
+            this.lblBadgeModo.ForeColor = Tema.VerdeOscuro;
+            this.lblBadgeModo.Location = new System.Drawing.Point(735, 18);
+            this.lblBadgeModo.Name = "lblBadgeModo";
+            this.lblBadgeModo.Size = new System.Drawing.Size(145, 28);
+            this.lblBadgeModo.TabIndex = 3;
+            this.lblBadgeModo.Text = "+ Nuevo Paciente";
+            this.lblBadgeModo.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             //
             // btnModoEditar
             //
@@ -552,7 +551,7 @@ namespace SanarRuralUnan.Views
             this.btnModoEditar.Font = new System.Drawing.Font(Tema.FamiliaFuente, 9F, System.Drawing.FontStyle.Regular);
             this.btnModoEditar.ForeColor = Tema.TextoSecundario;
             this.btnModoEditar.Location = new System.Drawing.Point(756, 18);
-            this.btnModoEditar.Name = "btnModoEditar";
+            this.btnModoEditar.Visible = false;
             this.btnModoEditar.Size = new System.Drawing.Size(130, 32);
             this.btnModoEditar.TabIndex = 4;
             this.btnModoEditar.Text = "✏️ Editar Paciente";
@@ -1742,7 +1741,7 @@ namespace SanarRuralUnan.Views
         private System.Windows.Forms.Label lblIconoPaciente;
         private System.Windows.Forms.Label lblTitulo;
         private System.Windows.Forms.Label lblSubtitulo;
-        private System.Windows.Forms.Label btnModoCrear;
+        private System.Windows.Forms.Label lblBadgeModo;
         private System.Windows.Forms.Label btnModoEditar;
 
         private System.Windows.Forms.Panel cardPersonal;

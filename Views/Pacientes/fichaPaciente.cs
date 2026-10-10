@@ -61,10 +61,7 @@ namespace SanarRuralUnan.Views.Pacientes
             Control control = sender as Control;
             if (control != null)
             {
-                using (var pen = new Pen(Tema.Borde, 1))
-                {
-                    e.Graphics.DrawRectangle(pen, 0, 0, control.Width - 1, control.Height - 1);
-                }
+                Tema.DibujarTarjetaRedondeada(e.Graphics, new Rectangle(0, 0, control.Width - 1, control.Height - 1), control.BackColor, Tema.Borde, 8);
             }
         }
 
