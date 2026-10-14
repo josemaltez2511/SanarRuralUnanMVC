@@ -340,26 +340,30 @@ namespace SanarRuralUnan
             }
         }
 
-        // Validación en tiempo real del formato de correo
+        // Validación en tiempo real del identificador de acceso
         private void txtCorreo_TextChanged(object sender, EventArgs e)
         {
-            string correo = txtCorreo.Text.Trim();
+            string usuario = txtCorreo.Text.Trim();
 
-            if (string.IsNullOrEmpty(correo))
+            if (string.IsNullOrEmpty(usuario))
             {
                 lblErrorCorreo.Text = "";
                 return;
             }
 
-            string patronCorreo = @"^[^@\s]+@[^@\s]+\.[^@\s]+$";
-            if (!Regex.IsMatch(correo, patronCorreo))
+            if (usuario.Length < 3)
             {
-                lblErrorCorreo.Text = "Formato de correo inválido.";
+                lblErrorCorreo.Text = "El nombre de usuario debe tener al menos 3 caracteres.";
+                lblErrorCorreo.ForeColor = Tema.Error;
+            }
+            else if (usuario.Length > 50)
+            {
+                lblErrorCorreo.Text = "El nombre de usuario no puede exceder 50 caracteres.";
                 lblErrorCorreo.ForeColor = Tema.Error;
             }
             else
             {
-                lblErrorCorreo.Text = "Formato correcto.";
+                lblErrorCorreo.Text = "Formato de usuario válido.";
                 lblErrorCorreo.ForeColor = Tema.VerdeAcento;
             }
         }
@@ -409,12 +413,12 @@ namespace SanarRuralUnan
         // Proceso de inicio de sesión y enrutamiento por roles
         private void btnIniciarSesion_Click(object sender, EventArgs e)
         {
-            string correo = txtCorreo.Text.Trim();
+            string usuarioOIdentificador = txtCorreo.Text.Trim();
             string contrasena = txtContrasena.Text;
 
-            if (string.IsNullOrEmpty(correo) || string.IsNullOrEmpty(contrasena))
+            if (string.IsNullOrEmpty(usuarioOIdentificador) || string.IsNullOrEmpty(contrasena))
             {
-                MessageBox.Show("Por favor, ingrese su correo y contraseña para continuar.",
+                MessageBox.Show("Por favor, ingrese su nombre de usuario y contraseña para continuar.",
                                 "Campos Vacíos",
                                 MessageBoxButtons.OK,
                                 MessageBoxIcon.Warning);
@@ -431,7 +435,19 @@ namespace SanarRuralUnan
             }
 
             usuariosControllers controlador = new usuariosControllers();
-            int tipoUsuario = controlador.IniciarSesion(correo, contrasena);
+            int tipoUsuario = controlador.IniciarSesion(usuarioOIdentificador, contrasena);
+
+            if (tipoUsuario == -2)
+            {
+                MessageBox.Show("Esta cuenta de usuario se encuentra inactiva. Comuníquese con la administración para reactivar su acceso.",
+                                "Cuenta Inactiva",
+                                MessageBoxButtons.OK,
+                                MessageBoxIcon.Warning);
+
+                txtContrasena.Clear();
+                txtCorreo.Focus();
+                return;
+            }
 
             if (tipoUsuario != -1)
             {
@@ -446,7 +462,13 @@ namespace SanarRuralUnan
 
                 try
                 {
-                    if (tipoUsuario == controlador.ObtenerIdRol("Doctor"))
+                    int idRolDoctor = controlador.ObtenerIdRol("Doctor");
+                    int idRolAdministrativo = controlador.ObtenerIdRol("Administrativo");
+                    int idRolAdmin = controlador.ObtenerIdRol("Admin");
+                    int idRolPersonalAdmin = controlador.ObtenerIdRol("Personal_administrativo");
+                    int idRolPaciente = controlador.ObtenerIdRol("Paciente");
+
+                    if (tipoUsuario == idRolDoctor)
                     {
                         using (menuPrincipalMedicos menuMedico = new menuPrincipalMedicos())
                         {
@@ -454,7 +476,7 @@ namespace SanarRuralUnan
                             volverAlLogin = menuMedico.SesionCerradaVoluntariamente;
                         }
                     }
-                    else if (tipoUsuario == controlador.ObtenerIdRol("Administrativo"))
+                    else if (tipoUsuario == idRolAdministrativo || tipoUsuario == idRolAdmin || tipoUsuario == idRolPersonalAdmin)
                     {
                         using (var menuAdmin = new SanarRuralUnan.Views.menuPrincipalAdministrativo())
                         {
@@ -462,7 +484,7 @@ namespace SanarRuralUnan
                             volverAlLogin = menuAdmin.SesionCerradaVoluntariamente;
                         }
                     }
-                    else if (tipoUsuario == controlador.ObtenerIdRol("Paciente"))
+                    else if (tipoUsuario == idRolPaciente)
                     {
                         using (var menuPaciente = new menuPrincipalPacientes())
                         {
@@ -495,7 +517,7 @@ namespace SanarRuralUnan
             }
             else
             {
-                MessageBox.Show("El correo o la contraseña son incorrectos. Verifique sus datos.",
+                MessageBox.Show("El nombre de usuario o la contraseña son incorrectos. Verifique sus datos.",
                                 "Error de Autenticación",
                                 MessageBoxButtons.OK,
                                 MessageBoxIcon.Error);
@@ -517,9 +539,13 @@ namespace SanarRuralUnan
                 {
                     formCrear.ShowDialog();
 
-                    if (formCrear.DialogResult == DialogResult.OK && !string.IsNullOrWhiteSpace(formCrear.CorreoRegistrado))
+                    string usuarioRegistrado = !string.IsNullOrWhiteSpace(formCrear.NombreUsuarioRegistrado)
+                        ? formCrear.NombreUsuarioRegistrado
+                        : formCrear.CorreoRegistrado;
+
+                    if (formCrear.DialogResult == DialogResult.OK && !string.IsNullOrWhiteSpace(usuarioRegistrado))
                     {
-                        txtCorreo.Text = formCrear.CorreoRegistrado;
+                        txtCorreo.Text = usuarioRegistrado;
                         txtContrasena.Clear();
                         txtContrasena.Focus();
                     }

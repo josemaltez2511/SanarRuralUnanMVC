@@ -58,7 +58,7 @@ namespace SanarRuralUnan.Models
             IList<int> idEspecialidades,
             IList<Tuple<int, int>> asignaciones)
         {
-            usuariosModels.ExigirRolAdministrativo("registrar un doctor");
+            usuariosModels.ExigirPermisoGestionCompleta("registrar un doctor");
 
             // Crear una nueva entidad Doctor con sus relaciones.
             var especialidades = (idEspecialidades ?? new List<int>()).Distinct().ToList();
@@ -201,7 +201,7 @@ namespace SanarRuralUnan.Models
             IList<int> idEspecialidades,
             IList<Tuple<int, int>> asignaciones)
         {
-            usuariosModels.ExigirRolAdministrativo("actualizar un doctor");
+            usuariosModels.ExigirPermisoGestionCompleta("actualizar un doctor");
 
             // Solo se pueden editar doctores que existan y estén activos.
             var doctor = db.Doctores
@@ -323,7 +323,7 @@ namespace SanarRuralUnan.Models
         // el historial del doctor únicamente si nunca ha tenido citas.
         public void eliminarDoctor(int idDoctor)
         {
-            usuariosModels.ExigirRolAdministrativo("dar de baja a un doctor");
+            usuariosModels.ExigirPermisoGestionCompleta("dar de baja a un doctor");
 
             // Buscar únicamente un doctor que esté activo.
             var doctor = db.Doctores.FirstOrDefault(

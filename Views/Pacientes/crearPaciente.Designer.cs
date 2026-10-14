@@ -10,10 +10,10 @@ namespace SanarRuralUnan.Views
         {
             if (disposing)
             {
-                if (picPreview != null && picPreview.Image != null)
+                if (picLogoHeader != null && picLogoHeader.Image != null)
                 {
-                    var img = picPreview.Image;
-                    picPreview.Image = null;
+                    var img = picLogoHeader.Image;
+                    picLogoHeader.Image = null;
                     img.Dispose();
                 }
 
@@ -29,39 +29,22 @@ namespace SanarRuralUnan.Views
 
         private void InitializeComponent()
         {
-            this.panelHero = new System.Windows.Forms.Panel();
-            this.picLogoHero = new System.Windows.Forms.PictureBox();
-            this.lblNombreHero = new System.Windows.Forms.Label();
-            this.lblSubtituloHero = new System.Windows.Forms.Label();
-            this.lblRegistroTituloHero = new System.Windows.Forms.Label();
-            this.lblDescripcionHero = new System.Windows.Forms.Label();
-            this.panelHeroBloque1 = new System.Windows.Forms.Panel();
-            this.lblHeroIcono1 = new System.Windows.Forms.Label();
-            this.lblHeroTitulo1 = new System.Windows.Forms.Label();
-            this.lblHeroDesc1 = new System.Windows.Forms.Label();
-            this.panelHeroBloque2 = new System.Windows.Forms.Panel();
-            this.lblHeroIcono2 = new System.Windows.Forms.Label();
-            this.lblHeroTitulo2 = new System.Windows.Forms.Label();
-            this.lblHeroDesc2 = new System.Windows.Forms.Label();
-            this.panelHeroBloque3 = new System.Windows.Forms.Panel();
-            this.lblHeroIcono3 = new System.Windows.Forms.Label();
-            this.lblHeroTitulo3 = new System.Windows.Forms.Label();
-            this.lblHeroDesc3 = new System.Windows.Forms.Label();
-            this.panelHeroBloque4 = new System.Windows.Forms.Panel();
-            this.lblHeroIcono4 = new System.Windows.Forms.Label();
-            this.lblHeroTitulo4 = new System.Windows.Forms.Label();
-            this.lblHeroDesc4 = new System.Windows.Forms.Label();
-            this.panelLema = new System.Windows.Forms.Panel();
-            this.lblLemaComillas = new System.Windows.Forms.Label();
-            this.lblLemaTexto = new System.Windows.Forms.Label();
-            this.lblLemaComillasCierre = new System.Windows.Forms.Label();
             this.panelFormContenedor = new System.Windows.Forms.Panel();
             this.cardHeader = new System.Windows.Forms.Panel();
-            this.lblIconoPaciente = new System.Windows.Forms.Label();
+            this.picLogoHeader = new System.Windows.Forms.PictureBox();
+            this.pnlSeparadorHeader = new System.Windows.Forms.Panel();
+            this.lblIconoHeader = new System.Windows.Forms.Label();
             this.lblTitulo = new System.Windows.Forms.Label();
             this.lblSubtitulo = new System.Windows.Forms.Label();
-            this.lblBadgeModo = new System.Windows.Forms.Label();
-            this.btnModoEditar = new System.Windows.Forms.Label();
+            this.panelPasos = new System.Windows.Forms.Panel();
+            this.lblPaso1Num = new System.Windows.Forms.Label();
+            this.lblPaso1Texto = new System.Windows.Forms.Label();
+            this.pnlPasoLinea1 = new System.Windows.Forms.Panel();
+            this.lblPaso2Num = new System.Windows.Forms.Label();
+            this.lblPaso2Texto = new System.Windows.Forms.Label();
+            this.pnlPasoLinea2 = new System.Windows.Forms.Panel();
+            this.lblPaso3Num = new System.Windows.Forms.Label();
+            this.lblPaso3Texto = new System.Windows.Forms.Label();
             this.cardPersonal = new System.Windows.Forms.Panel();
             this.lblIconoPersonal = new System.Windows.Forms.Label();
             this.lblTituloPersonal = new System.Windows.Forms.Label();
@@ -77,12 +60,8 @@ namespace SanarRuralUnan.Views
             this.txtSegundoApellido = new System.Windows.Forms.TextBox();
             this.lblCedula = new System.Windows.Forms.Label();
             this.txtCedula = new System.Windows.Forms.TextBox();
-            this.lblCedulaAyuda = new System.Windows.Forms.Label();
-            this.pnlCedulaInfo = new System.Windows.Forms.Panel();
-            this.lblCedulaInfo = new System.Windows.Forms.Label();
             this.lblNumeroINSS = new System.Windows.Forms.Label();
             this.txtNumeroINSS = new System.Windows.Forms.TextBox();
-            this.lblINSSAyuda = new System.Windows.Forms.Label();
             this.lblFechaNacimiento = new System.Windows.Forms.Label();
             this.dtpFechaNacimiento = new System.Windows.Forms.DateTimePicker();
             this.lblGenero = new System.Windows.Forms.Label();
@@ -90,19 +69,9 @@ namespace SanarRuralUnan.Views
             this.lblTelefono = new System.Windows.Forms.Label();
             this.cmbPaisTelefono = new System.Windows.Forms.ComboBox();
             this.txtTelefono = new System.Windows.Forms.TextBox();
-            this.lblTelefonoAyuda = new System.Windows.Forms.Label();
             this.lblErrorTelefono = new System.Windows.Forms.Label();
-            this.cardFoto = new System.Windows.Forms.Panel();
-            this.lblIconoFoto = new System.Windows.Forms.Label();
-            this.lblTituloFoto = new System.Windows.Forms.Label();
-            this.lblSubtituloFoto = new System.Windows.Forms.Label();
-            this.picPreview = new System.Windows.Forms.PictureBox();
-            this.btnSeleccionarFoto = new System.Windows.Forms.Button();
-            this.btnQuitarFoto = new System.Windows.Forms.Button();
-            this.lblFoto = new System.Windows.Forms.Label();
-            this.lblFotoAyuda = new System.Windows.Forms.Label();
-            this.pnlFotoInfo = new System.Windows.Forms.Panel();
-            this.lblFotoInfo = new System.Windows.Forms.Label();
+            this.lblCorreo = new System.Windows.Forms.Label();
+            this.txtCorreo = new System.Windows.Forms.TextBox();
             this.cardUbicacion = new System.Windows.Forms.Panel();
             this.lblIconoUbicacion = new System.Windows.Forms.Label();
             this.lblTituloUbicacion = new System.Windows.Forms.Label();
@@ -124,438 +93,250 @@ namespace SanarRuralUnan.Views
             this.lblTipoSangre = new System.Windows.Forms.Label();
             this.cmbTipoSangre = new System.Windows.Forms.ComboBox();
             this.lblAlergias = new System.Windows.Forms.Label();
+            this.pnlAlergiasChips = new System.Windows.Forms.Panel();
+            this.flpAlergias = new System.Windows.Forms.FlowLayoutPanel();
+            this.txtNuevaAlergia = new System.Windows.Forms.TextBox();
             this.txtAlergias = new System.Windows.Forms.TextBox();
-            this.lblAlergiasAyuda = new System.Windows.Forms.Label();
             this.lblAntecedentes = new System.Windows.Forms.Label();
+            this.pnlCondicionesChips = new System.Windows.Forms.Panel();
+            this.flpCondiciones = new System.Windows.Forms.FlowLayoutPanel();
+            this.txtNuevaCondicion = new System.Windows.Forms.TextBox();
             this.txtAntecedentes = new System.Windows.Forms.TextBox();
-            this.lblAntecedentesAyuda = new System.Windows.Forms.Label();
             this.cardEmergencia = new System.Windows.Forms.Panel();
             this.lblIconoEmergencia = new System.Windows.Forms.Label();
             this.lblTituloEmergencia = new System.Windows.Forms.Label();
             this.lblSubtituloEmergencia = new System.Windows.Forms.Label();
+            this.btnAgregarContacto = new System.Windows.Forms.Button();
+            this.dgvContactos = new System.Windows.Forms.DataGridView();
+            this.colExpandir = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.colContNombre = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.colContParentesco = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.colContTelefono = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.colContCedula = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.colContEditar = new System.Windows.Forms.DataGridViewButtonColumn();
+            this.colContEliminar = new System.Windows.Forms.DataGridViewButtonColumn();
+            this.lblSinContactos = new System.Windows.Forms.Label();
+            this.pnlEditorContacto = new System.Windows.Forms.Panel();
             this.lblContactoPrimerNombre = new System.Windows.Forms.Label();
             this.txtContactoPrimerNombre = new System.Windows.Forms.TextBox();
-            this.txtContactoSegundoNombre = new System.Windows.Forms.TextBox();
-            this.lblContactoPrimerApellido = new System.Windows.Forms.Label();
-            this.txtContactoPrimerApellido = new System.Windows.Forms.TextBox();
-            this.txtContactoSegundoApellido = new System.Windows.Forms.TextBox();
             this.lblContactoParentesco = new System.Windows.Forms.Label();
             this.cmbContactoParentesco = new System.Windows.Forms.ComboBox();
             this.lblContactoTelefono = new System.Windows.Forms.Label();
             this.txtContactoTelefono = new System.Windows.Forms.TextBox();
             this.lblContactoCedula = new System.Windows.Forms.Label();
             this.txtContactoCedula = new System.Windows.Forms.TextBox();
-            this.btnAgregarContacto = new System.Windows.Forms.Button();
+            this.btnGuardarContacto = new System.Windows.Forms.Button();
+            this.btnCancelarContacto = new System.Windows.Forms.Button();
             this.lblErrorContacto = new System.Windows.Forms.Label();
-            this.lblSubtituloListaContactos = new System.Windows.Forms.Label();
-            this.lblSinContactos = new System.Windows.Forms.Label();
-            this.dgvContactos = new System.Windows.Forms.DataGridView();
-            this.colContNombre = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.colContParentesco = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.colContTelefono = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.colContCedula = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.colContQuitar = new System.Windows.Forms.DataGridViewButtonColumn();
             this.panelAcciones = new System.Windows.Forms.Panel();
             this.btnCancelar = new System.Windows.Forms.Button();
             this.btnGuardar = new System.Windows.Forms.Button();
-            this.lnkVolver = new System.Windows.Forms.LinkLabel();
-            this.panelHero.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.picLogoHero)).BeginInit();
-            this.panelHeroBloque1.SuspendLayout();
-            this.panelHeroBloque2.SuspendLayout();
-            this.panelHeroBloque3.SuspendLayout();
-            this.panelHeroBloque4.SuspendLayout();
-            this.panelLema.SuspendLayout();
             this.panelFormContenedor.SuspendLayout();
             this.cardHeader.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.picLogoHeader)).BeginInit();
+            this.panelPasos.SuspendLayout();
             this.cardPersonal.SuspendLayout();
-            this.pnlCedulaInfo.SuspendLayout();
-            this.cardFoto.SuspendLayout();
-            this.pnlFotoInfo.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.picPreview)).BeginInit();
             this.cardUbicacion.SuspendLayout();
             this.cardSalud.SuspendLayout();
+            this.pnlAlergiasChips.SuspendLayout();
+            this.pnlCondicionesChips.SuspendLayout();
             this.cardEmergencia.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvContactos)).BeginInit();
+            this.pnlEditorContacto.SuspendLayout();
             this.panelAcciones.SuspendLayout();
             this.SuspendLayout();
-            //
-            // panelHero
-            //
-            this.panelHero.BackColor = Tema.Fondo;
-            this.panelHero.Controls.Add(this.picLogoHero);
-            this.panelHero.Controls.Add(this.lblNombreHero);
-            this.panelHero.Controls.Add(this.lblSubtituloHero);
-            this.panelHero.Controls.Add(this.lblRegistroTituloHero);
-            this.panelHero.Controls.Add(this.lblDescripcionHero);
-            this.panelHero.Controls.Add(this.panelHeroBloque1);
-            this.panelHero.Controls.Add(this.panelHeroBloque2);
-            this.panelHero.Controls.Add(this.panelHeroBloque3);
-            this.panelHero.Controls.Add(this.panelHeroBloque4);
-            this.panelHero.Controls.Add(this.panelLema);
-            this.panelHero.Location = new System.Drawing.Point(0, 0);
-            this.panelHero.Name = "panelHero";
-            this.panelHero.Size = new System.Drawing.Size(350, 800);
-            this.panelHero.TabIndex = 0;
-            //
-            // picLogoHero
-            //
-            this.picLogoHero.AccessibleDescription = "Identidad institucional de Sanar Rural";
-            this.picLogoHero.AccessibleName = "Logo Sanar Rural";
-            this.picLogoHero.Location = new System.Drawing.Point(28, 20);
-            this.picLogoHero.Name = "picLogoHero";
-            this.picLogoHero.Size = new System.Drawing.Size(100, 70);
-            this.picLogoHero.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-            this.picLogoHero.TabIndex = 0;
-            this.picLogoHero.TabStop = false;
-            //
-            // lblNombreHero
-            //
-            this.lblNombreHero.AutoSize = true;
-            this.lblNombreHero.Font = new System.Drawing.Font(Tema.FamiliaFuente, 20F, System.Drawing.FontStyle.Bold);
-            this.lblNombreHero.ForeColor = Tema.AzulOscuro;
-            this.lblNombreHero.Location = new System.Drawing.Point(26, 96);
-            this.lblNombreHero.Name = "lblNombreHero";
-            this.lblNombreHero.Size = new System.Drawing.Size(206, 37);
-            this.lblNombreHero.TabIndex = 1;
-            this.lblNombreHero.Text = "SANAR RURAL";
-            //
-            // lblSubtituloHero
-            //
-            this.lblSubtituloHero.AutoSize = true;
-            this.lblSubtituloHero.Font = new System.Drawing.Font(Tema.FamiliaFuente, 10F, System.Drawing.FontStyle.Regular);
-            this.lblSubtituloHero.ForeColor = Tema.AzulPrimario;
-            this.lblSubtituloHero.Location = new System.Drawing.Point(28, 136);
-            this.lblSubtituloHero.Name = "lblSubtituloHero";
-            this.lblSubtituloHero.Size = new System.Drawing.Size(250, 19);
-            this.lblSubtituloHero.TabIndex = 2;
-            this.lblSubtituloHero.Text = "Sistema de Gestión Médica Comunitaria";
-            //
-            // lblRegistroTituloHero
-            //
-            this.lblRegistroTituloHero.AutoSize = true;
-            this.lblRegistroTituloHero.Font = new System.Drawing.Font(Tema.FamiliaFuente, 15F, System.Drawing.FontStyle.Bold);
-            this.lblRegistroTituloHero.ForeColor = Tema.AzulOscuro;
-            this.lblRegistroTituloHero.Location = new System.Drawing.Point(26, 170);
-            this.lblRegistroTituloHero.Name = "lblRegistroTituloHero";
-            this.lblRegistroTituloHero.Size = new System.Drawing.Size(205, 28);
-            this.lblRegistroTituloHero.TabIndex = 3;
-            this.lblRegistroTituloHero.Text = "Registro de Paciente";
-            //
-            // lblDescripcionHero
-            //
-            this.lblDescripcionHero.Font = new System.Drawing.Font(Tema.FamiliaFuente, 8.5F, System.Drawing.FontStyle.Regular);
-            this.lblDescripcionHero.ForeColor = Tema.TextoSecundario;
-            this.lblDescripcionHero.Location = new System.Drawing.Point(28, 204);
-            this.lblDescripcionHero.Name = "lblDescripcionHero";
-            this.lblDescripcionHero.Size = new System.Drawing.Size(294, 48);
-            this.lblDescripcionHero.TabIndex = 4;
-            this.lblDescripcionHero.Text = "Registra la información personal y de salud para facilitar una atención médica comunitaria organizada.";
-            //
-            // panelHeroBloque1
-            //
-            this.panelHeroBloque1.Controls.Add(this.lblHeroIcono1);
-            this.panelHeroBloque1.Controls.Add(this.lblHeroTitulo1);
-            this.panelHeroBloque1.Controls.Add(this.lblHeroDesc1);
-            this.panelHeroBloque1.Location = new System.Drawing.Point(28, 260);
-            this.panelHeroBloque1.Name = "panelHeroBloque1";
-            this.panelHeroBloque1.Size = new System.Drawing.Size(294, 52);
-            this.panelHeroBloque1.TabIndex = 5;
-            //
-            // lblHeroIcono1
-            //
-            this.lblHeroIcono1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(226)))), ((int)(((byte)(238)))), ((int)(((byte)(248)))));
-            this.lblHeroIcono1.Font = new System.Drawing.Font("Segoe UI Emoji", 11F);
-            this.lblHeroIcono1.ForeColor = Tema.AzulPrimario;
-            this.lblHeroIcono1.Location = new System.Drawing.Point(0, 4);
-            this.lblHeroIcono1.Name = "lblHeroIcono1";
-            this.lblHeroIcono1.Size = new System.Drawing.Size(36, 36);
-            this.lblHeroIcono1.TabIndex = 0;
-            this.lblHeroIcono1.Text = "👤";
-            this.lblHeroIcono1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            //
-            // lblHeroTitulo1
-            //
-            this.lblHeroTitulo1.AutoSize = true;
-            this.lblHeroTitulo1.Font = new System.Drawing.Font(Tema.FamiliaFuente, 9.5F, System.Drawing.FontStyle.Bold);
-            this.lblHeroTitulo1.ForeColor = Tema.TextoPrincipal;
-            this.lblHeroTitulo1.Location = new System.Drawing.Point(44, 4);
-            this.lblHeroTitulo1.Name = "lblHeroTitulo1";
-            this.lblHeroTitulo1.Size = new System.Drawing.Size(141, 17);
-            this.lblHeroTitulo1.TabIndex = 1;
-            this.lblHeroTitulo1.Text = "Información personal";
-            //
-            // lblHeroDesc1
-            //
-            this.lblHeroDesc1.Font = new System.Drawing.Font(Tema.FamiliaFuente, 8.2F);
-            this.lblHeroDesc1.ForeColor = Tema.TextoSecundario;
-            this.lblHeroDesc1.Location = new System.Drawing.Point(44, 23);
-            this.lblHeroDesc1.Name = "lblHeroDesc1";
-            this.lblHeroDesc1.Size = new System.Drawing.Size(245, 26);
-            this.lblHeroDesc1.TabIndex = 2;
-            this.lblHeroDesc1.Text = "Datos de identificación y contacto del paciente.";
-            //
-            // panelHeroBloque2
-            //
-            this.panelHeroBloque2.Controls.Add(this.lblHeroIcono2);
-            this.panelHeroBloque2.Controls.Add(this.lblHeroTitulo2);
-            this.panelHeroBloque2.Controls.Add(this.lblHeroDesc2);
-            this.panelHeroBloque2.Location = new System.Drawing.Point(28, 318);
-            this.panelHeroBloque2.Name = "panelHeroBloque2";
-            this.panelHeroBloque2.Size = new System.Drawing.Size(294, 52);
-            this.panelHeroBloque2.TabIndex = 6;
-            //
-            // lblHeroIcono2
-            //
-            this.lblHeroIcono2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(226)))), ((int)(((byte)(238)))), ((int)(((byte)(248)))));
-            this.lblHeroIcono2.Font = new System.Drawing.Font("Segoe UI Emoji", 11F);
-            this.lblHeroIcono2.ForeColor = Tema.AzulPrimario;
-            this.lblHeroIcono2.Location = new System.Drawing.Point(0, 4);
-            this.lblHeroIcono2.Name = "lblHeroIcono2";
-            this.lblHeroIcono2.Size = new System.Drawing.Size(36, 36);
-            this.lblHeroIcono2.TabIndex = 0;
-            this.lblHeroIcono2.Text = "📍";
-            this.lblHeroIcono2.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            //
-            // lblHeroTitulo2
-            //
-            this.lblHeroTitulo2.AutoSize = true;
-            this.lblHeroTitulo2.Font = new System.Drawing.Font(Tema.FamiliaFuente, 9.5F, System.Drawing.FontStyle.Bold);
-            this.lblHeroTitulo2.ForeColor = Tema.TextoPrincipal;
-            this.lblHeroTitulo2.Location = new System.Drawing.Point(44, 4);
-            this.lblHeroTitulo2.Name = "lblHeroTitulo2";
-            this.lblHeroTitulo2.Size = new System.Drawing.Size(69, 17);
-            this.lblHeroTitulo2.TabIndex = 1;
-            this.lblHeroTitulo2.Text = "Ubicación";
-            //
-            // lblHeroDesc2
-            //
-            this.lblHeroDesc2.Font = new System.Drawing.Font(Tema.FamiliaFuente, 8.2F);
-            this.lblHeroDesc2.ForeColor = Tema.TextoSecundario;
-            this.lblHeroDesc2.Location = new System.Drawing.Point(44, 23);
-            this.lblHeroDesc2.Name = "lblHeroDesc2";
-            this.lblHeroDesc2.Size = new System.Drawing.Size(245, 26);
-            this.lblHeroDesc2.TabIndex = 2;
-            this.lblHeroDesc2.Text = "Organiza la información geográfica y la dirección.";
-            //
-            // panelHeroBloque3
-            //
-            this.panelHeroBloque3.Controls.Add(this.lblHeroIcono3);
-            this.panelHeroBloque3.Controls.Add(this.lblHeroTitulo3);
-            this.panelHeroBloque3.Controls.Add(this.lblHeroDesc3);
-            this.panelHeroBloque3.Location = new System.Drawing.Point(28, 376);
-            this.panelHeroBloque3.Name = "panelHeroBloque3";
-            this.panelHeroBloque3.Size = new System.Drawing.Size(294, 52);
-            this.panelHeroBloque3.TabIndex = 7;
-            //
-            // lblHeroIcono3
-            //
-            this.lblHeroIcono3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(226)))), ((int)(((byte)(238)))), ((int)(((byte)(248)))));
-            this.lblHeroIcono3.Font = new System.Drawing.Font("Segoe UI Emoji", 11F);
-            this.lblHeroIcono3.ForeColor = Tema.AzulPrimario;
-            this.lblHeroIcono3.Location = new System.Drawing.Point(0, 4);
-            this.lblHeroIcono3.Name = "lblHeroIcono3";
-            this.lblHeroIcono3.Size = new System.Drawing.Size(36, 36);
-            this.lblHeroIcono3.TabIndex = 0;
-            this.lblHeroIcono3.Text = "💓";
-            this.lblHeroIcono3.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            //
-            // lblHeroTitulo3
-            //
-            this.lblHeroTitulo3.AutoSize = true;
-            this.lblHeroTitulo3.Font = new System.Drawing.Font(Tema.FamiliaFuente, 9.5F, System.Drawing.FontStyle.Bold);
-            this.lblHeroTitulo3.ForeColor = Tema.TextoPrincipal;
-            this.lblHeroTitulo3.Location = new System.Drawing.Point(44, 4);
-            this.lblHeroTitulo3.Name = "lblHeroTitulo3";
-            this.lblHeroTitulo3.Size = new System.Drawing.Size(143, 17);
-            this.lblHeroTitulo3.TabIndex = 1;
-            this.lblHeroTitulo3.Text = "Información de salud";
-            //
-            // lblHeroDesc3
-            //
-            this.lblHeroDesc3.Font = new System.Drawing.Font(Tema.FamiliaFuente, 8.2F);
-            this.lblHeroDesc3.ForeColor = Tema.TextoSecundario;
-            this.lblHeroDesc3.Location = new System.Drawing.Point(44, 23);
-            this.lblHeroDesc3.Name = "lblHeroDesc3";
-            this.lblHeroDesc3.Size = new System.Drawing.Size(245, 26);
-            this.lblHeroDesc3.TabIndex = 2;
-            this.lblHeroDesc3.Text = "Registra los datos clínicos iniciales disponibles.";
-            //
-            // panelHeroBloque4
-            //
-            this.panelHeroBloque4.Controls.Add(this.lblHeroIcono4);
-            this.panelHeroBloque4.Controls.Add(this.lblHeroTitulo4);
-            this.panelHeroBloque4.Controls.Add(this.lblHeroDesc4);
-            this.panelHeroBloque4.Location = new System.Drawing.Point(28, 434);
-            this.panelHeroBloque4.Name = "panelHeroBloque4";
-            this.panelHeroBloque4.Size = new System.Drawing.Size(294, 52);
-            this.panelHeroBloque4.TabIndex = 8;
-            //
-            // lblHeroIcono4
-            //
-            this.lblHeroIcono4.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(226)))), ((int)(((byte)(238)))), ((int)(((byte)(248)))));
-            this.lblHeroIcono4.Font = new System.Drawing.Font("Segoe UI Emoji", 11F);
-            this.lblHeroIcono4.ForeColor = Tema.AzulPrimario;
-            this.lblHeroIcono4.Location = new System.Drawing.Point(0, 4);
-            this.lblHeroIcono4.Name = "lblHeroIcono4";
-            this.lblHeroIcono4.Size = new System.Drawing.Size(36, 36);
-            this.lblHeroIcono4.TabIndex = 0;
-            this.lblHeroIcono4.Text = "👥";
-            this.lblHeroIcono4.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            //
-            // lblHeroTitulo4
-            //
-            this.lblHeroTitulo4.AutoSize = true;
-            this.lblHeroTitulo4.Font = new System.Drawing.Font(Tema.FamiliaFuente, 9.5F, System.Drawing.FontStyle.Bold);
-            this.lblHeroTitulo4.ForeColor = Tema.TextoPrincipal;
-            this.lblHeroTitulo4.Location = new System.Drawing.Point(44, 4);
-            this.lblHeroTitulo4.Name = "lblHeroTitulo4";
-            this.lblHeroTitulo4.Size = new System.Drawing.Size(157, 17);
-            this.lblHeroTitulo4.TabIndex = 1;
-            this.lblHeroTitulo4.Text = "Contacto de emergencia";
-            //
-            // lblHeroDesc4
-            //
-            this.lblHeroDesc4.Font = new System.Drawing.Font(Tema.FamiliaFuente, 8.2F);
-            this.lblHeroDesc4.ForeColor = Tema.TextoSecundario;
-            this.lblHeroDesc4.Location = new System.Drawing.Point(44, 23);
-            this.lblHeroDesc4.Name = "lblHeroDesc4";
-            this.lblHeroDesc4.Size = new System.Drawing.Size(245, 26);
-            this.lblHeroDesc4.TabIndex = 2;
-            this.lblHeroDesc4.Text = "Facilita la identificación de personas de urgencia.";
-            //
-            // panelLema
-            //
-            this.panelLema.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(240)))), ((int)(((byte)(249)))), ((int)(((byte)(242)))));
-            this.panelLema.Controls.Add(this.lblLemaComillas);
-            this.panelLema.Controls.Add(this.lblLemaTexto);
-            this.panelLema.Controls.Add(this.lblLemaComillasCierre);
-            this.panelLema.Location = new System.Drawing.Point(28, 690);
-            this.panelLema.Name = "panelLema";
-            this.panelLema.Size = new System.Drawing.Size(294, 76);
-            this.panelLema.TabIndex = 9;
-            //
-            // lblLemaComillas
-            //
-            this.lblLemaComillas.AutoSize = true;
-            this.lblLemaComillas.Font = new System.Drawing.Font("Georgia", 24F, System.Drawing.FontStyle.Bold);
-            this.lblLemaComillas.ForeColor = Tema.VerdeOscuro;
-            this.lblLemaComillas.Location = new System.Drawing.Point(10, 8);
-            this.lblLemaComillas.Name = "lblLemaComillas";
-            this.lblLemaComillas.Size = new System.Drawing.Size(43, 38);
-            this.lblLemaComillas.TabIndex = 0;
-            this.lblLemaComillas.Text = "“";
-            //
-            // lblLemaTexto
-            //
-            this.lblLemaTexto.Font = new System.Drawing.Font(Tema.FamiliaFuente, 10F, System.Drawing.FontStyle.Bold);
-            this.lblLemaTexto.ForeColor = Tema.VerdeOscuro;
-            this.lblLemaTexto.Location = new System.Drawing.Point(46, 16);
-            this.lblLemaTexto.Name = "lblLemaTexto";
-            this.lblLemaTexto.Size = new System.Drawing.Size(210, 44);
-            this.lblLemaTexto.TabIndex = 1;
-            this.lblLemaTexto.Text = "Salud más cerca\r\nde nuestra gente";
-            //
-            // lblLemaComillasCierre
-            //
-            this.lblLemaComillasCierre.AutoSize = true;
-            this.lblLemaComillasCierre.Font = new System.Drawing.Font("Georgia", 24F, System.Drawing.FontStyle.Bold);
-            this.lblLemaComillasCierre.ForeColor = Tema.VerdeOscuro;
-            this.lblLemaComillasCierre.Location = new System.Drawing.Point(252, 28);
-            this.lblLemaComillasCierre.Name = "lblLemaComillasCierre";
-            this.lblLemaComillasCierre.Size = new System.Drawing.Size(43, 38);
-            this.lblLemaComillasCierre.TabIndex = 2;
-            this.lblLemaComillasCierre.Text = "”";
             //
             // panelFormContenedor
             //
             this.panelFormContenedor.AutoScroll = true;
             this.panelFormContenedor.BackColor = Tema.Fondo;
             this.panelFormContenedor.Controls.Add(this.cardHeader);
+            this.panelFormContenedor.Controls.Add(this.panelPasos);
             this.panelFormContenedor.Controls.Add(this.cardPersonal);
-            this.panelFormContenedor.Controls.Add(this.cardFoto);
             this.panelFormContenedor.Controls.Add(this.cardUbicacion);
             this.panelFormContenedor.Controls.Add(this.cardSalud);
             this.panelFormContenedor.Controls.Add(this.cardEmergencia);
             this.panelFormContenedor.Controls.Add(this.panelAcciones);
-            this.panelFormContenedor.Location = new System.Drawing.Point(350, 0);
+            this.panelFormContenedor.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panelFormContenedor.Location = new System.Drawing.Point(0, 0);
             this.panelFormContenedor.Name = "panelFormContenedor";
-            this.panelFormContenedor.Size = new System.Drawing.Size(950, 800);
-            this.panelFormContenedor.TabIndex = 1;
+            this.panelFormContenedor.Size = new System.Drawing.Size(1260, 800);
+            this.panelFormContenedor.TabIndex = 0;
             //
             // cardHeader
             //
             this.cardHeader.BackColor = Tema.Superficie;
-            this.cardHeader.Controls.Add(this.lblIconoPaciente);
+            this.cardHeader.Controls.Add(this.picLogoHeader);
+            this.cardHeader.Controls.Add(this.pnlSeparadorHeader);
+            this.cardHeader.Controls.Add(this.lblIconoHeader);
             this.cardHeader.Controls.Add(this.lblTitulo);
             this.cardHeader.Controls.Add(this.lblSubtitulo);
-            this.cardHeader.Controls.Add(this.lblBadgeModo);
-            this.cardHeader.Location = new System.Drawing.Point(20, 16);
+            this.cardHeader.Location = new System.Drawing.Point(20, 14);
             this.cardHeader.Name = "cardHeader";
-            this.cardHeader.Size = new System.Drawing.Size(900, 66);
+            this.cardHeader.Size = new System.Drawing.Size(1220, 68);
             this.cardHeader.TabIndex = 0;
             //
-            // lblIconoPaciente
+            // picLogoHeader
             //
-            this.lblIconoPaciente.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(226)))), ((int)(((byte)(238)))), ((int)(((byte)(248)))));
-            this.lblIconoPaciente.Font = new System.Drawing.Font("Segoe UI Emoji", 14F);
-            this.lblIconoPaciente.ForeColor = Tema.AzulPrimario;
-            this.lblIconoPaciente.Location = new System.Drawing.Point(16, 13);
-            this.lblIconoPaciente.Name = "lblIconoPaciente";
-            this.lblIconoPaciente.Size = new System.Drawing.Size(40, 40);
-            this.lblIconoPaciente.TabIndex = 0;
-            this.lblIconoPaciente.Text = "👤";
-            this.lblIconoPaciente.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.picLogoHeader.AccessibleDescription = "Identidad institucional de Sanar Rural";
+            this.picLogoHeader.AccessibleName = "Logo Sanar Rural";
+            this.picLogoHeader.Location = new System.Drawing.Point(16, 9);
+            this.picLogoHeader.Name = "picLogoHeader";
+            this.picLogoHeader.Size = new System.Drawing.Size(160, 50);
+            this.picLogoHeader.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.picLogoHeader.TabIndex = 0;
+            this.picLogoHeader.TabStop = false;
+            //
+            // pnlSeparadorHeader
+            //
+            this.pnlSeparadorHeader.BackColor = Tema.Borde;
+            this.pnlSeparadorHeader.Location = new System.Drawing.Point(190, 13);
+            this.pnlSeparadorHeader.Name = "pnlSeparadorHeader";
+            this.pnlSeparadorHeader.Size = new System.Drawing.Size(1, 42);
+            this.pnlSeparadorHeader.TabIndex = 1;
+            //
+            // lblIconoHeader
+            //
+            this.lblIconoHeader.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(226)))), ((int)(((byte)(238)))), ((int)(((byte)(248)))));
+            this.lblIconoHeader.Font = new System.Drawing.Font("Segoe UI Emoji", 14F);
+            this.lblIconoHeader.ForeColor = Tema.AzulPrimario;
+            this.lblIconoHeader.Location = new System.Drawing.Point(206, 14);
+            this.lblIconoHeader.Name = "lblIconoHeader";
+            this.lblIconoHeader.Size = new System.Drawing.Size(40, 40);
+            this.lblIconoHeader.TabIndex = 2;
+            this.lblIconoHeader.Text = "👤";
+            this.lblIconoHeader.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             //
             // lblTitulo
             //
             this.lblTitulo.AutoSize = true;
-            this.lblTitulo.Font = new System.Drawing.Font(Tema.FamiliaFuente, 16F, System.Drawing.FontStyle.Bold);
-            this.lblTitulo.ForeColor = Tema.AzulOscuro;
-            this.lblTitulo.Location = new System.Drawing.Point(64, 11);
+            this.lblTitulo.Font = new System.Drawing.Font(Tema.FamiliaFuente, 15.5F, System.Drawing.FontStyle.Bold);
+            this.lblTitulo.ForeColor = Tema.TextoPrincipal;
+            this.lblTitulo.Location = new System.Drawing.Point(254, 12);
             this.lblTitulo.Name = "lblTitulo";
-            this.lblTitulo.Size = new System.Drawing.Size(199, 30);
-            this.lblTitulo.TabIndex = 1;
-            this.lblTitulo.Text = "Datos del Paciente";
+            this.lblTitulo.Size = new System.Drawing.Size(185, 30);
+            this.lblTitulo.TabIndex = 3;
+            this.lblTitulo.Text = "Registrar paciente";
             //
             // lblSubtitulo
             //
             this.lblSubtitulo.AutoSize = true;
             this.lblSubtitulo.Font = new System.Drawing.Font(Tema.FamiliaFuente, 9.5F);
             this.lblSubtitulo.ForeColor = Tema.TextoSecundario;
-            this.lblSubtitulo.Location = new System.Drawing.Point(66, 40);
+            this.lblSubtitulo.Location = new System.Drawing.Point(256, 40);
             this.lblSubtitulo.Name = "lblSubtitulo";
-            this.lblSubtitulo.Size = new System.Drawing.Size(193, 17);
-            this.lblSubtitulo.TabIndex = 2;
-            this.lblSubtitulo.Text = "Completa la información requerida";
+            this.lblSubtitulo.Size = new System.Drawing.Size(315, 17);
+            this.lblSubtitulo.TabIndex = 4;
+            this.lblSubtitulo.Text = "Información personal, ubicación y expediente básico";
             //
-            // btnModoCrear
+            // panelPasos
             //
-            this.lblBadgeModo.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.lblBadgeModo.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(236)))), ((int)(((byte)(248)))), ((int)(((byte)(238)))));
-            this.lblBadgeModo.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.lblBadgeModo.Font = new System.Drawing.Font(Tema.FamiliaFuente, 9F, System.Drawing.FontStyle.Bold);
-            this.lblBadgeModo.ForeColor = Tema.VerdeOscuro;
-            this.lblBadgeModo.Location = new System.Drawing.Point(735, 18);
-            this.lblBadgeModo.Name = "lblBadgeModo";
-            this.lblBadgeModo.Size = new System.Drawing.Size(145, 28);
-            this.lblBadgeModo.TabIndex = 3;
-            this.lblBadgeModo.Text = "+ Nuevo Paciente";
-            this.lblBadgeModo.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.panelPasos.BackColor = Tema.Fondo;
+            this.panelPasos.Controls.Add(this.lblPaso1Num);
+            this.panelPasos.Controls.Add(this.lblPaso1Texto);
+            this.panelPasos.Controls.Add(this.pnlPasoLinea1);
+            this.panelPasos.Controls.Add(this.lblPaso2Num);
+            this.panelPasos.Controls.Add(this.lblPaso2Texto);
+            this.panelPasos.Controls.Add(this.pnlPasoLinea2);
+            this.panelPasos.Controls.Add(this.lblPaso3Num);
+            this.panelPasos.Controls.Add(this.lblPaso3Texto);
+            this.panelPasos.Location = new System.Drawing.Point(20, 88);
+            this.panelPasos.Name = "panelPasos";
+            this.panelPasos.Size = new System.Drawing.Size(1220, 38);
+            this.panelPasos.TabIndex = 1;
             //
-            // btnModoEditar
+            // lblPaso1Num
             //
-            this.btnModoEditar.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnModoEditar.BackColor = Tema.Superficie;
-            this.btnModoEditar.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.btnModoEditar.Font = new System.Drawing.Font(Tema.FamiliaFuente, 9F, System.Drawing.FontStyle.Regular);
-            this.btnModoEditar.ForeColor = Tema.TextoSecundario;
-            this.btnModoEditar.Location = new System.Drawing.Point(756, 18);
-            this.btnModoEditar.Visible = false;
-            this.btnModoEditar.Size = new System.Drawing.Size(130, 32);
-            this.btnModoEditar.TabIndex = 4;
-            this.btnModoEditar.Text = "✏️ Editar Paciente";
-            this.btnModoEditar.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.lblPaso1Num.BackColor = Tema.AzulPrimario;
+            this.lblPaso1Num.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.lblPaso1Num.Font = new System.Drawing.Font(Tema.FamiliaFuente, 9F, System.Drawing.FontStyle.Bold);
+            this.lblPaso1Num.ForeColor = System.Drawing.Color.White;
+            this.lblPaso1Num.Location = new System.Drawing.Point(270, 7);
+            this.lblPaso1Num.Name = "lblPaso1Num";
+            this.lblPaso1Num.Size = new System.Drawing.Size(24, 24);
+            this.lblPaso1Num.TabIndex = 0;
+            this.lblPaso1Num.Text = "1";
+            this.lblPaso1Num.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            //
+            // lblPaso1Texto
+            //
+            this.lblPaso1Texto.AutoSize = true;
+            this.lblPaso1Texto.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.lblPaso1Texto.Font = new System.Drawing.Font(Tema.FamiliaFuente, 9.5F, System.Drawing.FontStyle.Bold);
+            this.lblPaso1Texto.ForeColor = Tema.AzulPrimario;
+            this.lblPaso1Texto.Location = new System.Drawing.Point(300, 10);
+            this.lblPaso1Texto.Name = "lblPaso1Texto";
+            this.lblPaso1Texto.Size = new System.Drawing.Size(125, 17);
+            this.lblPaso1Texto.TabIndex = 1;
+            this.lblPaso1Texto.Text = "1. Datos personales";
+            //
+            // pnlPasoLinea1
+            //
+            this.pnlPasoLinea1.BackColor = Tema.Borde;
+            this.pnlPasoLinea1.Location = new System.Drawing.Point(434, 18);
+            this.pnlPasoLinea1.Name = "pnlPasoLinea1";
+            this.pnlPasoLinea1.Size = new System.Drawing.Size(70, 1);
+            this.pnlPasoLinea1.TabIndex = 2;
+            //
+            // lblPaso2Num
+            //
+            this.lblPaso2Num.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(240)))), ((int)(((byte)(244)))), ((int)(((byte)(248)))));
+            this.lblPaso2Num.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.lblPaso2Num.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.lblPaso2Num.Font = new System.Drawing.Font(Tema.FamiliaFuente, 9F, System.Drawing.FontStyle.Bold);
+            this.lblPaso2Num.ForeColor = Tema.TextoSecundario;
+            this.lblPaso2Num.Location = new System.Drawing.Point(514, 7);
+            this.lblPaso2Num.Name = "lblPaso2Num";
+            this.lblPaso2Num.Size = new System.Drawing.Size(24, 24);
+            this.lblPaso2Num.TabIndex = 3;
+            this.lblPaso2Num.Text = "2";
+            this.lblPaso2Num.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            //
+            // lblPaso2Texto
+            //
+            this.lblPaso2Texto.AutoSize = true;
+            this.lblPaso2Texto.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.lblPaso2Texto.Font = new System.Drawing.Font(Tema.FamiliaFuente, 9.5F);
+            this.lblPaso2Texto.ForeColor = Tema.TextoSecundario;
+            this.lblPaso2Texto.Location = new System.Drawing.Point(544, 10);
+            this.lblPaso2Texto.Name = "lblPaso2Texto";
+            this.lblPaso2Texto.Size = new System.Drawing.Size(124, 17);
+            this.lblPaso2Texto.TabIndex = 4;
+            this.lblPaso2Texto.Text = "2. Ubicación y salud";
+            //
+            // pnlPasoLinea2
+            //
+            this.pnlPasoLinea2.BackColor = Tema.Borde;
+            this.pnlPasoLinea2.Location = new System.Drawing.Point(678, 18);
+            this.pnlPasoLinea2.Name = "pnlPasoLinea2";
+            this.pnlPasoLinea2.Size = new System.Drawing.Size(70, 1);
+            this.pnlPasoLinea2.TabIndex = 5;
+            //
+            // lblPaso3Num
+            //
+            this.lblPaso3Num.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(240)))), ((int)(((byte)(244)))), ((int)(((byte)(248)))));
+            this.lblPaso3Num.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.lblPaso3Num.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.lblPaso3Num.Font = new System.Drawing.Font(Tema.FamiliaFuente, 9F, System.Drawing.FontStyle.Bold);
+            this.lblPaso3Num.ForeColor = Tema.TextoSecundario;
+            this.lblPaso3Num.Location = new System.Drawing.Point(758, 7);
+            this.lblPaso3Num.Name = "lblPaso3Num";
+            this.lblPaso3Num.Size = new System.Drawing.Size(24, 24);
+            this.lblPaso3Num.TabIndex = 6;
+            this.lblPaso3Num.Text = "3";
+            this.lblPaso3Num.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            //
+            // lblPaso3Texto
+            //
+            this.lblPaso3Texto.AutoSize = true;
+            this.lblPaso3Texto.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.lblPaso3Texto.Font = new System.Drawing.Font(Tema.FamiliaFuente, 9.5F);
+            this.lblPaso3Texto.ForeColor = Tema.TextoSecundario;
+            this.lblPaso3Texto.Location = new System.Drawing.Point(788, 10);
+            this.lblPaso3Texto.Name = "lblPaso3Texto";
+            this.lblPaso3Texto.Size = new System.Drawing.Size(175, 17);
+            this.lblPaso3Texto.TabIndex = 7;
+            this.lblPaso3Texto.Text = "3. Contactos de emergencia";
             //
             // cardPersonal
             //
@@ -574,11 +355,8 @@ namespace SanarRuralUnan.Views
             this.cardPersonal.Controls.Add(this.txtSegundoApellido);
             this.cardPersonal.Controls.Add(this.lblCedula);
             this.cardPersonal.Controls.Add(this.txtCedula);
-            this.cardPersonal.Controls.Add(this.lblCedulaAyuda);
-            this.cardPersonal.Controls.Add(this.pnlCedulaInfo);
             this.cardPersonal.Controls.Add(this.lblNumeroINSS);
             this.cardPersonal.Controls.Add(this.txtNumeroINSS);
-            this.cardPersonal.Controls.Add(this.lblINSSAyuda);
             this.cardPersonal.Controls.Add(this.lblFechaNacimiento);
             this.cardPersonal.Controls.Add(this.dtpFechaNacimiento);
             this.cardPersonal.Controls.Add(this.lblGenero);
@@ -586,21 +364,22 @@ namespace SanarRuralUnan.Views
             this.cardPersonal.Controls.Add(this.lblTelefono);
             this.cardPersonal.Controls.Add(this.cmbPaisTelefono);
             this.cardPersonal.Controls.Add(this.txtTelefono);
-            this.cardPersonal.Controls.Add(this.lblTelefonoAyuda);
             this.cardPersonal.Controls.Add(this.lblErrorTelefono);
-            this.cardPersonal.Location = new System.Drawing.Point(20, 94);
+            this.cardPersonal.Controls.Add(this.lblCorreo);
+            this.cardPersonal.Controls.Add(this.txtCorreo);
+            this.cardPersonal.Location = new System.Drawing.Point(20, 134);
             this.cardPersonal.Name = "cardPersonal";
-            this.cardPersonal.Size = new System.Drawing.Size(600, 360);
-            this.cardPersonal.TabIndex = 1;
+            this.cardPersonal.Size = new System.Drawing.Size(1220, 176);
+            this.cardPersonal.TabIndex = 2;
             //
             // lblIconoPersonal
             //
-            this.lblIconoPersonal.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(226)))), ((int)(((byte)(238)))), ((int)(((byte)(248)))));
+            this.lblIconoPersonal.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(235)))), ((int)(((byte)(248)))), ((int)(((byte)(238)))));
             this.lblIconoPersonal.Font = new System.Drawing.Font("Segoe UI Emoji", 11F);
-            this.lblIconoPersonal.ForeColor = Tema.AzulPrimario;
-            this.lblIconoPersonal.Location = new System.Drawing.Point(14, 12);
+            this.lblIconoPersonal.ForeColor = Tema.VerdeOscuro;
+            this.lblIconoPersonal.Location = new System.Drawing.Point(14, 10);
             this.lblIconoPersonal.Name = "lblIconoPersonal";
-            this.lblIconoPersonal.Size = new System.Drawing.Size(34, 34);
+            this.lblIconoPersonal.Size = new System.Drawing.Size(32, 32);
             this.lblIconoPersonal.TabIndex = 0;
             this.lblIconoPersonal.Text = "👤";
             this.lblIconoPersonal.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -608,31 +387,31 @@ namespace SanarRuralUnan.Views
             // lblTituloPersonal
             //
             this.lblTituloPersonal.AutoSize = true;
-            this.lblTituloPersonal.Font = new System.Drawing.Font(Tema.FamiliaFuente, 12F, System.Drawing.FontStyle.Bold);
+            this.lblTituloPersonal.Font = new System.Drawing.Font(Tema.FamiliaFuente, 11.5F, System.Drawing.FontStyle.Bold);
             this.lblTituloPersonal.ForeColor = Tema.AzulOscuro;
-            this.lblTituloPersonal.Location = new System.Drawing.Point(54, 10);
+            this.lblTituloPersonal.Location = new System.Drawing.Point(52, 9);
             this.lblTituloPersonal.Name = "lblTituloPersonal";
-            this.lblTituloPersonal.Size = new System.Drawing.Size(168, 21);
+            this.lblTituloPersonal.Size = new System.Drawing.Size(133, 21);
             this.lblTituloPersonal.TabIndex = 1;
-            this.lblTituloPersonal.Text = "Información personal";
+            this.lblTituloPersonal.Text = "Datos personales";
             //
             // lblSubtituloPersonal
             //
             this.lblSubtituloPersonal.AutoSize = true;
             this.lblSubtituloPersonal.Font = new System.Drawing.Font(Tema.FamiliaFuente, 8.5F);
             this.lblSubtituloPersonal.ForeColor = Tema.TextoSecundario;
-            this.lblSubtituloPersonal.Location = new System.Drawing.Point(56, 32);
+            this.lblSubtituloPersonal.Location = new System.Drawing.Point(54, 30);
             this.lblSubtituloPersonal.Name = "lblSubtituloPersonal";
-            this.lblSubtituloPersonal.Size = new System.Drawing.Size(252, 15);
+            this.lblSubtituloPersonal.Size = new System.Drawing.Size(175, 15);
             this.lblSubtituloPersonal.TabIndex = 2;
-            this.lblSubtituloPersonal.Text = "Datos de identificación y contacto del paciente.";
+            this.lblSubtituloPersonal.Text = "Información básica del paciente.";
             //
             // lblPrimerNombre
             //
             this.lblPrimerNombre.AutoSize = true;
             this.lblPrimerNombre.Font = Tema.FuenteLabelCampo;
             this.lblPrimerNombre.ForeColor = Tema.TextoPrincipal;
-            this.lblPrimerNombre.Location = new System.Drawing.Point(16, 56);
+            this.lblPrimerNombre.Location = new System.Drawing.Point(16, 52);
             this.lblPrimerNombre.Name = "lblPrimerNombre";
             this.lblPrimerNombre.Size = new System.Drawing.Size(107, 15);
             this.lblPrimerNombre.TabIndex = 3;
@@ -641,9 +420,9 @@ namespace SanarRuralUnan.Views
             // txtNombres
             //
             this.txtNombres.Font = Tema.FuenteInput;
-            this.txtNombres.Location = new System.Drawing.Point(16, 74);
+            this.txtNombres.Location = new System.Drawing.Point(16, 70);
             this.txtNombres.Name = "txtNombres";
-            this.txtNombres.Size = new System.Drawing.Size(270, 27);
+            this.txtNombres.Size = new System.Drawing.Size(220, 27);
             this.txtNombres.TabIndex = 4;
             this.txtNombres.TextChanged += new System.EventHandler(this.txtNombres_TextChanged);
             //
@@ -652,7 +431,7 @@ namespace SanarRuralUnan.Views
             this.lblErrorNombres.AutoSize = true;
             this.lblErrorNombres.Font = Tema.FuenteAyuda;
             this.lblErrorNombres.ForeColor = Tema.Error;
-            this.lblErrorNombres.Location = new System.Drawing.Point(16, 103);
+            this.lblErrorNombres.Location = new System.Drawing.Point(16, 99);
             this.lblErrorNombres.Name = "lblErrorNombres";
             this.lblErrorNombres.Size = new System.Drawing.Size(0, 13);
             this.lblErrorNombres.TabIndex = 5;
@@ -662,7 +441,7 @@ namespace SanarRuralUnan.Views
             this.lblSegundoNombre.AutoSize = true;
             this.lblSegundoNombre.Font = Tema.FuenteLabelCampo;
             this.lblSegundoNombre.ForeColor = Tema.TextoPrincipal;
-            this.lblSegundoNombre.Location = new System.Drawing.Point(300, 56);
+            this.lblSegundoNombre.Location = new System.Drawing.Point(250, 52);
             this.lblSegundoNombre.Name = "lblSegundoNombre";
             this.lblSegundoNombre.Size = new System.Drawing.Size(103, 15);
             this.lblSegundoNombre.TabIndex = 6;
@@ -671,9 +450,9 @@ namespace SanarRuralUnan.Views
             // txtSegundoNombre
             //
             this.txtSegundoNombre.Font = Tema.FuenteInput;
-            this.txtSegundoNombre.Location = new System.Drawing.Point(300, 74);
+            this.txtSegundoNombre.Location = new System.Drawing.Point(250, 70);
             this.txtSegundoNombre.Name = "txtSegundoNombre";
-            this.txtSegundoNombre.Size = new System.Drawing.Size(270, 27);
+            this.txtSegundoNombre.Size = new System.Drawing.Size(220, 27);
             this.txtSegundoNombre.TabIndex = 7;
             //
             // lblPrimerApellido
@@ -681,7 +460,7 @@ namespace SanarRuralUnan.Views
             this.lblPrimerApellido.AutoSize = true;
             this.lblPrimerApellido.Font = Tema.FuenteLabelCampo;
             this.lblPrimerApellido.ForeColor = Tema.TextoPrincipal;
-            this.lblPrimerApellido.Location = new System.Drawing.Point(16, 108);
+            this.lblPrimerApellido.Location = new System.Drawing.Point(484, 52);
             this.lblPrimerApellido.Name = "lblPrimerApellido";
             this.lblPrimerApellido.Size = new System.Drawing.Size(108, 15);
             this.lblPrimerApellido.TabIndex = 8;
@@ -690,9 +469,9 @@ namespace SanarRuralUnan.Views
             // txtApellidos
             //
             this.txtApellidos.Font = Tema.FuenteInput;
-            this.txtApellidos.Location = new System.Drawing.Point(16, 126);
+            this.txtApellidos.Location = new System.Drawing.Point(484, 70);
             this.txtApellidos.Name = "txtApellidos";
-            this.txtApellidos.Size = new System.Drawing.Size(270, 27);
+            this.txtApellidos.Size = new System.Drawing.Size(220, 27);
             this.txtApellidos.TabIndex = 9;
             //
             // lblSegundoApellido
@@ -700,7 +479,7 @@ namespace SanarRuralUnan.Views
             this.lblSegundoApellido.AutoSize = true;
             this.lblSegundoApellido.Font = Tema.FuenteLabelCampo;
             this.lblSegundoApellido.ForeColor = Tema.TextoPrincipal;
-            this.lblSegundoApellido.Location = new System.Drawing.Point(300, 108);
+            this.lblSegundoApellido.Location = new System.Drawing.Point(718, 52);
             this.lblSegundoApellido.Name = "lblSegundoApellido";
             this.lblSegundoApellido.Size = new System.Drawing.Size(104, 15);
             this.lblSegundoApellido.TabIndex = 10;
@@ -709,9 +488,9 @@ namespace SanarRuralUnan.Views
             // txtSegundoApellido
             //
             this.txtSegundoApellido.Font = Tema.FuenteInput;
-            this.txtSegundoApellido.Location = new System.Drawing.Point(300, 126);
+            this.txtSegundoApellido.Location = new System.Drawing.Point(718, 70);
             this.txtSegundoApellido.Name = "txtSegundoApellido";
-            this.txtSegundoApellido.Size = new System.Drawing.Size(270, 27);
+            this.txtSegundoApellido.Size = new System.Drawing.Size(220, 27);
             this.txtSegundoApellido.TabIndex = 11;
             //
             // lblCedula
@@ -719,7 +498,7 @@ namespace SanarRuralUnan.Views
             this.lblCedula.AutoSize = true;
             this.lblCedula.Font = Tema.FuenteLabelCampo;
             this.lblCedula.ForeColor = Tema.TextoPrincipal;
-            this.lblCedula.Location = new System.Drawing.Point(16, 160);
+            this.lblCedula.Location = new System.Drawing.Point(952, 52);
             this.lblCedula.Name = "lblCedula";
             this.lblCedula.Size = new System.Drawing.Size(56, 15);
             this.lblCedula.TabIndex = 12;
@@ -728,79 +507,39 @@ namespace SanarRuralUnan.Views
             // txtCedula
             //
             this.txtCedula.Font = Tema.FuenteInput;
-            this.txtCedula.Location = new System.Drawing.Point(16, 178);
+            this.txtCedula.Location = new System.Drawing.Point(952, 70);
             this.txtCedula.Name = "txtCedula";
-            this.txtCedula.Size = new System.Drawing.Size(270, 27);
+            this.txtCedula.Size = new System.Drawing.Size(250, 27);
             this.txtCedula.TabIndex = 13;
-            //
-            // lblCedulaAyuda
-            //
-            this.lblCedulaAyuda.Font = Tema.FuenteAyuda;
-            this.lblCedulaAyuda.ForeColor = Tema.TextoSecundario;
-            this.lblCedulaAyuda.Location = new System.Drawing.Point(16, 208);
-            this.lblCedulaAyuda.Name = "lblCedulaAyuda";
-            this.lblCedulaAyuda.Size = new System.Drawing.Size(270, 28);
-            this.lblCedulaAyuda.TabIndex = 14;
-            this.lblCedulaAyuda.Text = "Ejemplo: 001-091101-1042V\r\nPuedes escribirla con o sin guiones.";
-            //
-            // pnlCedulaInfo
-            //
-            this.pnlCedulaInfo.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(240)))), ((int)(((byte)(247)))), ((int)(((byte)(253)))));
-            this.pnlCedulaInfo.Controls.Add(this.lblCedulaInfo);
-            this.pnlCedulaInfo.Location = new System.Drawing.Point(16, 238);
-            this.pnlCedulaInfo.Name = "pnlCedulaInfo";
-            this.pnlCedulaInfo.Size = new System.Drawing.Size(270, 36);
-            this.pnlCedulaInfo.TabIndex = 15;
-            //
-            // lblCedulaInfo
-            //
-            this.lblCedulaInfo.Font = new System.Drawing.Font(Tema.FamiliaFuente, 8.2F);
-            this.lblCedulaInfo.ForeColor = Tema.AzulOscuro;
-            this.lblCedulaInfo.Location = new System.Drawing.Point(6, 4);
-            this.lblCedulaInfo.Name = "lblCedulaInfo";
-            this.lblCedulaInfo.Size = new System.Drawing.Size(258, 28);
-            this.lblCedulaInfo.TabIndex = 0;
-            this.lblCedulaInfo.Text = "Formato tradicional nicaragüense con formato estándar.";
             //
             // lblNumeroINSS
             //
             this.lblNumeroINSS.AutoSize = true;
             this.lblNumeroINSS.Font = Tema.FuenteLabelCampo;
             this.lblNumeroINSS.ForeColor = Tema.TextoPrincipal;
-            this.lblNumeroINSS.Location = new System.Drawing.Point(16, 278);
+            this.lblNumeroINSS.Location = new System.Drawing.Point(16, 108);
             this.lblNumeroINSS.Name = "lblNumeroINSS";
-            this.lblNumeroINSS.Size = new System.Drawing.Size(81, 15);
-            this.lblNumeroINSS.TabIndex = 16;
-            this.lblNumeroINSS.Text = "Número INSS";
+            this.lblNumeroINSS.Size = new System.Drawing.Size(139, 15);
+            this.lblNumeroINSS.TabIndex = 14;
+            this.lblNumeroINSS.Text = "Número INSS (opcional)";
             //
             // txtNumeroINSS
             //
             this.txtNumeroINSS.Font = Tema.FuenteInput;
-            this.txtNumeroINSS.Location = new System.Drawing.Point(16, 296);
+            this.txtNumeroINSS.Location = new System.Drawing.Point(16, 126);
             this.txtNumeroINSS.Name = "txtNumeroINSS";
-            this.txtNumeroINSS.Size = new System.Drawing.Size(270, 27);
-            this.txtNumeroINSS.TabIndex = 17;
-            //
-            // lblINSSAyuda
-            //
-            this.lblINSSAyuda.AutoSize = true;
-            this.lblINSSAyuda.Font = Tema.FuenteAyuda;
-            this.lblINSSAyuda.ForeColor = Tema.TextoSecundario;
-            this.lblINSSAyuda.Location = new System.Drawing.Point(16, 326);
-            this.lblINSSAyuda.Name = "lblINSSAyuda";
-            this.lblINSSAyuda.Size = new System.Drawing.Size(164, 13);
-            this.lblINSSAyuda.TabIndex = 18;
-            this.lblINSSAyuda.Text = "Si el paciente tiene número de INSS.";
+            this.txtNumeroINSS.Size = new System.Drawing.Size(220, 27);
+            this.txtNumeroINSS.TabIndex = 15;
             //
             // lblFechaNacimiento
             //
             this.lblFechaNacimiento.AutoSize = true;
             this.lblFechaNacimiento.Font = Tema.FuenteLabelCampo;
             this.lblFechaNacimiento.ForeColor = Tema.TextoPrincipal;
-            this.lblFechaNacimiento.Location = new System.Drawing.Point(300, 160);
+            this.lblFechaNacimiento.Location = new System.Drawing.Point(250, 108);
             this.lblFechaNacimiento.Name = "lblFechaNacimiento";
             this.lblFechaNacimiento.Size = new System.Drawing.Size(134, 15);
-            this.lblFechaNacimiento.TabIndex = 19;
+            this.lblFechaNacimiento.TabIndex = 16;
             this.lblFechaNacimiento.Text = "Fecha de nacimiento *";
             //
             // dtpFechaNacimiento
@@ -808,20 +547,20 @@ namespace SanarRuralUnan.Views
             this.dtpFechaNacimiento.CustomFormat = "dd/MM/yyyy";
             this.dtpFechaNacimiento.Font = Tema.FuenteInput;
             this.dtpFechaNacimiento.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
-            this.dtpFechaNacimiento.Location = new System.Drawing.Point(300, 178);
+            this.dtpFechaNacimiento.Location = new System.Drawing.Point(250, 126);
             this.dtpFechaNacimiento.Name = "dtpFechaNacimiento";
-            this.dtpFechaNacimiento.Size = new System.Drawing.Size(130, 27);
-            this.dtpFechaNacimiento.TabIndex = 20;
+            this.dtpFechaNacimiento.Size = new System.Drawing.Size(220, 27);
+            this.dtpFechaNacimiento.TabIndex = 17;
             //
             // lblGenero
             //
             this.lblGenero.AutoSize = true;
             this.lblGenero.Font = Tema.FuenteLabelCampo;
             this.lblGenero.ForeColor = Tema.TextoPrincipal;
-            this.lblGenero.Location = new System.Drawing.Point(440, 160);
+            this.lblGenero.Location = new System.Drawing.Point(484, 108);
             this.lblGenero.Name = "lblGenero";
             this.lblGenero.Size = new System.Drawing.Size(58, 15);
-            this.lblGenero.TabIndex = 21;
+            this.lblGenero.TabIndex = 18;
             this.lblGenero.Text = "Género *";
             //
             // cmbGenero
@@ -830,22 +569,24 @@ namespace SanarRuralUnan.Views
             this.cmbGenero.Font = Tema.FuenteInput;
             this.cmbGenero.FormattingEnabled = true;
             this.cmbGenero.Items.AddRange(new object[] {
+            "Masculino",
             "Femenino",
-            "Masculino"});
-            this.cmbGenero.Location = new System.Drawing.Point(440, 178);
+            "Otro",
+            "Prefiere no indicar"});
+            this.cmbGenero.Location = new System.Drawing.Point(484, 126);
             this.cmbGenero.Name = "cmbGenero";
-            this.cmbGenero.Size = new System.Drawing.Size(130, 27);
-            this.cmbGenero.TabIndex = 22;
+            this.cmbGenero.Size = new System.Drawing.Size(220, 27);
+            this.cmbGenero.TabIndex = 19;
             //
             // lblTelefono
             //
             this.lblTelefono.AutoSize = true;
             this.lblTelefono.Font = Tema.FuenteLabelCampo;
             this.lblTelefono.ForeColor = Tema.TextoPrincipal;
-            this.lblTelefono.Location = new System.Drawing.Point(300, 212);
+            this.lblTelefono.Location = new System.Drawing.Point(718, 108);
             this.lblTelefono.Name = "lblTelefono";
             this.lblTelefono.Size = new System.Drawing.Size(66, 15);
-            this.lblTelefono.TabIndex = 23;
+            this.lblTelefono.TabIndex = 20;
             this.lblTelefono.Text = "Teléfono *";
             //
             // cmbPaisTelefono
@@ -853,170 +594,48 @@ namespace SanarRuralUnan.Views
             this.cmbPaisTelefono.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbPaisTelefono.Font = Tema.FuenteInput;
             this.cmbPaisTelefono.FormattingEnabled = true;
-            this.cmbPaisTelefono.Location = new System.Drawing.Point(300, 230);
+            this.cmbPaisTelefono.Location = new System.Drawing.Point(718, 126);
             this.cmbPaisTelefono.Name = "cmbPaisTelefono";
-            this.cmbPaisTelefono.Size = new System.Drawing.Size(155, 27);
-            this.cmbPaisTelefono.TabIndex = 24;
+            this.cmbPaisTelefono.Size = new System.Drawing.Size(85, 27);
+            this.cmbPaisTelefono.TabIndex = 21;
             //
             // txtTelefono
             //
             this.txtTelefono.Font = Tema.FuenteInput;
-            this.txtTelefono.Location = new System.Drawing.Point(463, 230);
+            this.txtTelefono.Location = new System.Drawing.Point(807, 126);
             this.txtTelefono.Name = "txtTelefono";
-            this.txtTelefono.Size = new System.Drawing.Size(107, 27);
-            this.txtTelefono.TabIndex = 25;
+            this.txtTelefono.Size = new System.Drawing.Size(131, 27);
+            this.txtTelefono.TabIndex = 22;
             this.txtTelefono.TextChanged += new System.EventHandler(this.txtTelefono_TextChanged);
-            //
-            // lblTelefonoAyuda
-            //
-            this.lblTelefonoAyuda.Font = Tema.FuenteAyuda;
-            this.lblTelefonoAyuda.ForeColor = Tema.TextoSecundario;
-            this.lblTelefonoAyuda.Location = new System.Drawing.Point(300, 260);
-            this.lblTelefonoAyuda.Name = "lblTelefonoAyuda";
-            this.lblTelefonoAyuda.Size = new System.Drawing.Size(270, 36);
-            this.lblTelefonoAyuda.TabIndex = 26;
-            this.lblTelefonoAyuda.Text = "Ingresa solo el número de teléfono (sin el código de país).\r\nEjemplo: 8888-2222";
             //
             // lblErrorTelefono
             //
             this.lblErrorTelefono.AutoSize = true;
             this.lblErrorTelefono.Font = Tema.FuenteAyuda;
             this.lblErrorTelefono.ForeColor = Tema.Error;
-            this.lblErrorTelefono.Location = new System.Drawing.Point(300, 298);
+            this.lblErrorTelefono.Location = new System.Drawing.Point(718, 155);
             this.lblErrorTelefono.Name = "lblErrorTelefono";
             this.lblErrorTelefono.Size = new System.Drawing.Size(0, 13);
-            this.lblErrorTelefono.TabIndex = 27;
+            this.lblErrorTelefono.TabIndex = 23;
             //
-            // cardFoto
+            // lblCorreo
             //
-            this.cardFoto.BackColor = Tema.Superficie;
-            this.cardFoto.Controls.Add(this.lblIconoFoto);
-            this.cardFoto.Controls.Add(this.lblTituloFoto);
-            this.cardFoto.Controls.Add(this.lblSubtituloFoto);
-            this.cardFoto.Controls.Add(this.picPreview);
-            this.cardFoto.Controls.Add(this.btnSeleccionarFoto);
-            this.cardFoto.Controls.Add(this.btnQuitarFoto);
-            this.cardFoto.Controls.Add(this.lblFoto);
-            this.cardFoto.Controls.Add(this.lblFotoAyuda);
-            this.cardFoto.Controls.Add(this.pnlFotoInfo);
-            this.cardFoto.Location = new System.Drawing.Point(630, 94);
-            this.cardFoto.Name = "cardFoto";
-            this.cardFoto.Size = new System.Drawing.Size(290, 360);
-            this.cardFoto.TabIndex = 2;
+            this.lblCorreo.AutoSize = true;
+            this.lblCorreo.Font = Tema.FuenteLabelCampo;
+            this.lblCorreo.ForeColor = Tema.TextoPrincipal;
+            this.lblCorreo.Location = new System.Drawing.Point(952, 108);
+            this.lblCorreo.Name = "lblCorreo";
+            this.lblCorreo.Size = new System.Drawing.Size(176, 15);
+            this.lblCorreo.TabIndex = 24;
+            this.lblCorreo.Text = "Correo electrónico (opcional)";
             //
-            // lblIconoFoto
+            // txtCorreo
             //
-            this.lblIconoFoto.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(226)))), ((int)(((byte)(238)))), ((int)(((byte)(248)))));
-            this.lblIconoFoto.Font = new System.Drawing.Font("Segoe UI Emoji", 11F);
-            this.lblIconoFoto.ForeColor = Tema.AzulPrimario;
-            this.lblIconoFoto.Location = new System.Drawing.Point(14, 12);
-            this.lblIconoFoto.Name = "lblIconoFoto";
-            this.lblIconoFoto.Size = new System.Drawing.Size(34, 34);
-            this.lblIconoFoto.TabIndex = 0;
-            this.lblIconoFoto.Text = "📷";
-            this.lblIconoFoto.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            //
-            // lblTituloFoto
-            //
-            this.lblTituloFoto.AutoSize = true;
-            this.lblTituloFoto.Font = new System.Drawing.Font(Tema.FamiliaFuente, 12F, System.Drawing.FontStyle.Bold);
-            this.lblTituloFoto.ForeColor = Tema.AzulOscuro;
-            this.lblTituloFoto.Location = new System.Drawing.Point(54, 10);
-            this.lblTituloFoto.Name = "lblTituloFoto";
-            this.lblTituloFoto.Size = new System.Drawing.Size(142, 21);
-            this.lblTituloFoto.TabIndex = 1;
-            this.lblTituloFoto.Text = "Foto del paciente";
-            //
-            // lblSubtituloFoto
-            //
-            this.lblSubtituloFoto.AutoSize = true;
-            this.lblSubtituloFoto.Font = new System.Drawing.Font(Tema.FamiliaFuente, 8.5F);
-            this.lblSubtituloFoto.ForeColor = Tema.TextoSecundario;
-            this.lblSubtituloFoto.Location = new System.Drawing.Point(56, 32);
-            this.lblSubtituloFoto.Name = "lblSubtituloFoto";
-            this.lblSubtituloFoto.Size = new System.Drawing.Size(126, 15);
-            this.lblSubtituloFoto.TabIndex = 2;
-            this.lblSubtituloFoto.Text = "Foto de perfil (opcional).";
-            //
-            // picPreview
-            //
-            this.picPreview.BackColor = Tema.FondoSecundario;
-            this.picPreview.Location = new System.Drawing.Point(16, 56);
-            this.picPreview.Name = "picPreview";
-            this.picPreview.Size = new System.Drawing.Size(90, 90);
-            this.picPreview.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-            this.picPreview.TabIndex = 3;
-            this.picPreview.TabStop = false;
-            //
-            // btnSeleccionarFoto
-            //
-            this.btnSeleccionarFoto.BackColor = Tema.AzulPrimario;
-            this.btnSeleccionarFoto.FlatAppearance.BorderSize = 0;
-            this.btnSeleccionarFoto.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnSeleccionarFoto.Font = new System.Drawing.Font(Tema.FamiliaFuente, 9F, System.Drawing.FontStyle.Bold);
-            this.btnSeleccionarFoto.ForeColor = System.Drawing.Color.White;
-            this.btnSeleccionarFoto.Location = new System.Drawing.Point(118, 56);
-            this.btnSeleccionarFoto.Name = "btnSeleccionarFoto";
-            this.btnSeleccionarFoto.Size = new System.Drawing.Size(155, 34);
-            this.btnSeleccionarFoto.TabIndex = 4;
-            this.btnSeleccionarFoto.Text = "📷 Seleccionar foto";
-            this.btnSeleccionarFoto.UseVisualStyleBackColor = false;
-            //
-            // btnQuitarFoto
-            //
-            this.btnQuitarFoto.BackColor = Tema.Superficie;
-            this.btnQuitarFoto.FlatAppearance.BorderColor = Tema.Borde;
-            this.btnQuitarFoto.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnQuitarFoto.Font = new System.Drawing.Font(Tema.FamiliaFuente, 8.5F);
-            this.btnQuitarFoto.ForeColor = Tema.Error;
-            this.btnQuitarFoto.Location = new System.Drawing.Point(118, 96);
-            this.btnQuitarFoto.Name = "btnQuitarFoto";
-            this.btnQuitarFoto.Size = new System.Drawing.Size(155, 26);
-            this.btnQuitarFoto.TabIndex = 5;
-            this.btnQuitarFoto.Text = "✕ Quitar foto";
-            this.btnQuitarFoto.UseVisualStyleBackColor = false;
-            this.btnQuitarFoto.Visible = false;
-            //
-            // lblFoto
-            //
-            this.lblFoto.AutoSize = true;
-            this.lblFoto.Font = new System.Drawing.Font(Tema.FamiliaFuente, 9F, System.Drawing.FontStyle.Bold);
-            this.lblFoto.ForeColor = Tema.TextoPrincipal;
-            this.lblFoto.Location = new System.Drawing.Point(118, 126);
-            this.lblFoto.Name = "lblFoto";
-            this.lblFoto.Size = new System.Drawing.Size(124, 15);
-            this.lblFoto.TabIndex = 6;
-            this.lblFoto.Text = "Sin foto seleccionada";
-            //
-            // lblFotoAyuda
-            //
-            this.lblFotoAyuda.AutoSize = true;
-            this.lblFotoAyuda.Font = Tema.FuenteAyuda;
-            this.lblFotoAyuda.ForeColor = Tema.TextoSecundario;
-            this.lblFotoAyuda.Location = new System.Drawing.Point(118, 144);
-            this.lblFotoAyuda.Name = "lblFotoAyuda";
-            this.lblFotoAyuda.Size = new System.Drawing.Size(117, 13);
-            this.lblFotoAyuda.TabIndex = 7;
-            this.lblFotoAyuda.Text = "JPG, PNG (máx. 2 MB)";
-            //
-            // pnlFotoInfo
-            //
-            this.pnlFotoInfo.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(240)))), ((int)(((byte)(247)))), ((int)(((byte)(253)))));
-            this.pnlFotoInfo.Controls.Add(this.lblFotoInfo);
-            this.pnlFotoInfo.Location = new System.Drawing.Point(16, 238);
-            this.pnlFotoInfo.Name = "pnlFotoInfo";
-            this.pnlFotoInfo.Size = new System.Drawing.Size(257, 56);
-            this.pnlFotoInfo.TabIndex = 8;
-            //
-            // lblFotoInfo
-            //
-            this.lblFotoInfo.Font = new System.Drawing.Font(Tema.FamiliaFuente, 8.5F);
-            this.lblFotoInfo.ForeColor = Tema.AzulOscuro;
-            this.lblFotoInfo.Location = new System.Drawing.Point(8, 8);
-            this.lblFotoInfo.Name = "lblFotoInfo";
-            this.lblFotoInfo.Size = new System.Drawing.Size(240, 40);
-            this.lblFotoInfo.TabIndex = 0;
-            this.lblFotoInfo.Text = "ℹ La foto ayuda a identificar al paciente en el sistema.";
+            this.txtCorreo.Font = Tema.FuenteInput;
+            this.txtCorreo.Location = new System.Drawing.Point(952, 126);
+            this.txtCorreo.Name = "txtCorreo";
+            this.txtCorreo.Size = new System.Drawing.Size(250, 27);
+            this.txtCorreo.TabIndex = 25;
             //
             // cardUbicacion
             //
@@ -1034,9 +653,9 @@ namespace SanarRuralUnan.Views
             this.cardUbicacion.Controls.Add(this.txtDireccion);
             this.cardUbicacion.Controls.Add(this.lblReferencia);
             this.cardUbicacion.Controls.Add(this.txtReferencia);
-            this.cardUbicacion.Location = new System.Drawing.Point(20, 464);
+            this.cardUbicacion.Location = new System.Drawing.Point(20, 324);
             this.cardUbicacion.Name = "cardUbicacion";
-            this.cardUbicacion.Size = new System.Drawing.Size(900, 180);
+            this.cardUbicacion.Size = new System.Drawing.Size(1220, 205);
             this.cardUbicacion.TabIndex = 3;
             //
             // lblIconoUbicacion
@@ -1044,9 +663,9 @@ namespace SanarRuralUnan.Views
             this.lblIconoUbicacion.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(226)))), ((int)(((byte)(238)))), ((int)(((byte)(248)))));
             this.lblIconoUbicacion.Font = new System.Drawing.Font("Segoe UI Emoji", 11F);
             this.lblIconoUbicacion.ForeColor = Tema.AzulPrimario;
-            this.lblIconoUbicacion.Location = new System.Drawing.Point(14, 12);
+            this.lblIconoUbicacion.Location = new System.Drawing.Point(14, 10);
             this.lblIconoUbicacion.Name = "lblIconoUbicacion";
-            this.lblIconoUbicacion.Size = new System.Drawing.Size(34, 34);
+            this.lblIconoUbicacion.Size = new System.Drawing.Size(32, 32);
             this.lblIconoUbicacion.TabIndex = 0;
             this.lblIconoUbicacion.Text = "📍";
             this.lblIconoUbicacion.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -1054,11 +673,11 @@ namespace SanarRuralUnan.Views
             // lblTituloUbicacion
             //
             this.lblTituloUbicacion.AutoSize = true;
-            this.lblTituloUbicacion.Font = new System.Drawing.Font(Tema.FamiliaFuente, 12F, System.Drawing.FontStyle.Bold);
+            this.lblTituloUbicacion.Font = new System.Drawing.Font(Tema.FamiliaFuente, 11.5F, System.Drawing.FontStyle.Bold);
             this.lblTituloUbicacion.ForeColor = Tema.AzulOscuro;
-            this.lblTituloUbicacion.Location = new System.Drawing.Point(54, 10);
+            this.lblTituloUbicacion.Location = new System.Drawing.Point(52, 9);
             this.lblTituloUbicacion.Name = "lblTituloUbicacion";
-            this.lblTituloUbicacion.Size = new System.Drawing.Size(167, 21);
+            this.lblTituloUbicacion.Size = new System.Drawing.Size(173, 21);
             this.lblTituloUbicacion.TabIndex = 1;
             this.lblTituloUbicacion.Text = "Ubicación y dirección";
             //
@@ -1067,7 +686,7 @@ namespace SanarRuralUnan.Views
             this.lblSubtituloUbicacion.AutoSize = true;
             this.lblSubtituloUbicacion.Font = new System.Drawing.Font(Tema.FamiliaFuente, 8.5F);
             this.lblSubtituloUbicacion.ForeColor = Tema.TextoSecundario;
-            this.lblSubtituloUbicacion.Location = new System.Drawing.Point(56, 32);
+            this.lblSubtituloUbicacion.Location = new System.Drawing.Point(54, 30);
             this.lblSubtituloUbicacion.Name = "lblSubtituloUbicacion";
             this.lblSubtituloUbicacion.Size = new System.Drawing.Size(183, 15);
             this.lblSubtituloUbicacion.TabIndex = 2;
@@ -1078,7 +697,7 @@ namespace SanarRuralUnan.Views
             this.lblDepartamento.AutoSize = true;
             this.lblDepartamento.Font = Tema.FuenteLabelCampo;
             this.lblDepartamento.ForeColor = Tema.TextoPrincipal;
-            this.lblDepartamento.Location = new System.Drawing.Point(16, 56);
+            this.lblDepartamento.Location = new System.Drawing.Point(16, 52);
             this.lblDepartamento.Name = "lblDepartamento";
             this.lblDepartamento.Size = new System.Drawing.Size(96, 15);
             this.lblDepartamento.TabIndex = 3;
@@ -1089,9 +708,9 @@ namespace SanarRuralUnan.Views
             this.cmbDepartamento.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbDepartamento.Font = Tema.FuenteInput;
             this.cmbDepartamento.FormattingEnabled = true;
-            this.cmbDepartamento.Location = new System.Drawing.Point(16, 74);
+            this.cmbDepartamento.Location = new System.Drawing.Point(16, 70);
             this.cmbDepartamento.Name = "cmbDepartamento";
-            this.cmbDepartamento.Size = new System.Drawing.Size(270, 27);
+            this.cmbDepartamento.Size = new System.Drawing.Size(380, 27);
             this.cmbDepartamento.TabIndex = 4;
             this.cmbDepartamento.SelectedIndexChanged += new System.EventHandler(this.cmbDepartamento_SelectedIndexChanged);
             //
@@ -1100,7 +719,7 @@ namespace SanarRuralUnan.Views
             this.lblMunicipio.AutoSize = true;
             this.lblMunicipio.Font = Tema.FuenteLabelCampo;
             this.lblMunicipio.ForeColor = Tema.TextoPrincipal;
-            this.lblMunicipio.Location = new System.Drawing.Point(300, 56);
+            this.lblMunicipio.Location = new System.Drawing.Point(414, 52);
             this.lblMunicipio.Name = "lblMunicipio";
             this.lblMunicipio.Size = new System.Drawing.Size(70, 15);
             this.lblMunicipio.TabIndex = 5;
@@ -1111,9 +730,9 @@ namespace SanarRuralUnan.Views
             this.cmbMunicipio.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbMunicipio.Font = Tema.FuenteInput;
             this.cmbMunicipio.FormattingEnabled = true;
-            this.cmbMunicipio.Location = new System.Drawing.Point(300, 74);
+            this.cmbMunicipio.Location = new System.Drawing.Point(414, 70);
             this.cmbMunicipio.Name = "cmbMunicipio";
-            this.cmbMunicipio.Size = new System.Drawing.Size(270, 27);
+            this.cmbMunicipio.Size = new System.Drawing.Size(380, 27);
             this.cmbMunicipio.TabIndex = 6;
             this.cmbMunicipio.SelectedIndexChanged += new System.EventHandler(this.cmbMunicipio_SelectedIndexChanged);
             //
@@ -1122,7 +741,7 @@ namespace SanarRuralUnan.Views
             this.lblComunidad.AutoSize = true;
             this.lblComunidad.Font = Tema.FuenteLabelCampo;
             this.lblComunidad.ForeColor = Tema.TextoPrincipal;
-            this.lblComunidad.Location = new System.Drawing.Point(584, 56);
+            this.lblComunidad.Location = new System.Drawing.Point(812, 52);
             this.lblComunidad.Name = "lblComunidad";
             this.lblComunidad.Size = new System.Drawing.Size(81, 15);
             this.lblComunidad.TabIndex = 7;
@@ -1133,9 +752,9 @@ namespace SanarRuralUnan.Views
             this.cmbComunidad.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbComunidad.Font = Tema.FuenteInput;
             this.cmbComunidad.FormattingEnabled = true;
-            this.cmbComunidad.Location = new System.Drawing.Point(584, 74);
+            this.cmbComunidad.Location = new System.Drawing.Point(812, 70);
             this.cmbComunidad.Name = "cmbComunidad";
-            this.cmbComunidad.Size = new System.Drawing.Size(300, 27);
+            this.cmbComunidad.Size = new System.Drawing.Size(390, 27);
             this.cmbComunidad.TabIndex = 8;
             //
             // lblDireccion
@@ -1143,7 +762,7 @@ namespace SanarRuralUnan.Views
             this.lblDireccion.AutoSize = true;
             this.lblDireccion.Font = Tema.FuenteLabelCampo;
             this.lblDireccion.ForeColor = Tema.TextoPrincipal;
-            this.lblDireccion.Location = new System.Drawing.Point(16, 114);
+            this.lblDireccion.Location = new System.Drawing.Point(16, 108);
             this.lblDireccion.Name = "lblDireccion";
             this.lblDireccion.Size = new System.Drawing.Size(107, 15);
             this.lblDireccion.TabIndex = 9;
@@ -1152,9 +771,11 @@ namespace SanarRuralUnan.Views
             // txtDireccion
             //
             this.txtDireccion.Font = Tema.FuenteInput;
-            this.txtDireccion.Location = new System.Drawing.Point(16, 132);
+            this.txtDireccion.Location = new System.Drawing.Point(16, 126);
+            this.txtDireccion.Multiline = true;
             this.txtDireccion.Name = "txtDireccion";
-            this.txtDireccion.Size = new System.Drawing.Size(554, 27);
+            this.txtDireccion.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.txtDireccion.Size = new System.Drawing.Size(585, 58);
             this.txtDireccion.TabIndex = 10;
             //
             // lblReferencia
@@ -1162,7 +783,7 @@ namespace SanarRuralUnan.Views
             this.lblReferencia.AutoSize = true;
             this.lblReferencia.Font = Tema.FuenteLabelCampo;
             this.lblReferencia.ForeColor = Tema.TextoPrincipal;
-            this.lblReferencia.Location = new System.Drawing.Point(584, 114);
+            this.lblReferencia.Location = new System.Drawing.Point(617, 108);
             this.lblReferencia.Name = "lblReferencia";
             this.lblReferencia.Size = new System.Drawing.Size(117, 15);
             this.lblReferencia.TabIndex = 11;
@@ -1171,9 +792,11 @@ namespace SanarRuralUnan.Views
             // txtReferencia
             //
             this.txtReferencia.Font = Tema.FuenteInput;
-            this.txtReferencia.Location = new System.Drawing.Point(584, 132);
+            this.txtReferencia.Location = new System.Drawing.Point(617, 126);
+            this.txtReferencia.Multiline = true;
             this.txtReferencia.Name = "txtReferencia";
-            this.txtReferencia.Size = new System.Drawing.Size(300, 27);
+            this.txtReferencia.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.txtReferencia.Size = new System.Drawing.Size(585, 58);
             this.txtReferencia.TabIndex = 12;
             //
             // cardSalud
@@ -1185,14 +808,14 @@ namespace SanarRuralUnan.Views
             this.cardSalud.Controls.Add(this.lblTipoSangre);
             this.cardSalud.Controls.Add(this.cmbTipoSangre);
             this.cardSalud.Controls.Add(this.lblAlergias);
+            this.cardSalud.Controls.Add(this.pnlAlergiasChips);
             this.cardSalud.Controls.Add(this.txtAlergias);
-            this.cardSalud.Controls.Add(this.lblAlergiasAyuda);
             this.cardSalud.Controls.Add(this.lblAntecedentes);
+            this.cardSalud.Controls.Add(this.pnlCondicionesChips);
             this.cardSalud.Controls.Add(this.txtAntecedentes);
-            this.cardSalud.Controls.Add(this.lblAntecedentesAyuda);
-            this.cardSalud.Location = new System.Drawing.Point(20, 654);
+            this.cardSalud.Location = new System.Drawing.Point(20, 543);
             this.cardSalud.Name = "cardSalud";
-            this.cardSalud.Size = new System.Drawing.Size(440, 330);
+            this.cardSalud.Size = new System.Drawing.Size(1220, 185);
             this.cardSalud.TabIndex = 4;
             //
             // lblIconoSalud
@@ -1200,9 +823,9 @@ namespace SanarRuralUnan.Views
             this.lblIconoSalud.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(226)))), ((int)(((byte)(238)))), ((int)(((byte)(248)))));
             this.lblIconoSalud.Font = new System.Drawing.Font("Segoe UI Emoji", 11F);
             this.lblIconoSalud.ForeColor = Tema.AzulPrimario;
-            this.lblIconoSalud.Location = new System.Drawing.Point(14, 12);
+            this.lblIconoSalud.Location = new System.Drawing.Point(14, 10);
             this.lblIconoSalud.Name = "lblIconoSalud";
-            this.lblIconoSalud.Size = new System.Drawing.Size(34, 34);
+            this.lblIconoSalud.Size = new System.Drawing.Size(32, 32);
             this.lblIconoSalud.TabIndex = 0;
             this.lblIconoSalud.Text = "💓";
             this.lblIconoSalud.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -1210,9 +833,9 @@ namespace SanarRuralUnan.Views
             // lblTituloSalud
             //
             this.lblTituloSalud.AutoSize = true;
-            this.lblTituloSalud.Font = new System.Drawing.Font(Tema.FamiliaFuente, 12F, System.Drawing.FontStyle.Bold);
+            this.lblTituloSalud.Font = new System.Drawing.Font(Tema.FamiliaFuente, 11.5F, System.Drawing.FontStyle.Bold);
             this.lblTituloSalud.ForeColor = Tema.AzulOscuro;
-            this.lblTituloSalud.Location = new System.Drawing.Point(54, 10);
+            this.lblTituloSalud.Location = new System.Drawing.Point(52, 9);
             this.lblTituloSalud.Name = "lblTituloSalud";
             this.lblTituloSalud.Size = new System.Drawing.Size(167, 21);
             this.lblTituloSalud.TabIndex = 1;
@@ -1223,9 +846,9 @@ namespace SanarRuralUnan.Views
             this.lblSubtituloSalud.AutoSize = true;
             this.lblSubtituloSalud.Font = new System.Drawing.Font(Tema.FamiliaFuente, 8.5F);
             this.lblSubtituloSalud.ForeColor = Tema.TextoSecundario;
-            this.lblSubtituloSalud.Location = new System.Drawing.Point(56, 32);
+            this.lblSubtituloSalud.Location = new System.Drawing.Point(54, 30);
             this.lblSubtituloSalud.Name = "lblSubtituloSalud";
-            this.lblSubtituloSalud.Size = new System.Drawing.Size(211, 15);
+            this.lblSubtituloSalud.Size = new System.Drawing.Size(201, 15);
             this.lblSubtituloSalud.TabIndex = 2;
             this.lblSubtituloSalud.Text = "Datos clínicos básicos del paciente.";
             //
@@ -1234,7 +857,7 @@ namespace SanarRuralUnan.Views
             this.lblTipoSangre.AutoSize = true;
             this.lblTipoSangre.Font = Tema.FuenteLabelCampo;
             this.lblTipoSangre.ForeColor = Tema.TextoPrincipal;
-            this.lblTipoSangre.Location = new System.Drawing.Point(16, 56);
+            this.lblTipoSangre.Location = new System.Drawing.Point(16, 52);
             this.lblTipoSangre.Name = "lblTipoSangre";
             this.lblTipoSangre.Size = new System.Drawing.Size(91, 15);
             this.lblTipoSangre.TabIndex = 3;
@@ -1255,9 +878,9 @@ namespace SanarRuralUnan.Views
             "B-",
             "AB+",
             "AB-"});
-            this.cmbTipoSangre.Location = new System.Drawing.Point(16, 74);
+            this.cmbTipoSangre.Location = new System.Drawing.Point(16, 70);
             this.cmbTipoSangre.Name = "cmbTipoSangre";
-            this.cmbTipoSangre.Size = new System.Drawing.Size(180, 27);
+            this.cmbTipoSangre.Size = new System.Drawing.Size(220, 27);
             this.cmbTipoSangre.TabIndex = 4;
             //
             // lblAlergias
@@ -1265,62 +888,106 @@ namespace SanarRuralUnan.Views
             this.lblAlergias.AutoSize = true;
             this.lblAlergias.Font = Tema.FuenteLabelCampo;
             this.lblAlergias.ForeColor = Tema.TextoPrincipal;
-            this.lblAlergias.Location = new System.Drawing.Point(210, 56);
+            this.lblAlergias.Location = new System.Drawing.Point(254, 52);
             this.lblAlergias.Name = "lblAlergias";
             this.lblAlergias.Size = new System.Drawing.Size(117, 15);
             this.lblAlergias.TabIndex = 5;
             this.lblAlergias.Text = "Alergias conocidas";
             //
+            // pnlAlergiasChips
+            //
+            this.pnlAlergiasChips.BackColor = Tema.Superficie;
+            this.pnlAlergiasChips.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.pnlAlergiasChips.Controls.Add(this.flpAlergias);
+            this.pnlAlergiasChips.Location = new System.Drawing.Point(254, 70);
+            this.pnlAlergiasChips.Name = "pnlAlergiasChips";
+            this.pnlAlergiasChips.Size = new System.Drawing.Size(948, 34);
+            this.pnlAlergiasChips.TabIndex = 6;
+            //
+            // flpAlergias
+            //
+            this.flpAlergias.AutoScroll = true;
+            this.flpAlergias.BackColor = Tema.Superficie;
+            this.flpAlergias.Controls.Add(this.txtNuevaAlergia);
+            this.flpAlergias.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.flpAlergias.Location = new System.Drawing.Point(0, 0);
+            this.flpAlergias.Name = "flpAlergias";
+            this.flpAlergias.Padding = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.flpAlergias.Size = new System.Drawing.Size(946, 32);
+            this.flpAlergias.TabIndex = 0;
+            this.flpAlergias.WrapContents = false;
+            //
+            // txtNuevaAlergia
+            //
+            this.txtNuevaAlergia.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.txtNuevaAlergia.Font = new System.Drawing.Font(Tema.FamiliaFuente, 9.5F);
+            this.txtNuevaAlergia.ForeColor = Tema.TextoPrincipal;
+            this.txtNuevaAlergia.Location = new System.Drawing.Point(6, 6);
+            this.txtNuevaAlergia.Margin = new System.Windows.Forms.Padding(3, 4, 3, 3);
+            this.txtNuevaAlergia.Name = "txtNuevaAlergia";
+            this.txtNuevaAlergia.Size = new System.Drawing.Size(260, 17);
+            this.txtNuevaAlergia.TabIndex = 0;
+            //
             // txtAlergias
             //
-            this.txtAlergias.Font = Tema.FuenteInput;
-            this.txtAlergias.Location = new System.Drawing.Point(210, 74);
+            this.txtAlergias.Location = new System.Drawing.Point(0, 0);
             this.txtAlergias.Name = "txtAlergias";
-            this.txtAlergias.Size = new System.Drawing.Size(214, 27);
-            this.txtAlergias.TabIndex = 6;
-            //
-            // lblAlergiasAyuda
-            //
-            this.lblAlergiasAyuda.AutoSize = true;
-            this.lblAlergiasAyuda.Font = Tema.FuenteAyuda;
-            this.lblAlergiasAyuda.ForeColor = Tema.TextoSecundario;
-            this.lblAlergiasAyuda.Location = new System.Drawing.Point(210, 104);
-            this.lblAlergiasAyuda.Name = "lblAlergiasAyuda";
-            this.lblAlergiasAyuda.Size = new System.Drawing.Size(161, 13);
-            this.lblAlergiasAyuda.TabIndex = 7;
-            this.lblAlergiasAyuda.Text = "Ej. Medicamentos, alimentos, etc.";
+            this.txtAlergias.Size = new System.Drawing.Size(0, 20);
+            this.txtAlergias.TabIndex = 7;
+            this.txtAlergias.Visible = false;
             //
             // lblAntecedentes
             //
             this.lblAntecedentes.AutoSize = true;
             this.lblAntecedentes.Font = Tema.FuenteLabelCampo;
             this.lblAntecedentes.ForeColor = Tema.TextoPrincipal;
-            this.lblAntecedentes.Location = new System.Drawing.Point(16, 126);
+            this.lblAntecedentes.Location = new System.Drawing.Point(16, 114);
             this.lblAntecedentes.Name = "lblAntecedentes";
-            this.lblAntecedentes.Size = new System.Drawing.Size(206, 15);
+            this.lblAntecedentes.Size = new System.Drawing.Size(188, 15);
             this.lblAntecedentes.TabIndex = 8;
             this.lblAntecedentes.Text = "Condiciones de salud relevantes";
             //
+            // pnlCondicionesChips
+            //
+            this.pnlCondicionesChips.BackColor = Tema.Superficie;
+            this.pnlCondicionesChips.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.pnlCondicionesChips.Controls.Add(this.flpCondiciones);
+            this.pnlCondicionesChips.Location = new System.Drawing.Point(16, 134);
+            this.pnlCondicionesChips.Name = "pnlCondicionesChips";
+            this.pnlCondicionesChips.Size = new System.Drawing.Size(1186, 34);
+            this.pnlCondicionesChips.TabIndex = 9;
+            //
+            // flpCondiciones
+            //
+            this.flpCondiciones.AutoScroll = true;
+            this.flpCondiciones.BackColor = Tema.Superficie;
+            this.flpCondiciones.Controls.Add(this.txtNuevaCondicion);
+            this.flpCondiciones.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.flpCondiciones.Location = new System.Drawing.Point(0, 0);
+            this.flpCondiciones.Name = "flpCondiciones";
+            this.flpCondiciones.Padding = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.flpCondiciones.Size = new System.Drawing.Size(1184, 32);
+            this.flpCondiciones.TabIndex = 0;
+            this.flpCondiciones.WrapContents = false;
+            //
+            // txtNuevaCondicion
+            //
+            this.txtNuevaCondicion.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.txtNuevaCondicion.Font = new System.Drawing.Font(Tema.FamiliaFuente, 9.5F);
+            this.txtNuevaCondicion.ForeColor = Tema.TextoPrincipal;
+            this.txtNuevaCondicion.Location = new System.Drawing.Point(6, 6);
+            this.txtNuevaCondicion.Margin = new System.Windows.Forms.Padding(3, 4, 3, 3);
+            this.txtNuevaCondicion.Name = "txtNuevaCondicion";
+            this.txtNuevaCondicion.Size = new System.Drawing.Size(280, 17);
+            this.txtNuevaCondicion.TabIndex = 0;
+            //
             // txtAntecedentes
             //
-            this.txtAntecedentes.Font = Tema.FuenteInput;
-            this.txtAntecedentes.Location = new System.Drawing.Point(16, 146);
-            this.txtAntecedentes.Multiline = true;
+            this.txtAntecedentes.Location = new System.Drawing.Point(0, 0);
             this.txtAntecedentes.Name = "txtAntecedentes";
-            this.txtAntecedentes.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.txtAntecedentes.Size = new System.Drawing.Size(408, 140);
-            this.txtAntecedentes.TabIndex = 9;
-            //
-            // lblAntecedentesAyuda
-            //
-            this.lblAntecedentesAyuda.AutoSize = true;
-            this.lblAntecedentesAyuda.Font = Tema.FuenteAyuda;
-            this.lblAntecedentesAyuda.ForeColor = Tema.TextoSecundario;
-            this.lblAntecedentesAyuda.Location = new System.Drawing.Point(16, 292);
-            this.lblAntecedentesAyuda.Name = "lblAntecedentesAyuda";
-            this.lblAntecedentesAyuda.Size = new System.Drawing.Size(185, 13);
-            this.lblAntecedentesAyuda.TabIndex = 10;
-            this.lblAntecedentesAyuda.Text = "Ej. Hipertensión, diabetes, asma, etc.";
+            this.txtAntecedentes.Size = new System.Drawing.Size(0, 20);
+            this.txtAntecedentes.TabIndex = 10;
+            this.txtAntecedentes.Visible = false;
             //
             // cardEmergencia
             //
@@ -1328,36 +995,23 @@ namespace SanarRuralUnan.Views
             this.cardEmergencia.Controls.Add(this.lblIconoEmergencia);
             this.cardEmergencia.Controls.Add(this.lblTituloEmergencia);
             this.cardEmergencia.Controls.Add(this.lblSubtituloEmergencia);
-            this.cardEmergencia.Controls.Add(this.lblContactoPrimerNombre);
-            this.cardEmergencia.Controls.Add(this.txtContactoPrimerNombre);
-            this.cardEmergencia.Controls.Add(this.txtContactoSegundoNombre);
-            this.cardEmergencia.Controls.Add(this.lblContactoPrimerApellido);
-            this.cardEmergencia.Controls.Add(this.txtContactoPrimerApellido);
-            this.cardEmergencia.Controls.Add(this.txtContactoSegundoApellido);
-            this.cardEmergencia.Controls.Add(this.lblContactoParentesco);
-            this.cardEmergencia.Controls.Add(this.cmbContactoParentesco);
-            this.cardEmergencia.Controls.Add(this.lblContactoTelefono);
-            this.cardEmergencia.Controls.Add(this.txtContactoTelefono);
-            this.cardEmergencia.Controls.Add(this.lblContactoCedula);
-            this.cardEmergencia.Controls.Add(this.txtContactoCedula);
             this.cardEmergencia.Controls.Add(this.btnAgregarContacto);
-            this.cardEmergencia.Controls.Add(this.lblErrorContacto);
-            this.cardEmergencia.Controls.Add(this.lblSubtituloListaContactos);
-            this.cardEmergencia.Controls.Add(this.lblSinContactos);
             this.cardEmergencia.Controls.Add(this.dgvContactos);
-            this.cardEmergencia.Location = new System.Drawing.Point(470, 654);
+            this.cardEmergencia.Controls.Add(this.lblSinContactos);
+            this.cardEmergencia.Controls.Add(this.pnlEditorContacto);
+            this.cardEmergencia.Location = new System.Drawing.Point(20, 742);
             this.cardEmergencia.Name = "cardEmergencia";
-            this.cardEmergencia.Size = new System.Drawing.Size(450, 330);
+            this.cardEmergencia.Size = new System.Drawing.Size(1220, 260);
             this.cardEmergencia.TabIndex = 5;
             //
             // lblIconoEmergencia
             //
-            this.lblIconoEmergencia.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(226)))), ((int)(((byte)(238)))), ((int)(((byte)(248)))));
+            this.lblIconoEmergencia.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(235)))), ((int)(((byte)(248)))), ((int)(((byte)(238)))));
             this.lblIconoEmergencia.Font = new System.Drawing.Font("Segoe UI Emoji", 11F);
-            this.lblIconoEmergencia.ForeColor = Tema.AzulPrimario;
-            this.lblIconoEmergencia.Location = new System.Drawing.Point(14, 12);
+            this.lblIconoEmergencia.ForeColor = Tema.VerdeOscuro;
+            this.lblIconoEmergencia.Location = new System.Drawing.Point(14, 10);
             this.lblIconoEmergencia.Name = "lblIconoEmergencia";
-            this.lblIconoEmergencia.Size = new System.Drawing.Size(34, 34);
+            this.lblIconoEmergencia.Size = new System.Drawing.Size(32, 32);
             this.lblIconoEmergencia.TabIndex = 0;
             this.lblIconoEmergencia.Text = "👥";
             this.lblIconoEmergencia.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -1365,86 +1019,179 @@ namespace SanarRuralUnan.Views
             // lblTituloEmergencia
             //
             this.lblTituloEmergencia.AutoSize = true;
-            this.lblTituloEmergencia.Font = new System.Drawing.Font(Tema.FamiliaFuente, 12F, System.Drawing.FontStyle.Bold);
+            this.lblTituloEmergencia.Font = new System.Drawing.Font(Tema.FamiliaFuente, 11.5F, System.Drawing.FontStyle.Bold);
             this.lblTituloEmergencia.ForeColor = Tema.AzulOscuro;
-            this.lblTituloEmergencia.Location = new System.Drawing.Point(54, 10);
+            this.lblTituloEmergencia.Location = new System.Drawing.Point(52, 9);
             this.lblTituloEmergencia.Name = "lblTituloEmergencia";
             this.lblTituloEmergencia.Size = new System.Drawing.Size(189, 21);
             this.lblTituloEmergencia.TabIndex = 1;
-            this.lblTituloEmergencia.Text = "Contacto de emergencia";
+            this.lblTituloEmergencia.Text = "Contactos de emergencia";
             //
             // lblSubtituloEmergencia
             //
             this.lblSubtituloEmergencia.AutoSize = true;
             this.lblSubtituloEmergencia.Font = new System.Drawing.Font(Tema.FamiliaFuente, 8.5F);
             this.lblSubtituloEmergencia.ForeColor = Tema.TextoSecundario;
-            this.lblSubtituloEmergencia.Location = new System.Drawing.Point(56, 32);
+            this.lblSubtituloEmergencia.Location = new System.Drawing.Point(54, 30);
             this.lblSubtituloEmergencia.Name = "lblSubtituloEmergencia";
-            this.lblSubtituloEmergencia.Size = new System.Drawing.Size(248, 15);
+            this.lblSubtituloEmergencia.Size = new System.Drawing.Size(235, 15);
             this.lblSubtituloEmergencia.TabIndex = 2;
-            this.lblSubtituloEmergencia.Text = "Persona de contacto en caso de emergencia.";
+            this.lblSubtituloEmergencia.Text = "Personas de contacto en caso de emergencia.";
+            //
+            // btnAgregarContacto
+            //
+            this.btnAgregarContacto.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnAgregarContacto.BackColor = Tema.AzulPrimario;
+            this.btnAgregarContacto.FlatAppearance.BorderSize = 0;
+            this.btnAgregarContacto.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnAgregarContacto.Font = new System.Drawing.Font(Tema.FamiliaFuente, 9F, System.Drawing.FontStyle.Bold);
+            this.btnAgregarContacto.ForeColor = System.Drawing.Color.White;
+            this.btnAgregarContacto.Location = new System.Drawing.Point(1045, 10);
+            this.btnAgregarContacto.Name = "btnAgregarContacto";
+            this.btnAgregarContacto.Size = new System.Drawing.Size(155, 32);
+            this.btnAgregarContacto.TabIndex = 3;
+            this.btnAgregarContacto.Text = "+ Agregar contacto";
+            this.btnAgregarContacto.UseVisualStyleBackColor = false;
+            this.btnAgregarContacto.Click += new System.EventHandler(this.btnAgregarContacto_Click);
+            //
+            // dgvContactos
+            //
+            this.dgvContactos.AllowUserToAddRows = false;
+            this.dgvContactos.AllowUserToDeleteRows = false;
+            this.dgvContactos.BackgroundColor = Tema.Superficie;
+            this.dgvContactos.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dgvContactos.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.colExpandir,
+            this.colContNombre,
+            this.colContParentesco,
+            this.colContTelefono,
+            this.colContCedula,
+            this.colContEditar,
+            this.colContEliminar});
+            this.dgvContactos.Location = new System.Drawing.Point(16, 52);
+            this.dgvContactos.Name = "dgvContactos";
+            this.dgvContactos.ReadOnly = true;
+            this.dgvContactos.RowHeadersVisible = false;
+            this.dgvContactos.Size = new System.Drawing.Size(1186, 110);
+            this.dgvContactos.TabIndex = 4;
+            this.dgvContactos.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvContactos_CellContentClick);
+            //
+            // colExpandir
+            //
+            this.colExpandir.HeaderText = "";
+            this.colExpandir.Name = "colExpandir";
+            this.colExpandir.ReadOnly = true;
+            this.colExpandir.Width = 32;
+            //
+            // colContNombre
+            //
+            this.colContNombre.HeaderText = "Nombre completo";
+            this.colContNombre.Name = "colContNombre";
+            this.colContNombre.ReadOnly = true;
+            this.colContNombre.Width = 240;
+            //
+            // colContParentesco
+            //
+            this.colContParentesco.HeaderText = "Parentesco";
+            this.colContParentesco.Name = "colContParentesco";
+            this.colContParentesco.ReadOnly = true;
+            this.colContParentesco.Width = 140;
+            //
+            // colContTelefono
+            //
+            this.colContTelefono.HeaderText = "Teléfono";
+            this.colContTelefono.Name = "colContTelefono";
+            this.colContTelefono.ReadOnly = true;
+            this.colContTelefono.Width = 140;
+            //
+            // colContCedula
+            //
+            this.colContCedula.HeaderText = "Cédula";
+            this.colContCedula.Name = "colContCedula";
+            this.colContCedula.ReadOnly = true;
+            this.colContCedula.Width = 160;
+            //
+            // colContEditar
+            //
+            this.colContEditar.HeaderText = "Acciones";
+            this.colContEditar.Name = "colContEditar";
+            this.colContEditar.ReadOnly = true;
+            this.colContEditar.Text = "✏ Editar";
+            this.colContEditar.UseColumnTextForButtonValue = true;
+            this.colContEditar.Width = 85;
+            //
+            // colContEliminar
+            //
+            this.colContEliminar.HeaderText = "";
+            this.colContEliminar.Name = "colContEliminar";
+            this.colContEliminar.ReadOnly = true;
+            this.colContEliminar.Text = "🗑 Eliminar";
+            this.colContEliminar.UseColumnTextForButtonValue = true;
+            this.colContEliminar.Width = 85;
+            //
+            // lblSinContactos
+            //
+            this.lblSinContactos.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(248)))), ((int)(((byte)(251)))), ((int)(((byte)(249)))));
+            this.lblSinContactos.Font = new System.Drawing.Font(Tema.FamiliaFuente, 9F);
+            this.lblSinContactos.ForeColor = Tema.TextoSecundario;
+            this.lblSinContactos.Location = new System.Drawing.Point(16, 52);
+            this.lblSinContactos.Name = "lblSinContactos";
+            this.lblSinContactos.Size = new System.Drawing.Size(1186, 100);
+            this.lblSinContactos.TabIndex = 5;
+            this.lblSinContactos.Text = "No hay contactos de emergencia registrados aún.\r\nHaz clic en \'+ Agregar contacto\'" +
+    " para registrar personas de contacto.";
+            this.lblSinContactos.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            //
+            // pnlEditorContacto
+            //
+            this.pnlEditorContacto.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(240)))), ((int)(((byte)(247)))), ((int)(((byte)(253)))));
+            this.pnlEditorContacto.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.pnlEditorContacto.Controls.Add(this.lblContactoPrimerNombre);
+            this.pnlEditorContacto.Controls.Add(this.txtContactoPrimerNombre);
+            this.pnlEditorContacto.Controls.Add(this.lblContactoParentesco);
+            this.pnlEditorContacto.Controls.Add(this.cmbContactoParentesco);
+            this.pnlEditorContacto.Controls.Add(this.lblContactoTelefono);
+            this.pnlEditorContacto.Controls.Add(this.txtContactoTelefono);
+            this.pnlEditorContacto.Controls.Add(this.lblContactoCedula);
+            this.pnlEditorContacto.Controls.Add(this.txtContactoCedula);
+            this.pnlEditorContacto.Controls.Add(this.btnGuardarContacto);
+            this.pnlEditorContacto.Controls.Add(this.btnCancelarContacto);
+            this.pnlEditorContacto.Controls.Add(this.lblErrorContacto);
+            this.pnlEditorContacto.Location = new System.Drawing.Point(16, 170);
+            this.pnlEditorContacto.Name = "pnlEditorContacto";
+            this.pnlEditorContacto.Size = new System.Drawing.Size(1186, 76);
+            this.pnlEditorContacto.TabIndex = 6;
+            this.pnlEditorContacto.Visible = false;
             //
             // lblContactoPrimerNombre
             //
             this.lblContactoPrimerNombre.AutoSize = true;
             this.lblContactoPrimerNombre.Font = Tema.FuenteLabelCampo;
             this.lblContactoPrimerNombre.ForeColor = Tema.TextoPrincipal;
-            this.lblContactoPrimerNombre.Location = new System.Drawing.Point(16, 56);
+            this.lblContactoPrimerNombre.Location = new System.Drawing.Point(12, 10);
             this.lblContactoPrimerNombre.Name = "lblContactoPrimerNombre";
             this.lblContactoPrimerNombre.Size = new System.Drawing.Size(117, 15);
-            this.lblContactoPrimerNombre.TabIndex = 3;
+            this.lblContactoPrimerNombre.TabIndex = 0;
             this.lblContactoPrimerNombre.Text = "Nombre completo *";
             //
             // txtContactoPrimerNombre
             //
             this.txtContactoPrimerNombre.Font = Tema.FuenteInput;
-            this.txtContactoPrimerNombre.Location = new System.Drawing.Point(16, 74);
+            this.txtContactoPrimerNombre.Location = new System.Drawing.Point(12, 28);
             this.txtContactoPrimerNombre.Name = "txtContactoPrimerNombre";
-            this.txtContactoPrimerNombre.Size = new System.Drawing.Size(195, 27);
-            this.txtContactoPrimerNombre.TabIndex = 4;
-            //
-            // txtContactoSegundoNombre
-            //
-            this.txtContactoSegundoNombre.Location = new System.Drawing.Point(0, 0);
-            this.txtContactoSegundoNombre.Name = "txtContactoSegundoNombre";
-            this.txtContactoSegundoNombre.Size = new System.Drawing.Size(0, 20);
-            this.txtContactoSegundoNombre.TabIndex = 5;
-            this.txtContactoSegundoNombre.Visible = false;
-            //
-            // lblContactoPrimerApellido
-            //
-            this.lblContactoPrimerApellido.AutoSize = true;
-            this.lblContactoPrimerApellido.Font = Tema.FuenteLabelCampo;
-            this.lblContactoPrimerApellido.ForeColor = Tema.TextoPrincipal;
-            this.lblContactoPrimerApellido.Location = new System.Drawing.Point(220, 56);
-            this.lblContactoPrimerApellido.Name = "lblContactoPrimerApellido";
-            this.lblContactoPrimerApellido.Size = new System.Drawing.Size(84, 15);
-            this.lblContactoPrimerApellido.TabIndex = 6;
-            this.lblContactoPrimerApellido.Text = "Parentesco *";
-            //
-            // txtContactoPrimerApellido
-            //
-            this.txtContactoPrimerApellido.Location = new System.Drawing.Point(0, 0);
-            this.txtContactoPrimerApellido.Name = "txtContactoPrimerApellido";
-            this.txtContactoPrimerApellido.Size = new System.Drawing.Size(0, 20);
-            this.txtContactoPrimerApellido.TabIndex = 7;
-            this.txtContactoPrimerApellido.Visible = false;
-            //
-            // txtContactoSegundoApellido
-            //
-            this.txtContactoSegundoApellido.Location = new System.Drawing.Point(0, 0);
-            this.txtContactoSegundoApellido.Name = "txtContactoSegundoApellido";
-            this.txtContactoSegundoApellido.Size = new System.Drawing.Size(0, 20);
-            this.txtContactoSegundoApellido.TabIndex = 8;
-            this.txtContactoSegundoApellido.Visible = false;
+            this.txtContactoPrimerNombre.Size = new System.Drawing.Size(210, 27);
+            this.txtContactoPrimerNombre.TabIndex = 1;
             //
             // lblContactoParentesco
             //
-            this.lblContactoParentesco.Location = new System.Drawing.Point(0, 0);
+            this.lblContactoParentesco.AutoSize = true;
+            this.lblContactoParentesco.Font = Tema.FuenteLabelCampo;
+            this.lblContactoParentesco.ForeColor = Tema.TextoPrincipal;
+            this.lblContactoParentesco.Location = new System.Drawing.Point(234, 10);
             this.lblContactoParentesco.Name = "lblContactoParentesco";
-            this.lblContactoParentesco.Size = new System.Drawing.Size(0, 0);
-            this.lblContactoParentesco.TabIndex = 9;
-            this.lblContactoParentesco.Visible = false;
+            this.lblContactoParentesco.Size = new System.Drawing.Size(76, 15);
+            this.lblContactoParentesco.TabIndex = 2;
+            this.lblContactoParentesco.Text = "Parentesco *";
             //
             // cmbContactoParentesco
             //
@@ -1461,162 +1208,94 @@ namespace SanarRuralUnan.Views
             "Amigo/a",
             "Vecino/a",
             "Otro"});
-            this.cmbContactoParentesco.Location = new System.Drawing.Point(220, 74);
+            this.cmbContactoParentesco.Location = new System.Drawing.Point(234, 28);
             this.cmbContactoParentesco.Name = "cmbContactoParentesco";
-            this.cmbContactoParentesco.Size = new System.Drawing.Size(214, 27);
-            this.cmbContactoParentesco.TabIndex = 10;
+            this.cmbContactoParentesco.Size = new System.Drawing.Size(160, 27);
+            this.cmbContactoParentesco.TabIndex = 3;
             //
             // lblContactoTelefono
             //
             this.lblContactoTelefono.AutoSize = true;
             this.lblContactoTelefono.Font = Tema.FuenteLabelCampo;
             this.lblContactoTelefono.ForeColor = Tema.TextoPrincipal;
-            this.lblContactoTelefono.Location = new System.Drawing.Point(16, 108);
+            this.lblContactoTelefono.Location = new System.Drawing.Point(406, 10);
             this.lblContactoTelefono.Name = "lblContactoTelefono";
             this.lblContactoTelefono.Size = new System.Drawing.Size(66, 15);
-            this.lblContactoTelefono.TabIndex = 11;
+            this.lblContactoTelefono.TabIndex = 4;
             this.lblContactoTelefono.Text = "Teléfono *";
             //
             // txtContactoTelefono
             //
             this.txtContactoTelefono.Font = Tema.FuenteInput;
-            this.txtContactoTelefono.Location = new System.Drawing.Point(16, 126);
+            this.txtContactoTelefono.Location = new System.Drawing.Point(406, 28);
             this.txtContactoTelefono.Name = "txtContactoTelefono";
-            this.txtContactoTelefono.Size = new System.Drawing.Size(195, 27);
-            this.txtContactoTelefono.TabIndex = 12;
+            this.txtContactoTelefono.Size = new System.Drawing.Size(160, 27);
+            this.txtContactoTelefono.TabIndex = 5;
             //
             // lblContactoCedula
             //
             this.lblContactoCedula.AutoSize = true;
             this.lblContactoCedula.Font = Tema.FuenteLabelCampo;
             this.lblContactoCedula.ForeColor = Tema.TextoPrincipal;
-            this.lblContactoCedula.Location = new System.Drawing.Point(220, 108);
+            this.lblContactoCedula.Location = new System.Drawing.Point(578, 10);
             this.lblContactoCedula.Name = "lblContactoCedula";
             this.lblContactoCedula.Size = new System.Drawing.Size(107, 15);
-            this.lblContactoCedula.TabIndex = 13;
+            this.lblContactoCedula.TabIndex = 6;
             this.lblContactoCedula.Text = "Cédula (opcional)";
             //
             // txtContactoCedula
             //
             this.txtContactoCedula.Font = Tema.FuenteInput;
-            this.txtContactoCedula.Location = new System.Drawing.Point(220, 126);
+            this.txtContactoCedula.Location = new System.Drawing.Point(578, 28);
             this.txtContactoCedula.Name = "txtContactoCedula";
-            this.txtContactoCedula.Size = new System.Drawing.Size(110, 27);
-            this.txtContactoCedula.TabIndex = 14;
+            this.txtContactoCedula.Size = new System.Drawing.Size(180, 27);
+            this.txtContactoCedula.TabIndex = 7;
             //
-            // btnAgregarContacto
+            // btnGuardarContacto
             //
-            this.btnAgregarContacto.BackColor = Tema.AzulPrimario;
-            this.btnAgregarContacto.FlatAppearance.BorderSize = 0;
-            this.btnAgregarContacto.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnAgregarContacto.Font = new System.Drawing.Font(Tema.FamiliaFuente, 9F, System.Drawing.FontStyle.Bold);
-            this.btnAgregarContacto.ForeColor = System.Drawing.Color.White;
-            this.btnAgregarContacto.Location = new System.Drawing.Point(336, 126);
-            this.btnAgregarContacto.Name = "btnAgregarContacto";
-            this.btnAgregarContacto.Size = new System.Drawing.Size(98, 28);
-            this.btnAgregarContacto.TabIndex = 15;
-            this.btnAgregarContacto.Text = "+ Agregar";
-            this.btnAgregarContacto.UseVisualStyleBackColor = false;
-            this.btnAgregarContacto.Click += new System.EventHandler(this.btnAgregarContacto_Click);
+            this.btnGuardarContacto.BackColor = Tema.AzulPrimario;
+            this.btnGuardarContacto.FlatAppearance.BorderSize = 0;
+            this.btnGuardarContacto.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnGuardarContacto.Font = new System.Drawing.Font(Tema.FamiliaFuente, 9F, System.Drawing.FontStyle.Bold);
+            this.btnGuardarContacto.ForeColor = System.Drawing.Color.White;
+            this.btnGuardarContacto.Location = new System.Drawing.Point(772, 26);
+            this.btnGuardarContacto.Name = "btnGuardarContacto";
+            this.btnGuardarContacto.Size = new System.Drawing.Size(140, 31);
+            this.btnGuardarContacto.TabIndex = 8;
+            this.btnGuardarContacto.Text = "💾 Guardar cambios";
+            this.btnGuardarContacto.UseVisualStyleBackColor = false;
+            //
+            // btnCancelarContacto
+            //
+            this.btnCancelarContacto.BackColor = Tema.Superficie;
+            this.btnCancelarContacto.FlatAppearance.BorderColor = Tema.Borde;
+            this.btnCancelarContacto.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnCancelarContacto.Font = new System.Drawing.Font(Tema.FamiliaFuente, 8.5F);
+            this.btnCancelarContacto.ForeColor = Tema.TextoPrincipal;
+            this.btnCancelarContacto.Location = new System.Drawing.Point(920, 26);
+            this.btnCancelarContacto.Name = "btnCancelarContacto";
+            this.btnCancelarContacto.Size = new System.Drawing.Size(95, 31);
+            this.btnCancelarContacto.TabIndex = 9;
+            this.btnCancelarContacto.Text = "✕ Cancelar";
+            this.btnCancelarContacto.UseVisualStyleBackColor = false;
             //
             // lblErrorContacto
             //
             this.lblErrorContacto.AutoSize = true;
             this.lblErrorContacto.Font = Tema.FuenteAyuda;
             this.lblErrorContacto.ForeColor = Tema.Error;
-            this.lblErrorContacto.Location = new System.Drawing.Point(16, 156);
+            this.lblErrorContacto.Location = new System.Drawing.Point(12, 58);
             this.lblErrorContacto.Name = "lblErrorContacto";
             this.lblErrorContacto.Size = new System.Drawing.Size(0, 13);
-            this.lblErrorContacto.TabIndex = 16;
-            //
-            // lblSubtituloListaContactos
-            //
-            this.lblSubtituloListaContactos.AutoSize = true;
-            this.lblSubtituloListaContactos.Font = new System.Drawing.Font(Tema.FamiliaFuente, 9F, System.Drawing.FontStyle.Bold);
-            this.lblSubtituloListaContactos.ForeColor = Tema.TextoPrincipal;
-            this.lblSubtituloListaContactos.Location = new System.Drawing.Point(16, 172);
-            this.lblSubtituloListaContactos.Name = "lblSubtituloListaContactos";
-            this.lblSubtituloListaContactos.Size = new System.Drawing.Size(127, 15);
-            this.lblSubtituloListaContactos.TabIndex = 17;
-            this.lblSubtituloListaContactos.Text = "Contactos agregados:";
-            //
-            // lblSinContactos
-            //
-            this.lblSinContactos.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(245)))), ((int)(((byte)(250)))), ((int)(((byte)(247)))));
-            this.lblSinContactos.Font = new System.Drawing.Font(Tema.FamiliaFuente, 8.5F);
-            this.lblSinContactos.ForeColor = Tema.TextoSecundario;
-            this.lblSinContactos.Location = new System.Drawing.Point(16, 192);
-            this.lblSinContactos.Name = "lblSinContactos";
-            this.lblSinContactos.Size = new System.Drawing.Size(418, 120);
-            this.lblSinContactos.TabIndex = 18;
-            this.lblSinContactos.Text = "No hay contactos registrados aún.\r\nCompleta los campos arriba y haz clic en \'+ Agregar\'.";
-            this.lblSinContactos.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            //
-            // dgvContactos
-            //
-            this.dgvContactos.AllowUserToAddRows = false;
-            this.dgvContactos.AllowUserToDeleteRows = false;
-            this.dgvContactos.BackgroundColor = Tema.Superficie;
-            this.dgvContactos.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dgvContactos.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
-            this.colContNombre,
-            this.colContParentesco,
-            this.colContTelefono,
-            this.colContCedula,
-            this.colContQuitar});
-            this.dgvContactos.Location = new System.Drawing.Point(16, 192);
-            this.dgvContactos.Name = "dgvContactos";
-            this.dgvContactos.ReadOnly = true;
-            this.dgvContactos.RowHeadersVisible = false;
-            this.dgvContactos.Size = new System.Drawing.Size(418, 120);
-            this.dgvContactos.TabIndex = 19;
-            this.dgvContactos.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvContactos_CellContentClick);
-            //
-            // colContNombre
-            //
-            this.colContNombre.HeaderText = "Nombre";
-            this.colContNombre.Name = "colContNombre";
-            this.colContNombre.ReadOnly = true;
-            this.colContNombre.Width = 120;
-            //
-            // colContParentesco
-            //
-            this.colContParentesco.HeaderText = "Parentesco";
-            this.colContParentesco.Name = "colContParentesco";
-            this.colContParentesco.ReadOnly = true;
-            this.colContParentesco.Width = 80;
-            //
-            // colContTelefono
-            //
-            this.colContTelefono.HeaderText = "Teléfono";
-            this.colContTelefono.Name = "colContTelefono";
-            this.colContTelefono.ReadOnly = true;
-            this.colContTelefono.Width = 85;
-            //
-            // colContCedula
-            //
-            this.colContCedula.HeaderText = "Cédula";
-            this.colContCedula.Name = "colContCedula";
-            this.colContCedula.ReadOnly = true;
-            this.colContCedula.Width = 80;
-            //
-            // colContQuitar
-            //
-            this.colContQuitar.HeaderText = "Acción";
-            this.colContQuitar.Name = "colContQuitar";
-            this.colContQuitar.ReadOnly = true;
-            this.colContQuitar.Text = "🗑 Quitar";
-            this.colContQuitar.UseColumnTextForButtonValue = true;
-            this.colContQuitar.Width = 60;
+            this.lblErrorContacto.TabIndex = 10;
             //
             // panelAcciones
             //
             this.panelAcciones.Controls.Add(this.btnCancelar);
             this.panelAcciones.Controls.Add(this.btnGuardar);
-            this.panelAcciones.Controls.Add(this.lnkVolver);
-            this.panelAcciones.Location = new System.Drawing.Point(20, 1000);
+            this.panelAcciones.Location = new System.Drawing.Point(20, 1010);
             this.panelAcciones.Name = "panelAcciones";
-            this.panelAcciones.Size = new System.Drawing.Size(900, 60);
+            this.panelAcciones.Size = new System.Drawing.Size(1220, 52);
             this.panelAcciones.TabIndex = 6;
             //
             // btnCancelar
@@ -1627,9 +1306,9 @@ namespace SanarRuralUnan.Views
             this.btnCancelar.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnCancelar.Font = Tema.FuenteBoton;
             this.btnCancelar.ForeColor = Tema.TextoPrincipal;
-            this.btnCancelar.Location = new System.Drawing.Point(540, 10);
+            this.btnCancelar.Location = new System.Drawing.Point(880, 6);
             this.btnCancelar.Name = "btnCancelar";
-            this.btnCancelar.Size = new System.Drawing.Size(140, 40);
+            this.btnCancelar.Size = new System.Drawing.Size(130, 40);
             this.btnCancelar.TabIndex = 0;
             this.btnCancelar.Text = "✕ Cancelar";
             this.btnCancelar.UseVisualStyleBackColor = false;
@@ -1643,65 +1322,45 @@ namespace SanarRuralUnan.Views
             this.btnGuardar.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnGuardar.Font = Tema.FuenteBoton;
             this.btnGuardar.ForeColor = System.Drawing.Color.White;
-            this.btnGuardar.Location = new System.Drawing.Point(692, 10);
+            this.btnGuardar.Location = new System.Drawing.Point(1022, 6);
             this.btnGuardar.Name = "btnGuardar";
-            this.btnGuardar.Size = new System.Drawing.Size(194, 40);
+            this.btnGuardar.Size = new System.Drawing.Size(190, 40);
             this.btnGuardar.TabIndex = 1;
-            this.btnGuardar.Text = "💾 Guardar Paciente";
+            this.btnGuardar.Text = "💾 Guardar paciente";
             this.btnGuardar.UseVisualStyleBackColor = false;
             this.btnGuardar.Click += new System.EventHandler(this.btnGuardar_Click);
-            //
-            // lnkVolver
-            //
-            this.lnkVolver.Location = new System.Drawing.Point(0, 0);
-            this.lnkVolver.Name = "lnkVolver";
-            this.lnkVolver.Size = new System.Drawing.Size(0, 0);
-            this.lnkVolver.TabIndex = 2;
-            this.lnkVolver.Visible = false;
             //
             // crearPaciente
             //
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = Tema.Fondo;
-            this.ClientSize = new System.Drawing.Size(1300, 800);
+            this.ClientSize = new System.Drawing.Size(1260, 800);
             this.Controls.Add(this.panelFormContenedor);
-            this.Controls.Add(this.panelHero);
             this.MinimumSize = new System.Drawing.Size(1100, 700);
             this.Name = "crearPaciente";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Sanar Rural - Registro de Paciente";
             this.Load += new System.EventHandler(this.crearPaciente_Load);
-            this.panelHero.ResumeLayout(false);
-            this.panelHero.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.picLogoHero)).EndInit();
-            this.panelHeroBloque1.ResumeLayout(false);
-            this.panelHeroBloque1.PerformLayout();
-            this.panelHeroBloque2.ResumeLayout(false);
-            this.panelHeroBloque2.PerformLayout();
-            this.panelHeroBloque3.ResumeLayout(false);
-            this.panelHeroBloque3.PerformLayout();
-            this.panelHeroBloque4.ResumeLayout(false);
-            this.panelHeroBloque4.PerformLayout();
-            this.panelLema.ResumeLayout(false);
-            this.panelLema.PerformLayout();
             this.panelFormContenedor.ResumeLayout(false);
             this.cardHeader.ResumeLayout(false);
             this.cardHeader.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.picLogoHeader)).EndInit();
+            this.panelPasos.ResumeLayout(false);
+            this.panelPasos.PerformLayout();
             this.cardPersonal.ResumeLayout(false);
             this.cardPersonal.PerformLayout();
-            this.pnlCedulaInfo.ResumeLayout(false);
-            this.cardFoto.ResumeLayout(false);
-            this.cardFoto.PerformLayout();
-            this.pnlFotoInfo.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.picPreview)).EndInit();
             this.cardUbicacion.ResumeLayout(false);
             this.cardUbicacion.PerformLayout();
             this.cardSalud.ResumeLayout(false);
             this.cardSalud.PerformLayout();
+            this.pnlAlergiasChips.ResumeLayout(false);
+            this.pnlCondicionesChips.ResumeLayout(false);
             this.cardEmergencia.ResumeLayout(false);
             this.cardEmergencia.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvContactos)).EndInit();
+            this.pnlEditorContacto.ResumeLayout(false);
+            this.pnlEditorContacto.PerformLayout();
             this.panelAcciones.ResumeLayout(false);
             this.ResumeLayout(false);
 
@@ -1709,40 +1368,23 @@ namespace SanarRuralUnan.Views
 
         #endregion
 
-        private System.Windows.Forms.Panel panelHero;
-        private System.Windows.Forms.PictureBox picLogoHero;
-        private System.Windows.Forms.Label lblNombreHero;
-        private System.Windows.Forms.Label lblSubtituloHero;
-        private System.Windows.Forms.Label lblRegistroTituloHero;
-        private System.Windows.Forms.Label lblDescripcionHero;
-        private System.Windows.Forms.Panel panelHeroBloque1;
-        private System.Windows.Forms.Label lblHeroIcono1;
-        private System.Windows.Forms.Label lblHeroTitulo1;
-        private System.Windows.Forms.Label lblHeroDesc1;
-        private System.Windows.Forms.Panel panelHeroBloque2;
-        private System.Windows.Forms.Label lblHeroIcono2;
-        private System.Windows.Forms.Label lblHeroTitulo2;
-        private System.Windows.Forms.Label lblHeroDesc2;
-        private System.Windows.Forms.Panel panelHeroBloque3;
-        private System.Windows.Forms.Label lblHeroIcono3;
-        private System.Windows.Forms.Label lblHeroTitulo3;
-        private System.Windows.Forms.Label lblHeroDesc3;
-        private System.Windows.Forms.Panel panelHeroBloque4;
-        private System.Windows.Forms.Label lblHeroIcono4;
-        private System.Windows.Forms.Label lblHeroTitulo4;
-        private System.Windows.Forms.Label lblHeroDesc4;
-        private System.Windows.Forms.Panel panelLema;
-        private System.Windows.Forms.Label lblLemaComillas;
-        private System.Windows.Forms.Label lblLemaTexto;
-        private System.Windows.Forms.Label lblLemaComillasCierre;
-
         private System.Windows.Forms.Panel panelFormContenedor;
         private System.Windows.Forms.Panel cardHeader;
-        private System.Windows.Forms.Label lblIconoPaciente;
+        private System.Windows.Forms.PictureBox picLogoHeader;
+        private System.Windows.Forms.Panel pnlSeparadorHeader;
+        private System.Windows.Forms.Label lblIconoHeader;
         private System.Windows.Forms.Label lblTitulo;
         private System.Windows.Forms.Label lblSubtitulo;
-        private System.Windows.Forms.Label lblBadgeModo;
-        private System.Windows.Forms.Label btnModoEditar;
+
+        private System.Windows.Forms.Panel panelPasos;
+        private System.Windows.Forms.Label lblPaso1Num;
+        private System.Windows.Forms.Label lblPaso1Texto;
+        private System.Windows.Forms.Panel pnlPasoLinea1;
+        private System.Windows.Forms.Label lblPaso2Num;
+        private System.Windows.Forms.Label lblPaso2Texto;
+        private System.Windows.Forms.Panel pnlPasoLinea2;
+        private System.Windows.Forms.Label lblPaso3Num;
+        private System.Windows.Forms.Label lblPaso3Texto;
 
         private System.Windows.Forms.Panel cardPersonal;
         private System.Windows.Forms.Label lblIconoPersonal;
@@ -1759,12 +1401,8 @@ namespace SanarRuralUnan.Views
         private System.Windows.Forms.TextBox txtSegundoApellido;
         private System.Windows.Forms.Label lblCedula;
         private System.Windows.Forms.TextBox txtCedula;
-        private System.Windows.Forms.Label lblCedulaAyuda;
-        private System.Windows.Forms.Panel pnlCedulaInfo;
-        private System.Windows.Forms.Label lblCedulaInfo;
         private System.Windows.Forms.Label lblNumeroINSS;
         private System.Windows.Forms.TextBox txtNumeroINSS;
-        private System.Windows.Forms.Label lblINSSAyuda;
         private System.Windows.Forms.Label lblFechaNacimiento;
         private System.Windows.Forms.DateTimePicker dtpFechaNacimiento;
         private System.Windows.Forms.Label lblGenero;
@@ -1772,20 +1410,9 @@ namespace SanarRuralUnan.Views
         private System.Windows.Forms.Label lblTelefono;
         private System.Windows.Forms.ComboBox cmbPaisTelefono;
         private System.Windows.Forms.TextBox txtTelefono;
-        private System.Windows.Forms.Label lblTelefonoAyuda;
         private System.Windows.Forms.Label lblErrorTelefono;
-
-        private System.Windows.Forms.Panel cardFoto;
-        private System.Windows.Forms.Label lblIconoFoto;
-        private System.Windows.Forms.Label lblTituloFoto;
-        private System.Windows.Forms.Label lblSubtituloFoto;
-        private System.Windows.Forms.PictureBox picPreview;
-        private System.Windows.Forms.Button btnSeleccionarFoto;
-        private System.Windows.Forms.Button btnQuitarFoto;
-        private System.Windows.Forms.Label lblFoto;
-        private System.Windows.Forms.Label lblFotoAyuda;
-        private System.Windows.Forms.Panel pnlFotoInfo;
-        private System.Windows.Forms.Label lblFotoInfo;
+        private System.Windows.Forms.Label lblCorreo;
+        private System.Windows.Forms.TextBox txtCorreo;
 
         private System.Windows.Forms.Panel cardUbicacion;
         private System.Windows.Forms.Label lblIconoUbicacion;
@@ -1809,42 +1436,46 @@ namespace SanarRuralUnan.Views
         private System.Windows.Forms.Label lblTipoSangre;
         private System.Windows.Forms.ComboBox cmbTipoSangre;
         private System.Windows.Forms.Label lblAlergias;
+        private System.Windows.Forms.Panel pnlAlergiasChips;
+        private System.Windows.Forms.FlowLayoutPanel flpAlergias;
+        private System.Windows.Forms.TextBox txtNuevaAlergia;
         private System.Windows.Forms.TextBox txtAlergias;
-        private System.Windows.Forms.Label lblAlergiasAyuda;
         private System.Windows.Forms.Label lblAntecedentes;
+        private System.Windows.Forms.Panel pnlCondicionesChips;
+        private System.Windows.Forms.FlowLayoutPanel flpCondiciones;
+        private System.Windows.Forms.TextBox txtNuevaCondicion;
         private System.Windows.Forms.TextBox txtAntecedentes;
-        private System.Windows.Forms.Label lblAntecedentesAyuda;
 
         private System.Windows.Forms.Panel cardEmergencia;
         private System.Windows.Forms.Label lblIconoEmergencia;
         private System.Windows.Forms.Label lblTituloEmergencia;
         private System.Windows.Forms.Label lblSubtituloEmergencia;
+        private System.Windows.Forms.Button btnAgregarContacto;
+        private System.Windows.Forms.DataGridView dgvContactos;
+        private System.Windows.Forms.DataGridViewTextBoxColumn colExpandir;
+        private System.Windows.Forms.DataGridViewTextBoxColumn colContNombre;
+        private System.Windows.Forms.DataGridViewTextBoxColumn colContParentesco;
+        private System.Windows.Forms.DataGridViewTextBoxColumn colContTelefono;
+        private System.Windows.Forms.DataGridViewTextBoxColumn colContCedula;
+        private System.Windows.Forms.DataGridViewButtonColumn colContEditar;
+        private System.Windows.Forms.DataGridViewButtonColumn colContEliminar;
+        private System.Windows.Forms.Label lblSinContactos;
+
+        private System.Windows.Forms.Panel pnlEditorContacto;
         private System.Windows.Forms.Label lblContactoPrimerNombre;
         private System.Windows.Forms.TextBox txtContactoPrimerNombre;
-        private System.Windows.Forms.TextBox txtContactoSegundoNombre;
-        private System.Windows.Forms.Label lblContactoPrimerApellido;
-        private System.Windows.Forms.TextBox txtContactoPrimerApellido;
-        private System.Windows.Forms.TextBox txtContactoSegundoApellido;
         private System.Windows.Forms.Label lblContactoParentesco;
         private System.Windows.Forms.ComboBox cmbContactoParentesco;
         private System.Windows.Forms.Label lblContactoTelefono;
         private System.Windows.Forms.TextBox txtContactoTelefono;
         private System.Windows.Forms.Label lblContactoCedula;
         private System.Windows.Forms.TextBox txtContactoCedula;
-        private System.Windows.Forms.Button btnAgregarContacto;
+        private System.Windows.Forms.Button btnGuardarContacto;
+        private System.Windows.Forms.Button btnCancelarContacto;
         private System.Windows.Forms.Label lblErrorContacto;
-        private System.Windows.Forms.Label lblSubtituloListaContactos;
-        private System.Windows.Forms.Label lblSinContactos;
-        private System.Windows.Forms.DataGridView dgvContactos;
-        private System.Windows.Forms.DataGridViewTextBoxColumn colContNombre;
-        private System.Windows.Forms.DataGridViewTextBoxColumn colContParentesco;
-        private System.Windows.Forms.DataGridViewTextBoxColumn colContTelefono;
-        private System.Windows.Forms.DataGridViewTextBoxColumn colContCedula;
-        private System.Windows.Forms.DataGridViewButtonColumn colContQuitar;
 
         private System.Windows.Forms.Panel panelAcciones;
         private System.Windows.Forms.Button btnCancelar;
         private System.Windows.Forms.Button btnGuardar;
-        private System.Windows.Forms.LinkLabel lnkVolver;
     }
 }

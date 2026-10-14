@@ -53,6 +53,11 @@ namespace SanarRuralUnan.Controllers
             return modelo.EsAdministrativo();
         }
 
+        public bool PuedeDarDeBajaPacientes()
+        {
+            return usuariosModels.PuedeGestionarUsuariosYPersonal();
+        }
+
         // ============================================================
         // COMPROBACIONES DE UNICIDAD
         // ============================================================
@@ -87,12 +92,14 @@ namespace SanarRuralUnan.Controllers
             string tipoSangre,
             string alergias,
             string antecedentes,
-            List<ContactoEmergenciaDto> contactos = null)
+            List<ContactoEmergenciaDto> contactos = null,
+            string referenciaAdicional = null,
+            string correo = null)
         {
             return modelo.guardarPaciente(
                 idUsuario, primerNombre, segundoNombre, primerApellido, segundoApellido,
                 cedula, numeroINSS, fechaNacimiento, genero, telefono, idComunidad,
-                direccion, tipoSangre, alergias, antecedentes, contactos);
+                direccion, tipoSangre, alergias, antecedentes, contactos, referenciaAdicional, correo);
         }
 
         public bool editarPaciente(
@@ -111,12 +118,14 @@ namespace SanarRuralUnan.Controllers
             string tipoSangre,
             string alergias,
             string antecedentes,
-            List<ContactoEmergenciaDto> contactos = null)
+            List<ContactoEmergenciaDto> contactos = null,
+            string referenciaAdicional = null,
+            string correo = null)
         {
             return modelo.actualizarPaciente(
                 idPaciente, primerNombre, segundoNombre, primerApellido, segundoApellido,
                 cedula, numeroINSS, fechaNacimiento, genero, telefono, idComunidad,
-                direccion, tipoSangre, alergias, antecedentes, contactos);
+                direccion, tipoSangre, alergias, antecedentes, contactos, referenciaAdicional, correo);
         }
 
         // Permite la actualización de datos residenciales y de contacto por parte del paciente.
@@ -125,9 +134,10 @@ namespace SanarRuralUnan.Controllers
             string telefono,
             int idComunidad,
             string direccion,
-            List<ContactoEmergenciaDto> contactos)
+            List<ContactoEmergenciaDto> contactos,
+            string referenciaAdicional = null)
         {
-            return modelo.actualizarPerfilDemograficoPaciente(idPaciente, telefono, idComunidad, direccion, contactos);
+            return modelo.actualizarPerfilDemograficoPaciente(idPaciente, telefono, idComunidad, direccion, contactos, referenciaAdicional);
         }
 
         // ============================================================

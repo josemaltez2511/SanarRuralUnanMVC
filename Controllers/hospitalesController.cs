@@ -47,5 +47,10 @@ namespace SanarRuralUnan.Controllers
         {
             new hospitalesModels().eliminarHospital(idHospital);
         }
+
+        public bool PuedeGestionarHospitales()
+        {
+            return usuariosModels.PuedeGestionarUsuariosYPersonal();
+        }
     }
 }

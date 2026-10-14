@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
-using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
@@ -15,10 +14,11 @@ using SanarRuralUnan.Models;
 namespace SanarRuralUnan.Views
 {
     /// <summary>
-    /// Formulario para el registro y edición de pacientes.
-    /// Incorpora diseño modular por tarjetas independientes, panel Hero institucional,
-    /// cascada geográfica, formateo ágil de cédula nicaragüense, teléfono internacional
-    /// y gestión completa de contactos de emergencia.
+    /// Formulario para el registro y edición de pacientes en Sanar Rural.
+    /// Reproduce con fidelidad la composición visual aprobada:
+    /// cabecera superior con logotipo oficial, indicador de tres pasos,
+    /// cuatro tarjetas apiladas (Datos personales, Ubicación y dirección,
+    /// Información de salud con chips interactivos y Contactos de emergencia con edición inline).
     /// </summary>
     public partial class crearPaciente : Form
     {
@@ -33,9 +33,11 @@ namespace SanarRuralUnan.Views
         private bool esModoEdicion;
         private bool cargandoUbicacion;
         private bool formateandoCedula;
+        private int indiceContactoEditando = -1;
 
-        private byte[] fotoBytes;
-        private string fotoNombreArchivo;
+        // Listas dinámicas para los chips de salud
+        private readonly List<string> chipsAlergias = new List<string>();
+        private readonly List<string> chipsCondiciones = new List<string>();
 
         // Catálogo de países centroamericanos con prefijos oficiales
         private class PaisTelefonoItem
@@ -46,7 +48,7 @@ namespace SanarRuralUnan.Views
             public int LongitudMinima { get; set; }
             public int LongitudMaxima { get; set; }
 
-            public string TextoMostrar => $"{Bandera} {Nombre} ({Codigo})";
+            public string TextoMostrar => $"{Bandera} {Codigo}";
 
             public override string ToString() => TextoMostrar;
         }
@@ -105,19 +107,17 @@ namespace SanarRuralUnan.Views
 
         private void ConfigurarOptimizacionesVisuales()
         {
-            this.DoubleBuffered = true;
-            HabilitarDobleBufer(panelHero);
+            DoubleBuffered = true;
             HabilitarDobleBufer(panelFormContenedor);
             HabilitarDobleBufer(cardHeader);
+            HabilitarDobleBufer(panelPasos);
             HabilitarDobleBufer(cardPersonal);
-            HabilitarDobleBufer(cardFoto);
             HabilitarDobleBufer(cardUbicacion);
             HabilitarDobleBufer(cardSalud);
             HabilitarDobleBufer(cardEmergencia);
             HabilitarDobleBufer(panelAcciones);
-            HabilitarDobleBufer(panelLema);
-            HabilitarDobleBufer(pnlCedulaInfo);
-            HabilitarDobleBufer(pnlFotoInfo);
+            HabilitarDobleBufer(pnlEditorContacto);
+            HabilitarDobleBufer(dgvContactos);
         }
 
         private static void HabilitarDobleBufer(Control control)
@@ -146,8 +146,8 @@ namespace SanarRuralUnan.Views
         {
             WindowState = FormWindowState.Maximized;
 
-            // Cargar logotipo institucional de Sanar Rural
-            picLogoHero.Image = Tema.ObtenerLogo();
+            // Cargar logotipo institucional oficial de Sanar Rural sin alterar sus proporciones
+            picLogoHeader.Image = Tema.ObtenerLogo();
 
             ConfigurarEstilosVisuales();
             ConfigurarComportamientoControles();
@@ -164,46 +164,107 @@ namespace SanarRuralUnan.Views
             }
 
             AjustarLayoutPaciente();
-            this.Resize += (s, ev) => AjustarLayoutPaciente();
+            panelFormContenedor.Resize += (s, ev) => AjustarLayoutPaciente();
+            Resize += (s, ev) => AjustarLayoutPaciente();
         }
 
         private void ConfigurarEstilosVisuales()
         {
-            // Dibujado de tarjetas redondeadas con bordes suaves
-            panelHero.Paint += panelHero_Paint;
+            BackColor = Tema.Fondo;
+
+            // Pintado suave con esquinas redondeadas en tarjetas principales
             cardHeader.Paint += (s, ev) => Tema.DibujarTarjetaRedondeada(ev.Graphics, new Rectangle(0, 0, cardHeader.Width - 1, cardHeader.Height - 1), Tema.Superficie, Tema.Borde, 10);
             cardPersonal.Paint += (s, ev) => Tema.DibujarTarjetaRedondeada(ev.Graphics, new Rectangle(0, 0, cardPersonal.Width - 1, cardPersonal.Height - 1), Tema.Superficie, Tema.Borde, 10);
-            cardFoto.Paint += (s, ev) => Tema.DibujarTarjetaRedondeada(ev.Graphics, new Rectangle(0, 0, cardFoto.Width - 1, cardFoto.Height - 1), Tema.Superficie, Tema.Borde, 10);
             cardUbicacion.Paint += (s, ev) => Tema.DibujarTarjetaRedondeada(ev.Graphics, new Rectangle(0, 0, cardUbicacion.Width - 1, cardUbicacion.Height - 1), Tema.Superficie, Tema.Borde, 10);
             cardSalud.Paint += (s, ev) => Tema.DibujarTarjetaRedondeada(ev.Graphics, new Rectangle(0, 0, cardSalud.Width - 1, cardSalud.Height - 1), Tema.Superficie, Tema.Borde, 10);
             cardEmergencia.Paint += (s, ev) => Tema.DibujarTarjetaRedondeada(ev.Graphics, new Rectangle(0, 0, cardEmergencia.Width - 1, cardEmergencia.Height - 1), Tema.Superficie, Tema.Borde, 10);
-            panelLema.Paint += (s, ev) => Tema.DibujarTarjetaRedondeada(ev.Graphics, new Rectangle(0, 0, panelLema.Width - 1, panelLema.Height - 1), Color.FromArgb(240, 249, 242), Color.FromArgb(190, 225, 202), 10);
+            pnlEditorContacto.Paint += (s, ev) => Tema.DibujarTarjetaRedondeada(ev.Graphics, new Rectangle(0, 0, pnlEditorContacto.Width - 1, pnlEditorContacto.Height - 1), Color.FromArgb(240, 247, 253), Color.FromArgb(195, 222, 243), 8);
 
-            // Iconos circulares de encabezado
-            lblIconoPaciente.Paint += (s, ev) => DibujarBadgeCircular(lblIconoPaciente, ev, "👤");
-            lblIconoPersonal.Paint += (s, ev) => DibujarBadgeCircular(lblIconoPersonal, ev, "👤");
-            lblIconoFoto.Paint += (s, ev) => DibujarBadgeCircular(lblIconoFoto, ev, "📷");
-            lblIconoUbicacion.Paint += (s, ev) => DibujarBadgeCircular(lblIconoUbicacion, ev, "📍");
-            lblIconoSalud.Paint += (s, ev) => DibujarBadgeCircular(lblIconoSalud, ev, "💓");
-            lblIconoEmergencia.Paint += (s, ev) => DibujarBadgeCircular(lblIconoEmergencia, ev, "👥");
+            // Iconos circulares con paleta aprobada de salud y naturaleza
+            lblIconoHeader.Paint += (s, ev) => DibujarBadgeCircular(lblIconoHeader, ev, "👤", Tema.AzulPrimario, Color.White);
+            lblIconoPersonal.Paint += (s, ev) => DibujarBadgeCircular(lblIconoPersonal, ev, "👤", Tema.VerdeOscuro, Color.White);
+            lblIconoUbicacion.Paint += (s, ev) => DibujarBadgeCircular(lblIconoUbicacion, ev, "📍", Tema.AzulPrimario, Color.White);
+            lblIconoSalud.Paint += (s, ev) => DibujarBadgeCircular(lblIconoSalud, ev, "💓", Tema.AzulPrimario, Color.White);
+            lblIconoEmergencia.Paint += (s, ev) => DibujarBadgeCircular(lblIconoEmergencia, ev, "👥", Tema.VerdeOscuro, Color.White);
 
-            // Avatar circular con previsualización GDI+
-            picPreview.Paint += picPreview_Paint;
+            // Paso activo y pasos secundarios del indicador
+            lblPaso1Num.Paint += (s, ev) => DibujarCirculoPaso(lblPaso1Num, ev, "1", true);
+            lblPaso2Num.Paint += (s, ev) => DibujarCirculoPaso(lblPaso2Num, ev, "2", false);
+            lblPaso3Num.Paint += (s, ev) => DibujarCirculoPaso(lblPaso3Num, ev, "3", false);
 
-            // Tabla de contactos
+            // Configuración de tabla de contactos de emergencia
             Tema.ConfigurarTabla(dgvContactos);
             dgvContactos.AutoGenerateColumns = false;
-            colContQuitar.DefaultCellStyle.ForeColor = Tema.Error;
+            dgvContactos.RowTemplate.Height = 36;
+            dgvContactos.CellPainting += dgvContactos_CellPainting;
 
-            // Microinteracciones de botones
+            // Microinteracciones en botones
             btnGuardar.MouseEnter += (s, ev) => btnGuardar.BackColor = Tema.AzulOscuro;
             btnGuardar.MouseLeave += (s, ev) => btnGuardar.BackColor = Tema.AzulPrimario;
             btnCancelar.MouseEnter += (s, ev) => btnCancelar.BackColor = Tema.FondoSecundario;
             btnCancelar.MouseLeave += (s, ev) => btnCancelar.BackColor = Tema.Superficie;
-            btnSeleccionarFoto.MouseEnter += (s, ev) => btnSeleccionarFoto.BackColor = Tema.AzulOscuro;
-            btnSeleccionarFoto.MouseLeave += (s, ev) => btnSeleccionarFoto.BackColor = Tema.AzulPrimario;
             btnAgregarContacto.MouseEnter += (s, ev) => btnAgregarContacto.BackColor = Tema.AzulOscuro;
             btnAgregarContacto.MouseLeave += (s, ev) => btnAgregarContacto.BackColor = Tema.AzulPrimario;
+            btnGuardarContacto.MouseEnter += (s, ev) => btnGuardarContacto.BackColor = Tema.AzulOscuro;
+            btnGuardarContacto.MouseLeave += (s, ev) => btnGuardarContacto.BackColor = Tema.AzulPrimario;
+            btnCancelarContacto.MouseEnter += (s, ev) => btnCancelarContacto.BackColor = Tema.FondoSecundario;
+            btnCancelarContacto.MouseLeave += (s, ev) => btnCancelarContacto.BackColor = Tema.Superficie;
+
+            // Desplazamiento ágil al hacer clic en los pasos del indicador
+            lblPaso1Num.Click += (s, ev) => DesplazarHaciaControl(cardPersonal);
+            lblPaso1Texto.Click += (s, ev) => DesplazarHaciaControl(cardPersonal);
+            lblPaso2Num.Click += (s, ev) => DesplazarHaciaControl(cardUbicacion);
+            lblPaso2Texto.Click += (s, ev) => DesplazarHaciaControl(cardUbicacion);
+            lblPaso3Num.Click += (s, ev) => DesplazarHaciaControl(cardEmergencia);
+            lblPaso3Texto.Click += (s, ev) => DesplazarHaciaControl(cardEmergencia);
+        }
+
+        private void DesplazarHaciaControl(Control destino)
+        {
+            if (destino == null) return;
+            panelFormContenedor.ScrollControlIntoView(destino);
+        }
+
+        private static void DibujarBadgeCircular(Control c, PaintEventArgs e, string icono, Color fondo, Color colorIcono)
+        {
+            e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
+            e.Graphics.Clear(c.Parent?.BackColor ?? Tema.Superficie);
+            using (Brush br = new SolidBrush(fondo))
+            {
+                e.Graphics.FillEllipse(br, 1, 1, c.Width - 3, c.Height - 3);
+            }
+            using (Font f = new Font("Segoe UI Emoji", 11.5F))
+            using (Brush brText = new SolidBrush(colorIcono))
+            {
+                SizeF sf = e.Graphics.MeasureString(icono, f);
+                e.Graphics.DrawString(icono, f, brText, (c.Width - sf.Width) / 2 + 1, (c.Height - sf.Height) / 2);
+            }
+        }
+
+        private static void DibujarCirculoPaso(Control c, PaintEventArgs e, string numero, bool activo)
+        {
+            e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
+            e.Graphics.Clear(c.Parent?.BackColor ?? Tema.Fondo);
+
+            Color colorFondo = activo ? Tema.AzulPrimario : Color.FromArgb(240, 244, 248);
+            Color colorBorde = activo ? Tema.AzulPrimario : Tema.Borde;
+            Color colorTexto = activo ? Color.White : Tema.TextoSecundario;
+
+            Rectangle rect = new Rectangle(1, 1, c.Width - 3, c.Height - 3);
+            using (Brush br = new SolidBrush(colorFondo))
+            {
+                e.Graphics.FillEllipse(br, rect);
+            }
+            using (Pen pen = new Pen(colorBorde, 1.2f))
+            {
+                e.Graphics.DrawEllipse(pen, rect);
+            }
+            using (Font f = new Font(Tema.FamiliaFuente, 9F, FontStyle.Bold))
+            using (Brush brText = new SolidBrush(colorTexto))
+            {
+                SizeF sf = e.Graphics.MeasureString(numero, f);
+                e.Graphics.DrawString(numero, f, brText, (c.Width - sf.Width) / 2 + 0.5f, (c.Height - sf.Height) / 2);
+            }
         }
 
         private void ConfigurarComportamientoControles()
@@ -222,35 +283,60 @@ namespace SanarRuralUnan.Views
             ConfigurarDropDown(cmbDepartamento);
             ConfigurarDropDown(cmbMunicipio);
             ConfigurarDropDown(cmbComunidad);
+            ConfigurarDropDown(cmbContactoParentesco);
 
             if (cmbGenero.Items.Count > 0) cmbGenero.SelectedIndex = 0;
             if (cmbTipoSangre.Items.Count > 0) cmbTipoSangre.SelectedIndex = 0;
             if (cmbContactoParentesco.Items.Count > 0) cmbContactoParentesco.SelectedIndex = 0;
 
-            // Placeholders visuales
-            AsignarPlaceholder(txtNombres, "Ej. María");
-            AsignarPlaceholder(txtSegundoNombre, "Ej. José");
-            AsignarPlaceholder(txtApellidos, "Ej. López");
-            AsignarPlaceholder(txtSegundoApellido, "Ej. García");
-            AsignarPlaceholder(txtCedula, "001-091101-1042V");
-            AsignarPlaceholder(txtNumeroINSS, "1234567890123");
+            // Longitudes máximas
+            txtDireccion.MaxLength = 500;
+            txtReferencia.MaxLength = 500;
+            txtCorreo.MaxLength = 150;
+
+            // Placeholders visuales estándar
+            AsignarPlaceholder(txtNombres, "Juan");
+            AsignarPlaceholder(txtSegundoNombre, "Carlos");
+            AsignarPlaceholder(txtApellidos, "López");
+            AsignarPlaceholder(txtSegundoApellido, "Martínez");
+            AsignarPlaceholder(txtCedula, "001-050982-0001A");
+            AsignarPlaceholder(txtNumeroINSS, "1234567890");
             AsignarPlaceholder(txtTelefono, "8765-4321");
-            AsignarPlaceholder(txtDireccion, "Del parque central 2 cuadras al sur");
-            AsignarPlaceholder(txtReferencia, "Ej. Casa color azul, frente a la escuela...");
-            AsignarPlaceholder(txtAlergias, "Ninguna / Ej. Penicilina, mariscos, etc.");
-            AsignarPlaceholder(txtAntecedentes, "Ej. Hipertensión, diabetes, asma, etc.");
-            AsignarPlaceholder(txtContactoPrimerNombre, "Ej. Ana");
-            AsignarPlaceholder(txtContactoPrimerApellido, "Ej. López");
+            AsignarPlaceholder(txtCorreo, "juan.lopez@email.com");
+            AsignarPlaceholder(txtDireccion, "Reparto San Martín, de la agroalfa que está contiguo a Walmart dos cuadras al sur, a mano izquierda, casa esquina color verde.");
+            AsignarPlaceholder(txtReferencia, "Casa esquinera, portón negro, muro de piedra, cantera de color gris.");
+            AsignarPlaceholder(txtContactoPrimerNombre, "Ej. Ana López");
             AsignarPlaceholder(txtContactoTelefono, "8765-0000");
             AsignarPlaceholder(txtContactoCedula, "001-010180-0001A");
-
-            // Eventos de foto
-            btnSeleccionarFoto.Click += btnSeleccionarFoto_Click;
-            btnQuitarFoto.Click += btnQuitarFoto_Click;
+            AsignarPlaceholder(txtNuevaAlergia, "Agregue una alergia y presione Enter...");
+            AsignarPlaceholder(txtNuevaCondicion, "Agregue una condición y presione Enter...");
 
             // Formateo y validación de Cédula
             txtCedula.TextChanged += txtCedula_TextChanged;
             txtCedula.KeyPress += txtCedula_KeyPress;
+
+            // Eventos para ingreso de chips mediante teclado (Enter)
+            txtNuevaAlergia.KeyDown += (s, ev) =>
+            {
+                if (ev.KeyCode == Keys.Enter)
+                {
+                    ev.SuppressKeyPress = true;
+                    AgregarChip(txtNuevaAlergia.Text, chipsAlergias, flpAlergias, txtNuevaAlergia);
+                }
+            };
+
+            txtNuevaCondicion.KeyDown += (s, ev) =>
+            {
+                if (ev.KeyCode == Keys.Enter)
+                {
+                    ev.SuppressKeyPress = true;
+                    AgregarChip(txtNuevaCondicion.Text, chipsCondiciones, flpCondiciones, txtNuevaCondicion);
+                }
+            };
+
+            // Eventos del panel de edición de contactos
+            btnGuardarContacto.Click += btnGuardarContacto_Click;
+            btnCancelarContacto.Click += btnCancelarContacto_Click;
 
             // Navegación por teclado
             txtNombres.KeyDown += (s, ev) => { if (ev.KeyCode == Keys.Enter) { txtSegundoNombre.Focus(); ev.SuppressKeyPress = true; } };
@@ -262,14 +348,16 @@ namespace SanarRuralUnan.Views
             dtpFechaNacimiento.KeyDown += (s, ev) => { if (ev.KeyCode == Keys.Enter) { cmbGenero.Focus(); ev.SuppressKeyPress = true; } };
             cmbGenero.KeyDown += (s, ev) => { if (ev.KeyCode == Keys.Enter) { cmbPaisTelefono.Focus(); ev.SuppressKeyPress = true; } };
             cmbPaisTelefono.KeyDown += (s, ev) => { if (ev.KeyCode == Keys.Enter) { txtTelefono.Focus(); ev.SuppressKeyPress = true; } };
-            txtTelefono.KeyDown += (s, ev) => { if (ev.KeyCode == Keys.Enter) { cmbDepartamento.Focus(); ev.SuppressKeyPress = true; } };
+            txtTelefono.KeyDown += (s, ev) => { if (ev.KeyCode == Keys.Enter) { txtCorreo.Focus(); ev.SuppressKeyPress = true; } };
+            txtCorreo.KeyDown += (s, ev) => { if (ev.KeyCode == Keys.Enter) { cmbDepartamento.Focus(); ev.SuppressKeyPress = true; } };
 
-            this.CancelButton = btnCancelar;
-
+            CancelButton = btnCancelar;
             lblErrorNombres.Text = string.Empty;
             lblErrorTelefono.Text = string.Empty;
             lblErrorContacto.Text = string.Empty;
 
+            RefrescarChips(chipsAlergias, flpAlergias, txtNuevaAlergia);
+            RefrescarChips(chipsCondiciones, flpCondiciones, txtNuevaCondicion);
             RefrescarGridContactos();
         }
 
@@ -283,483 +371,442 @@ namespace SanarRuralUnan.Views
         private void ConfigurarModoCreacion()
         {
             Text = "Sanar Rural - Registro de Paciente";
-            lblRegistroTituloHero.Text = "Registro de Paciente";
-            lblTitulo.Text = "Datos del Paciente";
-            lblSubtitulo.Text = "Completa la información requerida";
-            btnGuardar.Text = "💾 Guardar Paciente";
+            lblTitulo.Text = "Registrar paciente";
+            lblSubtitulo.Text = "Información personal, ubicación y expediente básico";
+            btnGuardar.Text = "💾 Guardar paciente";
             btnCancelar.Text = "✕ Cancelar";
-
-            lblBadgeModo.Text = "+ Nuevo Paciente";
-            lblBadgeModo.BackColor = Color.FromArgb(236, 248, 238);
-            lblBadgeModo.ForeColor = Tema.VerdeOscuro;
-            lblBadgeModo.Visible = true;
         }
 
         // ============================================================
-        // LAYOUT RESPONSIVO Y DESCOMPRESIÓN VISUAL
+        // SISTEMA DE CHIPS INTERACTIVOS (SALUD)
         // ============================================================
-        private void AjustarLayoutPaciente()
+        private void AgregarChip(string texto, List<string> lista, FlowLayoutPanel flp, TextBox input)
         {
-            if (ClientSize.Width <= 0 || ClientSize.Height <= 0) return;
-
-            int anchoTotal = ClientSize.Width;
-            int altoTotal = ClientSize.Height;
-
-            // 1. Proporción estricta: Hero 25% (280-360px), Formulario 75%
-            int anchoHero = Math.Max(280, Math.Min(360, (int)(anchoTotal * 0.25f)));
-            panelHero.SetBounds(0, 0, anchoHero, altoTotal);
-            panelFormContenedor.SetBounds(anchoHero, 0, anchoTotal - anchoHero, altoTotal);
-
-            // 2. Elementos del Hero
-            int margenHero = 24;
-            int anchoContenidoHero = anchoHero - (margenHero * 2);
-
-            lblNombreHero.Width = anchoContenidoHero;
-            lblSubtituloHero.Width = anchoContenidoHero;
-            lblRegistroTituloHero.Width = anchoContenidoHero;
-            lblDescripcionHero.Width = anchoContenidoHero;
-
-            panelHeroBloque1.Width = anchoContenidoHero;
-            lblHeroDesc1.Width = panelHeroBloque1.Width - lblHeroDesc1.Left - 5;
-            panelHeroBloque2.Width = anchoContenidoHero;
-            lblHeroDesc2.Width = panelHeroBloque2.Width - lblHeroDesc2.Left - 5;
-            panelHeroBloque3.Width = anchoContenidoHero;
-            lblHeroDesc3.Width = panelHeroBloque3.Width - lblHeroDesc3.Left - 5;
-            panelHeroBloque4.Width = anchoContenidoHero;
-            lblHeroDesc4.Width = panelHeroBloque4.Width - lblHeroDesc4.Left - 5;
-
-            if (altoTotal >= 680)
+            if (string.IsNullOrWhiteSpace(texto)) return;
+            string limpio = texto.Trim();
+            if (!lista.Contains(limpio, StringComparer.OrdinalIgnoreCase))
             {
-                panelLema.Visible = true;
-                panelLema.Location = new Point(margenHero, altoTotal - panelLema.Height - 18);
-                panelLema.Width = anchoContenidoHero;
-                lblLemaTexto.Width = panelLema.Width - lblLemaTexto.Left - 36;
-                lblLemaComillasCierre.Left = panelLema.Width - 32;
+                lista.Add(limpio);
+                input.Clear();
+                RefrescarChips(lista, flp, input);
             }
             else
             {
-                panelLema.Visible = false;
+                input.Clear();
+            }
+        }
+
+        private void CargarChipsDesdeTexto(string texto, List<string> lista, FlowLayoutPanel flp, TextBox input)
+        {
+            lista.Clear();
+            if (!string.IsNullOrWhiteSpace(texto))
+            {
+                string[] partes = texto.Split(new[] { ',', ';', '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries);
+                foreach (string p in partes)
+                {
+                    string item = p.Trim();
+                    if (!string.IsNullOrEmpty(item) && !lista.Contains(item, StringComparer.OrdinalIgnoreCase))
+                    {
+                        lista.Add(item);
+                    }
+                }
+            }
+            RefrescarChips(lista, flp, input);
+        }
+
+        private void RefrescarChips(List<string> lista, FlowLayoutPanel flp, TextBox input)
+        {
+            flp.SuspendLayout();
+            flp.Controls.Clear();
+
+            foreach (string item in lista)
+            {
+                Panel pnlChip = CrearPillChip(item, () =>
+                {
+                    lista.Remove(item);
+                    RefrescarChips(lista, flp, input);
+                });
+                flp.Controls.Add(pnlChip);
             }
 
-            // 3. Tarjetas en el Formulario Derecho
-            int margenLateral = 20;
-            int scrollWidth = SystemInformation.VerticalScrollBarWidth;
-            int anchoNeto = panelFormContenedor.ClientSize.Width;
-            int anchoCards = Math.Max(660, anchoNeto - (margenLateral * 2) - scrollWidth);
+            flp.Controls.Add(input);
+            flp.ResumeLayout(true);
 
+            // Sincronizar campos de texto para persistencia transparente
+            txtAlergias.Text = string.Join(", ", chipsAlergias);
+            txtAntecedentes.Text = string.Join(", ", chipsCondiciones);
+        }
+
+        private static Panel CrearPillChip(string texto, Action alQuitar)
+        {
+            Panel pnl = new Panel
+            {
+                AutoSize = true,
+                AutoSizeMode = AutoSizeMode.GrowOnly,
+                BackColor = Color.FromArgb(232, 244, 253),
+                Margin = new Padding(3, 3, 4, 3),
+                Padding = new Padding(6, 2, 4, 2)
+            };
+
+            pnl.Paint += (s, e) =>
+            {
+                e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
+                Rectangle r = new Rectangle(0, 0, pnl.Width - 1, pnl.Height - 1);
+                using (Pen pen = new Pen(Color.FromArgb(190, 222, 245), 1f))
+                using (GraphicsPath path = Tema.CrearRutaRedondeada(r, 6))
+                {
+                    e.Graphics.DrawPath(pen, path);
+                }
+            };
+
+            Label lblTexto = new Label
+            {
+                Text = texto,
+                Font = new Font(Tema.FamiliaFuente, 9F, FontStyle.Regular),
+                ForeColor = Tema.AzulPrimario,
+                AutoSize = true,
+                Location = new Point(4, 3),
+                Cursor = Cursors.Default
+            };
+
+            Label lblCerrar = new Label
+            {
+                Text = "✕",
+                Font = new Font(Tema.FamiliaFuente, 8F, FontStyle.Bold),
+                ForeColor = Tema.AzulPrimario,
+                AutoSize = true,
+                Cursor = Cursors.Hand,
+                Location = new Point(lblTexto.Right + 2, 4)
+            };
+
+            lblCerrar.Click += (s, e) => alQuitar?.Invoke();
+            lblCerrar.MouseEnter += (s, e) => lblCerrar.ForeColor = Tema.Error;
+            lblCerrar.MouseLeave += (s, e) => lblCerrar.ForeColor = Tema.AzulPrimario;
+
+            pnl.Controls.Add(lblTexto);
+            pnl.Controls.Add(lblCerrar);
+            lblCerrar.Left = lblTexto.Right + 3;
+
+            return pnl;
+        }
+
+        // ============================================================
+        // LAYOUT RESPONSIVO DINÁMICO (ADAPTABLE A CUALQUIER RESOLUCIÓN)
+        // ============================================================
+        private void AjustarLayoutPaciente()
+        {
+            if (panelFormContenedor.ClientSize.Width <= 0) return;
+
+            panelFormContenedor.SuspendLayout();
+
+            int anchoNeto = panelFormContenedor.ClientSize.Width;
+            int margenLateral = 20;
+            int anchoCards = Math.Max(780, anchoNeto - (margenLateral * 2));
             int xCard = margenLateral;
             int gap = 14;
-            int y = 16;
+            int y = 14;
 
-            // Encabezado
-            cardHeader.SetBounds(xCard, y, anchoCards, 66);
-            lblIconoPaciente.SetBounds(16, 13, 40, 40);
-            lblTitulo.Location = new Point(64, 11);
-            lblSubtitulo.Location = new Point(66, 38);
-            lblBadgeModo.Location = new Point(cardHeader.Width - lblBadgeModo.Width - 18, 18);
-            y += cardHeader.Height + gap;
+            // 1. Cabecera superior horizontal
+            cardHeader.SetBounds(xCard, y, anchoCards, 68);
+            AjustarControlesHeader(anchoCards);
+            y += cardHeader.Height + 8;
 
-            // Fila 1: Información personal (100% de ancho disponible)
-            int altoRow1 = 360;
-            cardPersonal.SetBounds(xCard, y, anchoCards, altoRow1);
-            cardFoto.Visible = false;
+            // 2. Indicador visual de 3 pasos
+            panelPasos.SetBounds(xCard, y, anchoCards, 38);
+            AjustarControlesPasos(anchoCards);
+            y += panelPasos.Height + 12;
 
-            AjustarControlesCardPersonal(cardPersonal.Width);
-            y += altoRow1 + gap;
+            // 3. Tarjeta «Datos personales» (2 filas x 5 columnas)
+            int altoCardPersonal = 176;
+            cardPersonal.SetBounds(xCard, y, anchoCards, altoCardPersonal);
+            AjustarControlesCardPersonal(anchoCards);
+            y += altoCardPersonal + gap;
 
-            // Fila 2: Ubicación y dirección (100%)
-            int altoRow2 = 180;
-            cardUbicacion.SetBounds(xCard, y, anchoCards, altoRow2);
-            AjustarControlesCardUbicacion(cardUbicacion.Width);
-            y += altoRow2 + gap;
+            // 4. Tarjeta «Ubicación y dirección» (3 combos + 2 textareas)
+            int altoCardUbicacion = 205;
+            cardUbicacion.SetBounds(xCard, y, anchoCards, altoCardUbicacion);
+            AjustarControlesCardUbicacion(anchoCards);
+            y += altoCardUbicacion + gap;
 
-            // Fila 3: Información de salud (49%) y Contactos de emergencia (51%)
-            int anchoSalud = (int)((anchoCards - gap) * 0.49f);
-            int anchoEmergencia = anchoCards - gap - anchoSalud;
-            int altoRow3 = 330;
+            // 5. Tarjeta «Información de salud» (Tipo sangre + Alergias chips, Condiciones chips)
+            int altoCardSalud = 185;
+            cardSalud.SetBounds(xCard, y, anchoCards, altoCardSalud);
+            AjustarControlesCardSalud(anchoCards);
+            y += altoCardSalud + gap;
 
-            cardSalud.SetBounds(xCard, y, anchoSalud, altoRow3);
-            cardEmergencia.SetBounds(cardSalud.Right + gap, y, anchoEmergencia, altoRow3);
+            // 6. Tarjeta «Contactos de emergencia» con tabla e inline editor
+            int altoGridContactos = Math.Max(95, Math.Min(180, (Math.Max(1, listaContactos.Count) + 1) * 36 + 28));
+            int altoCardEmergencia = 54 + altoGridContactos + 16;
+            if (pnlEditorContacto.Visible)
+            {
+                altoCardEmergencia += pnlEditorContacto.Height + 12;
+            }
+            cardEmergencia.SetBounds(xCard, y, anchoCards, altoCardEmergencia);
+            AjustarControlesCardEmergencia(anchoCards, altoGridContactos);
+            y += altoCardEmergencia + gap;
 
-            AjustarControlesCardSalud(cardSalud.Width);
-            AjustarControlesCardEmergencia(cardEmergencia.Width);
-            y += altoRow3 + gap;
-
-            // Barra de Acciones Inferior
-            panelAcciones.SetBounds(xCard, y, anchoCards, 60);
-            btnGuardar.Left = panelAcciones.Width - btnGuardar.Width - 8;
+            // 7. Barra de acciones inferior
+            panelAcciones.SetBounds(xCard, y, anchoCards, 52);
+            btnGuardar.Left = panelAcciones.Width - btnGuardar.Width - 4;
             btnCancelar.Left = btnGuardar.Left - btnCancelar.Width - 12;
+            y += panelAcciones.Height + 24;
+
+            panelFormContenedor.ResumeLayout(true);
+        }
+
+        private void AjustarControlesHeader(int anchoCard)
+        {
+            picLogoHeader.SetBounds(16, 9, 160, 50);
+            pnlSeparadorHeader.SetBounds(188, 13, 1, 42);
+            lblIconoHeader.SetBounds(204, 14, 40, 40);
+            lblTitulo.Location = new Point(252, 12);
+            lblSubtitulo.Location = new Point(254, 40);
+        }
+
+        private void AjustarControlesPasos(int anchoCard)
+        {
+            int anchoTotalPasos = 640;
+            int xInicio = Math.Max(16, (anchoCard - anchoTotalPasos) / 2);
+
+            lblPaso1Num.Location = new Point(xInicio, 7);
+            lblPaso1Texto.Location = new Point(lblPaso1Num.Right + 6, 10);
+            pnlPasoLinea1.SetBounds(lblPaso1Texto.Right + 12, 18, 60, 1);
+
+            lblPaso2Num.Location = new Point(pnlPasoLinea1.Right + 12, 7);
+            lblPaso2Texto.Location = new Point(lblPaso2Num.Right + 6, 10);
+            pnlPasoLinea2.SetBounds(lblPaso2Texto.Right + 12, 18, 60, 1);
+
+            lblPaso3Num.Location = new Point(pnlPasoLinea2.Right + 12, 7);
+            lblPaso3Texto.Location = new Point(lblPaso3Num.Right + 6, 10);
         }
 
         private void AjustarControlesCardPersonal(int anchoCard)
         {
-            int margenP = 16;
-            int gapColP = 14;
-            int anchoColP = (anchoCard - (margenP * 2) - gapColP) / 2;
-            int xP1 = margenP;
-            int xP2 = margenP + anchoColP + gapColP;
+            int margen = 16;
+            int gapCol = 12;
+            int numColumnas = 5;
+            int anchoCol = (anchoCard - (margen * 2) - (gapCol * (numColumnas - 1))) / numColumnas;
 
-            // Fila 1: Nombres
-            lblPrimerNombre.Location = new Point(xP1, 56);
-            txtNombres.SetBounds(xP1, 74, anchoColP, 27);
-            lblSegundoNombre.Location = new Point(xP2, 56);
-            txtSegundoNombre.SetBounds(xP2, 74, anchoColP, 27);
+            int[] xCols = new int[numColumnas];
+            for (int i = 0; i < numColumnas; i++)
+            {
+                xCols[i] = margen + (i * (anchoCol + gapCol));
+            }
 
-            // Fila 2: Apellidos
-            lblPrimerApellido.Location = new Point(xP1, 108);
-            txtApellidos.SetBounds(xP1, 126, anchoColP, 27);
-            lblSegundoApellido.Location = new Point(xP2, 108);
-            txtSegundoApellido.SetBounds(xP2, 126, anchoColP, 27);
+            // Fila 1: Nombres, Apellidos y Cédula
+            lblPrimerNombre.Location = new Point(xCols[0], 52);
+            txtNombres.SetBounds(xCols[0], 70, anchoCol, 27);
 
-            // Fila 3: Cédula & INSS (Columna 1) vs Fecha & Género & Teléfono (Columna 2)
-            lblCedula.Location = new Point(xP1, 160);
-            txtCedula.SetBounds(xP1, 178, anchoColP, 27);
-            lblCedulaAyuda.SetBounds(xP1, 208, anchoColP, 28);
-            pnlCedulaInfo.SetBounds(xP1, 238, anchoColP, 36);
-            lblCedulaInfo.SetBounds(6, 4, pnlCedulaInfo.Width - 12, 28);
+            lblSegundoNombre.Location = new Point(xCols[1], 52);
+            txtSegundoNombre.SetBounds(xCols[1], 70, anchoCol, 27);
 
-            lblNumeroINSS.Location = new Point(xP1, 278);
-            txtNumeroINSS.SetBounds(xP1, 296, anchoColP, 27);
-            lblINSSAyuda.Location = new Point(xP1, 326);
+            lblPrimerApellido.Location = new Point(xCols[2], 52);
+            txtApellidos.SetBounds(xCols[2], 70, anchoCol, 27);
 
-            // Columna 2: Fecha y Género
-            int anchoFecha = (anchoColP - 10) / 2;
-            int anchoGenero = anchoColP - anchoFecha - 10;
-            lblFechaNacimiento.Location = new Point(xP2, 160);
-            dtpFechaNacimiento.SetBounds(xP2, 178, anchoFecha, 27);
-            lblGenero.Location = new Point(xP2 + anchoFecha + 10, 160);
-            cmbGenero.SetBounds(xP2 + anchoFecha + 10, 178, anchoGenero, 27);
+            lblSegundoApellido.Location = new Point(xCols[3], 52);
+            txtSegundoApellido.SetBounds(xCols[3], 70, anchoCol, 27);
 
-            // Teléfono con selector de país
-            lblTelefono.Location = new Point(xP2, 212);
-            int anchoComboTel = Math.Min(165, Math.Max(140, (int)(anchoColP * 0.52f)));
-            int anchoNumTel = anchoColP - anchoComboTel - 8;
-            cmbPaisTelefono.SetBounds(xP2, 230, anchoComboTel, 27);
-            txtTelefono.SetBounds(cmbPaisTelefono.Right + 8, 230, anchoNumTel, 27);
-            lblTelefonoAyuda.SetBounds(xP2, 260, anchoColP, 36);
-        }
+            int anchoUltimaCol = anchoCard - margen - xCols[4];
+            lblCedula.Location = new Point(xCols[4], 52);
+            txtCedula.SetBounds(xCols[4], 70, anchoUltimaCol, 27);
 
-        private void AjustarControlesCardFoto(int anchoCard)
-        {
-            int sAvatar = 88;
-            picPreview.SetBounds(16, 56, sAvatar, sAvatar);
+            // Fila 2: INSS, Fecha, Género, Teléfono y Correo
+            lblNumeroINSS.Location = new Point(xCols[0], 108);
+            txtNumeroINSS.SetBounds(xCols[0], 126, anchoCol, 27);
 
-            int xFotoCtrl = picPreview.Right + 12;
-            int anchoFotoCtrl = anchoCard - xFotoCtrl - 14;
-            int anchoBtn = Math.Min(155, anchoFotoCtrl);
+            lblFechaNacimiento.Location = new Point(xCols[1], 108);
+            dtpFechaNacimiento.SetBounds(xCols[1], 126, anchoCol, 27);
 
-            btnSeleccionarFoto.SetBounds(xFotoCtrl, 56, anchoBtn, 34);
-            btnQuitarFoto.SetBounds(xFotoCtrl, 94, anchoBtn, 26);
-            lblFoto.Location = new Point(xFotoCtrl, 126);
-            lblFotoAyuda.Location = new Point(xFotoCtrl, 144);
+            lblGenero.Location = new Point(xCols[2], 108);
+            cmbGenero.SetBounds(xCols[2], 126, anchoCol, 27);
 
-            pnlFotoInfo.SetBounds(16, 238, anchoCard - 32, 56);
-            lblFotoInfo.SetBounds(8, 8, pnlFotoInfo.Width - 16, 40);
+            // Teléfono con selector de país compacto integrado
+            lblTelefono.Location = new Point(xCols[3], 108);
+            int anchoPrefijo = Math.Min(78, (int)(anchoCol * 0.42f));
+            cmbPaisTelefono.SetBounds(xCols[3], 126, anchoPrefijo, 27);
+            txtTelefono.SetBounds(cmbPaisTelefono.Right + 4, 126, anchoCol - anchoPrefijo - 4, 27);
+
+            lblCorreo.Location = new Point(xCols[4], 108);
+            txtCorreo.SetBounds(xCols[4], 126, anchoUltimaCol, 27);
         }
 
         private void AjustarControlesCardUbicacion(int anchoCard)
         {
-            int margenU = 16;
-            int gapU = 12;
-            int anchoCombo = (anchoCard - (margenU * 2) - (gapU * 2)) / 3;
+            int margen = 16;
+            int gap = 12;
 
-            // Fila 1: Departamento, Municipio, Comunidad
-            lblDepartamento.Location = new Point(margenU, 56);
-            cmbDepartamento.SetBounds(margenU, 74, anchoCombo, 27);
+            // Fila 1: 3 columnas (Departamento, Municipio, Comunidad)
+            int anchoCol3 = (anchoCard - (margen * 2) - (gap * 2)) / 3;
 
-            lblMunicipio.Location = new Point(margenU + anchoCombo + gapU, 56);
-            cmbMunicipio.SetBounds(margenU + anchoCombo + gapU, 74, anchoCombo, 27);
+            lblDepartamento.Location = new Point(margen, 52);
+            cmbDepartamento.SetBounds(margen, 70, anchoCol3, 27);
 
-            lblComunidad.Location = new Point(margenU + (anchoCombo * 2) + (gapU * 2), 56);
-            cmbComunidad.SetBounds(margenU + (anchoCombo * 2) + (gapU * 2), 74, anchoCard - (margenU + (anchoCombo * 2) + (gapU * 2)) - margenU, 27);
+            lblMunicipio.Location = new Point(margen + anchoCol3 + gap, 52);
+            cmbMunicipio.SetBounds(margen + anchoCol3 + gap, 70, anchoCol3, 27);
 
-            // Fila 2: Dirección exacta y Referencia adicional
-            int anchoDir = (int)((anchoCard - (margenU * 2) - gapU) * 0.60f);
-            int anchoRef = anchoCard - (margenU * 2) - gapU - anchoDir;
+            int xComunidad = margen + (anchoCol3 * 2) + (gap * 2);
+            lblComunidad.Location = new Point(xComunidad, 52);
+            cmbComunidad.SetBounds(xComunidad, 70, anchoCard - margen - xComunidad, 27);
 
-            lblDireccion.Location = new Point(margenU, 114);
-            txtDireccion.SetBounds(margenU, 132, anchoDir, 27);
+            // Fila 2: 2 áreas de texto amplias (Dirección exacta y Referencia adicional)
+            int anchoCol2 = (anchoCard - (margen * 2) - gap) / 2;
 
-            lblReferencia.Location = new Point(margenU + anchoDir + gapU, 114);
-            txtReferencia.SetBounds(margenU + anchoDir + gapU, 132, anchoRef, 27);
+            lblDireccion.Location = new Point(margen, 108);
+            txtDireccion.SetBounds(margen, 126, anchoCol2, 58);
+
+            int xRef = margen + anchoCol2 + gap;
+            lblReferencia.Location = new Point(xRef, 108);
+            txtReferencia.SetBounds(xRef, 126, anchoCard - margen - xRef, 58);
         }
 
         private void AjustarControlesCardSalud(int anchoCard)
         {
-            int margenS = 16;
-            int gapS = 12;
-            int anchoColS = (anchoCard - (margenS * 2) - gapS) / 2;
+            int margen = 16;
+            int gap = 14;
 
-            lblTipoSangre.Location = new Point(margenS, 56);
-            cmbTipoSangre.SetBounds(margenS, 74, anchoColS, 27);
+            // Fila 1: Tipo de sangre (izquierda) y Alergias conocidas (derecha con chips)
+            int anchoSangre = 200;
+            lblTipoSangre.Location = new Point(margen, 52);
+            cmbTipoSangre.SetBounds(margen, 70, anchoSangre, 27);
 
-            lblAlergias.Location = new Point(margenS + anchoColS + gapS, 56);
-            txtAlergias.SetBounds(margenS + anchoColS + gapS, 74, anchoCard - (margenS + anchoColS + gapS) - margenS, 27);
-            lblAlergiasAyuda.Location = new Point(margenS + anchoColS + gapS, 104);
+            int xAlergias = margen + anchoSangre + gap;
+            int anchoAlergias = anchoCard - margen - xAlergias;
+            lblAlergias.Location = new Point(xAlergias, 52);
+            pnlAlergiasChips.SetBounds(xAlergias, 70, anchoAlergias, 34);
 
-            lblAntecedentes.Location = new Point(margenS, 126);
-            txtAntecedentes.SetBounds(margenS, 146, anchoCard - (margenS * 2), 140);
-            lblAntecedentesAyuda.Location = new Point(margenS, 292);
+            // Fila 2: Condiciones de salud relevantes (ancho completo con chips)
+            int anchoCondiciones = anchoCard - (margen * 2);
+            lblAntecedentes.Location = new Point(margen, 114);
+            pnlCondicionesChips.SetBounds(margen, 134, anchoCondiciones, 34);
         }
 
-        private void AjustarControlesCardEmergencia(int anchoCard)
+        private void AjustarControlesCardEmergencia(int anchoCard, int altoGrid)
         {
-            int margenE = 16;
-            int gapE = 12;
-            int anchoColE = (anchoCard - (margenE * 2) - gapE) / 2;
+            int margen = 16;
+            int anchoContenido = anchoCard - (margen * 2);
 
-            // Fila 1: Nombre completo & Parentesco
-            lblContactoPrimerNombre.Location = new Point(margenE, 56);
-            txtContactoPrimerNombre.SetBounds(margenE, 74, anchoColE, 27);
+            btnAgregarContacto.Location = new Point(anchoCard - margen - btnAgregarContacto.Width, 10);
 
-            lblContactoPrimerApellido.Location = new Point(margenE + anchoColE + gapE, 56);
-            cmbContactoParentesco.SetBounds(margenE + anchoColE + gapE, 74, anchoCard - (margenE + anchoColE + gapE) - margenE, 27);
+            dgvContactos.SetBounds(margen, 52, anchoContenido, altoGrid);
+            lblSinContactos.SetBounds(margen, 52, anchoContenido, altoGrid);
 
-            // Fila 2: Teléfono & Cédula & Botón Agregar
-            lblContactoTelefono.Location = new Point(margenE, 108);
-            txtContactoTelefono.SetBounds(margenE, 126, anchoColE, 27);
-
-            int xCol2 = margenE + anchoColE + gapE;
-            int anchoDisponibleCol2 = anchoCard - xCol2 - margenE;
-            int anchoBtnAgregar = 98;
-            int anchoCedula = anchoDisponibleCol2 - anchoBtnAgregar - 8;
-
-            lblContactoCedula.Location = new Point(xCol2, 108);
-            txtContactoCedula.SetBounds(xCol2, 126, anchoCedula, 27);
-            btnAgregarContacto.SetBounds(xCol2 + anchoCedula + 8, 125, anchoBtnAgregar, 29);
-
-            // Fila 3: Lista de contactos agregados / Estado sin contactos
-            lblSubtituloListaContactos.Location = new Point(margenE, 170);
-            int anchoGrid = anchoCard - (margenE * 2);
-            int altoGrid = 120;
-            dgvContactos.SetBounds(margenE, 192, anchoGrid, altoGrid);
-            lblSinContactos.SetBounds(margenE, 192, anchoGrid, altoGrid);
-        }
-
-        // ============================================================
-        // DIBUJADO DE ELEMENTOS GDI+ (ILUSTRACIÓN RURAL Y BADGES)
-        // ============================================================
-        private static void DibujarBadgeCircular(Control c, PaintEventArgs e, string icono)
-        {
-            e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
-            e.Graphics.Clear(c.Parent?.BackColor ?? Tema.Superficie);
-            using (Brush br = new SolidBrush(Tema.AzulPrimario))
+            if (pnlEditorContacto.Visible)
             {
-                e.Graphics.FillEllipse(br, 1, 1, c.Width - 3, c.Height - 3);
-            }
-            using (Font f = new Font("Segoe UI Emoji", 11.5F))
-            using (Brush brText = new SolidBrush(Color.White))
-            {
-                SizeF sf = e.Graphics.MeasureString(icono, f);
-                e.Graphics.DrawString(icono, f, brText, (c.Width - sf.Width) / 2 + 1, (c.Height - sf.Height) / 2);
+                pnlEditorContacto.SetBounds(margen, dgvContactos.Bottom + 10, anchoContenido, 76);
+                AjustarControlesEditorContacto(anchoContenido);
             }
         }
 
-        private void picPreview_Paint(object sender, PaintEventArgs e)
+        private void AjustarControlesEditorContacto(int anchoPanel)
         {
-            e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
-            int s = Math.Min(picPreview.Width, picPreview.Height) - 4;
-            int x = (picPreview.Width - s) / 2;
-            int y = (picPreview.Height - s) / 2;
-            Rectangle rectCirculo = new Rectangle(x, y, s, s);
+            int margen = 12;
+            int gap = 10;
+            int anchoBotones = 245;
+            int anchoCamposTotal = anchoPanel - (margen * 2) - anchoBotones - (gap * 4);
 
-            if (picPreview.Image == null)
-            {
-                using (Brush br = new SolidBrush(Tema.FondoSecundario))
-                {
-                    e.Graphics.FillEllipse(br, rectCirculo);
-                }
-                using (Brush brIcon = new SolidBrush(Color.FromArgb(160, 185, 198)))
-                {
-                    int rHead = s / 3;
-                    e.Graphics.FillEllipse(brIcon, x + (s - rHead) / 2, y + (int)(s * 0.18f), rHead, rHead);
-                    int wBody = (int)(s * 0.65f);
-                    int hBody = (int)(s * 0.40f);
-                    e.Graphics.FillPie(brIcon, x + (s - wBody) / 2, y + (int)(s * 0.48f), wBody, hBody * 2, 180, 180);
-                }
-                int badgeSize = 24;
-                int bx = x + s - badgeSize - 2;
-                int by = y + s - badgeSize - 2;
-                using (Brush brBadge = new SolidBrush(Tema.AzulPrimario))
-                {
-                    e.Graphics.FillEllipse(brBadge, bx, by, badgeSize, badgeSize);
-                }
-                using (Font fCamera = new Font("Segoe UI Emoji", 9F))
-                using (Brush brWhite = new SolidBrush(Color.White))
-                {
-                    e.Graphics.DrawString("📷", fCamera, brWhite, bx + 3, by + 3);
-                }
-            }
-            else
-            {
-                using (GraphicsPath clip = new GraphicsPath())
-                {
-                    clip.AddEllipse(rectCirculo);
-                    e.Graphics.SetClip(clip);
-                    e.Graphics.DrawImage(picPreview.Image, rectCirculo);
-                    e.Graphics.ResetClip();
-                }
-                using (Pen pen = new Pen(Tema.Borde, 2f))
-                {
-                    e.Graphics.DrawEllipse(pen, rectCirculo);
-                }
-            }
-        }
+            int wNombre = (int)(anchoCamposTotal * 0.32f);
+            int wParentesco = (int)(anchoCamposTotal * 0.22f);
+            int wTel = (int)(anchoCamposTotal * 0.22f);
+            int wCed = anchoCamposTotal - wNombre - wParentesco - wTel;
 
-        private void panelHero_Paint(object sender, PaintEventArgs e)
-        {
-            e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
+            lblContactoPrimerNombre.Location = new Point(margen, 10);
+            txtContactoPrimerNombre.SetBounds(margen, 28, wNombre, 27);
 
-            int w = panelHero.Width;
-            int h = panelHero.Height;
+            int xPar = txtContactoPrimerNombre.Right + gap;
+            lblContactoParentesco.Location = new Point(xPar, 10);
+            cmbContactoParentesco.SetBounds(xPar, 28, wParentesco, 27);
 
-            int altoPaisaje = Math.Max(220, (int)(h * 0.35f));
-            int yInicio = h - altoPaisaje;
+            int xTel = cmbContactoParentesco.Right + gap;
+            lblContactoTelefono.Location = new Point(xTel, 10);
+            txtContactoTelefono.SetBounds(xTel, 28, wTel, 27);
 
-            // Cielo suave en degradé
-            using (LinearGradientBrush brCielo = new LinearGradientBrush(
-                new Rectangle(0, yInicio - 30, w, 50),
-                Tema.Fondo,
-                Color.FromArgb(215, 238, 248),
-                LinearGradientMode.Vertical))
-            {
-                e.Graphics.FillRectangle(brCielo, 0, yInicio - 30, w, 50);
-            }
+            int xCed = txtContactoTelefono.Right + gap;
+            lblContactoCedula.Location = new Point(xCed, 10);
+            txtContactoCedula.SetBounds(xCed, 28, wCed, 27);
 
-            // Colina de fondo (verde suave)
-            using (GraphicsPath pathFondo = new GraphicsPath())
-            {
-                pathFondo.AddLine(0, yInicio + 70, 0, h);
-                pathFondo.AddLine(0, h, w, h);
-                pathFondo.AddLine(w, h, w, yInicio + 25);
-                pathFondo.AddBezier(w, yInicio + 25, (int)(w * 0.65f), yInicio - 10, (int)(w * 0.35f), yInicio + 80, 0, yInicio + 70);
-                using (Brush brColinaFondo = new SolidBrush(Color.FromArgb(168, 212, 160)))
-                {
-                    e.Graphics.FillPath(brColinaFondo, pathFondo);
-                }
-            }
-
-            // Colina media (verde Sanar Rural)
-            using (GraphicsPath pathMedia = new GraphicsPath())
-            {
-                pathMedia.AddLine(0, yInicio + 95, 0, h);
-                pathMedia.AddLine(0, h, w, h);
-                pathMedia.AddLine(w, h, w, yInicio + 80);
-                pathMedia.AddBezier(w, yInicio + 80, (int)(w * 0.60f), yInicio + 50, (int)(w * 0.25f), yInicio + 130, 0, yInicio + 95);
-                using (Brush brColinaMedia = new SolidBrush(Tema.Verde))
-                {
-                    e.Graphics.FillPath(brColinaMedia, pathMedia);
-                }
-            }
-
-            // Casita rural nicaragüense
-            int casaX = (int)(w * 0.18f);
-            int casaY = yInicio + 105;
-            using (Brush brPared = new SolidBrush(Color.FromArgb(245, 235, 220)))
-            using (Brush brTecho = new SolidBrush(Color.FromArgb(195, 95, 75)))
-            using (Brush brPuerta = new SolidBrush(Color.FromArgb(120, 75, 45)))
-            {
-                e.Graphics.FillRectangle(brPared, casaX, casaY, 26, 18);
-                Point[] techo = { new Point(casaX - 4, casaY), new Point(casaX + 13, casaY - 12), new Point(casaX + 30, casaY) };
-                e.Graphics.FillPolygon(brTecho, techo);
-                e.Graphics.FillRectangle(brPuerta, casaX + 9, casaY + 6, 8, 12);
-            }
-
-            // Árboles rurales
-            DibujarArbolito(e.Graphics, casaX - 18, casaY + 2);
-            DibujarArbolito(e.Graphics, casaX + 36, casaY - 4);
-            DibujarArbolito(e.Graphics, (int)(w * 0.75f), yInicio + 78);
-            DibujarArbolito(e.Graphics, (int)(w * 0.84f), yInicio + 85);
-
-            // Colina frontal (verde oscuro)
-            using (GraphicsPath pathFrontal = new GraphicsPath())
-            {
-                pathFrontal.AddLine(0, yInicio + 155, 0, h);
-                pathFrontal.AddLine(0, h, w, h);
-                pathFrontal.AddLine(w, h, w, yInicio + 160);
-                pathFrontal.AddBezier(w, yInicio + 160, (int)(w * 0.70f), yInicio + 135, (int)(w * 0.40f), yInicio + 195, 0, yInicio + 155);
-                using (Brush brColinaFrontal = new SolidBrush(Tema.VerdeOscuro))
-                {
-                    e.Graphics.FillPath(brColinaFrontal, pathFrontal);
-                }
-            }
-
-            // Olas decorativas de transición
-            using (GraphicsPath pathOlas = new GraphicsPath())
-            {
-                pathOlas.AddLine(0, h - 28, 0, h);
-                pathOlas.AddLine(0, h, w, h);
-                pathOlas.AddLine(w, h, w, h - 18);
-                pathOlas.AddBezier(w, h - 18, (int)(w * 0.65f), h - 45, (int)(w * 0.35f), h, 0, h - 28);
-                using (Brush brOlas = new SolidBrush(Color.FromArgb(170, Tema.Fondo.R, Tema.Fondo.G, Tema.Fondo.B)))
-                {
-                    e.Graphics.FillPath(brOlas, pathOlas);
-                }
-            }
-        }
-
-        private static void DibujarArbolito(Graphics g, int x, int y)
-        {
-            using (Brush brTronco = new SolidBrush(Color.FromArgb(115, 80, 50)))
-            using (Brush brCopa = new SolidBrush(Color.FromArgb(60, 125, 70)))
-            {
-                g.FillRectangle(brTronco, x + 5, y + 10, 4, 10);
-                g.FillEllipse(brCopa, x, y, 14, 14);
-            }
+            int xBtn = txtContactoCedula.Right + gap + 4;
+            btnGuardarContacto.SetBounds(xBtn, 26, 135, 31);
+            btnCancelarContacto.SetBounds(btnGuardarContacto.Right + 6, 26, 95, 31);
         }
 
         // ============================================================
-        // GESTIÓN DE FOTOGRAFÍA (OPCIONAL)
+        // PINTADO PERSONALIZADO DE LA TABLA DE CONTACTOS
         // ============================================================
-        private void btnSeleccionarFoto_Click(object sender, EventArgs e)
+        private void dgvContactos_CellPainting(object sender, DataGridViewCellPaintingEventArgs e)
         {
-            using (OpenFileDialog ofd = new OpenFileDialog())
+            if (e.RowIndex < 0) return;
+
+            // 1. Columna de expansión / indicador
+            if (dgvContactos.Columns[e.ColumnIndex].Name == "colExpandir")
             {
-                ofd.Filter = "Imágenes (*.jpg;*.jpeg;*.png)|*.jpg;*.jpeg;*.png";
-                ofd.Title = "Seleccionar fotografía del paciente";
+                e.PaintBackground(e.CellBounds, true);
+                e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
 
-                if (ofd.ShowDialog(this) == DialogResult.OK)
+                string flecha = (indiceContactoEditando == e.RowIndex && pnlEditorContacto.Visible) ? "▲" : "▼";
+                Color colorFlecha = (indiceContactoEditando == e.RowIndex && pnlEditorContacto.Visible)
+                    ? Tema.AzulPrimario
+                    : Tema.TextoSecundario;
+
+                using (Font font = new Font(Tema.FamiliaFuente, 8.5F, FontStyle.Bold))
+                using (Brush brush = new SolidBrush(colorFlecha))
+                using (StringFormat sf = new StringFormat { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center })
                 {
-                    try
-                    {
-                        FileInfo fi = new FileInfo(ofd.FileName);
-                        if (fi.Length > 2 * 1024 * 1024)
-                        {
-                            MessageBox.Show("El archivo excede el tamaño máximo permitido de 2 MB.", "Archivo muy pesado", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                            return;
-                        }
-
-                        using (var imgTemp = Image.FromFile(ofd.FileName))
-                        {
-                            picPreview.Image?.Dispose();
-                            picPreview.Image = new Bitmap(imgTemp);
-                        }
-
-                        fotoBytes = File.ReadAllBytes(ofd.FileName);
-                        fotoNombreArchivo = fi.Name;
-
-                        lblFoto.Text = fi.Name.Length > 22 ? fi.Name.Substring(0, 19) + "..." : fi.Name;
-                        btnQuitarFoto.Visible = true;
-                        picPreview.Invalidate();
-                    }
-                    catch (Exception ex)
-                    {
-                        MessageBox.Show("No se pudo cargar la imagen seleccionada:\n\n" + ex.Message, "Error al cargar foto", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    }
+                    e.Graphics.DrawString(flecha, font, brush, e.CellBounds, sf);
                 }
+
+                e.Handled = true;
+                return;
             }
-        }
 
-        private void btnQuitarFoto_Click(object sender, EventArgs e)
-        {
-            picPreview.Image?.Dispose();
-            picPreview.Image = null;
-            fotoBytes = null;
-            fotoNombreArchivo = null;
+            // 2. Botón Editar
+            if (dgvContactos.Columns[e.ColumnIndex].Name == "colContEditar")
+            {
+                e.PaintBackground(e.CellBounds, true);
+                e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
 
-            lblFoto.Text = "Sin foto seleccionada";
-            btnQuitarFoto.Visible = false;
-            picPreview.Invalidate();
+                int btnW = Math.Min(78, e.CellBounds.Width - 8);
+                int btnH = 26;
+                int btnX = e.CellBounds.X + ((e.CellBounds.Width - btnW) / 2);
+                int btnY = e.CellBounds.Y + ((e.CellBounds.Height - btnH) / 2);
+
+                Rectangle rectBtn = new Rectangle(btnX, btnY, btnW, btnH);
+                Tema.DibujarTarjetaRedondeada(e.Graphics, rectBtn, Tema.BotonEditarFondo, Tema.BotonEditarBorde, 6);
+
+                using (Brush brush = new SolidBrush(Tema.AzulPrimario))
+                using (StringFormat sf = new StringFormat { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center })
+                using (Font font = new Font(Tema.FamiliaFuente, 8.5F, FontStyle.Bold))
+                {
+                    e.Graphics.DrawString("✏ Editar", font, brush, rectBtn, sf);
+                }
+
+                e.Handled = true;
+                return;
+            }
+
+            // 3. Botón Eliminar
+            if (dgvContactos.Columns[e.ColumnIndex].Name == "colContEliminar")
+            {
+                e.PaintBackground(e.CellBounds, true);
+                e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
+
+                int btnW = Math.Min(82, e.CellBounds.Width - 8);
+                int btnH = 26;
+                int btnX = e.CellBounds.X + ((e.CellBounds.Width - btnW) / 2);
+                int btnY = e.CellBounds.Y + ((e.CellBounds.Height - btnH) / 2);
+
+                Rectangle rectBtn = new Rectangle(btnX, btnY, btnW, btnH);
+                Tema.DibujarTarjetaRedondeada(e.Graphics, rectBtn, Tema.BotonPeligroFondo, Tema.BotonPeligroBorde, 6);
+
+                using (Brush brush = new SolidBrush(Tema.Error))
+                using (StringFormat sf = new StringFormat { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center })
+                using (Font font = new Font(Tema.FamiliaFuente, 8.5F, FontStyle.Bold))
+                {
+                    e.Graphics.DrawString("🗑 Eliminar", font, brush, rectBtn, sf);
+                }
+
+                e.Handled = true;
+                return;
+            }
         }
 
         // ============================================================
@@ -774,13 +821,7 @@ namespace SanarRuralUnan.Views
 
             string soloCaracteres = Regex.Replace(textoOriginal, @"[\s-]", "").ToUpperInvariant();
 
-            if (soloCaracteres.Length == 0)
-            {
-                pnlCedulaInfo.BackColor = Color.FromArgb(240, 247, 253);
-                lblCedulaInfo.Text = "Formato tradicional nicaragüense con formato estándar.";
-                lblCedulaInfo.ForeColor = Tema.AzulOscuro;
-                return;
-            }
+            if (soloCaracteres.Length == 0) return;
 
             if (EsFormatoCedulaTradicional(soloCaracteres))
             {
@@ -789,16 +830,6 @@ namespace SanarRuralUnan.Views
                 txtCedula.Text = formateado;
                 txtCedula.SelectionStart = Math.Min(posOriginal + 1, formateado.Length);
                 formateandoCedula = false;
-
-                pnlCedulaInfo.BackColor = Color.FromArgb(235, 247, 238);
-                lblCedulaInfo.Text = "✓ Formato tradicional nicaragüense reconocido.";
-                lblCedulaInfo.ForeColor = Tema.VerdeOscuro;
-            }
-            else
-            {
-                pnlCedulaInfo.BackColor = Color.FromArgb(240, 247, 253);
-                lblCedulaInfo.Text = "Documento de identidad en edición. Formato tradicional o nuevo.";
-                lblCedulaInfo.ForeColor = Tema.AzulOscuro;
             }
         }
 
@@ -887,11 +918,7 @@ namespace SanarRuralUnan.Views
                 return true;
             }
 
-            var pais = cmbPaisTelefono.SelectedItem as PaisTelefonoItem;
-            if (pais == null)
-            {
-                pais = PaisesCentroamerica.First(p => p.Codigo == "+505");
-            }
+            var pais = cmbPaisTelefono.SelectedItem as PaisTelefonoItem ?? PaisesCentroamerica.First(p => p.Codigo == "+505");
 
             string soloDigitos = Regex.Replace(numeroNacional, @"\D", "");
             if (soloDigitos.Length < pais.LongitudMinima || soloDigitos.Length > pais.LongitudMaxima)
@@ -1008,16 +1035,10 @@ namespace SanarRuralUnan.Views
                 }
 
                 Text = "Sanar Rural - Editar Paciente";
-                lblRegistroTituloHero.Text = "Edición de Paciente";
-                lblTitulo.Text = "Datos del Paciente";
+                lblTitulo.Text = "Editar paciente";
                 lblSubtitulo.Text = string.Format("Editar expediente #{0} | {1}", paciente.IdPaciente, paciente.NombreCompleto);
                 btnGuardar.Text = "💾 Guardar cambios";
                 btnCancelar.Text = "✕ Cancelar";
-
-                lblBadgeModo.Text = "✎ Modo Edición";
-                lblBadgeModo.BackColor = Color.FromArgb(235, 245, 252);
-                lblBadgeModo.ForeColor = Tema.AzulPrimario;
-                lblBadgeModo.Visible = true;
 
                 txtNombres.Text = paciente.PrimerNombre;
                 txtSegundoNombre.Text = paciente.SegundoNombre;
@@ -1027,11 +1048,17 @@ namespace SanarRuralUnan.Views
                 txtNumeroINSS.Text = paciente.NumeroINSS;
                 dtpFechaNacimiento.Value = paciente.FechaNacimiento;
                 cmbGenero.SelectedItem = paciente.Genero;
+                txtCorreo.Text = paciente.Correo ?? string.Empty;
 
                 CargarTelefonoPaciente(paciente.Telefono);
 
-                // Desglose de dirección y referencia si existía
-                if (!string.IsNullOrWhiteSpace(paciente.Direccion) && paciente.Direccion.Contains(" (Ref: "))
+                // Carga de dirección y referencia adicional
+                txtDireccion.Text = paciente.Direccion ?? string.Empty;
+                if (!string.IsNullOrWhiteSpace(paciente.ReferenciaAdicional))
+                {
+                    txtReferencia.Text = paciente.ReferenciaAdicional;
+                }
+                else if (!string.IsNullOrWhiteSpace(paciente.Direccion) && paciente.Direccion.Contains(" (Ref: "))
                 {
                     int idx = paciente.Direccion.IndexOf(" (Ref: ");
                     txtDireccion.Text = paciente.Direccion.Substring(0, idx);
@@ -1039,13 +1066,14 @@ namespace SanarRuralUnan.Views
                 }
                 else
                 {
-                    txtDireccion.Text = paciente.Direccion;
                     txtReferencia.Text = string.Empty;
                 }
 
                 cmbTipoSangre.SelectedItem = string.IsNullOrWhiteSpace(paciente.TipoSangre) ? "No especificado" : paciente.TipoSangre;
-                txtAlergias.Text = paciente.Alergias;
-                txtAntecedentes.Text = paciente.Antecedentes;
+
+                // Carga de alergias y condiciones en chips sin fragmentación ni pérdida de texto
+                CargarChipsDesdeTexto(paciente.Alergias, chipsAlergias, flpAlergias, txtNuevaAlergia);
+                CargarChipsDesdeTexto(paciente.Antecedentes, chipsCondiciones, flpCondiciones, txtNuevaCondicion);
 
                 // Cascada de ubicación
                 cargandoUbicacion = true;
@@ -1077,19 +1105,42 @@ namespace SanarRuralUnan.Views
         }
 
         // ============================================================
-        // GESTIÓN DE CONTACTOS DE EMERGENCIA
+        // GESTIÓN DE CONTACTOS DE EMERGENCIA (CON EDICIÓN INLINE)
         // ============================================================
         private void btnAgregarContacto_Click(object sender, EventArgs e)
         {
-            string pNombre = txtContactoPrimerNombre.Text.Trim();
-            string pApellido = txtContactoPrimerApellido.Text.Trim();
+            indiceContactoEditando = -1;
+            txtContactoPrimerNombre.Clear();
+            txtContactoTelefono.Clear();
+            txtContactoCedula.Clear();
+            if (cmbContactoParentesco.Items.Count > 0) cmbContactoParentesco.SelectedIndex = 0;
+            lblErrorContacto.Text = string.Empty;
+            btnGuardarContacto.Text = "💾 Guardar contacto";
+
+            pnlEditorContacto.Visible = true;
+            AjustarLayoutPaciente();
+            txtContactoPrimerNombre.Focus();
+        }
+
+        private void btnCancelarContacto_Click(object sender, EventArgs e)
+        {
+            pnlEditorContacto.Visible = false;
+            indiceContactoEditando = -1;
+            lblErrorContacto.Text = string.Empty;
+            AjustarLayoutPaciente();
+            dgvContactos.Invalidate();
+        }
+
+        private void btnGuardarContacto_Click(object sender, EventArgs e)
+        {
+            string nombreCompleto = txtContactoPrimerNombre.Text.Trim();
             string parentesco = cmbContactoParentesco.Text.Trim();
             string tel = txtContactoTelefono.Text.Trim();
             string ced = txtContactoCedula.Text.Trim();
 
-            if (string.IsNullOrWhiteSpace(pNombre))
+            if (string.IsNullOrWhiteSpace(nombreCompleto))
             {
-                lblErrorContacto.Text = "El nombre del contacto es obligatorio.";
+                lblErrorContacto.Text = "El nombre completo del contacto es obligatorio.";
                 txtContactoPrimerNombre.Focus();
                 return;
             }
@@ -1115,39 +1166,45 @@ namespace SanarRuralUnan.Views
                 return;
             }
 
-            // Separación amigable de nombre y apellido si se introdujo completo en el primer campo
-            string segundoNombre = string.Empty;
-            string segundoApellido = string.Empty;
-
-            if (string.IsNullOrWhiteSpace(pApellido))
+            // Separación amigable de nombre y apellido
+            string pNombre = nombreCompleto;
+            string pApellido = "Familiar";
+            string[] partes = nombreCompleto.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+            if (partes.Length >= 2)
             {
-                string[] partes = pNombre.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-                if (partes.Length >= 2)
-                {
-                    pNombre = partes[0];
-                    pApellido = string.Join(" ", partes.Skip(1));
-                }
-                else
-                {
-                    pApellido = "Familiar"; // Valor por defecto amigable para mantener integridad
-                }
+                pNombre = partes[0];
+                pApellido = string.Join(" ", partes.Skip(1));
             }
 
-            var contacto = new ContactoEmergenciaDto
+            if (indiceContactoEditando >= 0 && indiceContactoEditando < listaContactos.Count)
             {
-                PrimerNombre = pNombre,
-                SegundoNombre = segundoNombre,
-                PrimerApellido = pApellido,
-                SegundoApellido = segundoApellido,
-                Parentesco = parentesco,
-                Telefono = tel,
-                Cedula = ced
-            };
+                // Modo edición de contacto existente
+                var contactoExistente = listaContactos[indiceContactoEditando];
+                contactoExistente.PrimerNombre = pNombre;
+                contactoExistente.PrimerApellido = pApellido;
+                contactoExistente.Parentesco = parentesco;
+                contactoExistente.Telefono = tel;
+                contactoExistente.Cedula = ced;
+            }
+            else
+            {
+                // Modo adición de nuevo contacto
+                var nuevoContacto = new ContactoEmergenciaDto
+                {
+                    PrimerNombre = pNombre,
+                    PrimerApellido = pApellido,
+                    Parentesco = parentesco,
+                    Telefono = tel,
+                    Cedula = ced
+                };
+                listaContactos.Add(nuevoContacto);
+            }
 
-            listaContactos.Add(contacto);
-            RefrescarGridContactos();
-            LimpiarCamposContacto();
+            pnlEditorContacto.Visible = false;
+            indiceContactoEditando = -1;
             lblErrorContacto.Text = string.Empty;
+            RefrescarGridContactos();
+            AjustarLayoutPaciente();
         }
 
         private void dgvContactos_CellContentClick(object sender, DataGridViewCellEventArgs e)
@@ -1155,16 +1212,43 @@ namespace SanarRuralUnan.Views
             if (e.RowIndex < 0 || e.ColumnIndex < 0)
                 return;
 
-            if (dgvContactos.Columns[e.ColumnIndex].Name == "colContQuitar")
+            string columna = dgvContactos.Columns[e.ColumnIndex].Name;
+
+            if (columna == "colContEditar")
+            {
+                if (e.RowIndex < listaContactos.Count)
+                {
+                    indiceContactoEditando = e.RowIndex;
+                    var c = listaContactos[e.RowIndex];
+                    txtContactoPrimerNombre.Text = c.NombreCompleto;
+                    cmbContactoParentesco.Text = c.Parentesco;
+                    txtContactoTelefono.Text = c.Telefono;
+                    txtContactoCedula.Text = c.Cedula;
+                    lblErrorContacto.Text = string.Empty;
+                    btnGuardarContacto.Text = "💾 Guardar cambios";
+
+                    pnlEditorContacto.Visible = true;
+                    AjustarLayoutPaciente();
+                    dgvContactos.Invalidate();
+                    txtContactoPrimerNombre.Focus();
+                }
+            }
+            else if (columna == "colContEliminar")
             {
                 if (e.RowIndex < listaContactos.Count)
                 {
                     string contactoDesc = listaContactos[e.RowIndex].NombreCompleto;
-                    if (MessageBox.Show("¿Desea quitar de la lista a " + contactoDesc + "?",
-                        "Quitar contacto", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+                    if (MessageBox.Show("¿Desea eliminar de la lista a " + contactoDesc + "?",
+                        "Eliminar contacto", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
                     {
                         listaContactos.RemoveAt(e.RowIndex);
+                        if (indiceContactoEditando == e.RowIndex)
+                        {
+                            pnlEditorContacto.Visible = false;
+                            indiceContactoEditando = -1;
+                        }
                         RefrescarGridContactos();
+                        AjustarLayoutPaciente();
                     }
                 }
             }
@@ -1173,30 +1257,23 @@ namespace SanarRuralUnan.Views
         private void RefrescarGridContactos()
         {
             dgvContactos.Rows.Clear();
-            foreach (ContactoEmergenciaDto c in listaContactos)
+            for (int i = 0; i < listaContactos.Count; i++)
             {
+                var c = listaContactos[i];
+                string indicador = (indiceContactoEditando == i && pnlEditorContacto.Visible) ? "▲" : "▼";
                 dgvContactos.Rows.Add(
+                    indicador,
                     c.NombreCompleto,
                     c.Parentesco,
                     c.Telefono,
-                    string.IsNullOrWhiteSpace(c.Cedula) ? "-" : c.Cedula);
+                    string.IsNullOrWhiteSpace(c.Cedula) ? "-" : c.Cedula,
+                    "✏ Editar",
+                    "🗑 Eliminar");
             }
 
             bool hayContactos = listaContactos.Count > 0;
             dgvContactos.Visible = hayContactos;
             lblSinContactos.Visible = !hayContactos;
-        }
-
-        private void LimpiarCamposContacto()
-        {
-            txtContactoPrimerNombre.Clear();
-            txtContactoSegundoNombre.Clear();
-            txtContactoPrimerApellido.Clear();
-            txtContactoSegundoApellido.Clear();
-            if (cmbContactoParentesco.Items.Count > 0) cmbContactoParentesco.SelectedIndex = 0;
-            txtContactoTelefono.Clear();
-            txtContactoCedula.Clear();
-            txtContactoPrimerNombre.Focus();
         }
 
         // ============================================================
@@ -1237,6 +1314,31 @@ namespace SanarRuralUnan.Views
         // ============================================================
         private void btnGuardar_Click(object sender, EventArgs e)
         {
+            // Incorporar cualquier texto que haya quedado pendiente en las cajas de chips sin haber presionado Enter
+            if (!string.IsNullOrWhiteSpace(txtNuevaAlergia.Text))
+            {
+                string pendiente = txtNuevaAlergia.Text.Trim();
+                if (!chipsAlergias.Contains(pendiente, StringComparer.OrdinalIgnoreCase))
+                {
+                    chipsAlergias.Add(pendiente);
+                }
+                txtNuevaAlergia.Clear();
+            }
+
+            if (!string.IsNullOrWhiteSpace(txtNuevaCondicion.Text))
+            {
+                string pendiente = txtNuevaCondicion.Text.Trim();
+                if (!chipsCondiciones.Contains(pendiente, StringComparer.OrdinalIgnoreCase))
+                {
+                    chipsCondiciones.Add(pendiente);
+                }
+                txtNuevaCondicion.Clear();
+            }
+
+            // Sincronizar cadenas consolidadas
+            txtAlergias.Text = string.Join(", ", chipsAlergias);
+            txtAntecedentes.Text = string.Join(", ", chipsCondiciones);
+
             string pNombre = txtNombres.Text.Trim();
             if (string.IsNullOrWhiteSpace(pNombre))
             {
@@ -1268,11 +1370,11 @@ namespace SanarRuralUnan.Views
                 return;
             }
 
-            // Comprobar si el usuario escribió datos de un contacto en las cajas de texto pero olvidó presionar "+ Agregar"
-            if (!string.IsNullOrWhiteSpace(txtContactoPrimerNombre.Text) || !string.IsNullOrWhiteSpace(txtContactoTelefono.Text))
+            // Comprobar si el usuario escribió datos de un contacto en el panel de edición pero olvidó pulsar 'Guardar cambios'
+            if (pnlEditorContacto.Visible && (!string.IsNullOrWhiteSpace(txtContactoPrimerNombre.Text) || !string.IsNullOrWhiteSpace(txtContactoTelefono.Text)))
             {
                 var respuesta = MessageBox.Show(
-                    "Hay datos ingresados en el formulario de contactos de emergencia que no han sido agregados a la lista.\n\n¿Desea agregarlo antes de guardar?",
+                    "Hay datos ingresados en el formulario de contactos de emergencia que no han sido guardados.\n\n¿Desea guardarlos antes de registrar al paciente?",
                     "Contacto pendiente",
                     MessageBoxButtons.YesNoCancel,
                     MessageBoxIcon.Question);
@@ -1282,9 +1384,9 @@ namespace SanarRuralUnan.Views
 
                 if (respuesta == DialogResult.Yes)
                 {
-                    btnAgregarContacto_Click(sender, e);
-                    if (!string.IsNullOrEmpty(lblErrorContacto.Text))
-                        return; // Hubo error en el contacto
+                    btnGuardarContacto_Click(sender, e);
+                    if (pnlEditorContacto.Visible)
+                        return; // Hubo error en la validación del contacto
                 }
             }
 
@@ -1295,12 +1397,10 @@ namespace SanarRuralUnan.Views
             DateTime fechaNac = dtpFechaNacimiento.Value.Date;
             string genero = cmbGenero.SelectedItem != null ? cmbGenero.SelectedItem.ToString() : null;
 
-            // Dirección combinada con referencia opcional
-            string direccionBase = txtDireccion.Text.Trim();
+            // Registro de dirección y referencia adicional por separado
+            string direccion = txtDireccion.Text.Trim();
             string refAdicional = txtReferencia.Text.Trim();
-            string direccion = !string.IsNullOrWhiteSpace(refAdicional)
-                ? string.Format("{0} (Ref: {1})", direccionBase, refAdicional)
-                : direccionBase;
+            string correo = string.IsNullOrWhiteSpace(txtCorreo.Text) ? null : txtCorreo.Text.Trim();
 
             string tipoSangre = cmbTipoSangre.SelectedItem != null ? cmbTipoSangre.SelectedItem.ToString() : null;
             string alergias = txtAlergias.Text.Trim();
@@ -1326,7 +1426,9 @@ namespace SanarRuralUnan.Views
                         tipoSangre,
                         alergias,
                         antecedentes,
-                        listaContactos);
+                        listaContactos,
+                        refAdicional,
+                        correo);
 
                     if (!actualizado)
                     {
@@ -1354,7 +1456,9 @@ namespace SanarRuralUnan.Views
                         tipoSangre,
                         alergias,
                         antecedentes,
-                        listaContactos);
+                        listaContactos,
+                        refAdicional,
+                        correo);
 
                     MessageBox.Show("¡Paciente y contactos registrados con éxito!", "Registro exitoso", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }

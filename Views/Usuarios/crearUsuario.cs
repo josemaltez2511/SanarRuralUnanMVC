@@ -56,7 +56,8 @@ namespace SanarRuralUnan.Views
         private bool modoAdministracion;
         private int? idUsuarioEditar;
         public int? IdUsuarioCreado { get; private set; }
-        public string CorreoRegistrado { get; private set; }
+        public string NombreUsuarioRegistrado { get; private set; }
+        public string CorreoRegistrado => NombreUsuarioRegistrado;
 
         public crearUsuario()
         {
@@ -499,9 +500,26 @@ namespace SanarRuralUnan.Views
                 return;
             }
 
-            txtCorreo.Text = usuario.Correo;
+            txtCorreo.Text = !string.IsNullOrWhiteSpace(usuario.NombreUsuario) ? usuario.NombreUsuario : usuario.Correo;
             cmbRol.SelectedValue = usuario.IdRol;
             lblErrorCorreo.Text = "";
+
+            // Sección 7: Protección e información del perfil vinculado
+            var perfil = controlador.ObtenerPerfilDeUsuario(idUsuarioEditar.Value);
+            if (perfil != null)
+            {
+                cmbRol.Enabled = false;
+                lblTipoUsuario.Text = "Rol del usuario (Vinculado a " + perfil.TipoPerfil + ")";
+                lblTipoUsuario.ForeColor = Tema.VerdeOscuro;
+                lblSubtitulo.Text = "Perfil asociado: " + perfil.NombreCompleto + " (" + perfil.TipoPerfil + ") - " + perfil.Identificacion;
+            }
+            else
+            {
+                cmbRol.Enabled = false;
+                lblTipoUsuario.Text = "Rol del usuario (Cuenta histórica sin perfil vinculado)";
+                lblTipoUsuario.ForeColor = Tema.TextoSecundario;
+                lblSubtitulo.Text = "Cuenta histórica sin perfil vinculado. Se conserva su rol actual de transición.";
+            }
         }
 
         // Configura el comportamiento visual, interactivo y accesible de las tarjetas de rol
@@ -640,40 +658,40 @@ namespace SanarRuralUnan.Views
             txtConfirmarContrasena.SelectionStart = txtConfirmarContrasena.Text.Length;
         }
 
-        // Validación en tiempo real del formato y disponibilidad de correo
+        // Validación en tiempo real de longitud y disponibilidad del nombre de usuario
         private void txtCorreo_TextChanged(object sender, EventArgs e)
         {
-            string correo = txtCorreo.Text.Trim();
-            if (string.IsNullOrEmpty(correo))
+            string nombreUsuario = txtCorreo.Text.Trim();
+            if (string.IsNullOrEmpty(nombreUsuario))
             {
-                lblErrorCorreo.Text = "El correo no puede estar vacío.";
+                lblErrorCorreo.Text = "El nombre de usuario no puede estar vacío.";
                 lblErrorCorreo.ForeColor = Tema.ColorError;
                 return;
             }
 
-            if (!Regex.IsMatch(correo, @"^[^@\s]+@[^@\s]+\.[^@\s]+$"))
+            if (nombreUsuario.Length < 3 || nombreUsuario.Length > 50)
             {
-                lblErrorCorreo.Text = "Formato de correo inválido.";
+                lblErrorCorreo.Text = "El nombre de usuario debe tener entre 3 y 50 caracteres.";
                 lblErrorCorreo.ForeColor = Tema.ColorError;
                 return;
             }
 
             try
             {
-                if (controlador.CorreoYaExiste(correo, idUsuarioEditar))
+                if (controlador.NombreUsuarioYaExiste(nombreUsuario, idUsuarioEditar))
                 {
-                    lblErrorCorreo.Text = "Este correo ya está registrado en la base de datos.";
+                    lblErrorCorreo.Text = "Este nombre de usuario ya está registrado en la base de datos.";
                     lblErrorCorreo.ForeColor = Tema.ColorError;
                 }
                 else
                 {
-                    lblErrorCorreo.Text = "Correo disponible.";
+                    lblErrorCorreo.Text = "Nombre de usuario disponible.";
                     lblErrorCorreo.ForeColor = Tema.ColorExito;
                 }
             }
             catch
             {
-                lblErrorCorreo.Text = "No se pudo validar el correo. Verifique la conexión a la base de datos.";
+                lblErrorCorreo.Text = "No se pudo validar el nombre de usuario. Verifique la conexión a la base de datos.";
                 lblErrorCorreo.ForeColor = Tema.ColorError;
             }
         }
@@ -728,14 +746,14 @@ namespace SanarRuralUnan.Views
         // Proceso principal de guardado o actualización de usuario
         private void btnGuardar_Click(object sender, EventArgs e)
         {
-            string correo = txtCorreo.Text.Trim();
+            string nombreUsuario = txtCorreo.Text.Trim();
             string contrasena = txtContrasena.Text;
             string confirmar = txtConfirmarContrasena.Text;
             bool editar = idUsuarioEditar.HasValue;
 
-            if (string.IsNullOrWhiteSpace(correo) || !Regex.IsMatch(correo, @"^[^@\s]+@[^@\s]+\.[^@\s]+$"))
+            if (string.IsNullOrWhiteSpace(nombreUsuario) || nombreUsuario.Length < 3 || nombreUsuario.Length > 50)
             {
-                MessageBox.Show("Ingrese un correo válido.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Ingrese un nombre de usuario válido (entre 3 y 50 caracteres).", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
@@ -786,34 +804,35 @@ namespace SanarRuralUnan.Views
             {
                 if (modoAdministracion)
                 {
-                    int idCreado = editar ? 0 : controlador.CrearUsuario(idRol, correo, contrasena);
-                    bool guardado = editar
-                        ? controlador.EditarUsuario(idUsuarioEditar.Value, idRol, correo, contrasena)
-                        : idCreado > 0;
-
-                    if (!guardado)
+                    if (!editar)
                     {
-                        MessageBox.Show("El correo ya está registrado o el usuario no está disponible.", "No se pudo guardar", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        MessageBox.Show("Para crear un nuevo acceso, debe seleccionar primero un perfil de persona sin cuenta desde 'Asignar acceso a perfil'.", "Asignación de accesos requerida", MessageBoxButtons.OK, MessageBoxIcon.Information);
                         return;
                     }
 
-                    if (!editar)
-                        IdUsuarioCreado = idCreado;
+                    bool guardado = controlador.EditarUsuario(idUsuarioEditar.Value, idRol, nombreUsuario, contrasena);
 
+                    if (!guardado)
+                    {
+                        MessageBox.Show("El nombre de usuario ya está registrado o el usuario no está disponible.", "No se pudo guardar", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        return;
+                    }
+
+                    NombreUsuarioRegistrado = nombreUsuario;
                     DialogResult = DialogResult.OK;
                     Close();
                     return;
                 }
 
-                int idUsuarioCreado = controlador.CrearUsuario(idRol, correo, contrasena);
+                int idUsuarioCreado = controlador.CrearUsuario(idRol, nombreUsuario, contrasena);
                 if (idUsuarioCreado == -1)
                 {
-                    MessageBox.Show("El correo ya se encuentra registrado.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show("El nombre de usuario ya se encuentra registrado.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
                 }
 
                 IdUsuarioCreado = idUsuarioCreado;
-                CorreoRegistrado = correo;
+                NombreUsuarioRegistrado = nombreUsuario;
 
                 if (esRegistroDoctorFijo)
                 {

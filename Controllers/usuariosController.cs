@@ -10,15 +10,12 @@ namespace SanarRuralUnan.Controllers
 {
     public class usuariosControllers
     {
-        // Método para iniciar sesión con sus parámetros de correo y contraseña
+        // Método para iniciar sesión con sus parámetros de identificador (nombre de usuario o correo) y contraseña
         // para verificar si el usuario existe y si la contraseña es correcta
-        // Este método llama al método IniciarSesion del modelo usuarios
-        // y retorna un valor entero indicando si el inicio de sesión fue exitoso y su rol
-        // Dependiendo del resultado, la vista puede mostrar un mensaje de error
-        // o redirigir al usuario a la página principal
-        public int IniciarSesion(string correo, string contrasena)
+        // Retorna IdRol si es exitoso, -1 si las credenciales son inválidas, o -2 si la cuenta está inactiva.
+        public int IniciarSesion(string identificador, string contrasena)
         {
-            return new usuariosModels().IniciarSesion(correo, contrasena);
+            return new usuariosModels().IniciarSesion(identificador, contrasena);
         }
 
         public void CerrarSesion()
@@ -38,8 +35,13 @@ namespace SanarRuralUnan.Controllers
             return new usuariosModels().ObtenerIdPacienteActual();
         }
 
-        // Método para saber si un correo ya está registrado
-        // La Vista llama a este método en vez de consultar la base de datos directamente
+        // Método para saber si un nombre de usuario ya está registrado
+        public bool NombreUsuarioYaExiste(string nombreUsuario, int? idUsuarioExcluir = null)
+        {
+            return new usuariosModels().ExisteNombreUsuario(nombreUsuario, idUsuarioExcluir);
+        }
+
+        // Método para saber si un correo ya está registrado (retrocompatibilidad)
         public bool CorreoYaExiste(string correo, int? idUsuarioExcluir = null)
         {
             return new usuariosModels().ExisteCorreo(correo, idUsuarioExcluir);
@@ -65,36 +67,69 @@ namespace SanarRuralUnan.Controllers
             return new usuariosModels().ConsultarUsuario(idUsuario);
         }
 
-        // Método para crear un nuevo usuario
-        // Recibe los datos que la Vista recolectó del formulario
-        // y le pasa la orden de guardar al Modelo
-        public int CrearUsuario(string correo, string contrasena)
+        // Método para crear un nuevo usuario con rol Paciente por defecto (registro público)
+        public int CrearUsuario(string nombreUsuario, string contrasena)
         {
             int idRolPaciente = ObtenerIdRol("Paciente");
-            return CrearUsuario(idRolPaciente, correo, contrasena);
+            return CrearUsuario(idRolPaciente, nombreUsuario, contrasena);
         }
 
-        public int CrearUsuario(int idRol, string correo, string contrasena)
+        public int CrearUsuario(int idRol, string nombreUsuario, string contrasena)
         {
             usuariosModels modelo = new usuariosModels();
-            if (idRol <= 0 || modelo.ExisteCorreo(correo))
+            if (idRol <= 0 || modelo.ExisteNombreUsuario(nombreUsuario))
                 return -1;
 
-            return modelo.Guardar(idRol, correo, contrasena);
+            return modelo.Guardar(idRol, nombreUsuario, contrasena);
         }
 
-        public bool EditarUsuario(int idUsuario, int idRol, string correo, string nuevaContrasena)
+        public bool EditarUsuario(int idUsuario, int idRol, string nombreUsuario, string nuevaContrasena)
         {
             usuariosModels modelo = new usuariosModels();
-            if (modelo.ExisteCorreo(correo, idUsuario))
+            if (modelo.ExisteNombreUsuario(nombreUsuario, idUsuario))
                 return false;
 
-            return modelo.Actualizar(idUsuario, idRol, correo, nuevaContrasena);
+            return modelo.Actualizar(idUsuario, idRol, nombreUsuario, nuevaContrasena);
         }
 
         public bool EliminarUsuario(int idUsuario)
         {
             return new usuariosModels().DarDeBaja(idUsuario);
+        }
+
+        public bool EsSesionAdmin()
+        {
+            return usuariosModels.EsSesionAdmin();
+        }
+
+        public bool EsSesionPersonalAdministrativo()
+        {
+            return usuariosModels.EsSesionPersonalAdministrativo();
+        }
+
+        public bool PuedeGestionarUsuariosYPersonal()
+        {
+            return usuariosModels.PuedeGestionarUsuariosYPersonal();
+        }
+
+        public bool PuedeCrearAccesoParaRol(string tipoPerfil)
+        {
+            return new usuariosModels().PuedeCrearAccesoParaRol(tipoPerfil);
+        }
+
+        public List<PerfilSinUsuarioDto> ListarPerfilesSinUsuario(string filtroTipo = null, string busqueda = null)
+        {
+            return new usuariosModels().ListarPerfilesSinUsuario(filtroTipo, busqueda);
+        }
+
+        public bool CrearUsuarioVinculadoAPerfil(int idPerfil, string tipoPerfil, string nombreUsuario, string contrasena, out string mensajeError)
+        {
+            return new usuariosModels().CrearUsuarioVinculadoAPerfil(idPerfil, tipoPerfil, nombreUsuario, contrasena, out mensajeError);
+        }
+
+        public PerfilVinculadoDto ObtenerPerfilDeUsuario(int idUsuario)
+        {
+            return new usuariosModels().ObtenerPerfilDeUsuario(idUsuario);
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
   <!-- EF Runtime content -->
   <edmx:Runtime>
@@ -28,6 +28,8 @@
           <EntitySet Name="SignosVitales" EntityType="SanarRuralUnan.Store.SignosVitales" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="Sintomas" EntityType="SanarRuralUnan.Store.Sintomas" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="Usuarios" EntityType="SanarRuralUnan.Store.Usuarios" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="Administradores" EntityType="SanarRuralUnan.Store.Administradores" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="PersonalAdministrativo" EntityType="SanarRuralUnan.Store.PersonalAdministrativo" store:Type="Tables" Schema="dbo" />
           <AssociationSet Name="FK_Citas_DoctorHospitalEspecialidad" Association="SanarRuralUnan.Store.FK_Citas_DoctorHospitalEspecialidad">
             <End Role="DoctorHospitalEspecialidad" EntitySet="DoctorHospitalEspecialidad" />
             <End Role="Citas" EntitySet="Citas" />
@@ -120,6 +122,14 @@
             <End Role="Roles" EntitySet="Roles" />
             <End Role="Usuarios" EntitySet="Usuarios" />
           </AssociationSet>
+          <AssociationSet Name="FK_Administradores_Usuarios" Association="SanarRuralUnan.Store.FK_Administradores_Usuarios">
+            <End Role="Usuarios" EntitySet="Usuarios" />
+            <End Role="Administradores" EntitySet="Administradores" />
+          </AssociationSet>
+          <AssociationSet Name="FK_PersonalAdministrativo_Usuarios" Association="SanarRuralUnan.Store.FK_PersonalAdministrativo_Usuarios">
+            <End Role="Usuarios" EntitySet="Usuarios" />
+            <End Role="PersonalAdministrativo" EntitySet="PersonalAdministrativo" />
+          </AssociationSet>
         </EntityContainer>
         <EntityType Name="Citas">
           <Key>
@@ -202,6 +212,7 @@
           <Property Name="Cedula" Type="nvarchar" Nullable="false" MaxLength="20" />
           <Property Name="NumeroLicencia" Type="nvarchar" Nullable="false" MaxLength="50" />
           <Property Name="Telefono" Type="nvarchar" MaxLength="30" />
+          <Property Name="Correo" Type="nvarchar" MaxLength="150" />
           <Property Name="Foto" Type="varbinary(max)" />
           <Property Name="FotoNombre" Type="nvarchar" MaxLength="255" />
           <Property Name="FotoMimeType" Type="nvarchar" MaxLength="100" />
@@ -298,8 +309,10 @@
           <Property Name="FechaNacimiento" Type="date" Nullable="false" />
           <Property Name="Genero" Type="nvarchar" MaxLength="30" />
           <Property Name="Telefono" Type="nvarchar" MaxLength="30" />
+          <Property Name="Correo" Type="nvarchar" MaxLength="150" />
           <Property Name="IdComunidad" Type="int" Nullable="false" />
-          <Property Name="Direccion" Type="nvarchar" MaxLength="300" />
+          <Property Name="Direccion" Type="nvarchar" MaxLength="500" />
+          <Property Name="ReferenciaAdicional" Type="nvarchar" MaxLength="500" />
           <Property Name="TipoSangre" Type="nvarchar" MaxLength="5" />
           <Property Name="Alergias" Type="nvarchar" MaxLength="1000" />
           <Property Name="Antecedentes" Type="nvarchar" MaxLength="2000" />
@@ -366,9 +379,41 @@
           </Key>
           <Property Name="IdUsuario" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
           <Property Name="IdRol" Type="int" Nullable="false" />
-          <Property Name="Correo" Type="nvarchar" Nullable="false" MaxLength="150" />
+          <Property Name="NombreUsuario" Type="nvarchar" Nullable="false" MaxLength="50" />
+          <Property Name="Correo" Type="nvarchar" MaxLength="150" />
           <Property Name="ContrasenaHash" Type="nvarchar" Nullable="false" MaxLength="255" />
           <Property Name="FechaRegistro" Type="datetime2" Nullable="false" />
+          <Property Name="Estado" Type="bit" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Administradores">
+          <Key>
+            <PropertyRef Name="IdAdministrador" />
+          </Key>
+          <Property Name="IdAdministrador" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="IdUsuario" Type="int" />
+          <Property Name="PrimerNombre" Type="nvarchar" Nullable="false" MaxLength="50" />
+          <Property Name="SegundoNombre" Type="nvarchar" MaxLength="50" />
+          <Property Name="PrimerApellido" Type="nvarchar" Nullable="false" MaxLength="50" />
+          <Property Name="SegundoApellido" Type="nvarchar" MaxLength="50" />
+          <Property Name="Cedula" Type="nvarchar" MaxLength="20" />
+          <Property Name="Telefono" Type="nvarchar" MaxLength="30" />
+          <Property Name="Correo" Type="nvarchar" MaxLength="150" />
+          <Property Name="Estado" Type="bit" Nullable="false" />
+        </EntityType>
+        <EntityType Name="PersonalAdministrativo">
+          <Key>
+            <PropertyRef Name="IdPersonalAdministrativo" />
+          </Key>
+          <Property Name="IdPersonalAdministrativo" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="IdUsuario" Type="int" />
+          <Property Name="PrimerNombre" Type="nvarchar" Nullable="false" MaxLength="50" />
+          <Property Name="SegundoNombre" Type="nvarchar" MaxLength="50" />
+          <Property Name="PrimerApellido" Type="nvarchar" Nullable="false" MaxLength="50" />
+          <Property Name="SegundoApellido" Type="nvarchar" MaxLength="50" />
+          <Property Name="Cedula" Type="nvarchar" MaxLength="20" />
+          <Property Name="Telefono" Type="nvarchar" MaxLength="30" />
+          <Property Name="Correo" Type="nvarchar" MaxLength="150" />
+          <Property Name="Cargo" Type="nvarchar" MaxLength="100" />
           <Property Name="Estado" Type="bit" Nullable="false" />
         </EntityType>
         <Association Name="FK_Citas_DoctorHospitalEspecialidad">
@@ -659,6 +704,30 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_Administradores_Usuarios">
+          <End Role="Usuarios" Type="SanarRuralUnan.Store.Usuarios" Multiplicity="0..1" />
+          <End Role="Administradores" Type="SanarRuralUnan.Store.Administradores" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Usuarios">
+              <PropertyRef Name="IdUsuario" />
+            </Principal>
+            <Dependent Role="Administradores">
+              <PropertyRef Name="IdUsuario" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_PersonalAdministrativo_Usuarios">
+          <End Role="Usuarios" Type="SanarRuralUnan.Store.Usuarios" Multiplicity="0..1" />
+          <End Role="PersonalAdministrativo" Type="SanarRuralUnan.Store.PersonalAdministrativo" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Usuarios">
+              <PropertyRef Name="IdUsuario" />
+            </Principal>
+            <Dependent Role="PersonalAdministrativo">
+              <PropertyRef Name="IdUsuario" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
       </Schema>
     </edmx:StorageModels>
     <!-- CSDL content -->
@@ -686,6 +755,8 @@
           <EntitySet Name="SignosVitales" EntityType="SanarRuralUnan.SignosVitales" />
           <EntitySet Name="Sintomas" EntityType="SanarRuralUnan.Sintomas" />
           <EntitySet Name="Usuarios" EntityType="SanarRuralUnan.Usuarios" />
+          <EntitySet Name="Administradores" EntityType="SanarRuralUnan.Administradores" />
+          <EntitySet Name="PersonalAdministrativo" EntityType="SanarRuralUnan.PersonalAdministrativo" />
           <AssociationSet Name="FK_Citas_DoctorHospitalEspecialidad" Association="SanarRuralUnan.FK_Citas_DoctorHospitalEspecialidad">
             <End Role="DoctorHospitalEspecialidad" EntitySet="DoctorHospitalEspecialidad" />
             <End Role="Citas" EntitySet="Citas" />
@@ -773,6 +844,14 @@
           <AssociationSet Name="Enfermedades_Sintomas" Association="SanarRuralUnan.Enfermedades_Sintomas">
             <End Role="Enfermedades" EntitySet="Enfermedades" />
             <End Role="Sintomas" EntitySet="Sintomas" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Administradores_Usuarios" Association="SanarRuralUnan.FK_Administradores_Usuarios">
+            <End Role="Usuarios" EntitySet="Usuarios" />
+            <End Role="Administradores" EntitySet="Administradores" />
+          </AssociationSet>
+          <AssociationSet Name="FK_PersonalAdministrativo_Usuarios" Association="SanarRuralUnan.FK_PersonalAdministrativo_Usuarios">
+            <End Role="Usuarios" EntitySet="Usuarios" />
+            <End Role="PersonalAdministrativo" EntitySet="PersonalAdministrativo" />
           </AssociationSet>
         </EntityContainer>
         <EntityType Name="Citas">
@@ -869,6 +948,7 @@
           <Property Name="Cedula" Type="String" Nullable="false" MaxLength="20" Unicode="true" FixedLength="false" />
           <Property Name="NumeroLicencia" Type="String" Nullable="false" MaxLength="50" Unicode="true" FixedLength="false" />
           <Property Name="Telefono" Type="String" MaxLength="30" Unicode="true" FixedLength="false" />
+          <Property Name="Correo" Type="String" MaxLength="150" Unicode="true" FixedLength="false" />
           <Property Name="Foto" Type="Binary" MaxLength="Max" FixedLength="false" />
           <Property Name="FotoNombre" Type="String" MaxLength="255" Unicode="true" FixedLength="false" />
           <Property Name="FotoMimeType" Type="String" MaxLength="100" Unicode="true" FixedLength="false" />
@@ -975,8 +1055,10 @@
           <Property Name="FechaNacimiento" Type="DateTime" Nullable="false" />
           <Property Name="Genero" Type="String" MaxLength="30" Unicode="true" FixedLength="false" />
           <Property Name="Telefono" Type="String" MaxLength="30" Unicode="true" FixedLength="false" />
+          <Property Name="Correo" Type="String" MaxLength="150" Unicode="true" FixedLength="false" />
           <Property Name="IdComunidad" Type="Int32" Nullable="false" />
-          <Property Name="Direccion" Type="String" MaxLength="300" Unicode="true" FixedLength="false" />
+          <Property Name="Direccion" Type="String" MaxLength="500" Unicode="true" FixedLength="false" />
+          <Property Name="ReferenciaAdicional" Type="String" MaxLength="500" Unicode="true" FixedLength="false" />
           <Property Name="TipoSangre" Type="String" MaxLength="5" Unicode="true" FixedLength="false" />
           <Property Name="Alergias" Type="String" MaxLength="1000" Unicode="true" FixedLength="false" />
           <Property Name="Antecedentes" Type="String" MaxLength="2000" Unicode="true" FixedLength="false" />
@@ -1053,13 +1135,49 @@
           </Key>
           <Property Name="IdUsuario" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="IdRol" Type="Int32" Nullable="false" />
-          <Property Name="Correo" Type="String" Nullable="false" MaxLength="150" Unicode="true" FixedLength="false" />
+          <Property Name="NombreUsuario" Type="String" Nullable="false" MaxLength="50" Unicode="true" FixedLength="false" />
+          <Property Name="Correo" Type="String" MaxLength="150" Unicode="true" FixedLength="false" />
           <Property Name="ContrasenaHash" Type="String" Nullable="false" MaxLength="255" Unicode="true" FixedLength="false" />
           <Property Name="FechaRegistro" Type="DateTime" Nullable="false" />
           <Property Name="Estado" Type="Boolean" Nullable="false" />
           <NavigationProperty Name="Doctores" Relationship="SanarRuralUnan.FK_Doctores_Usuarios" FromRole="Usuarios" ToRole="Doctores" />
           <NavigationProperty Name="Pacientes" Relationship="SanarRuralUnan.FK_Pacientes_Usuarios" FromRole="Usuarios" ToRole="Pacientes" />
           <NavigationProperty Name="Roles" Relationship="SanarRuralUnan.FK_Usuarios_Roles" FromRole="Usuarios" ToRole="Roles" />
+          <NavigationProperty Name="Administradores" Relationship="SanarRuralUnan.FK_Administradores_Usuarios" FromRole="Usuarios" ToRole="Administradores" />
+          <NavigationProperty Name="PersonalAdministrativo" Relationship="SanarRuralUnan.FK_PersonalAdministrativo_Usuarios" FromRole="Usuarios" ToRole="PersonalAdministrativo" />
+        </EntityType>
+        <EntityType Name="Administradores">
+          <Key>
+            <PropertyRef Name="IdAdministrador" />
+          </Key>
+          <Property Name="IdAdministrador" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="IdUsuario" Type="Int32" />
+          <Property Name="PrimerNombre" Type="String" Nullable="false" MaxLength="50" Unicode="true" FixedLength="false" />
+          <Property Name="SegundoNombre" Type="String" MaxLength="50" Unicode="true" FixedLength="false" />
+          <Property Name="PrimerApellido" Type="String" Nullable="false" MaxLength="50" Unicode="true" FixedLength="false" />
+          <Property Name="SegundoApellido" Type="String" MaxLength="50" Unicode="true" FixedLength="false" />
+          <Property Name="Cedula" Type="String" MaxLength="20" Unicode="true" FixedLength="false" />
+          <Property Name="Telefono" Type="String" MaxLength="30" Unicode="true" FixedLength="false" />
+          <Property Name="Correo" Type="String" MaxLength="150" Unicode="true" FixedLength="false" />
+          <Property Name="Estado" Type="Boolean" Nullable="false" />
+          <NavigationProperty Name="Usuarios" Relationship="SanarRuralUnan.FK_Administradores_Usuarios" FromRole="Administradores" ToRole="Usuarios" />
+        </EntityType>
+        <EntityType Name="PersonalAdministrativo">
+          <Key>
+            <PropertyRef Name="IdPersonalAdministrativo" />
+          </Key>
+          <Property Name="IdPersonalAdministrativo" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="IdUsuario" Type="Int32" />
+          <Property Name="PrimerNombre" Type="String" Nullable="false" MaxLength="50" Unicode="true" FixedLength="false" />
+          <Property Name="SegundoNombre" Type="String" MaxLength="50" Unicode="true" FixedLength="false" />
+          <Property Name="PrimerApellido" Type="String" Nullable="false" MaxLength="50" Unicode="true" FixedLength="false" />
+          <Property Name="SegundoApellido" Type="String" MaxLength="50" Unicode="true" FixedLength="false" />
+          <Property Name="Cedula" Type="String" MaxLength="20" Unicode="true" FixedLength="false" />
+          <Property Name="Telefono" Type="String" MaxLength="30" Unicode="true" FixedLength="false" />
+          <Property Name="Correo" Type="String" MaxLength="150" Unicode="true" FixedLength="false" />
+          <Property Name="Cargo" Type="String" MaxLength="100" Unicode="true" FixedLength="false" />
+          <Property Name="Estado" Type="Boolean" Nullable="false" />
+          <NavigationProperty Name="Usuarios" Relationship="SanarRuralUnan.FK_PersonalAdministrativo_Usuarios" FromRole="PersonalAdministrativo" ToRole="Usuarios" />
         </EntityType>
         <Association Name="FK_Citas_DoctorHospitalEspecialidad">
           <End Role="DoctorHospitalEspecialidad" Type="SanarRuralUnan.DoctorHospitalEspecialidad" Multiplicity="1" />
@@ -1325,6 +1443,30 @@
           <End Role="Enfermedades" Type="SanarRuralUnan.Enfermedades" Multiplicity="*" />
           <End Role="Sintomas" Type="SanarRuralUnan.Sintomas" Multiplicity="*" />
         </Association>
+        <Association Name="FK_Administradores_Usuarios">
+          <End Role="Usuarios" Type="SanarRuralUnan.Usuarios" Multiplicity="0..1" />
+          <End Role="Administradores" Type="SanarRuralUnan.Administradores" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Usuarios">
+              <PropertyRef Name="IdUsuario" />
+            </Principal>
+            <Dependent Role="Administradores">
+              <PropertyRef Name="IdUsuario" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_PersonalAdministrativo_Usuarios">
+          <End Role="Usuarios" Type="SanarRuralUnan.Usuarios" Multiplicity="0..1" />
+          <End Role="PersonalAdministrativo" Type="SanarRuralUnan.PersonalAdministrativo" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Usuarios">
+              <PropertyRef Name="IdUsuario" />
+            </Principal>
+            <Dependent Role="PersonalAdministrativo">
+              <PropertyRef Name="IdUsuario" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -1417,6 +1559,7 @@
                 <ScalarProperty Name="Cedula" ColumnName="Cedula" />
                 <ScalarProperty Name="NumeroLicencia" ColumnName="NumeroLicencia" />
                 <ScalarProperty Name="Telefono" ColumnName="Telefono" />
+                <ScalarProperty Name="Correo" ColumnName="Correo" />
                 <ScalarProperty Name="Foto" ColumnName="Foto" />
                 <ScalarProperty Name="FotoNombre" ColumnName="FotoNombre" />
                 <ScalarProperty Name="FotoMimeType" ColumnName="FotoMimeType" />
@@ -1510,8 +1653,10 @@
                 <ScalarProperty Name="FechaNacimiento" ColumnName="FechaNacimiento" />
                 <ScalarProperty Name="Genero" ColumnName="Genero" />
                 <ScalarProperty Name="Telefono" ColumnName="Telefono" />
+                <ScalarProperty Name="Correo" ColumnName="Correo" />
                 <ScalarProperty Name="IdComunidad" ColumnName="IdComunidad" />
                 <ScalarProperty Name="Direccion" ColumnName="Direccion" />
+                <ScalarProperty Name="ReferenciaAdicional" ColumnName="ReferenciaAdicional" />
                 <ScalarProperty Name="TipoSangre" ColumnName="TipoSangre" />
                 <ScalarProperty Name="Alergias" ColumnName="Alergias" />
                 <ScalarProperty Name="Antecedentes" ColumnName="Antecedentes" />
@@ -1584,9 +1729,43 @@
               <MappingFragment StoreEntitySet="Usuarios">
                 <ScalarProperty Name="IdUsuario" ColumnName="IdUsuario" />
                 <ScalarProperty Name="IdRol" ColumnName="IdRol" />
+                <ScalarProperty Name="NombreUsuario" ColumnName="NombreUsuario" />
                 <ScalarProperty Name="Correo" ColumnName="Correo" />
                 <ScalarProperty Name="ContrasenaHash" ColumnName="ContrasenaHash" />
                 <ScalarProperty Name="FechaRegistro" ColumnName="FechaRegistro" />
+                <ScalarProperty Name="Estado" ColumnName="Estado" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Administradores">
+            <EntityTypeMapping TypeName="SanarRuralUnan.Administradores">
+              <MappingFragment StoreEntitySet="Administradores">
+                <ScalarProperty Name="IdAdministrador" ColumnName="IdAdministrador" />
+                <ScalarProperty Name="IdUsuario" ColumnName="IdUsuario" />
+                <ScalarProperty Name="PrimerNombre" ColumnName="PrimerNombre" />
+                <ScalarProperty Name="SegundoNombre" ColumnName="SegundoNombre" />
+                <ScalarProperty Name="PrimerApellido" ColumnName="PrimerApellido" />
+                <ScalarProperty Name="SegundoApellido" ColumnName="SegundoApellido" />
+                <ScalarProperty Name="Cedula" ColumnName="Cedula" />
+                <ScalarProperty Name="Telefono" ColumnName="Telefono" />
+                <ScalarProperty Name="Correo" ColumnName="Correo" />
+                <ScalarProperty Name="Estado" ColumnName="Estado" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="PersonalAdministrativo">
+            <EntityTypeMapping TypeName="SanarRuralUnan.PersonalAdministrativo">
+              <MappingFragment StoreEntitySet="PersonalAdministrativo">
+                <ScalarProperty Name="IdPersonalAdministrativo" ColumnName="IdPersonalAdministrativo" />
+                <ScalarProperty Name="IdUsuario" ColumnName="IdUsuario" />
+                <ScalarProperty Name="PrimerNombre" ColumnName="PrimerNombre" />
+                <ScalarProperty Name="SegundoNombre" ColumnName="SegundoNombre" />
+                <ScalarProperty Name="PrimerApellido" ColumnName="PrimerApellido" />
+                <ScalarProperty Name="SegundoApellido" ColumnName="SegundoApellido" />
+                <ScalarProperty Name="Cedula" ColumnName="Cedula" />
+                <ScalarProperty Name="Telefono" ColumnName="Telefono" />
+                <ScalarProperty Name="Correo" ColumnName="Correo" />
+                <ScalarProperty Name="Cargo" ColumnName="Cargo" />
                 <ScalarProperty Name="Estado" ColumnName="Estado" />
               </MappingFragment>
             </EntityTypeMapping>

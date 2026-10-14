@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
@@ -138,6 +138,13 @@ namespace SanarRuralUnan.Views.Hospitales
                 }
 
                 CalcularMetricas(lista.Count);
+
+                bool puedeGestionar = controlador.PuedeGestionarHospitales();
+                btnNuevo.Visible = puedeGestionar;
+                if (dgvHospitales.Columns["colEditar"] != null)
+                    dgvHospitales.Columns["colEditar"].Visible = puedeGestionar;
+                if (dgvHospitales.Columns["colBaja"] != null)
+                    dgvHospitales.Columns["colBaja"].Visible = puedeGestionar;
             }
             catch (Exception ex)
             {
@@ -321,6 +328,12 @@ namespace SanarRuralUnan.Views.Hospitales
 
         private void btnNuevo_Click(object sender, EventArgs e)
         {
+            if (!controlador.PuedeGestionarHospitales())
+            {
+                MessageBox.Show("El rol Personal_administrativo no tiene autorización para registrar sedes hospitalarias. Esta operación requiere privilegios de Administrador.", "Acceso restringido", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
             using (crearHospital formulario = new crearHospital())
             {
                 if (formulario.ShowDialog(this) == DialogResult.OK)
@@ -336,6 +349,12 @@ namespace SanarRuralUnan.Views.Hospitales
 
             if (dgvHospitales.Columns[e.ColumnIndex].Name == "colEditar")
             {
+                if (!controlador.PuedeGestionarHospitales())
+                {
+                    MessageBox.Show("El rol Personal_administrativo no tiene autorización para modificar sedes hospitalarias. Esta operación requiere privilegios de Administrador.", "Acceso restringido", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
                 using (crearHospital formulario = new crearHospital(idHospital))
                 {
                     if (formulario.ShowDialog(this) == DialogResult.OK)
@@ -344,6 +363,12 @@ namespace SanarRuralUnan.Views.Hospitales
             }
             else if (dgvHospitales.Columns[e.ColumnIndex].Name == "colBaja")
             {
+                if (!controlador.PuedeGestionarHospitales())
+                {
+                    MessageBox.Show("El rol Personal_administrativo no tiene autorización para dar de baja sedes hospitalarias. Esta operación requiere privilegios de Administrador.", "Acceso restringido", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
                 string nombre = dgvHospitales.Rows[e.RowIndex].Cells["colNombre"].Value?.ToString() ?? "este hospital";
                 DialogResult respuesta = MessageBox.Show(
                     "¿Desea dar de baja a " + nombre + "? Sus referencias históricas se conservarán.",

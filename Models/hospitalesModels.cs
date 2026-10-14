@@ -15,7 +15,7 @@ namespace SanarRuralUnan.Models
         // Crea el hospital activo asociado al municipio seleccionado.
         public void guardarHospital(int idMunicipio, string nombre, string direccion, string telefono)
         {
-            usuariosModels.ExigirRolAdministrativo("registrar una sede hospitalaria");
+            usuariosModels.ExigirPermisoGestionCompleta("registrar una sede hospitalaria");
 
             Hospitales hospital = new Hospitales
             {
@@ -75,7 +75,7 @@ namespace SanarRuralUnan.Models
         // Actualiza los datos del hospital sin alterar sus relaciones históricas.
         public void actualizarHospital(int idHospital, int idMunicipio, string nombre, string direccion, string telefono)
         {
-            usuariosModels.ExigirRolAdministrativo("actualizar una sede hospitalaria");
+            usuariosModels.ExigirPermisoGestionCompleta("actualizar una sede hospitalaria");
 
             Hospitales hospital = db.Hospitales.FirstOrDefault(h => h.IdHospital == idHospital && h.Estado);
 
@@ -91,7 +91,7 @@ namespace SanarRuralUnan.Models
         // Baja lógica para conservar las referencias de doctores y citas.
         public void eliminarHospital(int idHospital)
         {
-            usuariosModels.ExigirRolAdministrativo("dar de baja a una sede hospitalaria");
+            usuariosModels.ExigirPermisoGestionCompleta("dar de baja a una sede hospitalaria");
 
             Hospitales hospital = db.Hospitales.FirstOrDefault(h => h.IdHospital == idHospital && h.Estado);
 

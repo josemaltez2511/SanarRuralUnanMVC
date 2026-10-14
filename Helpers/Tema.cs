@@ -189,5 +189,24 @@ namespace SanarRuralUnan.Helpers
                 return null;
             }
         }
+
+        // Sanea textos provenientes de la base de datos con problemas de codificación UTF-8 / Windows-1252
+        public static string SanearTexto(string texto)
+        {
+            if (string.IsNullOrEmpty(texto)) return texto;
+            if (texto.Contains("Ã"))
+            {
+                try
+                {
+                    byte[] bytes = System.Text.Encoding.GetEncoding("ISO-8859-1").GetBytes(texto);
+                    return System.Text.Encoding.UTF8.GetString(bytes);
+                }
+                catch
+                {
+                    return texto;
+                }
+            }
+            return texto;
+        }
     }
 }

@@ -122,12 +122,23 @@ namespace SanarRuralUnan.Views.Pacientes
 
         private void ConfigurarSeguridadPorRol()
         {
+            bool puedeAdministrarTodo = controlador.PuedeDarDeBajaPacientes();
             bool esAdmin = controlador.EsAdministrativo();
-            if (esAdmin)
+
+            if (puedeAdministrarTodo)
             {
+                // Admin o Administrativo histórico: acceso completo a edición y baja/reactivación
                 panelFiltroEstado.Visible = true;
                 cmbFiltroEstado.SelectedIndex = 0; // "Activos" por defecto
                 dgvPacientes.Columns["colBaja"].Visible = true;
+                dgvPacientes.Columns["colEditar"].Visible = true;
+            }
+            else if (esAdmin)
+            {
+                // Personal_administrativo: puede crear y editar pacientes, pero no darlos de baja
+                panelFiltroEstado.Visible = true;
+                cmbFiltroEstado.SelectedIndex = 0;
+                dgvPacientes.Columns["colBaja"].Visible = false;
                 dgvPacientes.Columns["colEditar"].Visible = true;
             }
             else
@@ -470,9 +481,9 @@ namespace SanarRuralUnan.Views.Pacientes
             }
             else if (columna == "colBaja")
             {
-                if (!controlador.EsAdministrativo())
+                if (!controlador.PuedeDarDeBajaPacientes())
                 {
-                    MessageBox.Show("Solo los usuarios con rol Administrativo pueden dar de baja o reactivar pacientes.", "Acceso restringido", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    MessageBox.Show("El rol Personal_administrativo no tiene autorización para dar de baja o reactivar pacientes. Esta operación requiere privilegios de Administrador.", "Acceso restringido", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return;
                 }
 
