@@ -57,6 +57,7 @@ namespace SanarRuralUnan.Views
         private int? idUsuarioEditar;
         public int? IdUsuarioCreado { get; private set; }
         public string NombreUsuarioRegistrado { get; private set; }
+        [Obsolete("Las cuentas de usuario operan exclusivamente con NombreUsuario. Utilice NombreUsuarioRegistrado.")]
         public string CorreoRegistrado => NombreUsuarioRegistrado;
 
         public crearUsuario()
@@ -500,7 +501,7 @@ namespace SanarRuralUnan.Views
                 return;
             }
 
-            txtCorreo.Text = !string.IsNullOrWhiteSpace(usuario.NombreUsuario) ? usuario.NombreUsuario : usuario.Correo;
+            txtCorreo.Text = usuario.NombreUsuario ?? string.Empty;
             cmbRol.SelectedValue = usuario.IdRol;
             lblErrorCorreo.Text = "";
 

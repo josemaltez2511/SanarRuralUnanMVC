@@ -1,4 +1,4 @@
-using System.Drawing;
+﻿using System.Drawing;
 using System.Windows.Forms;
 using SanarRuralUnan.Helpers;
 
@@ -17,6 +17,9 @@ namespace SanarRuralUnan.Views
 
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
+            this.toolTipSidebar = new System.Windows.Forms.ToolTip(this.components);
+            this.btnToggleSidebar = new System.Windows.Forms.Button();
             this.panelEncabezado = new System.Windows.Forms.Panel();
             this.picLogo = new System.Windows.Forms.PictureBox();
             this.lblMarca = new System.Windows.Forms.Label();
@@ -49,6 +52,7 @@ namespace SanarRuralUnan.Views
             // panelEncabezado
             //
             this.panelEncabezado.BackColor = Tema.Superficie;
+            this.panelEncabezado.Controls.Add(this.btnToggleSidebar);
             this.panelEncabezado.Controls.Add(this.picLogo);
             this.panelEncabezado.Controls.Add(this.lblMarca);
             this.panelEncabezado.Controls.Add(this.lblDescripcion);
@@ -62,15 +66,32 @@ namespace SanarRuralUnan.Views
             this.panelEncabezado.Size = new System.Drawing.Size(1280, 82);
             this.panelEncabezado.TabIndex = 0;
             //
+            // btnToggleSidebar
+            //
+            this.btnToggleSidebar.AccessibleDescription = "Ocultar o mostrar el menú lateral de navegación";
+            this.btnToggleSidebar.AccessibleName = "Alternar menú lateral";
+            this.btnToggleSidebar.BackColor = Tema.Superficie;
+            this.btnToggleSidebar.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnToggleSidebar.FlatAppearance.BorderColor = Tema.Borde;
+            this.btnToggleSidebar.FlatAppearance.BorderSize = 1;
+            this.btnToggleSidebar.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnToggleSidebar.Location = new System.Drawing.Point(14, 21);
+            this.btnToggleSidebar.Name = "btnToggleSidebar";
+            this.btnToggleSidebar.Size = new System.Drawing.Size(40, 40);
+            this.btnToggleSidebar.TabIndex = 0;
+            this.btnToggleSidebar.UseVisualStyleBackColor = false;
+            this.btnToggleSidebar.Click += new System.EventHandler(this.btnToggleSidebar_Click);
+            this.toolTipSidebar.SetToolTip(this.btnToggleSidebar, "Ocultar menú lateral (Ctrl+B)");
+            //
             // picLogo
             //
             this.picLogo.AccessibleDescription = "Identidad visual de Sanar Rural";
             this.picLogo.AccessibleName = "Logo institucional";
-            this.picLogo.Location = new System.Drawing.Point(20, 14);
+            this.picLogo.Location = new System.Drawing.Point(64, 14);
             this.picLogo.Name = "picLogo";
             this.picLogo.Size = new System.Drawing.Size(54, 54);
             this.picLogo.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-            this.picLogo.TabIndex = 0;
+            this.picLogo.TabIndex = 1;
             this.picLogo.TabStop = false;
             //
             // lblMarca
@@ -78,10 +99,10 @@ namespace SanarRuralUnan.Views
             this.lblMarca.AutoSize = true;
             this.lblMarca.Font = new System.Drawing.Font(Tema.FamiliaFuente, 16F, System.Drawing.FontStyle.Bold);
             this.lblMarca.ForeColor = Tema.AzulOscuro;
-            this.lblMarca.Location = new System.Drawing.Point(82, 14);
+            this.lblMarca.Location = new System.Drawing.Point(126, 14);
             this.lblMarca.Name = "lblMarca";
             this.lblMarca.Size = new System.Drawing.Size(188, 30);
-            this.lblMarca.TabIndex = 1;
+            this.lblMarca.TabIndex = 2;
             this.lblMarca.Text = "SANAR RURAL";
             //
             // lblDescripcion
@@ -89,10 +110,10 @@ namespace SanarRuralUnan.Views
             this.lblDescripcion.AutoSize = true;
             this.lblDescripcion.Font = Tema.FuenteAyuda;
             this.lblDescripcion.ForeColor = Tema.TextoSecundario;
-            this.lblDescripcion.Location = new System.Drawing.Point(84, 48);
+            this.lblDescripcion.Location = new System.Drawing.Point(128, 48);
             this.lblDescripcion.Name = "lblDescripcion";
             this.lblDescripcion.Size = new System.Drawing.Size(175, 15);
-            this.lblDescripcion.TabIndex = 2;
+            this.lblDescripcion.TabIndex = 3;
             this.lblDescripcion.Text = "Atención Médica Comunitaria";
             //
             // panelBannerPaisaje
@@ -101,10 +122,10 @@ namespace SanarRuralUnan.Views
             | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.panelBannerPaisaje.BackColor = Tema.Superficie;
-            this.panelBannerPaisaje.Location = new System.Drawing.Point(280, 2);
+            this.panelBannerPaisaje.Location = new System.Drawing.Point(324, 2);
             this.panelBannerPaisaje.Name = "panelBannerPaisaje";
-            this.panelBannerPaisaje.Size = new System.Drawing.Size(560, 78);
-            this.panelBannerPaisaje.TabIndex = 3;
+            this.panelBannerPaisaje.Size = new System.Drawing.Size(516, 78);
+            this.panelBannerPaisaje.TabIndex = 4;
             //
             // panelUsuario
             //
@@ -369,5 +390,7 @@ namespace SanarRuralUnan.Views
         private System.Windows.Forms.Label lblPlaceholderBadge;
         private System.Windows.Forms.Label lblSeccion;
         private System.Windows.Forms.Label lblContenido;
+        private System.Windows.Forms.Button btnToggleSidebar;
+        private System.Windows.Forms.ToolTip toolTipSidebar;
     }
 }

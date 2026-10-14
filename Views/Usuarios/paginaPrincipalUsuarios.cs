@@ -376,7 +376,7 @@ namespace SanarRuralUnan.Views
                     string nombreRol = usuario.Roles != null ? usuario.Roles.Nombre : "Sin rol";
                     string identificador = !string.IsNullOrWhiteSpace(usuario.NombreUsuario)
                         ? usuario.NombreUsuario
-                        : (usuario.Correo ?? "Sin identificador");
+                        : "Sin identificador";
 
                     dgvUsuarios.Rows.Add(
                         usuario.IdUsuario,

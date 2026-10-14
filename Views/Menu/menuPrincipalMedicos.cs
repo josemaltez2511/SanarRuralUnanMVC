@@ -30,6 +30,8 @@ namespace SanarRuralUnan.Views
         private readonly Timer timerTransicion = new Timer();
         private int pasoAnimacion = 0;
         private Form formularioEntrante = null;
+        private bool _sidebarColapsado = false;
+        private bool _hoverToggleSidebar = false;
 
         public bool SesionCerradaVoluntariamente { get; private set; }
 
@@ -77,6 +79,8 @@ namespace SanarRuralUnan.Views
                 btnCerrarSesion.FlatAppearance.BorderColor = Tema.Borde;
                 btnCerrarSesion.ForeColor = Tema.TextoPrincipal;
             };
+
+            ConfigurarToggleSidebar();
         }
 
         private void ConfigurarBotonNavegacion(Button boton, string seccion)
@@ -132,7 +136,7 @@ namespace SanarRuralUnan.Views
                 {
                     string ident = !string.IsNullOrWhiteSpace(usuariosModels.NombreUsuarioActual)
                         ? usuariosModels.NombreUsuarioActual
-                        : (!string.IsNullOrWhiteSpace(usuariosModels.CorreoActual) ? usuariosModels.CorreoActual.Split('@')[0] : "");
+                        : "";
 
                     if (!string.IsNullOrEmpty(ident))
                     {
@@ -297,6 +301,90 @@ namespace SanarRuralUnan.Views
             SesionCerradaVoluntariamente = true;
             new usuariosControllers().CerrarSesion();
             Close();
+        }
+
+        private void ConfigurarToggleSidebar()
+        {
+            btnToggleSidebar.Paint += BtnToggleSidebar_Paint;
+            btnToggleSidebar.MouseEnter += (s, e) => { _hoverToggleSidebar = true; btnToggleSidebar.Invalidate(); };
+            btnToggleSidebar.MouseLeave += (s, e) => { _hoverToggleSidebar = false; btnToggleSidebar.Invalidate(); };
+        }
+
+        private void btnToggleSidebar_Click(object sender, EventArgs e)
+        {
+            AlternarSidebar();
+        }
+
+        public void AlternarSidebar()
+        {
+            _sidebarColapsado = !_sidebarColapsado;
+            panelSidebar.Visible = !_sidebarColapsado;
+            toolTipSidebar?.SetToolTip(btnToggleSidebar, _sidebarColapsado ? "Mostrar barra lateral (Ctrl+B)" : "Ocultar barra lateral (Ctrl+B)");
+            btnToggleSidebar.Invalidate();
+            panelContenido.PerformLayout();
+            formularioActual?.PerformLayout();
+            formularioActual?.Invalidate(true);
+            CentrarPlaceholder();
+        }
+
+        protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
+        {
+            if (keyData == (Keys.Control | Keys.B))
+            {
+                AlternarSidebar();
+                return true;
+            }
+            return base.ProcessCmdKey(ref msg, keyData);
+        }
+
+        private void BtnToggleSidebar_Paint(object sender, PaintEventArgs e)
+        {
+            Graphics g = e.Graphics;
+            g.SmoothingMode = SmoothingMode.AntiAlias;
+
+            int w = btnToggleSidebar.Width;
+            int h = btnToggleSidebar.Height;
+            Color colorFondo = _hoverToggleSidebar ? Tema.FondoSecundario : Tema.Superficie;
+            Color colorBorde = _hoverToggleSidebar ? Tema.AzulPrimario : Tema.Borde;
+            Color colorBarras = _hoverToggleSidebar ? Tema.AzulPrimario : Tema.AzulOscuro;
+
+            using (var path = Tema.CrearRutaRedondeada(new Rectangle(0, 0, w - 1, h - 1), 8))
+            {
+                using (var brush = new SolidBrush(colorFondo))
+                {
+                    g.FillPath(brush, path);
+                }
+                using (var penBorde = new Pen(colorBorde, 1f))
+                {
+                    g.DrawPath(penBorde, path);
+                }
+            }
+
+            int cx = w / 2;
+            int cy = h / 2;
+            int anchoBarra = 16;
+            int x1 = cx - (anchoBarra / 2);
+            int x2 = cx + (anchoBarra / 2);
+
+            using (var penBarras = new Pen(colorBarras, 2.2f) { StartCap = LineCap.Round, EndCap = LineCap.Round })
+            {
+                if (!_sidebarColapsado)
+                {
+                    // Icono de 3 barras horizontales (expandido)
+                    g.DrawLine(penBarras, x1, cy - 6, x2, cy - 6);
+                    g.DrawLine(penBarras, x1, cy, x2, cy);
+                    g.DrawLine(penBarras, x1, cy + 6, x2, cy + 6);
+                }
+                else
+                {
+                    // Icono con saeta indicativa de despliegue (colapsado)
+                    g.DrawLine(penBarras, x1, cy - 6, x2, cy - 6);
+                    g.DrawLine(penBarras, x1, cy, x2 - 4, cy);
+                    g.DrawLine(penBarras, x1, cy + 6, x2, cy + 6);
+                    g.DrawLine(penBarras, x2 - 5, cy - 4, x2 - 1, cy);
+                    g.DrawLine(penBarras, x2 - 1, cy, x2 - 5, cy + 4);
+                }
+            }
         }
 
         private void menuPrincipalMedicos_Resize(object sender, EventArgs e)

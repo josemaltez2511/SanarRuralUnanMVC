@@ -41,10 +41,11 @@ namespace SanarRuralUnan.Controllers
             return new usuariosModels().ExisteNombreUsuario(nombreUsuario, idUsuarioExcluir);
         }
 
-        // Método para saber si un correo ya está registrado (retrocompatibilidad)
+        // Método obsoleto: Las cuentas de usuario operan exclusivamente con NombreUsuario
+        [Obsolete("Las cuentas de usuario ya no gestionan correo. Utilice NombreUsuarioYaExiste.")]
         public bool CorreoYaExiste(string correo, int? idUsuarioExcluir = null)
         {
-            return new usuariosModels().ExisteCorreo(correo, idUsuarioExcluir);
+            return false;
         }
 
         public List<Roles> ListarRoles()

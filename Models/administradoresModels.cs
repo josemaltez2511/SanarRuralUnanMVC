@@ -171,7 +171,7 @@ namespace SanarRuralUnan.Models
                 Correo = admin.Correo,
                 Estado = admin.Estado,
                 NombreUsuario = admin.Usuarios != null ? admin.Usuarios.NombreUsuario : null,
-                CorreoUsuario = admin.Usuarios != null ? admin.Usuarios.Correo : null,
+                CorreoUsuario = null,
                 EstadoUsuario = admin.Usuarios != null ? (bool?)admin.Usuarios.Estado : null
             };
         }

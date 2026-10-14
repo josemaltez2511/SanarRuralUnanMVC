@@ -539,9 +539,7 @@ namespace SanarRuralUnan
                 {
                     formCrear.ShowDialog();
 
-                    string usuarioRegistrado = !string.IsNullOrWhiteSpace(formCrear.NombreUsuarioRegistrado)
-                        ? formCrear.NombreUsuarioRegistrado
-                        : formCrear.CorreoRegistrado;
+                    string usuarioRegistrado = formCrear.NombreUsuarioRegistrado;
 
                     if (formCrear.DialogResult == DialogResult.OK && !string.IsNullOrWhiteSpace(usuarioRegistrado))
                     {

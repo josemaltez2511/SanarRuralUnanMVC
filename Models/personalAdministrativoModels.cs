@@ -176,7 +176,7 @@ namespace SanarRuralUnan.Models
                 Cargo = Tema.SanearTexto(personal.Cargo),
                 Estado = personal.Estado,
                 NombreUsuario = personal.Usuarios != null ? personal.Usuarios.NombreUsuario : null,
-                CorreoUsuario = personal.Usuarios != null ? personal.Usuarios.Correo : null,
+                CorreoUsuario = null,
                 EstadoUsuario = personal.Usuarios != null ? (bool?)personal.Usuarios.Estado : null
             };
         }
