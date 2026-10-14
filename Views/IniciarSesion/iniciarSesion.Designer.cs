@@ -295,7 +295,7 @@ namespace SanarRuralUnan
             this.lblCorreo.Name = "lblCorreo";
             this.lblCorreo.Size = new System.Drawing.Size(121, 17);
             this.lblCorreo.TabIndex = 3;
-            this.lblCorreo.Text = "Correo Electrónico";
+            this.lblCorreo.Text = "Nombre de Usuario";
             //
             // txtCorreo
             //

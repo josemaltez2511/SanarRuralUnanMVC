@@ -6,10 +6,12 @@ using System.Windows.Forms;
 using SanarRuralUnan.Controllers;
 using SanarRuralUnan.Helpers;
 using SanarRuralUnan.Models;
+using SanarRuralUnan.Views.Administradores;
 using SanarRuralUnan.Views.Citas;
 using SanarRuralUnan.Views.Doctores;
 using SanarRuralUnan.Views.Hospitales;
 using SanarRuralUnan.Views.Pacientes;
+using SanarRuralUnan.Views.PersonalAdministrativo;
 
 namespace SanarRuralUnan.Views
 {
@@ -21,6 +23,8 @@ namespace SanarRuralUnan.Views
     {
         private Form formularioActual;
         private paginaPrincipalUsuarios paginaUsuarios;
+        private paginaPrincipalAdministradores paginaAdministradores;
+        private paginaPrincipalPersonalAdministrativo paginaPersonalAdministrativo;
         private paginaPrincipalDoctores paginaDoctores;
         private paginaPrincipalHospitales paginaHospitales;
         private paginaPrincipalPacientes paginaPacientes;
@@ -30,6 +34,7 @@ namespace SanarRuralUnan.Views
         private readonly Timer timerTransicion = new Timer();
         private int pasoAnimacion = 0;
         private Form formularioEntrante = null;
+        private readonly Font fuenteSidebarBoton = new Font(Tema.FamiliaFuente, 9.5F, FontStyle.Bold);
 
         public bool SesionCerradaVoluntariamente { get; private set; }
 
@@ -58,34 +63,65 @@ namespace SanarRuralUnan.Views
             lblAvatar.Paint += LblAvatar_Paint;
             panelSidebarLema.Paint += PanelSidebarLema_Paint;
 
+            panelSidebar.Resize += (s, e) => AjustarPosicionesBotonesSidebar();
+
             ConfigurarBotonNavegacion(btnUsuarios, "Usuarios");
+            ConfigurarBotonNavegacion(btnAdministradores, "Administradores");
+            ConfigurarBotonNavegacion(btnPersonalAdministrativo, "PersonalAdministrativo");
             ConfigurarBotonNavegacion(btnDoctores, "Doctores");
             ConfigurarBotonNavegacion(btnPacientes, "Pacientes");
             ConfigurarBotonNavegacion(btnHospitales, "Hospitales");
             ConfigurarBotonNavegacion(btnCitas, "Citas");
 
+            ConfigurarSeguridadNavegacion();
+
+            btnCerrarSesion.Paint += (s, ev) =>
+            {
+                Graphics g = ev.Graphics;
+                g.SmoothingMode = SmoothingMode.AntiAlias;
+                int ix = 12;
+                int iy = (btnCerrarSesion.Height - 16) / 2;
+                using (var pen = new Pen(btnCerrarSesion.ForeColor, 1.6f))
+                {
+                    // Marco de puerta
+                    g.DrawRectangle(pen, ix, iy, 9, 15);
+                    // Flecha de salida
+                    g.DrawLine(pen, ix + 5, iy + 7, ix + 16, iy + 7);
+                    g.DrawLine(pen, ix + 13, iy + 4, ix + 16, iy + 7);
+                    g.DrawLine(pen, ix + 13, iy + 10, ix + 16, iy + 7);
+                }
+            };
             btnCerrarSesion.MouseEnter += (s, e) =>
             {
                 btnCerrarSesion.BackColor = Tema.BotonPeligroFondo;
                 btnCerrarSesion.FlatAppearance.BorderColor = Tema.BotonPeligroBorde;
                 btnCerrarSesion.ForeColor = Tema.Error;
+                btnCerrarSesion.Invalidate();
             };
             btnCerrarSesion.MouseLeave += (s, e) =>
             {
                 btnCerrarSesion.BackColor = Tema.Superficie;
                 btnCerrarSesion.FlatAppearance.BorderColor = Tema.Borde;
                 btnCerrarSesion.ForeColor = Tema.TextoPrincipal;
+                btnCerrarSesion.Invalidate();
             };
         }
 
         private void ConfigurarBotonNavegacion(Button boton, string seccion)
         {
+            boton.Tag = seccion;
+            boton.Paint += (s, ev) =>
+            {
+                DibujarIconoBotonSidebar(ev.Graphics, seccion, boton.ForeColor, boton.Height);
+            };
+
             boton.MouseEnter += (s, e) =>
             {
                 if (boton != botonActivo)
                 {
                     boton.BackColor = Tema.FondoSecundario;
                     boton.ForeColor = Tema.AzulPrimario;
+                    boton.Invalidate();
                 }
             };
 
@@ -95,8 +131,52 @@ namespace SanarRuralUnan.Views
                 {
                     boton.BackColor = Color.Transparent;
                     boton.ForeColor = Tema.AzulOscuro;
+                    boton.Invalidate();
                 }
             };
+        }
+
+        protected override void OnLoad(EventArgs e)
+        {
+            base.OnLoad(e);
+            ConfigurarSeguridadNavegacion();
+        }
+
+        private void ConfigurarSeguridadNavegacion()
+        {
+            AjustarPosicionesBotonesSidebar();
+        }
+
+        private void AjustarPosicionesBotonesSidebar()
+        {
+            panelSidebar.Width = 248;
+
+            // Solo los usuarios con rol 'Admin' tienen acceso visible y funcional a Administradores y Personal Administrativo
+            bool esAdmin = usuariosModels.EsSesionAdmin();
+            btnAdministradores.Visible = esAdmin;
+            btnPersonalAdministrativo.Visible = esAdmin;
+
+            Button[] botones = esAdmin
+                ? new Button[] { btnUsuarios, btnAdministradores, btnPersonalAdministrativo, btnDoctores, btnPacientes, btnHospitales, btnCitas }
+                : new Button[] { btnUsuarios, btnDoctores, btnPacientes, btnHospitales, btnCitas };
+
+            int top = 16;
+            int gap = 6;
+            int anchoBoton = panelSidebar.ClientSize.Width - 28;
+            foreach (var b in botones)
+            {
+                b.Left = 14;
+                b.Width = anchoBoton;
+                b.Height = 44;
+                b.Font = fuenteSidebarBoton;
+                b.Padding = new Padding(28, 0, 0, 0);
+                b.Top = top;
+                b.BringToFront();
+                top += b.Height + gap;
+            }
+
+            panelSidebarLema.Left = 14;
+            panelSidebarLema.Width = anchoBoton;
         }
 
         private void CargarLogo()
@@ -110,26 +190,33 @@ namespace SanarRuralUnan.Views
 
         private void CargarDatosUsuario()
         {
+            string nombreUsuario = usuariosModels.NombreUsuarioActual;
             string correo = usuariosModels.CorreoActual;
-            if (!string.IsNullOrWhiteSpace(correo))
+            string nombreMostrar = !string.IsNullOrWhiteSpace(nombreUsuario) ? nombreUsuario : (!string.IsNullOrWhiteSpace(correo) ? correo.Split('@')[0] : "Administración");
+
+            if (!string.IsNullOrWhiteSpace(nombreMostrar))
             {
-                string nombre = correo.Split('@')[0];
-                if (nombre.Length > 0)
+                if (nombreMostrar.Length > 0 && char.IsLower(nombreMostrar[0]))
                 {
-                    nombre = char.ToUpper(nombre[0]) + nombre.Substring(1);
+                    nombreMostrar = char.ToUpper(nombreMostrar[0]) + nombreMostrar.Substring(1);
                 }
-                lblUsuarioNombre.Text = nombre;
+                lblUsuarioNombre.Text = nombreMostrar;
 
                 // Iniciales para el avatar
-                if (nombre.Length >= 2)
-                    lblAvatar.Text = nombre.Substring(0, 2).ToUpper();
+                if (nombreMostrar.Length >= 2)
+                    lblAvatar.Text = nombreMostrar.Substring(0, 2).ToUpper();
                 else
-                    lblAvatar.Text = nombre.ToUpper();
+                    lblAvatar.Text = nombreMostrar.ToUpper();
             }
             else
             {
                 lblUsuarioNombre.Text = "Administración";
                 lblAvatar.Text = "AD";
+            }
+
+            if (!string.IsNullOrWhiteSpace(usuariosModels.NombreRolActual))
+            {
+                lblUsuarioRol.Text = usuariosModels.NombreRolActual;
             }
         }
 
@@ -142,6 +229,18 @@ namespace SanarRuralUnan.Views
             {
                 formulario = paginaUsuarios ?? (paginaUsuarios = new paginaPrincipalUsuarios());
                 nuevoBoton = btnUsuarios;
+            }
+            else if (nombre == "Administradores")
+            {
+                usuariosModels.ExigirRolAdmin("acceder al módulo de administradores");
+                formulario = paginaAdministradores ?? (paginaAdministradores = new paginaPrincipalAdministradores());
+                nuevoBoton = btnAdministradores;
+            }
+            else if (nombre == "PersonalAdministrativo")
+            {
+                usuariosModels.ExigirRolAdmin("acceder al módulo de personal administrativo");
+                formulario = paginaPersonalAdministrativo ?? (paginaPersonalAdministrativo = new paginaPrincipalPersonalAdministrativo());
+                nuevoBoton = btnPersonalAdministrativo;
             }
             else if (nombre == "Doctores")
             {
@@ -177,7 +276,7 @@ namespace SanarRuralUnan.Views
         private void ActualizarEstadoBotones(Button activo)
         {
             botonActivo = activo;
-            Button[] todos = { btnUsuarios, btnDoctores, btnPacientes, btnHospitales, btnCitas };
+            Button[] todos = { btnUsuarios, btnAdministradores, btnPersonalAdministrativo, btnDoctores, btnPacientes, btnHospitales, btnCitas };
 
             foreach (var b in todos)
             {
@@ -185,14 +284,15 @@ namespace SanarRuralUnan.Views
                 {
                     b.BackColor = Tema.AzulPrimario;
                     b.ForeColor = Color.White;
-                    b.Font = Tema.FuenteBoton;
+                    b.Font = fuenteSidebarBoton;
                 }
                 else
                 {
                     b.BackColor = Color.Transparent;
                     b.ForeColor = Tema.AzulOscuro;
-                    b.Font = Tema.FuenteBoton;
+                    b.Font = fuenteSidebarBoton;
                 }
+                b.Invalidate();
             }
         }
 
@@ -244,7 +344,14 @@ namespace SanarRuralUnan.Views
             MostrarFormulario(formulario);
         }
 
+        public void VolverAUsuarios()
+        {
+            MostrarSeccion("Usuarios");
+        }
+
         private void btnUsuarios_Click(object sender, EventArgs e) { MostrarSeccion("Usuarios"); }
+        private void btnAdministradores_Click(object sender, EventArgs e) { MostrarSeccion("Administradores"); }
+        private void btnPersonalAdministrativo_Click(object sender, EventArgs e) { MostrarSeccion("PersonalAdministrativo"); }
         private void btnDoctores_Click(object sender, EventArgs e) { MostrarSeccion("Doctores"); }
         private void btnPacientes_Click(object sender, EventArgs e) { MostrarSeccion("Pacientes"); }
         private void btnHospitales_Click(object sender, EventArgs e) { MostrarSeccion("Hospitales"); }
@@ -261,11 +368,14 @@ namespace SanarRuralUnan.Views
         {
             timerTransicion.Dispose();
             if (paginaUsuarios != null) paginaUsuarios.Dispose();
+            if (paginaAdministradores != null) paginaAdministradores.Dispose();
+            if (paginaPersonalAdministrativo != null) paginaPersonalAdministrativo.Dispose();
             if (paginaDoctores != null) paginaDoctores.Dispose();
             if (paginaHospitales != null) paginaHospitales.Dispose();
             if (paginaPacientes != null) paginaPacientes.Dispose();
             if (paginaCitas != null) paginaCitas.Dispose();
             if (picLogo.Image != null) picLogo.Image.Dispose();
+            fuenteSidebarBoton.Dispose();
         }
 
         // ===== PINTADO GDI+ DECORATIVO DE IDENTIDAD VISUAL =====
@@ -479,6 +589,91 @@ namespace SanarRuralUnan.Views
             {
                 var textRect = new Rectangle(14, 16, w - 28, h - 36);
                 g.DrawString("\"Salud\nmás cerca\nde nuestra\ngente\"", fontLema, textBrush, textRect, sf);
+            }
+        }
+
+        /// <summary>
+        /// Dibuja el icono vectorial correspondiente a cada sección del menú lateral.
+        /// Garantiza un aspecto nítido, sin glifos sustitutos ni cajas cuadradas, adaptando el color al estado (activo, hover o reposo).
+        /// </summary>
+        private static void DibujarIconoBotonSidebar(Graphics g, string seccion, Color color, int btnHeight)
+        {
+            g.SmoothingMode = SmoothingMode.AntiAlias;
+            int ix = 8;
+            int iy = (btnHeight - 16) / 2;
+
+            using (var pen = new Pen(color, 1.6f))
+            using (var brush = new SolidBrush(color))
+            {
+                switch (seccion)
+                {
+                    case "Usuarios":
+                        // Dos siluetas de personas (perfiles / usuarios)
+                        g.FillEllipse(brush, ix + 1, iy + 2, 6, 6);
+                        g.DrawArc(pen, ix - 1, iy + 9, 10, 8, 180, 180);
+                        g.FillEllipse(brush, ix + 9, iy + 3, 5, 5);
+                        g.DrawArc(pen, ix + 7, iy + 9, 9, 7, 200, 160);
+                        break;
+
+                    case "Administradores":
+                        // Escudo de seguridad institucional
+                        PointF[] escudo = {
+                            new PointF(ix + 2, iy + 2),
+                            new PointF(ix + 14, iy + 2),
+                            new PointF(ix + 14, iy + 8),
+                            new PointF(ix + 8, iy + 15),
+                            new PointF(ix + 2, iy + 8)
+                        };
+                        g.DrawPolygon(pen, escudo);
+                        g.FillEllipse(brush, ix + 7, iy + 6, 3, 3);
+                        break;
+
+                    case "PersonalAdministrativo":
+                        // Maletín corporativo de gestión administrativa
+                        g.DrawArc(pen, ix + 5, iy + 1, 6, 4, 180, 180);
+                        g.DrawRectangle(pen, ix + 1, iy + 4, 14, 11);
+                        g.DrawLine(pen, ix + 1, iy + 8, ix + 15, iy + 8);
+                        g.FillRectangle(brush, ix + 7, iy + 7, 3, 3);
+                        break;
+
+                    case "Doctores":
+                        // Estetoscopio médico profesional
+                        g.DrawLine(pen, ix + 4, iy + 2, ix + 4, iy + 6);
+                        g.DrawLine(pen, ix + 12, iy + 2, ix + 12, iy + 6);
+                        g.DrawArc(pen, ix + 4, iy + 3, 8, 7, 0, 180);
+                        g.DrawLine(pen, ix + 8, iy + 10, ix + 8, iy + 13);
+                        g.DrawArc(pen, ix + 8, iy + 11, 4, 4, 90, 180);
+                        g.FillEllipse(brush, ix + 11, iy + 12, 4, 4);
+                        break;
+
+                    case "Pacientes":
+                        // Silueta de paciente con cruz de salud
+                        g.FillEllipse(brush, ix + 3, iy + 2, 6, 6);
+                        g.DrawArc(pen, ix, iy + 9, 12, 8, 180, 180);
+                        g.DrawLine(pen, ix + 13, iy + 6, ix + 13, iy + 12);
+                        g.DrawLine(pen, ix + 10, iy + 9, ix + 16, iy + 9);
+                        break;
+
+                    case "Hospitales":
+                        // Edificio hospitalario con cruz institucional
+                        g.DrawRectangle(pen, ix + 2, iy + 3, 12, 13);
+                        g.DrawLine(pen, ix + 8, iy + 5, ix + 8, iy + 9);
+                        g.DrawLine(pen, ix + 6, iy + 7, ix + 10, iy + 7);
+                        g.DrawRectangle(pen, ix + 6, iy + 12, 4, 4);
+                        break;
+
+                    case "Citas":
+                        // Calendario de citas médicas
+                        g.DrawRectangle(pen, ix + 2, iy + 3, 13, 12);
+                        g.DrawLine(pen, ix + 5, iy + 1, ix + 5, iy + 4);
+                        g.DrawLine(pen, ix + 11, iy + 1, ix + 11, iy + 4);
+                        g.DrawLine(pen, ix + 2, iy + 6, ix + 15, iy + 6);
+                        g.FillRectangle(brush, ix + 5, iy + 8, 2, 2);
+                        g.FillRectangle(brush, ix + 9, iy + 8, 2, 2);
+                        g.FillRectangle(brush, ix + 5, iy + 11, 2, 2);
+                        g.FillRectangle(brush, ix + 9, iy + 11, 2, 2);
+                        break;
+                }
             }
         }
     }

@@ -140,9 +140,9 @@ namespace SanarRuralUnan.Views
                 e.PaintBackground(e.CellBounds, true);
                 e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
 
-                string correo = e.Value != null ? e.Value.ToString() : "";
-                string iniciales = ObtenerIniciales(correo);
-                Color colorAvatar = ObtenerColorAvatar(correo);
+                string identificador = e.Value != null ? e.Value.ToString() : "";
+                string iniciales = ObtenerIniciales(identificador);
+                Color colorAvatar = ObtenerColorAvatar(identificador);
 
                 // Dibujar círculo de avatar
                 int diametro = 28;
@@ -161,13 +161,13 @@ namespace SanarRuralUnan.Views
                     e.Graphics.DrawString(iniciales, fontIniciales, Brushes.White, new Rectangle(avatarX, avatarY, diametro, diametro), sf);
                 }
 
-                // Dibujar correo electrónico
+                // Dibujar nombre de usuario o correo
                 int textoX = avatarX + diametro + 10;
                 var rectTexto = new Rectangle(textoX, e.CellBounds.Y, e.CellBounds.Width - (textoX - e.CellBounds.X) - 4, e.CellBounds.Height);
                 using (var sfTexto = new StringFormat { LineAlignment = StringAlignment.Center })
                 using (var brushTexto = new SolidBrush(Tema.TextoPrincipal))
                 {
-                    e.Graphics.DrawString(correo, Tema.FuenteCuerpo, brushTexto, rectTexto, sfTexto);
+                    e.Graphics.DrawString(identificador, Tema.FuenteCuerpo, brushTexto, rectTexto, sfTexto);
                 }
 
                 e.Handled = true;
@@ -194,6 +194,18 @@ namespace SanarRuralUnan.Views
                     fondoBadge = Tema.BadgeRolPacienteFondo;
                     textoBadge = Tema.VerdeOscuro;
                     icono = "👤 ";
+                }
+                else if (rol == "Admin")
+                {
+                    fondoBadge = Tema.BadgeRolAdminFondo;
+                    textoBadge = Tema.AzulPrimario;
+                    icono = "👑 ";
+                }
+                else if (rol == "Personal_administrativo" || rol == "Administrativo")
+                {
+                    fondoBadge = Tema.BadgeRolAdminFondo;
+                    textoBadge = Tema.AzulPrimario;
+                    icono = "⚙ ";
                 }
 
                 int badgeH = 26;
@@ -291,22 +303,29 @@ namespace SanarRuralUnan.Views
             }
         }
 
-        private static string ObtenerIniciales(string correo)
+        private static string ObtenerIniciales(string texto)
         {
-            if (string.IsNullOrWhiteSpace(correo)) return "U";
-            string usuario = correo.Split('@')[0];
+            if (string.IsNullOrWhiteSpace(texto)) return "U";
+            string limpio = texto.Split('@')[0];
 
-            if (usuario.Contains("."))
+            if (limpio.Contains("_"))
             {
-                var partes = usuario.Split('.');
+                var partes = limpio.Split('_');
                 if (partes.Length >= 2 && partes[0].Length > 0 && partes[1].Length > 0)
                     return ("" + partes[0][0] + partes[1][0]).ToUpper();
             }
 
-            if (usuario.Length >= 2)
-                return usuario.Substring(0, 2).ToUpper();
+            if (limpio.Contains("."))
+            {
+                var partes = limpio.Split('.');
+                if (partes.Length >= 2 && partes[0].Length > 0 && partes[1].Length > 0)
+                    return ("" + partes[0][0] + partes[1][0]).ToUpper();
+            }
 
-            return usuario.ToUpper();
+            if (limpio.Length >= 2)
+                return limpio.Substring(0, 2).ToUpper();
+
+            return limpio.ToUpper();
         }
 
         private static Color ObtenerColorAvatar(string correo)
@@ -325,8 +344,7 @@ namespace SanarRuralUnan.Views
 
         private bool VerificarAccesoAdministrativo()
         {
-            if (usuariosModels.IdRolActual.HasValue &&
-                usuariosModels.IdRolActual.Value == controlador.ObtenerIdRol("Administrativo"))
+            if (usuariosModels.EsSesionAdministrativa())
                 return true;
 
             MessageBox.Show("Esta sección está disponible para usuarios administrativos.", "Acceso restringido", MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -356,9 +374,13 @@ namespace SanarRuralUnan.Views
                 foreach (Usuarios usuario in listaFiltrada)
                 {
                     string nombreRol = usuario.Roles != null ? usuario.Roles.Nombre : "Sin rol";
+                    string identificador = !string.IsNullOrWhiteSpace(usuario.NombreUsuario)
+                        ? usuario.NombreUsuario
+                        : (usuario.Correo ?? "Sin identificador");
+
                     dgvUsuarios.Rows.Add(
                         usuario.IdUsuario,
-                        usuario.Correo,
+                        identificador,
                         nombreRol,
                         usuario.FechaRegistro.ToString("g"),
                         usuario.Estado ? "✓ Activo" : "Inactivo");
@@ -375,6 +397,14 @@ namespace SanarRuralUnan.Views
 
                 // Actualizar texto del pie de tabla
                 lblConteo.Text = string.Format("Mostrando {0} de {1} usuarios", listaFiltrada.Count, total);
+
+                // Control de acceso por rol: Personal_administrativo solo puede consultar/buscar
+                bool puedeGestionar = controlador.PuedeGestionarUsuariosYPersonal();
+                btnNuevo.Visible = puedeGestionar;
+                if (dgvUsuarios.Columns["colEditar"] != null)
+                    dgvUsuarios.Columns["colEditar"].Visible = puedeGestionar;
+                if (dgvUsuarios.Columns["colBaja"] != null)
+                    dgvUsuarios.Columns["colBaja"].Visible = puedeGestionar;
             }
             catch (Exception ex)
             {
@@ -414,10 +444,24 @@ namespace SanarRuralUnan.Views
 
         private void btnNuevo_Click(object sender, EventArgs e)
         {
-            using (var formulario = new crearUsuario(false, true))
+            if (!controlador.PuedeGestionarUsuariosYPersonal())
             {
-                if (formulario.ShowDialog(this) == DialogResult.OK)
-                    CargarUsuarios();
+                MessageBox.Show("El rol Personal_administrativo no tiene permisos para crear usuarios. Esta operación requiere privilegios de Administrador.", "Acceso restringido", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            var shell = this.FindForm() as menuPrincipalAdministrativo ?? this.ParentForm as menuPrincipalAdministrativo;
+            if (shell != null)
+            {
+                shell.CargarFormulario(new asignarAccesoPerfil());
+            }
+            else
+            {
+                using (var formulario = new asignarAccesoPerfil())
+                {
+                    if (formulario.ShowDialog(this) == DialogResult.OK)
+                        CargarUsuarios();
+                }
             }
         }
 
@@ -430,6 +474,12 @@ namespace SanarRuralUnan.Views
 
             if (dgvUsuarios.Columns[e.ColumnIndex].Name == "colEditar")
             {
+                if (!controlador.PuedeGestionarUsuariosYPersonal())
+                {
+                    MessageBox.Show("El rol Personal_administrativo no tiene permisos para editar usuarios. Esta operación requiere privilegios de Administrador.", "Acceso restringido", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
                 using (var formulario = new crearUsuario(idUsuario))
                 {
                     if (formulario.ShowDialog(this) == DialogResult.OK)
@@ -438,6 +488,12 @@ namespace SanarRuralUnan.Views
             }
             else if (dgvUsuarios.Columns[e.ColumnIndex].Name == "colBaja")
             {
+                if (!controlador.PuedeGestionarUsuariosYPersonal())
+                {
+                    MessageBox.Show("El rol Personal_administrativo no tiene permisos para dar de baja usuarios. Esta operación requiere privilegios de Administrador.", "Acceso restringido", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
                 string correo = dgvUsuarios.Rows[e.RowIndex].Cells["Correo"].Value.ToString();
                 if (MessageBox.Show("¿Desea dar de baja a " + correo + "? Sus perfiles y referencias históricas se conservarán.",
                     "Confirmar baja", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)

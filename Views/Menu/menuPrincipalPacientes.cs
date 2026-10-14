@@ -125,13 +125,16 @@ namespace SanarRuralUnan.Views
                     }
                 }
 
-                if (nombreMostrar == "Paciente" && !string.IsNullOrWhiteSpace(usuariosModels.CorreoActual))
+                if (nombreMostrar == "Paciente")
                 {
-                    string nombre = usuariosModels.CorreoActual.Split('@')[0];
-                    if (nombre.Length > 0)
+                    string ident = !string.IsNullOrWhiteSpace(usuariosModels.NombreUsuarioActual)
+                        ? usuariosModels.NombreUsuarioActual
+                        : (!string.IsNullOrWhiteSpace(usuariosModels.CorreoActual) ? usuariosModels.CorreoActual.Split('@')[0] : "");
+
+                    if (!string.IsNullOrEmpty(ident))
                     {
-                        nombreMostrar = char.ToUpper(nombre[0]) + nombre.Substring(1);
-                        iniciales = nombre.Length >= 2 ? nombre.Substring(0, 2).ToUpper() : nombre.ToUpper();
+                        nombreMostrar = char.ToUpper(ident[0]) + ident.Substring(1);
+                        iniciales = ident.Length >= 2 ? ident.Substring(0, 2).ToUpper() : ident.ToUpper();
                     }
                 }
             }

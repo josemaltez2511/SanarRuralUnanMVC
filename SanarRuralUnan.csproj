@@ -74,11 +74,13 @@
     <Compile Include="ContactosEmergencia.cs">
       <DependentUpon>ModelSanarRural.tt</DependentUpon>
     </Compile>
+    <Compile Include="Controllers\administradoresControllers.cs" />
     <Compile Include="Controllers\citasControllers.cs" />
     <Compile Include="Controllers\consultasControllers.cs" />
     <Compile Include="Controllers\doctoresControllers.cs" />
     <Compile Include="Controllers\hospitalesController.cs" />
     <Compile Include="Controllers\pacientesControllers.cs" />
+    <Compile Include="Controllers\personalAdministrativoControllers.cs" />
     <Compile Include="Controllers\usuariosController.cs" />
     <Compile Include="Departamentos.cs">
       <DependentUpon>ModelSanarRural.tt</DependentUpon>
@@ -123,12 +125,15 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>ModelSanarRural.edmx</DependentUpon>
     </Compile>
+    <Compile Include="Models\administradoresModels.cs" />
     <Compile Include="Models\citasModels.cs" />
     <Compile Include="Models\consultasModels.cs" />
     <Compile Include="Models\doctoresModels.cs" />
     <Compile Include="Models\hospitalesModels.cs" />
     <Compile Include="Models\pacientesModels.cs" />
+    <Compile Include="Models\personalAdministrativoModels.cs" />
     <Compile Include="Models\usuariosModels.cs" />
+    <Compile Include="Models\entidadesParciales.cs" />
     <Compile Include="Municipios.cs">
       <DependentUpon>ModelSanarRural.tt</DependentUpon>
     </Compile>
@@ -284,6 +289,48 @@
     </Compile>
     <Compile Include="Views\Usuarios\paginaPrincipalUsuarios.Designer.cs">
       <DependentUpon>paginaPrincipalUsuarios.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Usuarios\asignarAccesoPerfil.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Views\Usuarios\asignarAccesoPerfil.Designer.cs">
+      <DependentUpon>asignarAccesoPerfil.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Administradores\paginaPrincipalAdministradores.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Views\Administradores\paginaPrincipalAdministradores.Designer.cs">
+      <DependentUpon>paginaPrincipalAdministradores.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Administradores\crearAdministrador.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Views\Administradores\crearAdministrador.Designer.cs">
+      <DependentUpon>crearAdministrador.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Administradores\detalleAdministrador.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Views\Administradores\detalleAdministrador.Designer.cs">
+      <DependentUpon>detalleAdministrador.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Views\PersonalAdministrativo\paginaPrincipalPersonalAdministrativo.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Views\PersonalAdministrativo\paginaPrincipalPersonalAdministrativo.Designer.cs">
+      <DependentUpon>paginaPrincipalPersonalAdministrativo.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Views\PersonalAdministrativo\crearPersonalAdministrativo.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Views\PersonalAdministrativo\crearPersonalAdministrativo.Designer.cs">
+      <DependentUpon>crearPersonalAdministrativo.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Views\PersonalAdministrativo\detallePersonalAdministrativo.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Views\PersonalAdministrativo\detallePersonalAdministrativo.Designer.cs">
+      <DependentUpon>detallePersonalAdministrativo.cs</DependentUpon>
     </Compile>
     <Compile Include="Views\IniciarSesion\iniciarSesion.cs">
       <SubType>Form</SubType>
@@ -472,6 +519,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Views\Usuarios\paginaPrincipalUsuarios.resx">
       <DependentUpon>paginaPrincipalUsuarios.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\Usuarios\asignarAccesoPerfil.resx">
+      <DependentUpon>asignarAccesoPerfil.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Views\IniciarSesion\iniciarSesion.resx">
       <DependentUpon>iniciarSesion.cs</DependentUpon>

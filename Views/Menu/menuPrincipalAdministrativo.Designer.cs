@@ -29,6 +29,8 @@ namespace SanarRuralUnan.Views
             this.btnCerrarSesion = new System.Windows.Forms.Button();
             this.panelSidebar = new System.Windows.Forms.Panel();
             this.btnUsuarios = new System.Windows.Forms.Button();
+            this.btnAdministradores = new System.Windows.Forms.Button();
+            this.btnPersonalAdministrativo = new System.Windows.Forms.Button();
             this.btnDoctores = new System.Windows.Forms.Button();
             this.btnPacientes = new System.Windows.Forms.Button();
             this.btnHospitales = new System.Windows.Forms.Button();
@@ -157,11 +159,12 @@ namespace SanarRuralUnan.Views
             this.btnCerrarSesion.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnCerrarSesion.Font = Tema.FuenteLabelCampo;
             this.btnCerrarSesion.ForeColor = Tema.TextoPrincipal;
-            this.btnCerrarSesion.Location = new System.Drawing.Point(1116, 21);
+            this.btnCerrarSesion.Location = new System.Drawing.Point(1110, 21);
             this.btnCerrarSesion.Name = "btnCerrarSesion";
-            this.btnCerrarSesion.Size = new System.Drawing.Size(144, 40);
+            this.btnCerrarSesion.Padding = new System.Windows.Forms.Padding(22, 0, 0, 0);
+            this.btnCerrarSesion.Size = new System.Drawing.Size(150, 40);
             this.btnCerrarSesion.TabIndex = 5;
-            this.btnCerrarSesion.Text = "🚪 Cerrar sesión";
+            this.btnCerrarSesion.Text = "Cerrar sesión";
             this.btnCerrarSesion.UseVisualStyleBackColor = false;
             this.btnCerrarSesion.Click += new System.EventHandler(this.btnCerrarSesion_Click);
             //
@@ -169,6 +172,8 @@ namespace SanarRuralUnan.Views
             //
             this.panelSidebar.BackColor = Tema.Fondo;
             this.panelSidebar.Controls.Add(this.btnUsuarios);
+            this.panelSidebar.Controls.Add(this.btnAdministradores);
+            this.panelSidebar.Controls.Add(this.btnPersonalAdministrativo);
             this.panelSidebar.Controls.Add(this.btnDoctores);
             this.panelSidebar.Controls.Add(this.btnPacientes);
             this.panelSidebar.Controls.Add(this.btnHospitales);
@@ -178,7 +183,7 @@ namespace SanarRuralUnan.Views
             this.panelSidebar.Location = new System.Drawing.Point(0, 82);
             this.panelSidebar.Name = "panelSidebar";
             this.panelSidebar.Padding = new System.Windows.Forms.Padding(14, 16, 14, 16);
-            this.panelSidebar.Size = new System.Drawing.Size(195, 718);
+            this.panelSidebar.Size = new System.Drawing.Size(252, 718);
             this.panelSidebar.TabIndex = 1;
             //
             // btnUsuarios
@@ -189,15 +194,51 @@ namespace SanarRuralUnan.Views
             this.btnUsuarios.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnUsuarios.Font = Tema.FuenteBoton;
             this.btnUsuarios.ForeColor = System.Drawing.Color.White;
-            this.btnUsuarios.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.btnUsuarios.Location = new System.Drawing.Point(14, 16);
             this.btnUsuarios.Name = "btnUsuarios";
-            this.btnUsuarios.Size = new System.Drawing.Size(167, 44);
+            this.btnUsuarios.Padding = new System.Windows.Forms.Padding(28, 0, 0, 0);
+            this.btnUsuarios.Size = new System.Drawing.Size(224, 44);
             this.btnUsuarios.TabIndex = 0;
-            this.btnUsuarios.Text = "  👥  Usuarios";
+            this.btnUsuarios.Text = "Usuarios";
             this.btnUsuarios.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.btnUsuarios.UseVisualStyleBackColor = false;
             this.btnUsuarios.Click += new System.EventHandler(this.btnUsuarios_Click);
+            //
+            // btnAdministradores
+            //
+            this.btnAdministradores.BackColor = System.Drawing.Color.Transparent;
+            this.btnAdministradores.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnAdministradores.FlatAppearance.BorderSize = 0;
+            this.btnAdministradores.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnAdministradores.Font = Tema.FuenteBoton;
+            this.btnAdministradores.ForeColor = Tema.AzulOscuro;
+            this.btnAdministradores.Location = new System.Drawing.Point(14, 66);
+            this.btnAdministradores.Name = "btnAdministradores";
+            this.btnAdministradores.Padding = new System.Windows.Forms.Padding(28, 0, 0, 0);
+            this.btnAdministradores.Size = new System.Drawing.Size(224, 44);
+            this.btnAdministradores.TabIndex = 1;
+            this.btnAdministradores.Text = "Administradores";
+            this.btnAdministradores.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.btnAdministradores.UseVisualStyleBackColor = false;
+            this.btnAdministradores.Click += new System.EventHandler(this.btnAdministradores_Click);
+            //
+            // btnPersonalAdministrativo
+            //
+            this.btnPersonalAdministrativo.BackColor = System.Drawing.Color.Transparent;
+            this.btnPersonalAdministrativo.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnPersonalAdministrativo.FlatAppearance.BorderSize = 0;
+            this.btnPersonalAdministrativo.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnPersonalAdministrativo.Font = Tema.FuenteBoton;
+            this.btnPersonalAdministrativo.ForeColor = Tema.AzulOscuro;
+            this.btnPersonalAdministrativo.Location = new System.Drawing.Point(14, 116);
+            this.btnPersonalAdministrativo.Name = "btnPersonalAdministrativo";
+            this.btnPersonalAdministrativo.Padding = new System.Windows.Forms.Padding(28, 0, 0, 0);
+            this.btnPersonalAdministrativo.Size = new System.Drawing.Size(224, 44);
+            this.btnPersonalAdministrativo.TabIndex = 2;
+            this.btnPersonalAdministrativo.Text = "Personal administrativo";
+            this.btnPersonalAdministrativo.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.btnPersonalAdministrativo.UseVisualStyleBackColor = false;
+            this.btnPersonalAdministrativo.Click += new System.EventHandler(this.btnPersonalAdministrativo_Click);
             //
             // btnDoctores
             //
@@ -207,11 +248,12 @@ namespace SanarRuralUnan.Views
             this.btnDoctores.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnDoctores.Font = Tema.FuenteBoton;
             this.btnDoctores.ForeColor = Tema.AzulOscuro;
-            this.btnDoctores.Location = new System.Drawing.Point(14, 68);
+            this.btnDoctores.Location = new System.Drawing.Point(14, 166);
             this.btnDoctores.Name = "btnDoctores";
-            this.btnDoctores.Size = new System.Drawing.Size(167, 44);
-            this.btnDoctores.TabIndex = 1;
-            this.btnDoctores.Text = "  🩺  Doctores";
+            this.btnDoctores.Padding = new System.Windows.Forms.Padding(28, 0, 0, 0);
+            this.btnDoctores.Size = new System.Drawing.Size(224, 44);
+            this.btnDoctores.TabIndex = 3;
+            this.btnDoctores.Text = "Doctores";
             this.btnDoctores.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.btnDoctores.UseVisualStyleBackColor = false;
             this.btnDoctores.Click += new System.EventHandler(this.btnDoctores_Click);
@@ -224,11 +266,12 @@ namespace SanarRuralUnan.Views
             this.btnPacientes.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnPacientes.Font = Tema.FuenteBoton;
             this.btnPacientes.ForeColor = Tema.AzulOscuro;
-            this.btnPacientes.Location = new System.Drawing.Point(14, 120);
+            this.btnPacientes.Location = new System.Drawing.Point(14, 216);
             this.btnPacientes.Name = "btnPacientes";
-            this.btnPacientes.Size = new System.Drawing.Size(167, 44);
-            this.btnPacientes.TabIndex = 2;
-            this.btnPacientes.Text = "  👥  Pacientes";
+            this.btnPacientes.Padding = new System.Windows.Forms.Padding(28, 0, 0, 0);
+            this.btnPacientes.Size = new System.Drawing.Size(224, 44);
+            this.btnPacientes.TabIndex = 4;
+            this.btnPacientes.Text = "Pacientes";
             this.btnPacientes.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.btnPacientes.UseVisualStyleBackColor = false;
             this.btnPacientes.Click += new System.EventHandler(this.btnPacientes_Click);
@@ -241,11 +284,12 @@ namespace SanarRuralUnan.Views
             this.btnHospitales.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnHospitales.Font = Tema.FuenteBoton;
             this.btnHospitales.ForeColor = Tema.AzulOscuro;
-            this.btnHospitales.Location = new System.Drawing.Point(14, 172);
+            this.btnHospitales.Location = new System.Drawing.Point(14, 266);
             this.btnHospitales.Name = "btnHospitales";
-            this.btnHospitales.Size = new System.Drawing.Size(167, 44);
-            this.btnHospitales.TabIndex = 3;
-            this.btnHospitales.Text = "  🏥  Hospitales";
+            this.btnHospitales.Padding = new System.Windows.Forms.Padding(28, 0, 0, 0);
+            this.btnHospitales.Size = new System.Drawing.Size(224, 44);
+            this.btnHospitales.TabIndex = 5;
+            this.btnHospitales.Text = "Hospitales";
             this.btnHospitales.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.btnHospitales.UseVisualStyleBackColor = false;
             this.btnHospitales.Click += new System.EventHandler(this.btnHospitales_Click);
@@ -258,11 +302,12 @@ namespace SanarRuralUnan.Views
             this.btnCitas.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnCitas.Font = Tema.FuenteBoton;
             this.btnCitas.ForeColor = Tema.AzulOscuro;
-            this.btnCitas.Location = new System.Drawing.Point(14, 224);
+            this.btnCitas.Location = new System.Drawing.Point(14, 316);
             this.btnCitas.Name = "btnCitas";
-            this.btnCitas.Size = new System.Drawing.Size(167, 44);
-            this.btnCitas.TabIndex = 4;
-            this.btnCitas.Text = "  📅  Citas";
+            this.btnCitas.Padding = new System.Windows.Forms.Padding(28, 0, 0, 0);
+            this.btnCitas.Size = new System.Drawing.Size(224, 44);
+            this.btnCitas.TabIndex = 6;
+            this.btnCitas.Text = "Citas";
             this.btnCitas.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.btnCitas.UseVisualStyleBackColor = false;
             this.btnCitas.Click += new System.EventHandler(this.btnCitas_Click);
@@ -273,17 +318,17 @@ namespace SanarRuralUnan.Views
             this.panelSidebarLema.BackColor = System.Drawing.Color.Transparent;
             this.panelSidebarLema.Location = new System.Drawing.Point(14, 560);
             this.panelSidebarLema.Name = "panelSidebarLema";
-            this.panelSidebarLema.Size = new System.Drawing.Size(167, 140);
+            this.panelSidebarLema.Size = new System.Drawing.Size(224, 140);
             this.panelSidebarLema.TabIndex = 5;
             //
             // panelContenido
             //
             this.panelContenido.BackColor = Tema.Fondo;
             this.panelContenido.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panelContenido.Location = new System.Drawing.Point(195, 82);
+            this.panelContenido.Location = new System.Drawing.Point(252, 82);
             this.panelContenido.Name = "panelContenido";
             this.panelContenido.Padding = new System.Windows.Forms.Padding(12, 12, 16, 16);
-            this.panelContenido.Size = new System.Drawing.Size(1085, 718);
+            this.panelContenido.Size = new System.Drawing.Size(1028, 718);
             this.panelContenido.TabIndex = 2;
             //
             // menuPrincipalAdministrativo
@@ -326,6 +371,8 @@ namespace SanarRuralUnan.Views
         private System.Windows.Forms.Button btnCerrarSesion;
         private System.Windows.Forms.Panel panelSidebar;
         private System.Windows.Forms.Button btnUsuarios;
+        private System.Windows.Forms.Button btnAdministradores;
+        private System.Windows.Forms.Button btnPersonalAdministrativo;
         private System.Windows.Forms.Button btnDoctores;
         private System.Windows.Forms.Button btnPacientes;
         private System.Windows.Forms.Button btnHospitales;

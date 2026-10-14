@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
@@ -26,6 +26,7 @@ namespace SanarRuralUnan.Views.Doctores
             ConfigurarEstilosVisuales();
             ConfigurarGrid();
             AjustarLayout();
+            btnNuevo.Visible = controlador.PuedeGestionarDoctores();
             CargarDoctores();
 
             this.VisibleChanged += (s, ev) =>
@@ -222,6 +223,10 @@ namespace SanarRuralUnan.Views.Doctores
 
             dgvDoctores.Columns["colEditar"].DisplayIndex = dgvDoctores.Columns.Count - 2;
             dgvDoctores.Columns["colBaja"].DisplayIndex = dgvDoctores.Columns.Count - 1;
+
+            bool puedeGestionar = controlador.PuedeGestionarDoctores();
+            dgvDoctores.Columns["colEditar"].Visible = puedeGestionar;
+            dgvDoctores.Columns["colBaja"].Visible = puedeGestionar;
         }
 
         private void AjustarLayout()
@@ -394,6 +399,12 @@ namespace SanarRuralUnan.Views.Doctores
 
             if (dgvDoctores.Columns[e.ColumnIndex].Name == "colEditar")
             {
+                if (!controlador.PuedeGestionarDoctores())
+                {
+                    MessageBox.Show("El rol Personal_administrativo no tiene autorización para modificar doctores. Esta operación requiere privilegios de Administrador.", "Acceso restringido", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
                 int idDoctor = Convert.ToInt32(dgvDoctores.Rows[e.RowIndex].Cells["IdDoctor"].Value);
                 using (crearDoctor formEditar = new crearDoctor(idDoctor, true))
                 {
@@ -403,6 +414,12 @@ namespace SanarRuralUnan.Views.Doctores
             }
             else if (dgvDoctores.Columns[e.ColumnIndex].Name == "colBaja")
             {
+                if (!controlador.PuedeGestionarDoctores())
+                {
+                    MessageBox.Show("El rol Personal_administrativo no tiene autorización para dar de baja doctores. Esta operación requiere privilegios de Administrador.", "Acceso restringido", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
                 int idDoctor = Convert.ToInt32(dgvDoctores.Rows[e.RowIndex].Cells["IdDoctor"].Value);
                 string nombreDoctor = dgvDoctores.Rows[e.RowIndex].Cells["Nombre"].Value?.ToString() ?? "este doctor";
 
@@ -437,6 +454,12 @@ namespace SanarRuralUnan.Views.Doctores
 
         private void btnNuevo_Click(object sender, EventArgs e)
         {
+            if (!controlador.PuedeGestionarDoctores())
+            {
+                MessageBox.Show("El rol Personal_administrativo no tiene autorización para registrar doctores. Esta operación requiere privilegios de Administrador.", "Acceso restringido", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
             DialogResult respuesta = MessageBox.Show(
                 "¿Desea crear una cuenta de usuario para este doctor?",
                 "Registro de doctor",

@@ -211,7 +211,7 @@ namespace SanarRuralUnan.Models
             // 2. Si idDoctor es null: únicamente rol Administrativo puede utilizar el listado global
             if (!idDoctor.HasValue)
             {
-                if (rolActual.Nombre != "Administrativo")
+                if (!usuariosModels.EsRolAdministrativo(rolActual.Nombre))
                 {
                     throw new InvalidOperationException("El listado global de consultas médicas está reservado exclusivamente para usuarios con rol administrativo.");
                 }
@@ -458,7 +458,7 @@ namespace SanarRuralUnan.Models
                 throw new InvalidOperationException($"Un usuario con rol paciente no tiene autorización para {operacion}.");
             }
 
-            if (rolActual.Nombre != "Doctor" && rolActual.Nombre != "Administrativo")
+            if (rolActual.Nombre != "Doctor" && !usuariosModels.EsRolAdministrativo(rolActual.Nombre))
             {
                 throw new InvalidOperationException($"La operación '{operacion}' solo está permitida para personal médico o administrativo.");
             }
@@ -498,7 +498,7 @@ namespace SanarRuralUnan.Models
                     throw new InvalidOperationException($"El rol de la sesión actual no es válido para {operacion}.");
                 }
 
-                if (usuarioSesion.Roles.Nombre == "Administrativo")
+                if (usuariosModels.EsRolAdministrativo(usuarioSesion.Roles.Nombre))
                 {
                     throw new InvalidOperationException($"Un usuario con rol administrativo no tiene autorización para {operacion}. Su perfil es estrictamente de solo lectura.");
                 }
@@ -641,7 +641,7 @@ namespace SanarRuralUnan.Models
                     throw new InvalidOperationException("El identificador del facultativo no coincide con el médico autenticado en la sesión.");
                 }
             }
-            else if (rolActual.Nombre != "Administrativo")
+            else if (!usuariosModels.EsRolAdministrativo(rolActual.Nombre))
             {
                 throw new InvalidOperationException("El rol de la sesión actual no está autorizado para consultar expedientes clínicos.");
             }

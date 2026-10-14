@@ -63,7 +63,7 @@ namespace SanarRuralUnan.Models
 
             idRolActual = usuario.IdRol;
             string nombreRol = usuario.Roles.Nombre;
-            esAdmin = nombreRol == "Administrativo";
+            esAdmin = usuariosModels.EsRolAdministrativo(nombreRol);
             esDoctor = nombreRol == "Doctor";
             esPaciente = nombreRol == "Paciente";
 

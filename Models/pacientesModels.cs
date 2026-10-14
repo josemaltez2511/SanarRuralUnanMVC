@@ -101,6 +101,8 @@ namespace SanarRuralUnan.Models
         public int IdDepartamento { get; set; }
         public string Departamento { get; set; }
         public string Direccion { get; set; }
+        public string ReferenciaAdicional { get; set; }
+        public string Correo { get; set; }
         public string TipoSangre { get; set; }
         public string Alergias { get; set; }
         public string Antecedentes { get; set; }
@@ -296,7 +298,7 @@ namespace SanarRuralUnan.Models
                     throw new InvalidOperationException("No tiene permisos para consultar el expediente de un paciente inactivo.");
                 }
             }
-            else if (rolActual.Nombre != "Administrativo")
+            else if (!usuariosModels.EsRolAdministrativo(rolActual.Nombre))
             {
                 throw new InvalidOperationException("No tiene permisos para consultar la ficha del paciente.");
             }
@@ -339,6 +341,8 @@ namespace SanarRuralUnan.Models
                 IdDepartamento = (p.Comunidades != null && p.Comunidades.Municipios != null) ? p.Comunidades.Municipios.IdDepartamento : 0,
                 Departamento = (p.Comunidades != null && p.Comunidades.Municipios != null && p.Comunidades.Municipios.Departamentos != null) ? p.Comunidades.Municipios.Departamentos.Nombre : "Sin departamento",
                 Direccion = p.Direccion ?? string.Empty,
+                ReferenciaAdicional = p.ReferenciaAdicional ?? string.Empty,
+                Correo = p.Correo ?? string.Empty,
                 TipoSangre = p.TipoSangre ?? string.Empty,
                 Alergias = p.Alergias ?? string.Empty,
                 Antecedentes = p.Antecedentes ?? string.Empty,
@@ -398,6 +402,8 @@ namespace SanarRuralUnan.Models
             string tipoSangre,
             string alergias,
             string antecedentes,
+            string referenciaAdicional = null,
+            string correo = null,
             int? idPacienteExcluir = null)
         {
             if (string.IsNullOrWhiteSpace(primerNombre))
@@ -459,9 +465,19 @@ namespace SanarRuralUnan.Models
                 throw new InvalidOperationException("El teléfono no puede exceder los 30 caracteres.");
             }
 
-            if (!string.IsNullOrWhiteSpace(direccion) && direccion.Trim().Length > 300)
+            if (!string.IsNullOrWhiteSpace(direccion) && direccion.Trim().Length > 500)
             {
-                throw new InvalidOperationException("La dirección no puede exceder los 300 caracteres.");
+                throw new InvalidOperationException("La dirección no puede exceder los 500 caracteres.");
+            }
+
+            if (!string.IsNullOrWhiteSpace(referenciaAdicional) && referenciaAdicional.Trim().Length > 500)
+            {
+                throw new InvalidOperationException("La referencia adicional no puede exceder los 500 caracteres.");
+            }
+
+            if (!string.IsNullOrWhiteSpace(correo) && correo.Trim().Length > 150)
+            {
+                throw new InvalidOperationException("El correo electrónico no puede exceder los 150 caracteres.");
             }
 
             if (!string.IsNullOrWhiteSpace(tipoSangre))
@@ -560,7 +576,9 @@ namespace SanarRuralUnan.Models
             string tipoSangre,
             string alergias,
             string antecedentes,
-            List<ContactoEmergenciaDto> contactos = null)
+            List<ContactoEmergenciaDto> contactos = null,
+            string referenciaAdicional = null,
+            string correo = null)
         {
             ValidarSesion("registrar pacientes");
 
@@ -571,7 +589,8 @@ namespace SanarRuralUnan.Models
 
             ValidarDatosPaciente(
                 primerNombre, primerApellido, fechaNacimiento, idComunidad,
-                cedula, numeroINSS, telefono, direccion, tipoSangre, alergias, antecedentes);
+                cedula, numeroINSS, telefono, direccion, tipoSangre, alergias, antecedentes,
+                referenciaAdicional: referenciaAdicional, correo: correo);
 
             if (contactos != null)
             {
@@ -599,6 +618,8 @@ namespace SanarRuralUnan.Models
                         Telefono = string.IsNullOrWhiteSpace(telefono) ? null : telefono.Trim(),
                         IdComunidad = idComunidad,
                         Direccion = string.IsNullOrWhiteSpace(direccion) ? null : direccion.Trim(),
+                        ReferenciaAdicional = string.IsNullOrWhiteSpace(referenciaAdicional) ? null : referenciaAdicional.Trim(),
+                        Correo = string.IsNullOrWhiteSpace(correo) ? null : correo.Trim(),
                         TipoSangre = string.IsNullOrWhiteSpace(tipoSangre) ? null : tipoSangre.Trim(),
                         Alergias = string.IsNullOrWhiteSpace(alergias) ? null : alergias.Trim(),
                         Antecedentes = string.IsNullOrWhiteSpace(antecedentes) ? null : antecedentes.Trim(),
@@ -704,7 +725,9 @@ namespace SanarRuralUnan.Models
             string tipoSangre,
             string alergias,
             string antecedentes,
-            List<ContactoEmergenciaDto> contactos = null)
+            List<ContactoEmergenciaDto> contactos = null,
+            string referenciaAdicional = null,
+            string correo = null)
         {
             if (!usuariosModels.EsUsuarioSesionActivo(db))
             {
@@ -724,7 +747,7 @@ namespace SanarRuralUnan.Models
                 throw new InvalidOperationException("Un usuario con rol Paciente no tiene autorización para editar el expediente maestro de pacientes. Solo el rol Administrativo puede gestionar datos legales e institucionales.");
             }
 
-            if (rolActual.Nombre != "Administrativo")
+            if (!usuariosModels.EsRolAdministrativo(rolActual.Nombre))
             {
                 throw new InvalidOperationException($"El rol '{rolActual.Nombre}' no tiene autorización para editar pacientes.");
             }
@@ -740,7 +763,10 @@ namespace SanarRuralUnan.Models
 
             ValidarDatosPaciente(
                 primerNombre, primerApellido, fechaNacimiento, idComunidad,
-                cedula, numeroINSS, telefono, direccion, tipoSangre, alergias, antecedentes, idPaciente);
+                cedula, numeroINSS, telefono, direccion, tipoSangre, alergias, antecedentes,
+                referenciaAdicional: referenciaAdicional,
+                correo: correo,
+                idPacienteExcluir: idPaciente);
 
             if (contactos != null)
             {
@@ -765,6 +791,15 @@ namespace SanarRuralUnan.Models
                     paciente.Telefono = string.IsNullOrWhiteSpace(telefono) ? null : telefono.Trim();
                     paciente.IdComunidad = idComunidad;
                     paciente.Direccion = string.IsNullOrWhiteSpace(direccion) ? null : direccion.Trim();
+                    paciente.ReferenciaAdicional = string.IsNullOrWhiteSpace(referenciaAdicional) ? null : referenciaAdicional.Trim();
+                    if (!string.IsNullOrWhiteSpace(correo))
+                    {
+                        paciente.Correo = correo.Trim();
+                    }
+                    else if (correo != null)
+                    {
+                        paciente.Correo = null;
+                    }
                     paciente.TipoSangre = string.IsNullOrWhiteSpace(tipoSangre) ? null : tipoSangre.Trim();
                     paciente.Alergias = string.IsNullOrWhiteSpace(alergias) ? null : alergias.Trim();
                     paciente.Antecedentes = string.IsNullOrWhiteSpace(antecedentes) ? null : antecedentes.Trim();
@@ -822,6 +857,29 @@ namespace SanarRuralUnan.Models
             string alergias,
             string antecedentes)
         {
+            if (!usuariosModels.EsUsuarioSesionActivo(db))
+            {
+                throw new InvalidOperationException("No se detectó una sesión activa con un rol válido para editar pacientes.");
+            }
+
+            var usuarioSesion = db.Usuarios.Include(u => u.Roles).First(u => u.IdUsuario == usuariosModels.IdUsuarioActual.Value);
+            var rolActual = usuarioSesion.Roles;
+
+            if (rolActual.Nombre == "Doctor")
+            {
+                throw new InvalidOperationException("El rol Doctor no tiene autorización para modificar el expediente maestro civil o institucional del paciente. Solo el rol Administrativo puede gestionar datos legales e institucionales.");
+            }
+
+            if (rolActual.Nombre == "Paciente")
+            {
+                throw new InvalidOperationException("Un usuario con rol Paciente no tiene autorización para editar el expediente maestro de pacientes. Solo el rol Administrativo puede gestionar datos legales e institucionales.");
+            }
+
+            if (!usuariosModels.EsRolAdministrativo(rolActual.Nombre))
+            {
+                throw new InvalidOperationException($"El rol '{rolActual.Nombre}' no tiene autorización para editar pacientes.");
+            }
+
             // Mantiene los contactos existentes sin alterarlos
             var paciente = db.Pacientes.Include(p => p.ContactosEmergencia).FirstOrDefault(p => p.IdPaciente == idPaciente && p.Estado);
             if (paciente == null)
@@ -858,7 +916,8 @@ namespace SanarRuralUnan.Models
             string telefono,
             int idComunidad,
             string direccion,
-            List<ContactoEmergenciaDto> contactos)
+            List<ContactoEmergenciaDto> contactos,
+            string referenciaAdicional = null)
         {
             if (!usuariosModels.IdUsuarioActual.HasValue || !usuariosModels.IdRolActual.HasValue)
             {
@@ -885,7 +944,7 @@ namespace SanarRuralUnan.Models
                 throw new InvalidOperationException("El rol Doctor no tiene autorización para modificar los datos demográficos personales del paciente a través de este método.");
             }
 
-            bool esAdmin = rolActual.Nombre == "Administrativo";
+            bool esAdmin = usuariosModels.EsRolAdministrativo(rolActual.Nombre);
             bool esPaciente = rolActual.Nombre == "Paciente";
             bool esMismoPaciente = paciente.IdUsuario.HasValue && paciente.IdUsuario.Value == usuariosModels.IdUsuarioActual.Value;
 
@@ -904,9 +963,14 @@ namespace SanarRuralUnan.Models
                 throw new InvalidOperationException("El teléfono no puede exceder los 30 caracteres.");
             }
 
-            if (!string.IsNullOrWhiteSpace(direccion) && direccion.Trim().Length > 300)
+            if (!string.IsNullOrWhiteSpace(direccion) && direccion.Trim().Length > 500)
             {
-                throw new InvalidOperationException("La dirección no puede exceder los 300 caracteres.");
+                throw new InvalidOperationException("La dirección no puede exceder los 500 caracteres.");
+            }
+
+            if (!string.IsNullOrWhiteSpace(referenciaAdicional) && referenciaAdicional.Trim().Length > 500)
+            {
+                throw new InvalidOperationException("La referencia adicional no puede exceder los 500 caracteres.");
             }
 
             if (contactos != null)
@@ -924,6 +988,10 @@ namespace SanarRuralUnan.Models
                     paciente.Telefono = string.IsNullOrWhiteSpace(telefono) ? null : telefono.Trim();
                     paciente.IdComunidad = idComunidad;
                     paciente.Direccion = string.IsNullOrWhiteSpace(direccion) ? null : direccion.Trim();
+                    if (referenciaAdicional != null)
+                    {
+                        paciente.ReferenciaAdicional = string.IsNullOrWhiteSpace(referenciaAdicional) ? null : referenciaAdicional.Trim();
+                    }
 
                     // Sincronización completa de contactos de emergencia
                     var contactosActuales = paciente.ContactosEmergencia.ToList();
@@ -966,9 +1034,14 @@ namespace SanarRuralUnan.Models
         public void eliminarPaciente(int idPaciente)
         {
             var rol = ValidarSesion("dar de baja a pacientes");
-            if (rol.Nombre != "Administrativo")
+            if (rol.Nombre == "Personal_administrativo")
             {
-                throw new InvalidOperationException("Solo un usuario con rol 'Administrativo' tiene autorización para dar de baja a un paciente.");
+                throw new InvalidOperationException("El rol Personal_administrativo no tiene autorización para dar de baja a pacientes. Esta operación es exclusiva de administradores.");
+            }
+
+            if (!usuariosModels.EsRolAdministrativo(rol.Nombre))
+            {
+                throw new InvalidOperationException("Solo un usuario con rol administrativo tiene autorización para dar de baja a un paciente.");
             }
 
             var paciente = db.Pacientes.FirstOrDefault(p => p.IdPaciente == idPaciente && p.Estado);
@@ -1001,9 +1074,14 @@ namespace SanarRuralUnan.Models
         public void reactivarPaciente(int idPaciente)
         {
             var rol = ValidarSesion("reactivar pacientes");
-            if (rol.Nombre != "Administrativo")
+            if (rol.Nombre == "Personal_administrativo")
             {
-                throw new InvalidOperationException("Solo un usuario con rol 'Administrativo' tiene autorización para reactivar a un paciente.");
+                throw new InvalidOperationException("El rol Personal_administrativo no tiene autorización para reactivar a pacientes. Esta operación es exclusiva de administradores.");
+            }
+
+            if (!usuariosModels.EsRolAdministrativo(rol.Nombre))
+            {
+                throw new InvalidOperationException("Solo un usuario con rol administrativo tiene autorización para reactivar a un paciente.");
             }
 
             var paciente = db.Pacientes.FirstOrDefault(p => p.IdPaciente == idPaciente && !p.Estado);

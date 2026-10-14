@@ -1,0 +1,242 @@
+using System;
+using System.Drawing;
+using System.Drawing.Drawing2D;
+using System.Text.RegularExpressions;
+using System.Windows.Forms;
+using SanarRuralUnan.Controllers;
+using SanarRuralUnan.Helpers;
+using SanarRuralUnan.Models;
+
+namespace SanarRuralUnan.Views.Administradores
+{
+    /// <summary>
+    /// Formulario modal para la creación y edición de perfiles de Administrador.
+    /// Respeta la separación estricta entre perfil de persona y credenciales de usuario.
+    /// Exclusivo para el rol 'Admin'.
+    /// </summary>
+    public partial class crearAdministrador : Form
+    {
+        private readonly administradoresControllers controlador = new administradoresControllers();
+        private readonly int? idAdministradorEditar;
+        private AdministradorDetalleDto detalleExistente;
+
+        public crearAdministrador()
+        {
+            InitializeComponent();
+            ConfigurarEstilosVisuales();
+        }
+
+        public crearAdministrador(int idAdministrador) : this()
+        {
+            idAdministradorEditar = idAdministrador;
+        }
+
+        private void ConfigurarEstilosVisuales()
+        {
+            this.BackColor = Tema.Fondo;
+
+            cardHeader.Paint += (s, ev) =>
+            {
+                Tema.DibujarTarjetaRedondeada(ev.Graphics, new Rectangle(0, 0, cardHeader.Width - 1, cardHeader.Height - 1), Color.White, Tema.Borde, 8);
+            };
+
+            cardForm.Paint += (s, ev) =>
+            {
+                Tema.DibujarTarjetaRedondeada(ev.Graphics, new Rectangle(0, 0, cardForm.Width - 1, cardForm.Height - 1), Color.White, Tema.Borde, 8);
+            };
+
+            pnlInfoCredenciales.Paint += (s, ev) =>
+            {
+                Tema.DibujarTarjetaRedondeada(ev.Graphics, new Rectangle(0, 0, pnlInfoCredenciales.Width - 1, pnlInfoCredenciales.Height - 1), Color.FromArgb(243, 248, 253), Color.FromArgb(200, 224, 246), 6);
+            };
+
+            lblIconoHeader.Paint += (s, ev) =>
+            {
+                ev.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
+                using (var brush = new SolidBrush(Color.FromArgb(226, 238, 248)))
+                {
+                    ev.Graphics.FillEllipse(brush, 1, 1, lblIconoHeader.Width - 3, lblIconoHeader.Height - 3);
+                }
+                using (var pen = new Pen(Tema.AzulPrimario, 1.8f))
+                using (var brush = new SolidBrush(Color.FromArgb(195, 222, 246)))
+                {
+                    PointF[] escudo = {
+                        new PointF(20, 10),
+                        new PointF(29, 10),
+                        new PointF(29, 21),
+                        new PointF(20, 30),
+                        new PointF(11, 21),
+                        new PointF(11, 10)
+                    };
+                    ev.Graphics.FillPolygon(brush, escudo);
+                    ev.Graphics.DrawPolygon(pen, escudo);
+                }
+            };
+        }
+
+        private void crearAdministrador_Load(object sender, EventArgs e)
+        {
+            lblError.Text = "";
+
+            if (idAdministradorEditar.HasValue)
+            {
+                lblTitulo.Text = "Editar Administrador";
+                lblSubtitulo.Text = "Modifique los datos personales del perfil del administrador.";
+                btnGuardar.Text = "Guardar cambios";
+
+                CargarDatosParaEdicion(idAdministradorEditar.Value);
+            }
+            else
+            {
+                lblTitulo.Text = "Nuevo Administrador";
+                lblSubtitulo.Text = "Complete los datos personales del perfil del administrador.";
+                btnGuardar.Text = "Guardar";
+                lblInfoCredenciales.Text = "• Este formulario registra el perfil de la persona. Para asignarle un nombre de usuario y contraseña, utilice la opción 'Asignar acceso a perfil' una vez guardado.";
+            }
+        }
+
+        private void CargarDatosParaEdicion(int idAdministrador)
+        {
+            try
+            {
+                detalleExistente = controlador.ObtenerDetalle(idAdministrador);
+                if (detalleExistente == null)
+                {
+                    MessageBox.Show("No se encontró el administrador especificado.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    Close();
+                    return;
+                }
+
+                txtPrimerNombre.Text = detalleExistente.PrimerNombre;
+                txtSegundoNombre.Text = detalleExistente.SegundoNombre ?? "";
+                txtPrimerApellido.Text = detalleExistente.PrimerApellido;
+                txtSegundoApellido.Text = detalleExistente.SegundoApellido ?? "";
+                txtCedula.Text = detalleExistente.Cedula ?? "";
+                txtTelefono.Text = detalleExistente.Telefono ?? "";
+                txtCorreo.Text = detalleExistente.Correo ?? "";
+
+                if (detalleExistente.TieneCuenta)
+                {
+                    string estadoStr = detalleExistente.EstadoUsuario == true ? "Activa" : "Inactiva / Bloqueada";
+                    lblInfoCredenciales.Text = string.Format("● Cuenta de acceso vinculada: {0} ({1}). El usuario se preserva intacto.", detalleExistente.NombreUsuario, estadoStr);
+                }
+                else
+                {
+                    lblInfoCredenciales.Text = "○ Este administrador aún no tiene cuenta de acceso. Podrá asignarle credenciales desde 'Asignar acceso a perfil'.";
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("No se pudieron cargar los datos del administrador:\n\n" + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                Close();
+            }
+        }
+
+        private void btnGuardar_Click(object sender, EventArgs e)
+        {
+            lblError.Text = "";
+
+            string primerNombre = txtPrimerNombre.Text.Trim();
+            string segundoNombre = txtSegundoNombre.Text.Trim();
+            string primerApellido = txtPrimerApellido.Text.Trim();
+            string segundoApellido = txtSegundoApellido.Text.Trim();
+            string cedula = txtCedula.Text.Trim();
+            string telefono = txtTelefono.Text.Trim();
+            string correo = txtCorreo.Text.Trim();
+
+            // Validaciones locales inmediatas
+            if (string.IsNullOrWhiteSpace(primerNombre))
+            {
+                MostrarError("El primer nombre es obligatorio.");
+                txtPrimerNombre.Focus();
+                return;
+            }
+
+            if (string.IsNullOrWhiteSpace(primerApellido))
+            {
+                MostrarError("El primer apellido es obligatorio.");
+                txtPrimerApellido.Focus();
+                return;
+            }
+
+            if (!string.IsNullOrWhiteSpace(correo) && !Regex.IsMatch(correo, @"^[^@\s]+@[^@\s]+\.[^@\s]+$"))
+            {
+                MostrarError("El formato del correo electrónico no es válido.");
+                txtCorreo.Focus();
+                return;
+            }
+
+            if (!string.IsNullOrWhiteSpace(cedula) && controlador.ExisteCedula(cedula, idAdministradorEditar))
+            {
+                MostrarError("Ya existe otro administrador registrado con esa misma cédula.");
+                txtCedula.Focus();
+                return;
+            }
+
+            try
+            {
+                if (idAdministradorEditar.HasValue)
+                {
+                    controlador.Actualizar(
+                        idAdministradorEditar.Value,
+                        primerNombre,
+                        segundoNombre,
+                        primerApellido,
+                        segundoApellido,
+                        cedula,
+                        telefono,
+                        correo
+                    );
+
+                    MessageBox.Show("Administrador actualizado exitosamente.", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+                else
+                {
+                    controlador.Guardar(
+                        primerNombre,
+                        segundoNombre,
+                        primerApellido,
+                        segundoApellido,
+                        cedula,
+                        telefono,
+                        correo
+                    );
+
+                    MessageBox.Show("Administrador registrado exitosamente.\n\nPuede vincularle una cuenta de usuario desde 'Asignar acceso a perfil'.", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+
+                DialogResult = DialogResult.OK;
+                Close();
+            }
+            catch (ArgumentException ex)
+            {
+                MostrarError(ex.Message);
+            }
+            catch (InvalidOperationException ex)
+            {
+                MostrarError(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Ocurrió un error al guardar el administrador:\n\n" + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void MostrarError(string mensaje)
+        {
+            lblError.Text = "⚠ " + mensaje;
+        }
+
+        private void btnCancelar_Click(object sender, EventArgs e)
+        {
+            DialogResult = DialogResult.Cancel;
+            Close();
+        }
+
+        private void btnCerrarTop_Click(object sender, EventArgs e)
+        {
+            DialogResult = DialogResult.Cancel;
+            Close();
+        }
+    }
+}

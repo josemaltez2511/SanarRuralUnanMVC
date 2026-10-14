@@ -164,5 +164,10 @@ namespace SanarRuralUnan.Controllers
         {
             return new doctoresModels().existeNumeroLicencia(numeroLicencia, idDoctorExcluir);
         }
+
+        public bool PuedeGestionarDoctores()
+        {
+            return usuariosModels.PuedeGestionarUsuariosYPersonal();
+        }
     }
 }

@@ -253,6 +253,8 @@ namespace SanarRuralUnan.Views
             this.cmbFiltroRol.FormattingEnabled = true;
             this.cmbFiltroRol.Items.AddRange(new object[] {
             "Todos los roles",
+            "Admin",
+            "Personal_administrativo",
             "Administrativo",
             "Doctor",
             "Paciente"});
@@ -460,7 +462,7 @@ namespace SanarRuralUnan.Views
             // Correo
             //
             this.Correo.FillWeight = 160F;
-            this.Correo.HeaderText = "Correo electrónico";
+            this.Correo.HeaderText = "Nombre de Usuario";
             this.Correo.Name = "Correo";
             this.Correo.ReadOnly = true;
             //
