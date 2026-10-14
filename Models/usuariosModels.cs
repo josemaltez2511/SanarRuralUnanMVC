@@ -40,18 +40,11 @@ namespace SanarRuralUnan.Models
             }
         }
 
-        // MÉTODO PARA VERIFICAR SI UN CORREO YA EXISTE EN LA BD
-        // esto lo usa el Controller para validar antes de crear o mientras el usuario escribe
-        // devuelve true si el correo ya está registrado, false si está libre
+        // MÉTODO OBSOLETO: Las cuentas de usuario operan exclusivamente con NombreUsuario
+        [Obsolete("Las cuentas de usuario ya no gestionan correo. Utilice ExisteNombreUsuario.")]
         public bool ExisteCorreo(string correo, int? idUsuarioExcluir = null)
         {
-            if (string.IsNullOrWhiteSpace(correo)) return false;
-            string correoNormalizado = correo.Trim();
-            using (var db = new SanarRuralDBEntities())
-            {
-                return db.Usuarios.Any(u => u.Correo != null && u.Correo == correoNormalizado &&
-                    (!idUsuarioExcluir.HasValue || u.IdUsuario != idUsuarioExcluir.Value));
-            }
+            return false;
         }
 
         public static bool EsUsuarioSesionActivo(SanarRuralDBEntities db, string rolEsperado = null)
@@ -215,11 +208,10 @@ namespace SanarRuralUnan.Models
                     filtro = filtro.Trim();
                     consulta = consulta.Where(u =>
                         (u.NombreUsuario != null && u.NombreUsuario.Contains(filtro)) ||
-                        (u.Correo != null && u.Correo.Contains(filtro)) ||
                         (u.Roles != null && u.Roles.Nombre.Contains(filtro)));
                 }
 
-                return consulta.OrderBy(u => u.NombreUsuario ?? u.Correo).ToList();
+                return consulta.OrderBy(u => u.NombreUsuario).ToList();
             }
         }
 
@@ -287,7 +279,6 @@ namespace SanarRuralUnan.Models
                 {
                     IdRol = idRol,
                     NombreUsuario = nombreUsuario,
-                    Correo = string.IsNullOrWhiteSpace(correo) ? null : correo.Trim(),
                     ContrasenaHash = CrearHashContrasena(contrasena),
                     FechaRegistro = DateTime.Now,
                     Estado = true
@@ -299,9 +290,9 @@ namespace SanarRuralUnan.Models
             }
         }
 
-        public int Guardar(int idRol, string correo, string contrasena)
+        public int Guardar(int idRol, string nombreUsuario, string contrasena)
         {
-            return Guardar(idRol, correo, contrasena, correo != null && correo.Contains("@") ? correo : null);
+            return Guardar(idRol, nombreUsuario, contrasena, null);
         }
 
         public bool Actualizar(int idUsuario, int idRol, string nombreUsuario, string nuevaContrasena, string correo = null)
@@ -352,8 +343,6 @@ namespace SanarRuralUnan.Models
 
                 usuario.IdRol = idRol;
                 usuario.NombreUsuario = nombreUsuario;
-                if (!string.IsNullOrWhiteSpace(correo))
-                    usuario.Correo = correo.Trim();
 
                 if (!string.IsNullOrEmpty(nuevaContrasena))
                     usuario.ContrasenaHash = CrearHashContrasena(nuevaContrasena);
@@ -364,8 +353,6 @@ namespace SanarRuralUnan.Models
                 {
                     IdRolActual = idRol;
                     NombreUsuarioActual = nombreUsuario;
-                    if (!string.IsNullOrWhiteSpace(correo))
-                        CorreoActual = correo.Trim();
                     var rol = db.Roles.FirstOrDefault(r => r.IdRol == idRol);
                     if (rol != null)
                         NombreRolActual = rol.Nombre;
@@ -374,9 +361,9 @@ namespace SanarRuralUnan.Models
             }
         }
 
-        public bool Actualizar(int idUsuario, int idRol, string correo, string nuevaContrasena)
+        public bool Actualizar(int idUsuario, int idRol, string nombreUsuario, string nuevaContrasena)
         {
-            return Actualizar(idUsuario, idRol, correo, nuevaContrasena, correo != null && correo.Contains("@") ? correo : null);
+            return Actualizar(idUsuario, idRol, nombreUsuario, nuevaContrasena, null);
         }
 
         private int ObtenerIdRolEnContexto(SanarRuralDBEntities db, string nombre)
@@ -483,8 +470,7 @@ namespace SanarRuralUnan.Models
             {
                 Usuarios usuario = db.Usuarios
                     .Include(u => u.Roles)
-                    .FirstOrDefault(u => u.NombreUsuario == identNormalizado ||
-                        (u.Correo != null && u.Correo == identNormalizado));
+                    .FirstOrDefault(u => u.NombreUsuario == identNormalizado);
 
                 if (usuario == null || !VerificarContrasena(contrasena, usuario.ContrasenaHash))
                 {
@@ -501,7 +487,7 @@ namespace SanarRuralUnan.Models
                 IdUsuarioActual = usuario.IdUsuario;
                 IdRolActual = usuario.IdRol;
                 NombreUsuarioActual = usuario.NombreUsuario;
-                CorreoActual = usuario.Correo;
+                CorreoActual = null;
                 NombreRolActual = usuario.Roles != null ? usuario.Roles.Nombre : ObtenerNombreRolEnContexto(db, usuario.IdRol);
                 return usuario.IdRol;
             }

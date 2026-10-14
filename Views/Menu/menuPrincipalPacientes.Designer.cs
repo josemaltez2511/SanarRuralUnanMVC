@@ -1,4 +1,4 @@
-using System.Drawing;
+﻿using System.Drawing;
 using System.Windows.Forms;
 using SanarRuralUnan.Helpers;
 
@@ -17,6 +17,9 @@ namespace SanarRuralUnan.Views
 
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
+            this.toolTipSidebar = new System.Windows.Forms.ToolTip(this.components);
+            this.btnToggleSidebar = new System.Windows.Forms.Button();
             this.panelEncabezado = new System.Windows.Forms.Panel();
             this.picLogo = new System.Windows.Forms.PictureBox();
             this.lblMarca = new System.Windows.Forms.Label();
@@ -44,10 +47,11 @@ namespace SanarRuralUnan.Views
             this.panelContenido.SuspendLayout();
             this.panelPlaceholder.SuspendLayout();
             this.SuspendLayout();
-            // 
+            //
             // panelEncabezado
-            // 
+            //
             this.panelEncabezado.BackColor = Tema.Superficie;
+            this.panelEncabezado.Controls.Add(this.btnToggleSidebar);
             this.panelEncabezado.Controls.Add(this.picLogo);
             this.panelEncabezado.Controls.Add(this.lblMarca);
             this.panelEncabezado.Controls.Add(this.lblDescripcion);
@@ -60,53 +64,70 @@ namespace SanarRuralUnan.Views
             this.panelEncabezado.Name = "panelEncabezado";
             this.panelEncabezado.Size = new System.Drawing.Size(1280, 82);
             this.panelEncabezado.TabIndex = 0;
-            // 
+            //
+            // btnToggleSidebar
+            //
+            this.btnToggleSidebar.AccessibleDescription = "Ocultar o mostrar el menú lateral de navegación";
+            this.btnToggleSidebar.AccessibleName = "Alternar menú lateral";
+            this.btnToggleSidebar.BackColor = Tema.Superficie;
+            this.btnToggleSidebar.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnToggleSidebar.FlatAppearance.BorderColor = Tema.Borde;
+            this.btnToggleSidebar.FlatAppearance.BorderSize = 1;
+            this.btnToggleSidebar.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnToggleSidebar.Location = new System.Drawing.Point(14, 21);
+            this.btnToggleSidebar.Name = "btnToggleSidebar";
+            this.btnToggleSidebar.Size = new System.Drawing.Size(40, 40);
+            this.btnToggleSidebar.TabIndex = 0;
+            this.btnToggleSidebar.UseVisualStyleBackColor = false;
+            this.btnToggleSidebar.Click += new System.EventHandler(this.btnToggleSidebar_Click);
+            this.toolTipSidebar.SetToolTip(this.btnToggleSidebar, "Ocultar menú lateral (Ctrl+B)");
+            //
             // picLogo
-            // 
+            //
             this.picLogo.AccessibleDescription = "Identidad visual de Sanar Rural";
             this.picLogo.AccessibleName = "Logo institucional";
-            this.picLogo.Location = new System.Drawing.Point(20, 14);
+            this.picLogo.Location = new System.Drawing.Point(64, 14);
             this.picLogo.Name = "picLogo";
             this.picLogo.Size = new System.Drawing.Size(54, 54);
             this.picLogo.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-            this.picLogo.TabIndex = 0;
+            this.picLogo.TabIndex = 1;
             this.picLogo.TabStop = false;
-            // 
+            //
             // lblMarca
-            // 
+            //
             this.lblMarca.AutoSize = true;
             this.lblMarca.Font = new System.Drawing.Font(Tema.FamiliaFuente, 16F, System.Drawing.FontStyle.Bold);
             this.lblMarca.ForeColor = Tema.AzulOscuro;
-            this.lblMarca.Location = new System.Drawing.Point(82, 14);
+            this.lblMarca.Location = new System.Drawing.Point(126, 14);
             this.lblMarca.Name = "lblMarca";
             this.lblMarca.Size = new System.Drawing.Size(188, 30);
-            this.lblMarca.TabIndex = 1;
+            this.lblMarca.TabIndex = 2;
             this.lblMarca.Text = "SANAR RURAL";
-            // 
+            //
             // lblDescripcion
-            // 
+            //
             this.lblDescripcion.AutoSize = true;
             this.lblDescripcion.Font = Tema.FuenteAyuda;
             this.lblDescripcion.ForeColor = Tema.TextoSecundario;
-            this.lblDescripcion.Location = new System.Drawing.Point(84, 48);
+            this.lblDescripcion.Location = new System.Drawing.Point(128, 48);
             this.lblDescripcion.Name = "lblDescripcion";
             this.lblDescripcion.Size = new System.Drawing.Size(130, 15);
-            this.lblDescripcion.TabIndex = 2;
+            this.lblDescripcion.TabIndex = 3;
             this.lblDescripcion.Text = "Portal del Paciente";
-            // 
+            //
             // panelBannerPaisaje
-            // 
-            this.panelBannerPaisaje.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
+            //
+            this.panelBannerPaisaje.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.panelBannerPaisaje.BackColor = Tema.Superficie;
-            this.panelBannerPaisaje.Location = new System.Drawing.Point(280, 2);
+            this.panelBannerPaisaje.Location = new System.Drawing.Point(324, 2);
             this.panelBannerPaisaje.Name = "panelBannerPaisaje";
-            this.panelBannerPaisaje.Size = new System.Drawing.Size(560, 78);
-            this.panelBannerPaisaje.TabIndex = 3;
-            // 
+            this.panelBannerPaisaje.Size = new System.Drawing.Size(516, 78);
+            this.panelBannerPaisaje.TabIndex = 4;
+            //
             // panelUsuario
-            // 
+            //
             this.panelUsuario.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.panelUsuario.BackColor = Tema.Superficie;
             this.panelUsuario.Controls.Add(this.lblAvatar);
@@ -116,9 +137,9 @@ namespace SanarRuralUnan.Views
             this.panelUsuario.Name = "panelUsuario";
             this.panelUsuario.Size = new System.Drawing.Size(240, 50);
             this.panelUsuario.TabIndex = 4;
-            // 
+            //
             // lblAvatar
-            // 
+            //
             this.lblAvatar.BackColor = System.Drawing.Color.Transparent;
             this.lblAvatar.Font = new System.Drawing.Font(Tema.FamiliaFuente, 11F, System.Drawing.FontStyle.Bold);
             this.lblAvatar.ForeColor = Tema.VerdeOscuro;
@@ -128,9 +149,9 @@ namespace SanarRuralUnan.Views
             this.lblAvatar.TabIndex = 0;
             this.lblAvatar.Text = "PA";
             this.lblAvatar.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
+            //
             // lblUsuarioNombre
-            // 
+            //
             this.lblUsuarioNombre.AutoEllipsis = true;
             this.lblUsuarioNombre.Font = Tema.FuenteLabelCampo;
             this.lblUsuarioNombre.ForeColor = Tema.AzulOscuro;
@@ -139,9 +160,9 @@ namespace SanarRuralUnan.Views
             this.lblUsuarioNombre.Size = new System.Drawing.Size(184, 18);
             this.lblUsuarioNombre.TabIndex = 1;
             this.lblUsuarioNombre.Text = "Paciente";
-            // 
+            //
             // lblUsuarioRol
-            // 
+            //
             this.lblUsuarioRol.AutoSize = true;
             this.lblUsuarioRol.Font = Tema.FuentePequena;
             this.lblUsuarioRol.ForeColor = Tema.TextoSecundario;
@@ -150,9 +171,9 @@ namespace SanarRuralUnan.Views
             this.lblUsuarioRol.Size = new System.Drawing.Size(103, 15);
             this.lblUsuarioRol.TabIndex = 2;
             this.lblUsuarioRol.Text = "Paciente Registrado";
-            // 
+            //
             // btnCerrarSesion
-            // 
+            //
             this.btnCerrarSesion.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnCerrarSesion.BackColor = Tema.Superficie;
             this.btnCerrarSesion.Cursor = System.Windows.Forms.Cursors.Hand;
@@ -168,9 +189,9 @@ namespace SanarRuralUnan.Views
             this.btnCerrarSesion.Text = "🚪 Cerrar sesión";
             this.btnCerrarSesion.UseVisualStyleBackColor = false;
             this.btnCerrarSesion.Click += new System.EventHandler(this.btnCerrarSesion_Click);
-            // 
+            //
             // panelSidebar
-            // 
+            //
             this.panelSidebar.BackColor = Tema.Fondo;
             this.panelSidebar.Controls.Add(this.btnPerfil);
             this.panelSidebar.Controls.Add(this.btnCitas);
@@ -182,9 +203,9 @@ namespace SanarRuralUnan.Views
             this.panelSidebar.Padding = new System.Windows.Forms.Padding(14, 16, 14, 16);
             this.panelSidebar.Size = new System.Drawing.Size(195, 718);
             this.panelSidebar.TabIndex = 1;
-            // 
+            //
             // btnPerfil
-            // 
+            //
             this.btnPerfil.BackColor = Tema.AzulPrimario;
             this.btnPerfil.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnPerfil.FlatAppearance.BorderSize = 0;
@@ -200,9 +221,9 @@ namespace SanarRuralUnan.Views
             this.btnPerfil.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.btnPerfil.UseVisualStyleBackColor = false;
             this.btnPerfil.Click += new System.EventHandler(this.btnPerfil_Click);
-            // 
+            //
             // btnCitas
-            // 
+            //
             this.btnCitas.BackColor = System.Drawing.Color.Transparent;
             this.btnCitas.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnCitas.FlatAppearance.BorderSize = 0;
@@ -217,9 +238,9 @@ namespace SanarRuralUnan.Views
             this.btnCitas.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.btnCitas.UseVisualStyleBackColor = false;
             this.btnCitas.Click += new System.EventHandler(this.btnCitas_Click);
-            // 
+            //
             // btnHistorial
-            // 
+            //
             this.btnHistorial.BackColor = System.Drawing.Color.Transparent;
             this.btnHistorial.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnHistorial.FlatAppearance.BorderSize = 0;
@@ -234,17 +255,17 @@ namespace SanarRuralUnan.Views
             this.btnHistorial.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.btnHistorial.UseVisualStyleBackColor = false;
             this.btnHistorial.Click += new System.EventHandler(this.btnHistorial_Click);
-            // 
+            //
             // panelSidebarLema
-            // 
+            //
             this.panelSidebarLema.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.panelSidebarLema.Location = new System.Drawing.Point(14, 582);
             this.panelSidebarLema.Name = "panelSidebarLema";
             this.panelSidebarLema.Size = new System.Drawing.Size(167, 120);
             this.panelSidebarLema.TabIndex = 3;
-            // 
+            //
             // panelContenido
-            // 
+            //
             this.panelContenido.BackColor = Tema.Fondo;
             this.panelContenido.Controls.Add(this.panelPlaceholder);
             this.panelContenido.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -253,9 +274,9 @@ namespace SanarRuralUnan.Views
             this.panelContenido.Padding = new System.Windows.Forms.Padding(18, 16, 20, 18);
             this.panelContenido.Size = new System.Drawing.Size(1085, 718);
             this.panelContenido.TabIndex = 2;
-            // 
+            //
             // panelPlaceholder
-            // 
+            //
             this.panelPlaceholder.BackColor = Tema.Superficie;
             this.panelPlaceholder.Controls.Add(this.lblPlaceholderBadge);
             this.panelPlaceholder.Controls.Add(this.lblSeccion);
@@ -266,9 +287,9 @@ namespace SanarRuralUnan.Views
             this.panelPlaceholder.Size = new System.Drawing.Size(620, 240);
             this.panelPlaceholder.TabIndex = 0;
             this.panelPlaceholder.Visible = false;
-            // 
+            //
             // lblPlaceholderBadge
-            // 
+            //
             this.lblPlaceholderBadge.AutoSize = true;
             this.lblPlaceholderBadge.Font = Tema.FuenteAyuda;
             this.lblPlaceholderBadge.ForeColor = Tema.AzulPrimario;
@@ -277,9 +298,9 @@ namespace SanarRuralUnan.Views
             this.lblPlaceholderBadge.Size = new System.Drawing.Size(130, 15);
             this.lblPlaceholderBadge.TabIndex = 0;
             this.lblPlaceholderBadge.Text = "PORTAL DEL PACIENTE";
-            // 
+            //
             // lblSeccion
-            // 
+            //
             this.lblSeccion.AutoSize = true;
             this.lblSeccion.Font = new System.Drawing.Font(Tema.FamiliaFuente, 16F, System.Drawing.FontStyle.Bold);
             this.lblSeccion.ForeColor = Tema.AzulOscuro;
@@ -288,9 +309,9 @@ namespace SanarRuralUnan.Views
             this.lblSeccion.Size = new System.Drawing.Size(97, 30);
             this.lblSeccion.TabIndex = 1;
             this.lblSeccion.Text = "Sección";
-            // 
+            //
             // lblContenido
-            // 
+            //
             this.lblContenido.Font = Tema.FuenteLabelCampo;
             this.lblContenido.ForeColor = Tema.TextoSecundario;
             this.lblContenido.Location = new System.Drawing.Point(36, 102);
@@ -298,9 +319,9 @@ namespace SanarRuralUnan.Views
             this.lblContenido.Size = new System.Drawing.Size(548, 96);
             this.lblContenido.TabIndex = 2;
             this.lblContenido.Text = "Bienvenido a su portal personal de salud en Sanar Rural.";
-            // 
+            //
             // menuPrincipalPacientes
-            // 
+            //
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = Tema.Fondo;
@@ -347,5 +368,7 @@ namespace SanarRuralUnan.Views
         private System.Windows.Forms.Label lblPlaceholderBadge;
         private System.Windows.Forms.Label lblSeccion;
         private System.Windows.Forms.Label lblContenido;
+        private System.Windows.Forms.Button btnToggleSidebar;
+        private System.Windows.Forms.ToolTip toolTipSidebar;
     }
 }

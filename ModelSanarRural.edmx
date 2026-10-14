@@ -380,7 +380,6 @@
           <Property Name="IdUsuario" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
           <Property Name="IdRol" Type="int" Nullable="false" />
           <Property Name="NombreUsuario" Type="nvarchar" Nullable="false" MaxLength="50" />
-          <Property Name="Correo" Type="nvarchar" MaxLength="150" />
           <Property Name="ContrasenaHash" Type="nvarchar" Nullable="false" MaxLength="255" />
           <Property Name="FechaRegistro" Type="datetime2" Nullable="false" />
           <Property Name="Estado" Type="bit" Nullable="false" />
@@ -1136,7 +1135,6 @@
           <Property Name="IdUsuario" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="IdRol" Type="Int32" Nullable="false" />
           <Property Name="NombreUsuario" Type="String" Nullable="false" MaxLength="50" Unicode="true" FixedLength="false" />
-          <Property Name="Correo" Type="String" MaxLength="150" Unicode="true" FixedLength="false" />
           <Property Name="ContrasenaHash" Type="String" Nullable="false" MaxLength="255" Unicode="true" FixedLength="false" />
           <Property Name="FechaRegistro" Type="DateTime" Nullable="false" />
           <Property Name="Estado" Type="Boolean" Nullable="false" />
@@ -1730,7 +1728,6 @@
                 <ScalarProperty Name="IdUsuario" ColumnName="IdUsuario" />
                 <ScalarProperty Name="IdRol" ColumnName="IdRol" />
                 <ScalarProperty Name="NombreUsuario" ColumnName="NombreUsuario" />
-                <ScalarProperty Name="Correo" ColumnName="Correo" />
                 <ScalarProperty Name="ContrasenaHash" ColumnName="ContrasenaHash" />
                 <ScalarProperty Name="FechaRegistro" ColumnName="FechaRegistro" />
                 <ScalarProperty Name="Estado" ColumnName="Estado" />

@@ -107,7 +107,8 @@ namespace SanarRuralUnan.Views.PersonalAdministrativo
                 {
                     lblValorUsuario.Text = detalle.NombreUsuario;
                     lblValorUsuario.ForeColor = Tema.AzulPrimario;
-                    lblValorCorreoUsuario.Text = string.IsNullOrWhiteSpace(detalle.CorreoUsuario) ? "No registrado" : detalle.CorreoUsuario;
+                    lblTituloCorreoUsuario.Text = "Modalidad de acceso";
+                    lblValorCorreoUsuario.Text = "Solo nombre de usuario";
 
                     if (detalle.EstadoUsuario == true)
                     {
