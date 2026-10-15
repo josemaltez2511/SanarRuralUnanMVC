@@ -91,7 +91,33 @@ namespace SanarRuralUnan
             // Cargar logotipo institucional desde los recursos del sistema
             picLogoHero.Image = Tema.ObtenerLogo();
 
-            btnVerContrasena.Text = "👁";
+            btnVerContrasena.Text = "";
+            btnVerContrasena.Paint += (s, ev) =>
+            {
+                bool cerrado = txtContrasena.PasswordChar != '●';
+                Tema.DibujarIconoOjo(ev.Graphics, btnVerContrasena.ClientRectangle, Tema.TextoSecundario, cerrado);
+            };
+
+            lblSlideIcono.Text = "";
+            lblSlideIcono.Paint += (s, ev) =>
+            {
+                Tema.DibujarFondoCircular(ev.Graphics, lblSlideIcono.ClientRectangle, lblSlideIcono.BackColor);
+                switch (_indiceSlideActual)
+                {
+                    case 0:
+                        Tema.DibujarIconoUsuarios(ev.Graphics, lblSlideIcono.ClientRectangle, Tema.AzulPrimario);
+                        break;
+                    case 1:
+                        Tema.DibujarIconoCalendario(ev.Graphics, lblSlideIcono.ClientRectangle, Tema.AzulPrimario);
+                        break;
+                    case 2:
+                        Tema.DibujarIconoDoctor(ev.Graphics, lblSlideIcono.ClientRectangle, Tema.AzulPrimario);
+                        break;
+                    case 3:
+                        Tema.DibujarIconoHistorial(ev.Graphics, lblSlideIcono.ClientRectangle, Tema.AzulPrimario);
+                        break;
+                }
+            };
 
             // Microinteracciones de hover en botones
             btnIniciarSesion.MouseEnter += (s, ev) => btnIniciarSesion.BackColor = Tema.AzulOscuro;
@@ -204,7 +230,8 @@ namespace SanarRuralUnan
                 return;
 
             var slide = _slides[_indiceSlideActual];
-            lblSlideIcono.Text = slide.Icono;
+            lblSlideIcono.Text = "";
+            lblSlideIcono.Invalidate();
             lblSlideTitulo.Text = slide.Titulo;
             lblSlideDescripcion.Text = slide.Descripcion;
             panelSlideIndicadores.Invalidate();
@@ -395,16 +422,8 @@ namespace SanarRuralUnan
         // Alternar visualización de contraseña (mostrar/ocultar)
         private void btnVerContrasena_Click(object sender, EventArgs e)
         {
-            if (txtContrasena.PasswordChar == '●')
-            {
-                txtContrasena.PasswordChar = '\0';
-                btnVerContrasena.Text = "🙈";
-            }
-            else
-            {
-                txtContrasena.PasswordChar = '●';
-                btnVerContrasena.Text = "👁";
-            }
+            txtContrasena.PasswordChar = (txtContrasena.PasswordChar == '●') ? '\0' : '●';
+            btnVerContrasena.Invalidate();
 
             txtContrasena.Focus();
             txtContrasena.SelectionStart = txtContrasena.Text.Length;

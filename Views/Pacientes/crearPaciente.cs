@@ -181,11 +181,17 @@ namespace SanarRuralUnan.Views
             pnlEditorContacto.Paint += (s, ev) => Tema.DibujarTarjetaRedondeada(ev.Graphics, new Rectangle(0, 0, pnlEditorContacto.Width - 1, pnlEditorContacto.Height - 1), Color.FromArgb(240, 247, 253), Color.FromArgb(195, 222, 243), 8);
 
             // Iconos circulares con paleta aprobada de salud y naturaleza
-            lblIconoHeader.Paint += (s, ev) => DibujarBadgeCircular(lblIconoHeader, ev, "👤", Tema.AzulPrimario, Color.White);
-            lblIconoPersonal.Paint += (s, ev) => DibujarBadgeCircular(lblIconoPersonal, ev, "👤", Tema.VerdeOscuro, Color.White);
-            lblIconoUbicacion.Paint += (s, ev) => DibujarBadgeCircular(lblIconoUbicacion, ev, "📍", Tema.AzulPrimario, Color.White);
-            lblIconoSalud.Paint += (s, ev) => DibujarBadgeCircular(lblIconoSalud, ev, "💓", Tema.AzulPrimario, Color.White);
-            lblIconoEmergencia.Paint += (s, ev) => DibujarBadgeCircular(lblIconoEmergencia, ev, "👥", Tema.VerdeOscuro, Color.White);
+            lblIconoHeader.Text = "";
+            lblIconoPersonal.Text = "";
+            lblIconoUbicacion.Text = "";
+            lblIconoSalud.Text = "";
+            lblIconoEmergencia.Text = "";
+
+            lblIconoHeader.Paint += (s, ev) => DibujarBadgeCircular(lblIconoHeader, ev, "paciente", Tema.AzulPrimario, Color.White);
+            lblIconoPersonal.Paint += (s, ev) => DibujarBadgeCircular(lblIconoPersonal, ev, "usuario", Tema.VerdeOscuro, Color.White);
+            lblIconoUbicacion.Paint += (s, ev) => DibujarBadgeCircular(lblIconoUbicacion, ev, "ubicacion", Tema.AzulPrimario, Color.White);
+            lblIconoSalud.Paint += (s, ev) => DibujarBadgeCircular(lblIconoSalud, ev, "doctor", Tema.AzulPrimario, Color.White);
+            lblIconoEmergencia.Paint += (s, ev) => DibujarBadgeCircular(lblIconoEmergencia, ev, "emergencia", Tema.VerdeOscuro, Color.White);
 
             // Paso activo y pasos secundarios del indicador
             lblPaso1Num.Paint += (s, ev) => DibujarCirculoPaso(lblPaso1Num, ev, "1", true);
@@ -225,7 +231,7 @@ namespace SanarRuralUnan.Views
             panelFormContenedor.ScrollControlIntoView(destino);
         }
 
-        private static void DibujarBadgeCircular(Control c, PaintEventArgs e, string icono, Color fondo, Color colorIcono)
+        private static void DibujarBadgeCircular(Control c, PaintEventArgs e, string tipoIcono, Color fondo, Color colorIcono)
         {
             e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
             e.Graphics.Clear(c.Parent?.BackColor ?? Tema.Superficie);
@@ -233,12 +239,8 @@ namespace SanarRuralUnan.Views
             {
                 e.Graphics.FillEllipse(br, 1, 1, c.Width - 3, c.Height - 3);
             }
-            using (Font f = new Font("Segoe UI Emoji", 11.5F))
-            using (Brush brText = new SolidBrush(colorIcono))
-            {
-                SizeF sf = e.Graphics.MeasureString(icono, f);
-                e.Graphics.DrawString(icono, f, brText, (c.Width - sf.Width) / 2 + 1, (c.Height - sf.Height) / 2);
-            }
+            Rectangle rectIcono = new Rectangle(0, 0, c.Width, c.Height);
+            Tema.DibujarIconoVectorial(e.Graphics, tipoIcono, rectIcono, colorIcono);
         }
 
         private static void DibujarCirculoPaso(Control c, PaintEventArgs e, string numero, bool activo)
@@ -373,8 +375,8 @@ namespace SanarRuralUnan.Views
             Text = "Sanar Rural - Registro de Paciente";
             lblTitulo.Text = "Registrar paciente";
             lblSubtitulo.Text = "Información personal, ubicación y expediente básico";
-            btnGuardar.Text = "💾 Guardar paciente";
-            btnCancelar.Text = "✕ Cancelar";
+            btnGuardar.Text = "Guardar paciente";
+            btnCancelar.Text = "Cancelar";
         }
 
         // ============================================================
@@ -776,7 +778,7 @@ namespace SanarRuralUnan.Views
                 using (StringFormat sf = new StringFormat { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center })
                 using (Font font = new Font(Tema.FamiliaFuente, 8.5F, FontStyle.Bold))
                 {
-                    e.Graphics.DrawString("✏ Editar", font, brush, rectBtn, sf);
+                    e.Graphics.DrawString("Editar", font, brush, rectBtn, sf);
                 }
 
                 e.Handled = true;
@@ -801,7 +803,7 @@ namespace SanarRuralUnan.Views
                 using (StringFormat sf = new StringFormat { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center })
                 using (Font font = new Font(Tema.FamiliaFuente, 8.5F, FontStyle.Bold))
                 {
-                    e.Graphics.DrawString("🗑 Eliminar", font, brush, rectBtn, sf);
+                    e.Graphics.DrawString("Eliminar", font, brush, rectBtn, sf);
                 }
 
                 e.Handled = true;
@@ -1037,8 +1039,8 @@ namespace SanarRuralUnan.Views
                 Text = "Sanar Rural - Editar Paciente";
                 lblTitulo.Text = "Editar paciente";
                 lblSubtitulo.Text = string.Format("Editar expediente #{0} | {1}", paciente.IdPaciente, paciente.NombreCompleto);
-                btnGuardar.Text = "💾 Guardar cambios";
-                btnCancelar.Text = "✕ Cancelar";
+                btnGuardar.Text = "Guardar cambios";
+                btnCancelar.Text = "Cancelar";
 
                 txtNombres.Text = paciente.PrimerNombre;
                 txtSegundoNombre.Text = paciente.SegundoNombre;
@@ -1115,7 +1117,7 @@ namespace SanarRuralUnan.Views
             txtContactoCedula.Clear();
             if (cmbContactoParentesco.Items.Count > 0) cmbContactoParentesco.SelectedIndex = 0;
             lblErrorContacto.Text = string.Empty;
-            btnGuardarContacto.Text = "💾 Guardar contacto";
+            btnGuardarContacto.Text = "Guardar contacto";
 
             pnlEditorContacto.Visible = true;
             AjustarLayoutPaciente();
@@ -1225,7 +1227,7 @@ namespace SanarRuralUnan.Views
                     txtContactoTelefono.Text = c.Telefono;
                     txtContactoCedula.Text = c.Cedula;
                     lblErrorContacto.Text = string.Empty;
-                    btnGuardarContacto.Text = "💾 Guardar cambios";
+                    btnGuardarContacto.Text = "Guardar cambios";
 
                     pnlEditorContacto.Visible = true;
                     AjustarLayoutPaciente();
@@ -1267,8 +1269,8 @@ namespace SanarRuralUnan.Views
                     c.Parentesco,
                     c.Telefono,
                     string.IsNullOrWhiteSpace(c.Cedula) ? "-" : c.Cedula,
-                    "✏ Editar",
-                    "🗑 Eliminar");
+                    "Editar",
+                    "Eliminar");
             }
 
             bool hayContactos = listaContactos.Count > 0;

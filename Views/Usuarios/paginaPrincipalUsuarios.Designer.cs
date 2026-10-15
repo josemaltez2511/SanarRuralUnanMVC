@@ -120,7 +120,7 @@ namespace SanarRuralUnan.Views
             this.lblIconoModulo.Name = "lblIconoModulo";
             this.lblIconoModulo.Size = new System.Drawing.Size(46, 46);
             this.lblIconoModulo.TabIndex = 0;
-            this.lblIconoModulo.Text = "👥";
+            this.lblIconoModulo.Text = "";
             this.lblIconoModulo.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             //
             // lblTitulo
@@ -192,7 +192,7 @@ namespace SanarRuralUnan.Views
             this.lblIconoBuscar.Name = "lblIconoBuscar";
             this.lblIconoBuscar.Size = new System.Drawing.Size(26, 26);
             this.lblIconoBuscar.TabIndex = 0;
-            this.lblIconoBuscar.Text = "🔍";
+            this.lblIconoBuscar.Text = "";
             this.lblIconoBuscar.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             //
             // txtBuscar
@@ -241,7 +241,7 @@ namespace SanarRuralUnan.Views
             this.lblIconoFiltro.Name = "lblIconoFiltro";
             this.lblIconoFiltro.Size = new System.Drawing.Size(26, 26);
             this.lblIconoFiltro.TabIndex = 0;
-            this.lblIconoFiltro.Text = "🏷";
+            this.lblIconoFiltro.Text = "";
             this.lblIconoFiltro.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             //
             // cmbFiltroRol
@@ -297,7 +297,7 @@ namespace SanarRuralUnan.Views
             this.lblIconoTotal.Name = "lblIconoTotal";
             this.lblIconoTotal.Size = new System.Drawing.Size(40, 40);
             this.lblIconoTotal.TabIndex = 0;
-            this.lblIconoTotal.Text = "👥";
+            this.lblIconoTotal.Text = "";
             this.lblIconoTotal.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             //
             // lblTotalTitulo
@@ -342,7 +342,7 @@ namespace SanarRuralUnan.Views
             this.lblIconoActivos.Name = "lblIconoActivos";
             this.lblIconoActivos.Size = new System.Drawing.Size(40, 40);
             this.lblIconoActivos.TabIndex = 0;
-            this.lblIconoActivos.Text = "👤";
+            this.lblIconoActivos.Text = "";
             this.lblIconoActivos.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             //
             // lblActivosTitulo
@@ -387,7 +387,7 @@ namespace SanarRuralUnan.Views
             this.lblIconoInactivos.Name = "lblIconoInactivos";
             this.lblIconoInactivos.Size = new System.Drawing.Size(40, 40);
             this.lblIconoInactivos.TabIndex = 0;
-            this.lblIconoInactivos.Text = "👤";
+            this.lblIconoInactivos.Text = "";
             this.lblIconoInactivos.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             //
             // lblInactivosTitulo

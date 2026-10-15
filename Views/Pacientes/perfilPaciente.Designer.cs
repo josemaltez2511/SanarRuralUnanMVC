@@ -181,7 +181,7 @@ namespace SanarRuralUnan.Views.Pacientes
             this.lblTituloCardLegales.Name = "lblTituloCardLegales";
             this.lblTituloCardLegales.Size = new System.Drawing.Size(370, 21);
             this.lblTituloCardLegales.TabIndex = 0;
-            this.lblTituloCardLegales.Text = "📋 Identificación y Antecedentes Clínicos (Solo lectura)";
+            this.lblTituloCardLegales.Text = "Identificación y Antecedentes Clínicos (Solo lectura)";
             // 
             // lblAvisoPrivacidad
             // 
@@ -357,7 +357,7 @@ namespace SanarRuralUnan.Views.Pacientes
             this.lblTituloCardDemograficos.Name = "lblTituloCardDemograficos";
             this.lblTituloCardDemograficos.Size = new System.Drawing.Size(350, 21);
             this.lblTituloCardDemograficos.TabIndex = 0;
-            this.lblTituloCardDemograficos.Text = "🏠 Contacto y Residencia (Editable por el paciente)";
+            this.lblTituloCardDemograficos.Text = "Contacto y Residencia (Editable por el paciente)";
             // 
             // lblTelefonoEtiqueta
             // 
@@ -487,7 +487,7 @@ namespace SanarRuralUnan.Views.Pacientes
             this.lblTituloCardEmergencia.Name = "lblTituloCardEmergencia";
             this.lblTituloCardEmergencia.Size = new System.Drawing.Size(260, 21);
             this.lblTituloCardEmergencia.TabIndex = 0;
-            this.lblTituloCardEmergencia.Text = "📞 Contactos en Caso de Emergencia";
+            this.lblTituloCardEmergencia.Text = "Contactos en Caso de Emergencia";
             // 
             // lblContNombre
             // 
@@ -621,7 +621,7 @@ namespace SanarRuralUnan.Views.Pacientes
             this.btnGuardar.Name = "btnGuardar";
             this.btnGuardar.Size = new System.Drawing.Size(220, 42);
             this.btnGuardar.TabIndex = 0;
-            this.btnGuardar.Text = "💾 Guardar Cambios";
+            this.btnGuardar.Text = "Guardar Cambios";
             this.btnGuardar.UseVisualStyleBackColor = true;
             this.btnGuardar.Click += new System.EventHandler(this.btnGuardar_Click);
             // 
@@ -634,7 +634,7 @@ namespace SanarRuralUnan.Views.Pacientes
             this.btnRestablecer.Name = "btnRestablecer";
             this.btnRestablecer.Size = new System.Drawing.Size(150, 38);
             this.btnRestablecer.TabIndex = 1;
-            this.btnRestablecer.Text = "🔄 Restablecer";
+            this.btnRestablecer.Text = "Restablecer";
             this.btnRestablecer.UseVisualStyleBackColor = true;
             this.btnRestablecer.Click += new System.EventHandler(this.btnRestablecer_Click);
             // 

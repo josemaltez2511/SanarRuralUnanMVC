@@ -80,9 +80,38 @@ namespace SanarRuralUnan.Views.Pacientes
                 }
             };
 
-            lblIconoTotal.Paint += DibujarFondoCircularIcono;
-            lblIconoActivos.Paint += DibujarFondoCircularIcono;
-            lblIconoInactivos.Paint += DibujarFondoCircularIcono;
+            lblIconoModulo.Paint += (s, ev) =>
+            {
+                Tema.DibujarIconoPaciente(ev.Graphics, lblIconoModulo.ClientRectangle, Tema.AzulPrimario);
+            };
+
+            lblIconoBuscar.Paint += (s, ev) =>
+            {
+                Tema.DibujarIconoLupa(ev.Graphics, lblIconoBuscar.ClientRectangle, Tema.TextoSecundario);
+            };
+
+            lblIconoFiltro.Paint += (s, ev) =>
+            {
+                Tema.DibujarIconoFiltro(ev.Graphics, lblIconoFiltro.ClientRectangle, Tema.TextoSecundario);
+            };
+
+            lblIconoTotal.Paint += (s, ev) =>
+            {
+                DibujarFondoCircularIcono(lblIconoTotal, ev);
+                Tema.DibujarIconoUsuarios(ev.Graphics, lblIconoTotal.ClientRectangle, Tema.AzulPrimario);
+            };
+
+            lblIconoActivos.Paint += (s, ev) =>
+            {
+                DibujarFondoCircularIcono(lblIconoActivos, ev);
+                Tema.DibujarIconoCheck(ev.Graphics, lblIconoActivos.ClientRectangle, Tema.VerdeOscuro);
+            };
+
+            lblIconoInactivos.Paint += (s, ev) =>
+            {
+                DibujarFondoCircularIcono(lblIconoInactivos, ev);
+                Tema.DibujarIconoInactivo(ev.Graphics, lblIconoInactivos.ClientRectangle, Tema.TextoSecundario);
+            };
         }
 
         private static void DibujarFondoCircularIcono(object sender, PaintEventArgs e)
@@ -174,8 +203,8 @@ namespace SanarRuralUnan.Views.Pacientes
                         paciente.Estado ? "● Activo" : "○ Inactivo");
 
                     DataGridViewRow fila = dgvPacientes.Rows[rowIndex];
-                    fila.Cells["colVer"].Value = "👁 Ver";
-                    fila.Cells["colEditar"].Value = "✏ Editar";
+                    fila.Cells["colVer"].Value = "Ver";
+                    fila.Cells["colEditar"].Value = "Editar";
                     fila.Cells["colBaja"].Value = paciente.Estado ? "Dar de baja" : "Reactivar";
                 }
 
@@ -328,7 +357,7 @@ namespace SanarRuralUnan.Views.Pacientes
                 using (var sfBtn = new StringFormat { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center })
                 using (var fontBtn = new Font(Tema.FamiliaFuente, 8.5F, FontStyle.Bold))
                 {
-                    e.Graphics.DrawString("👁 Ver", fontBtn, brushVer, rectBtn, sfBtn);
+                    e.Graphics.DrawString("Ver", fontBtn, brushVer, rectBtn, sfBtn);
                 }
 
                 e.Handled = true;
@@ -353,7 +382,7 @@ namespace SanarRuralUnan.Views.Pacientes
                 using (var sfBtn = new StringFormat { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center })
                 using (var fontBtn = new Font(Tema.FamiliaFuente, 8.5F, FontStyle.Bold))
                 {
-                    e.Graphics.DrawString("✏ Editar", fontBtn, brushEditar, rectBtn, sfBtn);
+                    e.Graphics.DrawString("Editar", fontBtn, brushEditar, rectBtn, sfBtn);
                 }
 
                 e.Handled = true;
@@ -385,8 +414,7 @@ namespace SanarRuralUnan.Views.Pacientes
                 using (var sfBtn = new StringFormat { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center })
                 using (var fontBtn = new Font(Tema.FamiliaFuente, 8.2F, FontStyle.Bold))
                 {
-                    string icono = esDarBaja ? "🚫 " : "↻ ";
-                    e.Graphics.DrawString(icono + textoBoton, fontBtn, brushBaja, rectBtn, sfBtn);
+                    e.Graphics.DrawString(textoBoton, fontBtn, brushBaja, rectBtn, sfBtn);
                 }
 
                 e.Handled = true;

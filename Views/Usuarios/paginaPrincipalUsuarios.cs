@@ -81,9 +81,38 @@ namespace SanarRuralUnan.Views
                 }
             };
 
-            lblIconoTotal.Paint += DibujarFondoCircularIcono;
-            lblIconoActivos.Paint += DibujarFondoCircularIcono;
-            lblIconoInactivos.Paint += DibujarFondoCircularIcono;
+            lblIconoModulo.Paint += (s, ev) =>
+            {
+                Tema.DibujarIconoUsuarios(ev.Graphics, lblIconoModulo.ClientRectangle, Tema.AzulPrimario);
+            };
+
+            lblIconoBuscar.Paint += (s, ev) =>
+            {
+                Tema.DibujarIconoLupa(ev.Graphics, lblIconoBuscar.ClientRectangle, Tema.TextoSecundario);
+            };
+
+            lblIconoFiltro.Paint += (s, ev) =>
+            {
+                Tema.DibujarIconoFiltro(ev.Graphics, lblIconoFiltro.ClientRectangle, Tema.TextoSecundario);
+            };
+
+            lblIconoTotal.Paint += (s, ev) =>
+            {
+                DibujarFondoCircularIcono(lblIconoTotal, ev);
+                Tema.DibujarIconoUsuarios(ev.Graphics, lblIconoTotal.ClientRectangle, Tema.AzulPrimario);
+            };
+
+            lblIconoActivos.Paint += (s, ev) =>
+            {
+                DibujarFondoCircularIcono(lblIconoActivos, ev);
+                Tema.DibujarIconoCheck(ev.Graphics, lblIconoActivos.ClientRectangle, Tema.VerdeOscuro);
+            };
+
+            lblIconoInactivos.Paint += (s, ev) =>
+            {
+                DibujarFondoCircularIcono(lblIconoInactivos, ev);
+                Tema.DibujarIconoInactivo(ev.Graphics, lblIconoInactivos.ClientRectangle, Tema.TextoSecundario);
+            };
 
             toolTipAcciones.SetToolTip(btnNuevo, "Crear una nueva cuenta de usuario en el sistema");
             toolTipAcciones.SetToolTip(txtBuscar, "Buscar por correo electrónico o rol");
@@ -181,31 +210,28 @@ namespace SanarRuralUnan.Views
                 string rol = e.Value != null ? e.Value.ToString() : "";
                 Color fondoBadge = Tema.BadgeRolAdminFondo;
                 Color textoBadge = Tema.AzulPrimario;
-                string icono = "⚙ ";
+                string textoRol = rol;
 
                 if (rol == "Doctor")
                 {
                     fondoBadge = Tema.BadgeRolDoctorFondo;
                     textoBadge = Color.FromArgb(14, 118, 136);
-                    icono = "🩺 ";
                 }
                 else if (rol == "Paciente")
                 {
                     fondoBadge = Tema.BadgeRolPacienteFondo;
                     textoBadge = Tema.VerdeOscuro;
-                    icono = "👤 ";
                 }
                 else if (rol == "Admin")
                 {
                     fondoBadge = Tema.BadgeRolAdminFondo;
                     textoBadge = Tema.AzulPrimario;
-                    icono = "👑 ";
                 }
                 else if (rol == "Personal_administrativo" || rol == "Administrativo")
                 {
                     fondoBadge = Tema.BadgeRolAdminFondo;
                     textoBadge = Tema.AzulPrimario;
-                    icono = "⚙ ";
+                    textoRol = "Personal adm.";
                 }
 
                 int badgeH = 26;
@@ -220,7 +246,7 @@ namespace SanarRuralUnan.Views
                 using (var sfRol = new StringFormat { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center })
                 using (var fontRol = new Font(Tema.FamiliaFuente, 8.8F, FontStyle.Bold))
                 {
-                    e.Graphics.DrawString(icono + rol, fontRol, brushRol, rectBadge, sfRol);
+                    e.Graphics.DrawString(textoRol, fontRol, brushRol, rectBadge, sfRol);
                 }
 
                 e.Handled = true;
@@ -273,7 +299,7 @@ namespace SanarRuralUnan.Views
                 using (var sfBtn = new StringFormat { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center })
                 using (var fontBtn = new Font(Tema.FamiliaFuente, 8.8F, FontStyle.Bold))
                 {
-                    e.Graphics.DrawString("✏ Editar", fontBtn, brushEditar, rectBtn, sfBtn);
+                    e.Graphics.DrawString("Editar", fontBtn, brushEditar, rectBtn, sfBtn);
                 }
 
                 e.Handled = true;
@@ -296,7 +322,7 @@ namespace SanarRuralUnan.Views
                 using (var sfBtn = new StringFormat { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center })
                 using (var fontBtn = new Font(Tema.FamiliaFuente, 8.5F, FontStyle.Bold))
                 {
-                    e.Graphics.DrawString("🚫 Dar de baja", fontBtn, brushBaja, rectBtn, sfBtn);
+                    e.Graphics.DrawString("Dar de baja", fontBtn, brushBaja, rectBtn, sfBtn);
                 }
 
                 e.Handled = true;
@@ -383,7 +409,7 @@ namespace SanarRuralUnan.Views
                         identificador,
                         nombreRol,
                         usuario.FechaRegistro.ToString("g"),
-                        usuario.Estado ? "✓ Activo" : "Inactivo");
+                        usuario.Estado ? "Activo" : "Inactivo");
                 }
 
                 // Actualizar métricas resumidas

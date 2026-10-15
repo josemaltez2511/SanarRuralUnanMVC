@@ -1,4 +1,4 @@
-﻿namespace SanarRuralUnan.Views
+namespace SanarRuralUnan.Views
 {
     partial class asignarAccesoPerfil
     {
@@ -366,7 +366,7 @@
             this.lblLupa.Name = "lblLupa";
             this.lblLupa.Size = new System.Drawing.Size(20, 17);
             this.lblLupa.TabIndex = 0;
-            this.lblLupa.Text = "🔍";
+            this.lblLupa.Text = "";
             //
             // txtBuscar
             //
@@ -425,7 +425,7 @@
             this.lblIconoHeader.Name = "lblIconoHeader";
             this.lblIconoHeader.Size = new System.Drawing.Size(46, 46);
             this.lblIconoHeader.TabIndex = 0;
-            this.lblIconoHeader.Text = "👤⁺";
+            this.lblIconoHeader.Text = "";
             this.lblIconoHeader.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             //
             // lblTitulo
@@ -491,7 +491,7 @@
             this.badgePerfil.Name = "badgePerfil";
             this.badgePerfil.Size = new System.Drawing.Size(26, 26);
             this.badgePerfil.TabIndex = 0;
-            this.badgePerfil.Text = "👤";
+            this.badgePerfil.Text = "";
             this.badgePerfil.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             //
             // lblTituloCardPerfil
@@ -678,7 +678,7 @@
             this.badgeCredenciales.Name = "badgeCredenciales";
             this.badgeCredenciales.Size = new System.Drawing.Size(26, 26);
             this.badgeCredenciales.TabIndex = 0;
-            this.badgeCredenciales.Text = "🔒";
+            this.badgeCredenciales.Text = "";
             this.badgeCredenciales.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             //
             // lblTituloCardCredenciales
@@ -787,7 +787,7 @@
             this.btnVerContrasena.Name = "btnVerContrasena";
             this.btnVerContrasena.Size = new System.Drawing.Size(26, 24);
             this.btnVerContrasena.TabIndex = 1;
-            this.btnVerContrasena.Text = "👁";
+            this.btnVerContrasena.Text = "";
             this.btnVerContrasena.UseVisualStyleBackColor = false;
             //
             // lblAyudaContrasena
@@ -850,7 +850,7 @@
             this.btnVerConfirmar.Name = "btnVerConfirmar";
             this.btnVerConfirmar.Size = new System.Drawing.Size(26, 24);
             this.btnVerConfirmar.TabIndex = 1;
-            this.btnVerConfirmar.Text = "👁";
+            this.btnVerConfirmar.Text = "";
             this.btnVerConfirmar.UseVisualStyleBackColor = false;
             //
             // lblErrorConfirmar

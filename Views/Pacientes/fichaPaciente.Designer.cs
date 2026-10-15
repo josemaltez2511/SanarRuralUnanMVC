@@ -167,7 +167,7 @@ namespace SanarRuralUnan.Views.Pacientes
             this.btnCerrarTop.Name = "btnCerrarTop";
             this.btnCerrarTop.Size = new System.Drawing.Size(124, 38);
             this.btnCerrarTop.TabIndex = 4;
-            this.btnCerrarTop.Text = "✕  Cerrar";
+            this.btnCerrarTop.Text = "Cerrar";
             this.btnCerrarTop.UseVisualStyleBackColor = false;
             //
             // panelContenido

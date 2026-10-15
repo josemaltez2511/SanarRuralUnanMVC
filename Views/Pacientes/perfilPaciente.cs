@@ -271,7 +271,7 @@ namespace SanarRuralUnan.Views.Pacientes
             {
                 Name = "colQuitar",
                 HeaderText = "Acción",
-                Text = "✕ Quitar",
+                Text = "Quitar",
                 UseColumnTextForButtonValue = true,
                 FlatStyle = FlatStyle.Flat,
                 FillWeight = 50
