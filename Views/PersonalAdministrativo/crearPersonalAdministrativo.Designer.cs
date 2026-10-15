@@ -1,4 +1,4 @@
-﻿using System.Drawing;
+using System.Drawing;
 using System.Windows.Forms;
 using SanarRuralUnan.Helpers;
 
@@ -130,7 +130,7 @@ namespace SanarRuralUnan.Views.PersonalAdministrativo
             this.lblIconoHeader.Name = "lblIconoHeader";
             this.lblIconoHeader.Size = new System.Drawing.Size(42, 42);
             this.lblIconoHeader.TabIndex = 0;
-            this.lblIconoHeader.Text = "💼";
+            this.lblIconoHeader.Text = "";
             this.lblIconoHeader.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             //
             // cardForm

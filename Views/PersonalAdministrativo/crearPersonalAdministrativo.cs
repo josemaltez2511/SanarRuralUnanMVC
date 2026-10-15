@@ -50,21 +50,11 @@ namespace SanarRuralUnan.Views.PersonalAdministrativo
                 Tema.DibujarTarjetaRedondeada(ev.Graphics, new Rectangle(0, 0, pnlInfoCredenciales.Width - 1, pnlInfoCredenciales.Height - 1), Color.FromArgb(243, 248, 253), Color.FromArgb(200, 224, 246), 6);
             };
 
+            lblIconoHeader.Text = "";
             lblIconoHeader.Paint += (s, ev) =>
             {
-                ev.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
-                using (var brush = new SolidBrush(Color.FromArgb(226, 238, 248)))
-                {
-                    ev.Graphics.FillEllipse(brush, 1, 1, lblIconoHeader.Width - 3, lblIconoHeader.Height - 3);
-                }
-                using (var pen = new Pen(Tema.AzulPrimario, 1.8f))
-                using (var brush = new SolidBrush(Color.FromArgb(195, 222, 246)))
-                {
-                    var rectCuerpo = new RectangleF(10, 15, 20, 13);
-                    ev.Graphics.FillRectangle(brush, rectCuerpo);
-                    ev.Graphics.DrawRectangle(pen, rectCuerpo.X, rectCuerpo.Y, rectCuerpo.Width, rectCuerpo.Height);
-                    ev.Graphics.DrawArc(pen, 16, 11, 8, 7, 180, 180);
-                }
+                Tema.DibujarFondoCircular(ev.Graphics, lblIconoHeader.ClientRectangle, Color.FromArgb(226, 238, 248));
+                Tema.DibujarIconoPersonal(ev.Graphics, lblIconoHeader.ClientRectangle, Tema.AzulPrimario);
             };
         }
 
@@ -222,7 +212,7 @@ namespace SanarRuralUnan.Views.PersonalAdministrativo
 
         private void MostrarError(string mensaje)
         {
-            lblError.Text = "⚠ " + mensaje;
+            lblError.Text = mensaje;
         }
 
         private void btnCancelar_Click(object sender, EventArgs e)

@@ -462,7 +462,7 @@ namespace SanarRuralUnan.Views
                     !string.IsNullOrWhiteSpace(p.Telefono) ? p.Telefono : "—",
                     !string.IsNullOrWhiteSpace(p.UbicacionCargo) ? SanearTexto(p.UbicacionCargo) : "—",
                     (perfilSeleccionado != null && perfilSeleccionado.IdPerfil == p.IdPerfil && perfilSeleccionado.TipoPerfil == p.TipoPerfil)
-                        ? "✓ Seleccionado"
+                        ? "Seleccionado"
                         : "+ Seleccionar"
                 );
                 dgvPerfiles.Rows[rowIndex].Tag = p;
@@ -485,7 +485,7 @@ namespace SanarRuralUnan.Views
                 if (dto != null && dto.IdPerfil == perfilSeleccionado.IdPerfil && dto.TipoPerfil == perfilSeleccionado.TipoPerfil)
                 {
                     row.Selected = true;
-                    row.Cells["colAccion"].Value = "✓ Seleccionado";
+                    row.Cells["colAccion"].Value = "Seleccionado";
                     row.DefaultCellStyle.BackColor = Color.FromArgb(235, 245, 251);
                 }
                 else
@@ -815,7 +815,7 @@ namespace SanarRuralUnan.Views
                 Color fondoBoton = estaSeleccionado ? Color.FromArgb(15, 76, 129) : Color.White;
                 Color bordeBoton = estaSeleccionado ? Color.FromArgb(15, 76, 129) : Color.FromArgb(35, 120, 183);
                 Color textoBoton = estaSeleccionado ? Color.White : Color.FromArgb(35, 120, 183);
-                string texto = estaSeleccionado ? "✓ Seleccionado" : "+ Seleccionar";
+                string texto = estaSeleccionado ? "Seleccionado" : "+ Seleccionar";
 
                 Tema.DibujarTarjetaRedondeada(e.Graphics, rectBoton, fondoBoton, bordeBoton, 6);
 

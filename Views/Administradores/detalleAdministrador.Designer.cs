@@ -1,4 +1,4 @@
-﻿using System.Drawing;
+using System.Drawing;
 using System.Windows.Forms;
 using SanarRuralUnan.Helpers;
 
@@ -94,7 +94,7 @@ namespace SanarRuralUnan.Views.Administradores
             this.btnEditar.Name = "btnEditar";
             this.btnEditar.Size = new System.Drawing.Size(134, 42);
             this.btnEditar.TabIndex = 0;
-            this.btnEditar.Text = "✏ Editar perfil";
+            this.btnEditar.Text = "Editar perfil";
             this.btnEditar.UseVisualStyleBackColor = false;
             this.btnEditar.Click += new System.EventHandler(this.btnEditar_Click);
             //

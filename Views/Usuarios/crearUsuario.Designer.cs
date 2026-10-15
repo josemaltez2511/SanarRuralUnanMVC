@@ -395,7 +395,7 @@ namespace SanarRuralUnan.Views
             this.btnVerContrasena.Name = "btnVerContrasena";
             this.btnVerContrasena.Size = new System.Drawing.Size(40, 27);
             this.btnVerContrasena.TabIndex = 2;
-            this.btnVerContrasena.Text = "👁";
+            this.btnVerContrasena.Text = "";
             this.btnVerContrasena.UseVisualStyleBackColor = false;
             this.btnVerContrasena.Click += new System.EventHandler(this.btnVerContrasena_Click);
             //
@@ -442,7 +442,7 @@ namespace SanarRuralUnan.Views
             this.btnVerConfirmarContrasena.Name = "btnVerConfirmarContrasena";
             this.btnVerConfirmarContrasena.Size = new System.Drawing.Size(40, 27);
             this.btnVerConfirmarContrasena.TabIndex = 4;
-            this.btnVerConfirmarContrasena.Text = "👁";
+            this.btnVerConfirmarContrasena.Text = "";
             this.btnVerConfirmarContrasena.UseVisualStyleBackColor = false;
             this.btnVerConfirmarContrasena.Click += new System.EventHandler(this.btnVerConfirmarContrasena_Click);
             //

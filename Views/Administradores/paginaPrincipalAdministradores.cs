@@ -72,62 +72,46 @@ namespace SanarRuralUnan.Views.Administradores
                 Tema.DibujarTarjetaRedondeada(ev.Graphics, new Rectangle(0, 0, cardInactivos.Width - 1, cardInactivos.Height - 1), cardInactivos.BackColor, Tema.Borde, 8);
             };
 
-            lblIconoModulo.Visible = false;
-            panelIconoModulo.Paint += (s, ev) =>
+            lblIconoModulo.Visible = true;
+            lblIconoModulo.Text = "";
+            lblIconoModulo.Paint += (s, ev) =>
             {
-                ev.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
-                using (var brush = new SolidBrush(Color.FromArgb(226, 238, 248)))
-                {
-                    ev.Graphics.FillEllipse(brush, 1, 1, panelIconoModulo.Width - 3, panelIconoModulo.Height - 3);
-                }
-                using (var pen = new Pen(Tema.AzulPrimario, 2f))
-                using (var brush = new SolidBrush(Color.FromArgb(195, 222, 246)))
-                {
-                    PointF[] escudo = {
-                        new PointF(20, 10),
-                        new PointF(29, 10),
-                        new PointF(29, 21),
-                        new PointF(20, 30),
-                        new PointF(11, 21),
-                        new PointF(11, 10)
-                    };
-                    ev.Graphics.FillPolygon(brush, escudo);
-                    ev.Graphics.DrawPolygon(pen, escudo);
-                }
+                Tema.DibujarFondoCircular(ev.Graphics, lblIconoModulo.ClientRectangle, Color.FromArgb(226, 238, 248));
+                Tema.DibujarIconoAdmin(ev.Graphics, lblIconoModulo.ClientRectangle, Tema.AzulPrimario);
             };
 
             lblIconoBuscar.Text = "";
             lblIconoBuscar.Paint += (s, ev) =>
             {
-                ev.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
-                using (var pen = new Pen(Tema.TextoSecundario, 1.8f))
-                {
-                    ev.Graphics.DrawEllipse(pen, 5, 5, 10, 10);
-                    ev.Graphics.DrawLine(pen, 13, 13, 19, 19);
-                }
+                Tema.DibujarIconoLupa(ev.Graphics, lblIconoBuscar.ClientRectangle, lblIconoBuscar.ForeColor);
             };
 
             lblIconoFiltro.Text = "";
             lblIconoFiltro.Paint += (s, ev) =>
             {
-                ev.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
-                using (var pen = new Pen(Tema.TextoSecundario, 1.6f))
-                {
-                    PointF[] embudo = {
-                        new PointF(5, 7),
-                        new PointF(19, 7),
-                        new PointF(13, 14),
-                        new PointF(13, 19),
-                        new PointF(11, 19),
-                        new PointF(11, 14)
-                    };
-                    ev.Graphics.DrawPolygon(pen, embudo);
-                }
+                Tema.DibujarIconoFiltro(ev.Graphics, lblIconoFiltro.ClientRectangle, lblIconoFiltro.ForeColor);
             };
 
-            lblIconoTotal.Paint += DibujarFondoCircularIcono;
-            lblIconoActivos.Paint += DibujarFondoCircularIcono;
-            lblIconoInactivos.Paint += DibujarFondoCircularIcono;
+            lblIconoTotal.Text = "";
+            lblIconoTotal.Paint += (s, ev) =>
+            {
+                Tema.DibujarFondoCircular(ev.Graphics, lblIconoTotal.ClientRectangle, lblIconoTotal.BackColor);
+                Tema.DibujarIconoAdmin(ev.Graphics, lblIconoTotal.ClientRectangle, lblIconoTotal.ForeColor);
+            };
+
+            lblIconoActivos.Text = "";
+            lblIconoActivos.Paint += (s, ev) =>
+            {
+                Tema.DibujarFondoCircular(ev.Graphics, lblIconoActivos.ClientRectangle, lblIconoActivos.BackColor);
+                Tema.DibujarIconoCheck(ev.Graphics, lblIconoActivos.ClientRectangle, lblIconoActivos.ForeColor);
+            };
+
+            lblIconoInactivos.Text = "";
+            lblIconoInactivos.Paint += (s, ev) =>
+            {
+                Tema.DibujarFondoCircular(ev.Graphics, lblIconoInactivos.ClientRectangle, lblIconoInactivos.BackColor);
+                Tema.DibujarIconoInactivo(ev.Graphics, lblIconoInactivos.ClientRectangle, lblIconoInactivos.ForeColor);
+            };
         }
 
         private static void DibujarFondoCircularIcono(object sender, PaintEventArgs e)

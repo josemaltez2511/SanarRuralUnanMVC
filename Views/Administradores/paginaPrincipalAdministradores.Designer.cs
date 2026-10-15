@@ -1,4 +1,4 @@
-﻿using System.Drawing;
+using System.Drawing;
 using System.Windows.Forms;
 using SanarRuralUnan.Helpers;
 
@@ -254,7 +254,7 @@ namespace SanarRuralUnan.Views.Administradores
             this.lblIconoTotal.Name = "lblIconoTotal";
             this.lblIconoTotal.Size = new System.Drawing.Size(40, 40);
             this.lblIconoTotal.TabIndex = 0;
-            this.lblIconoTotal.Text = "◈";
+            this.lblIconoTotal.Text = "";
             this.lblIconoTotal.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             //
             // lblTotalTitulo
@@ -299,7 +299,7 @@ namespace SanarRuralUnan.Views.Administradores
             this.lblIconoActivos.Name = "lblIconoActivos";
             this.lblIconoActivos.Size = new System.Drawing.Size(40, 40);
             this.lblIconoActivos.TabIndex = 0;
-            this.lblIconoActivos.Text = "✓";
+            this.lblIconoActivos.Text = "";
             this.lblIconoActivos.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             //
             // lblActivosTitulo
@@ -344,7 +344,7 @@ namespace SanarRuralUnan.Views.Administradores
             this.lblIconoInactivos.Name = "lblIconoInactivos";
             this.lblIconoInactivos.Size = new System.Drawing.Size(40, 40);
             this.lblIconoInactivos.TabIndex = 0;
-            this.lblIconoInactivos.Text = "○";
+            this.lblIconoInactivos.Text = "";
             this.lblIconoInactivos.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             //
             // lblInactivosTitulo
@@ -399,7 +399,7 @@ namespace SanarRuralUnan.Views.Administradores
             this.lblIconoFiltro.Name = "lblIconoFiltro";
             this.lblIconoFiltro.Size = new System.Drawing.Size(26, 26);
             this.lblIconoFiltro.TabIndex = 0;
-            this.lblIconoFiltro.Text = "🏷";
+            this.lblIconoFiltro.Text = "";
             this.lblIconoFiltro.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             //
             // cmbFiltroEstado
@@ -465,7 +465,7 @@ namespace SanarRuralUnan.Views.Administradores
             this.lblIconoBuscar.Name = "lblIconoBuscar";
             this.lblIconoBuscar.Size = new System.Drawing.Size(26, 26);
             this.lblIconoBuscar.TabIndex = 0;
-            this.lblIconoBuscar.Text = "🔍";
+            this.lblIconoBuscar.Text = "";
             this.lblIconoBuscar.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             //
             // panelHeaderModulo
@@ -538,7 +538,7 @@ namespace SanarRuralUnan.Views.Administradores
             this.lblIconoModulo.Name = "lblIconoModulo";
             this.lblIconoModulo.Size = new System.Drawing.Size(46, 46);
             this.lblIconoModulo.TabIndex = 0;
-            this.lblIconoModulo.Text = "🛡️";
+            this.lblIconoModulo.Text = "";
             this.lblIconoModulo.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             //
             // paginaPrincipalAdministradores

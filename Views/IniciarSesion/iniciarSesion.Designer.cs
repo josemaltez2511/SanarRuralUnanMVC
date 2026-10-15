@@ -146,7 +146,7 @@ namespace SanarRuralUnan
             this.lblSlideIcono.Name = "lblSlideIcono";
             this.lblSlideIcono.Size = new System.Drawing.Size(55, 55);
             this.lblSlideIcono.TabIndex = 0;
-            this.lblSlideIcono.Text = "👥";
+            this.lblSlideIcono.Text = "";
             this.lblSlideIcono.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             //
             // lblSlideTitulo
@@ -200,7 +200,7 @@ namespace SanarRuralUnan
             this.lblLemaComillas.Name = "lblLemaComillas";
             this.lblLemaComillas.Size = new System.Drawing.Size(35, 42);
             this.lblLemaComillas.TabIndex = 0;
-            this.lblLemaComillas.Text = "❝";
+            this.lblLemaComillas.Text = "“";
             this.lblLemaComillas.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             //
             // lblLemaTexto
@@ -348,7 +348,7 @@ namespace SanarRuralUnan
             this.btnVerContrasena.Name = "btnVerContrasena";
             this.btnVerContrasena.Size = new System.Drawing.Size(40, 27);
             this.btnVerContrasena.TabIndex = 2;
-            this.btnVerContrasena.Text = "👁";
+            this.btnVerContrasena.Text = "";
             this.btnVerContrasena.UseVisualStyleBackColor = false;
             this.btnVerContrasena.Click += new System.EventHandler(this.btnVerContrasena_Click);
             //

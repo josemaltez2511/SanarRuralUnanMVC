@@ -50,27 +50,11 @@ namespace SanarRuralUnan.Views.Administradores
                 Tema.DibujarTarjetaRedondeada(ev.Graphics, new Rectangle(0, 0, pnlInfoCredenciales.Width - 1, pnlInfoCredenciales.Height - 1), Color.FromArgb(243, 248, 253), Color.FromArgb(200, 224, 246), 6);
             };
 
+            lblIconoHeader.Text = "";
             lblIconoHeader.Paint += (s, ev) =>
             {
-                ev.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
-                using (var brush = new SolidBrush(Color.FromArgb(226, 238, 248)))
-                {
-                    ev.Graphics.FillEllipse(brush, 1, 1, lblIconoHeader.Width - 3, lblIconoHeader.Height - 3);
-                }
-                using (var pen = new Pen(Tema.AzulPrimario, 1.8f))
-                using (var brush = new SolidBrush(Color.FromArgb(195, 222, 246)))
-                {
-                    PointF[] escudo = {
-                        new PointF(20, 10),
-                        new PointF(29, 10),
-                        new PointF(29, 21),
-                        new PointF(20, 30),
-                        new PointF(11, 21),
-                        new PointF(11, 10)
-                    };
-                    ev.Graphics.FillPolygon(brush, escudo);
-                    ev.Graphics.DrawPolygon(pen, escudo);
-                }
+                Tema.DibujarFondoCircular(ev.Graphics, lblIconoHeader.ClientRectangle, Color.FromArgb(226, 238, 248));
+                Tema.DibujarIconoAdmin(ev.Graphics, lblIconoHeader.ClientRectangle, Tema.AzulPrimario);
             };
         }
 
@@ -224,7 +208,7 @@ namespace SanarRuralUnan.Views.Administradores
 
         private void MostrarError(string mensaje)
         {
-            lblError.Text = "⚠ " + mensaje;
+            lblError.Text = mensaje;
         }
 
         private void btnCancelar_Click(object sender, EventArgs e)

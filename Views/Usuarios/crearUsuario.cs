@@ -121,8 +121,19 @@ namespace SanarRuralUnan.Views
             lblErrorContrasena.Text = "La contraseña debe tener al menos 5 caracteres";
             lblErrorContrasena.ForeColor = Tema.TextoSecundario;
             lblErrorConfirmar.Text = "";
-            btnVerContrasena.Text = "👁";
-            btnVerConfirmarContrasena.Text = "👁";
+            btnVerContrasena.Text = "";
+            btnVerContrasena.Paint += (s, ev) =>
+            {
+                bool cerrado = txtContrasena.PasswordChar != '●';
+                Tema.DibujarIconoOjo(ev.Graphics, btnVerContrasena.ClientRectangle, Tema.TextoSecundario, cerrado);
+            };
+
+            btnVerConfirmarContrasena.Text = "";
+            btnVerConfirmarContrasena.Paint += (s, ev) =>
+            {
+                bool cerrado = txtConfirmarContrasena.PasswordChar != '●';
+                Tema.DibujarIconoOjo(ev.Graphics, btnVerConfirmarContrasena.ClientRectangle, Tema.TextoSecundario, cerrado);
+            };
 
             // Microinteracciones de hover para botones
             btnGuardar.MouseEnter += (s, ev) => btnGuardar.BackColor = Tema.AzulOscuro;
@@ -645,7 +656,7 @@ namespace SanarRuralUnan.Views
         private void btnVerContrasena_Click(object sender, EventArgs e)
         {
             txtContrasena.PasswordChar = txtContrasena.PasswordChar == '●' ? '\0' : '●';
-            btnVerContrasena.Text = txtContrasena.PasswordChar == '●' ? "👁" : "🙈";
+            btnVerContrasena.Invalidate();
             txtContrasena.Focus();
             txtContrasena.SelectionStart = txtContrasena.Text.Length;
         }
@@ -654,7 +665,7 @@ namespace SanarRuralUnan.Views
         private void btnVerConfirmarContrasena_Click(object sender, EventArgs e)
         {
             txtConfirmarContrasena.PasswordChar = txtConfirmarContrasena.PasswordChar == '●' ? '\0' : '●';
-            btnVerConfirmarContrasena.Text = txtConfirmarContrasena.PasswordChar == '●' ? "👁" : "🙈";
+            btnVerConfirmarContrasena.Invalidate();
             txtConfirmarContrasena.Focus();
             txtConfirmarContrasena.SelectionStart = txtConfirmarContrasena.Text.Length;
         }

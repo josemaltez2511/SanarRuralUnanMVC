@@ -204,7 +204,7 @@ namespace SanarRuralUnan.Views
             this.lblIconoHeader.Name = "lblIconoHeader";
             this.lblIconoHeader.Size = new System.Drawing.Size(40, 40);
             this.lblIconoHeader.TabIndex = 2;
-            this.lblIconoHeader.Text = "👤";
+            this.lblIconoHeader.Text = "";
             this.lblIconoHeader.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             //
             // lblTitulo
@@ -381,7 +381,7 @@ namespace SanarRuralUnan.Views
             this.lblIconoPersonal.Name = "lblIconoPersonal";
             this.lblIconoPersonal.Size = new System.Drawing.Size(32, 32);
             this.lblIconoPersonal.TabIndex = 0;
-            this.lblIconoPersonal.Text = "👤";
+            this.lblIconoPersonal.Text = "";
             this.lblIconoPersonal.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             //
             // lblTituloPersonal
@@ -667,7 +667,7 @@ namespace SanarRuralUnan.Views
             this.lblIconoUbicacion.Name = "lblIconoUbicacion";
             this.lblIconoUbicacion.Size = new System.Drawing.Size(32, 32);
             this.lblIconoUbicacion.TabIndex = 0;
-            this.lblIconoUbicacion.Text = "📍";
+            this.lblIconoUbicacion.Text = "";
             this.lblIconoUbicacion.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             //
             // lblTituloUbicacion
@@ -827,7 +827,7 @@ namespace SanarRuralUnan.Views
             this.lblIconoSalud.Name = "lblIconoSalud";
             this.lblIconoSalud.Size = new System.Drawing.Size(32, 32);
             this.lblIconoSalud.TabIndex = 0;
-            this.lblIconoSalud.Text = "💓";
+            this.lblIconoSalud.Text = "";
             this.lblIconoSalud.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             //
             // lblTituloSalud
@@ -1013,7 +1013,7 @@ namespace SanarRuralUnan.Views
             this.lblIconoEmergencia.Name = "lblIconoEmergencia";
             this.lblIconoEmergencia.Size = new System.Drawing.Size(32, 32);
             this.lblIconoEmergencia.TabIndex = 0;
-            this.lblIconoEmergencia.Text = "👥";
+            this.lblIconoEmergencia.Text = "";
             this.lblIconoEmergencia.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             //
             // lblTituloEmergencia
@@ -1116,7 +1116,7 @@ namespace SanarRuralUnan.Views
             this.colContEditar.HeaderText = "Acciones";
             this.colContEditar.Name = "colContEditar";
             this.colContEditar.ReadOnly = true;
-            this.colContEditar.Text = "✏ Editar";
+            this.colContEditar.Text = "Editar";
             this.colContEditar.UseColumnTextForButtonValue = true;
             this.colContEditar.Width = 85;
             //
@@ -1125,7 +1125,7 @@ namespace SanarRuralUnan.Views
             this.colContEliminar.HeaderText = "";
             this.colContEliminar.Name = "colContEliminar";
             this.colContEliminar.ReadOnly = true;
-            this.colContEliminar.Text = "🗑 Eliminar";
+            this.colContEliminar.Text = "Eliminar";
             this.colContEliminar.UseColumnTextForButtonValue = true;
             this.colContEliminar.Width = 85;
             //
@@ -1262,7 +1262,7 @@ namespace SanarRuralUnan.Views
             this.btnGuardarContacto.Name = "btnGuardarContacto";
             this.btnGuardarContacto.Size = new System.Drawing.Size(140, 31);
             this.btnGuardarContacto.TabIndex = 8;
-            this.btnGuardarContacto.Text = "💾 Guardar cambios";
+            this.btnGuardarContacto.Text = "Guardar cambios";
             this.btnGuardarContacto.UseVisualStyleBackColor = false;
             //
             // btnCancelarContacto
@@ -1276,7 +1276,7 @@ namespace SanarRuralUnan.Views
             this.btnCancelarContacto.Name = "btnCancelarContacto";
             this.btnCancelarContacto.Size = new System.Drawing.Size(95, 31);
             this.btnCancelarContacto.TabIndex = 9;
-            this.btnCancelarContacto.Text = "✕ Cancelar";
+            this.btnCancelarContacto.Text = "Cancelar";
             this.btnCancelarContacto.UseVisualStyleBackColor = false;
             //
             // lblErrorContacto
@@ -1310,7 +1310,7 @@ namespace SanarRuralUnan.Views
             this.btnCancelar.Name = "btnCancelar";
             this.btnCancelar.Size = new System.Drawing.Size(130, 40);
             this.btnCancelar.TabIndex = 0;
-            this.btnCancelar.Text = "✕ Cancelar";
+            this.btnCancelar.Text = "Cancelar";
             this.btnCancelar.UseVisualStyleBackColor = false;
             this.btnCancelar.Click += new System.EventHandler(this.lnkVolver_LinkClicked);
             //
@@ -1326,7 +1326,7 @@ namespace SanarRuralUnan.Views
             this.btnGuardar.Name = "btnGuardar";
             this.btnGuardar.Size = new System.Drawing.Size(190, 40);
             this.btnGuardar.TabIndex = 1;
-            this.btnGuardar.Text = "💾 Guardar paciente";
+            this.btnGuardar.Text = "Guardar paciente";
             this.btnGuardar.UseVisualStyleBackColor = false;
             this.btnGuardar.Click += new System.EventHandler(this.btnGuardar_Click);
             //

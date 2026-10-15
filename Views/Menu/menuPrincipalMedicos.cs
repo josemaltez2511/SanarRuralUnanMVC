@@ -67,17 +67,35 @@ namespace SanarRuralUnan.Views
             ConfigurarBotonNavegacion(btnConsultas, "Consultas");
             ConfigurarBotonNavegacion(btnHistorial, "Historial");
 
+            btnCerrarSesion.Paint += (s, ev) =>
+            {
+                Graphics g = ev.Graphics;
+                g.SmoothingMode = SmoothingMode.AntiAlias;
+                int ix = 12;
+                int iy = (btnCerrarSesion.Height - 16) / 2;
+                using (var pen = new Pen(btnCerrarSesion.ForeColor, 1.6f))
+                {
+                    // Marco de puerta
+                    g.DrawRectangle(pen, ix, iy, 9, 15);
+                    // Flecha de salida
+                    g.DrawLine(pen, ix + 5, iy + 7, ix + 16, iy + 7);
+                    g.DrawLine(pen, ix + 13, iy + 4, ix + 16, iy + 7);
+                    g.DrawLine(pen, ix + 13, iy + 10, ix + 16, iy + 7);
+                }
+            };
             btnCerrarSesion.MouseEnter += (s, e) =>
             {
                 btnCerrarSesion.BackColor = Tema.BotonPeligroFondo;
                 btnCerrarSesion.FlatAppearance.BorderColor = Tema.BotonPeligroBorde;
                 btnCerrarSesion.ForeColor = Tema.Error;
+                btnCerrarSesion.Invalidate();
             };
             btnCerrarSesion.MouseLeave += (s, e) =>
             {
                 btnCerrarSesion.BackColor = Tema.Superficie;
                 btnCerrarSesion.FlatAppearance.BorderColor = Tema.Borde;
                 btnCerrarSesion.ForeColor = Tema.TextoPrincipal;
+                btnCerrarSesion.Invalidate();
             };
 
             ConfigurarToggleSidebar();
@@ -85,12 +103,19 @@ namespace SanarRuralUnan.Views
 
         private void ConfigurarBotonNavegacion(Button boton, string seccion)
         {
+            boton.Tag = seccion;
+            boton.Paint += (s, ev) =>
+            {
+                DibujarIconoBotonSidebar(ev.Graphics, seccion, boton.ForeColor, boton.Height);
+            };
+
             boton.MouseEnter += (s, e) =>
             {
                 if (boton != botonActivo)
                 {
                     boton.BackColor = Tema.FondoSecundario;
                     boton.ForeColor = Tema.AzulPrimario;
+                    boton.Invalidate();
                 }
             };
 
@@ -100,6 +125,7 @@ namespace SanarRuralUnan.Views
                 {
                     boton.BackColor = Color.Transparent;
                     boton.ForeColor = Tema.AzulOscuro;
+                    boton.Invalidate();
                 }
             };
         }
@@ -213,6 +239,7 @@ namespace SanarRuralUnan.Views
                     b.ForeColor = Tema.AzulOscuro;
                     b.Font = Tema.FuenteBoton;
                 }
+                b.Invalidate();
             }
         }
 
@@ -623,6 +650,63 @@ namespace SanarRuralUnan.Views
                 using (var pen = new Pen(Tema.Borde, 1.2f))
                 {
                     e.Graphics.DrawPath(pen, path);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Dibuja el icono vectorial correspondiente a cada sección del menú lateral médico.
+        /// Garantiza un aspecto nítido, sin glifos sustitutos ni cajas cuadradas, adaptando el color al estado.
+        /// </summary>
+        private static void DibujarIconoBotonSidebar(Graphics g, string seccion, Color color, int btnHeight)
+        {
+            g.SmoothingMode = SmoothingMode.AntiAlias;
+            int ix = 8;
+            int iy = (btnHeight - 16) / 2;
+
+            using (var pen = new Pen(color, 1.6f))
+            using (var brush = new SolidBrush(color))
+            {
+                switch (seccion)
+                {
+                    case "Pacientes":
+                        // Silueta de paciente con cruz de salud
+                        g.FillEllipse(brush, ix + 3, iy + 2, 6, 6);
+                        g.DrawArc(pen, ix, iy + 9, 12, 8, 180, 180);
+                        g.DrawLine(pen, ix + 13, iy + 6, ix + 13, iy + 12);
+                        g.DrawLine(pen, ix + 10, iy + 9, ix + 16, iy + 9);
+                        break;
+
+                    case "Citas":
+                        // Calendario de citas médicas
+                        g.DrawRectangle(pen, ix + 2, iy + 3, 13, 12);
+                        g.DrawLine(pen, ix + 5, iy + 1, ix + 5, iy + 4);
+                        g.DrawLine(pen, ix + 11, iy + 1, ix + 11, iy + 4);
+                        g.DrawLine(pen, ix + 2, iy + 6, ix + 15, iy + 6);
+                        g.FillRectangle(brush, ix + 5, iy + 8, 2, 2);
+                        g.FillRectangle(brush, ix + 9, iy + 8, 2, 2);
+                        g.FillRectangle(brush, ix + 5, iy + 11, 2, 2);
+                        g.FillRectangle(brush, ix + 9, iy + 11, 2, 2);
+                        break;
+
+                    case "Consultas":
+                        // Estetoscopio médico para consultas
+                        g.DrawLine(pen, ix + 4, iy + 2, ix + 4, iy + 6);
+                        g.DrawLine(pen, ix + 12, iy + 2, ix + 12, iy + 6);
+                        g.DrawArc(pen, ix + 4, iy + 3, 8, 7, 0, 180);
+                        g.DrawLine(pen, ix + 8, iy + 10, ix + 8, iy + 13);
+                        g.DrawArc(pen, ix + 8, iy + 11, 4, 4, 90, 180);
+                        g.FillEllipse(brush, ix + 11, iy + 12, 4, 4);
+                        break;
+
+                    case "Historial":
+                        // Portapapeles con historial médico
+                        g.DrawRectangle(pen, ix + 2, iy + 3, 13, 13);
+                        g.FillRectangle(brush, ix + 6, iy + 1, 5, 3);
+                        g.DrawLine(pen, ix + 5, iy + 7, ix + 12, iy + 7);
+                        g.DrawLine(pen, ix + 5, iy + 10, ix + 12, iy + 10);
+                        g.DrawLine(pen, ix + 5, iy + 13, ix + 10, iy + 13);
+                        break;
                 }
             }
         }

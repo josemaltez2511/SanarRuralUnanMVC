@@ -1,4 +1,4 @@
-﻿using System.Drawing;
+using System.Drawing;
 using System.Windows.Forms;
 using SanarRuralUnan.Helpers;
 
@@ -185,9 +185,10 @@ namespace SanarRuralUnan.Views
             this.btnCerrarSesion.ForeColor = Tema.TextoPrincipal;
             this.btnCerrarSesion.Location = new System.Drawing.Point(1116, 21);
             this.btnCerrarSesion.Name = "btnCerrarSesion";
+            this.btnCerrarSesion.Padding = new System.Windows.Forms.Padding(22, 0, 0, 0);
             this.btnCerrarSesion.Size = new System.Drawing.Size(144, 40);
             this.btnCerrarSesion.TabIndex = 5;
-            this.btnCerrarSesion.Text = "🚪 Cerrar sesión";
+            this.btnCerrarSesion.Text = "Cerrar sesión";
             this.btnCerrarSesion.UseVisualStyleBackColor = false;
             this.btnCerrarSesion.Click += new System.EventHandler(this.btnCerrarSesion_Click);
             //
@@ -217,9 +218,10 @@ namespace SanarRuralUnan.Views
             this.btnPacientes.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.btnPacientes.Location = new System.Drawing.Point(14, 16);
             this.btnPacientes.Name = "btnPacientes";
+            this.btnPacientes.Padding = new System.Windows.Forms.Padding(28, 0, 0, 0);
             this.btnPacientes.Size = new System.Drawing.Size(167, 44);
             this.btnPacientes.TabIndex = 0;
-            this.btnPacientes.Text = "  👥  Pacientes";
+            this.btnPacientes.Text = "Pacientes";
             this.btnPacientes.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.btnPacientes.UseVisualStyleBackColor = false;
             this.btnPacientes.Click += new System.EventHandler(this.btnPacientes_Click);
@@ -234,9 +236,10 @@ namespace SanarRuralUnan.Views
             this.btnCitas.ForeColor = Tema.AzulOscuro;
             this.btnCitas.Location = new System.Drawing.Point(14, 68);
             this.btnCitas.Name = "btnCitas";
+            this.btnCitas.Padding = new System.Windows.Forms.Padding(28, 0, 0, 0);
             this.btnCitas.Size = new System.Drawing.Size(167, 44);
             this.btnCitas.TabIndex = 1;
-            this.btnCitas.Text = "  📅  Citas";
+            this.btnCitas.Text = "Citas";
             this.btnCitas.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.btnCitas.UseVisualStyleBackColor = false;
             this.btnCitas.Click += new System.EventHandler(this.btnCitas_Click);
@@ -251,9 +254,10 @@ namespace SanarRuralUnan.Views
             this.btnConsultas.ForeColor = Tema.AzulOscuro;
             this.btnConsultas.Location = new System.Drawing.Point(14, 120);
             this.btnConsultas.Name = "btnConsultas";
+            this.btnConsultas.Padding = new System.Windows.Forms.Padding(28, 0, 0, 0);
             this.btnConsultas.Size = new System.Drawing.Size(167, 44);
             this.btnConsultas.TabIndex = 2;
-            this.btnConsultas.Text = "  🩺  Consultas";
+            this.btnConsultas.Text = "Consultas";
             this.btnConsultas.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.btnConsultas.UseVisualStyleBackColor = false;
             this.btnConsultas.Click += new System.EventHandler(this.btnConsultas_Click);
@@ -268,9 +272,10 @@ namespace SanarRuralUnan.Views
             this.btnHistorial.ForeColor = Tema.AzulOscuro;
             this.btnHistorial.Location = new System.Drawing.Point(14, 172);
             this.btnHistorial.Name = "btnHistorial";
+            this.btnHistorial.Padding = new System.Windows.Forms.Padding(28, 0, 0, 0);
             this.btnHistorial.Size = new System.Drawing.Size(167, 44);
             this.btnHistorial.TabIndex = 3;
-            this.btnHistorial.Text = "  📋  Historial clínico";
+            this.btnHistorial.Text = "Historial clínico";
             this.btnHistorial.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.btnHistorial.UseVisualStyleBackColor = false;
             this.btnHistorial.Click += new System.EventHandler(this.btnHistorial_Click);
