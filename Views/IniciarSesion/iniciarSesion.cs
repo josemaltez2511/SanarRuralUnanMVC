@@ -545,41 +545,5 @@ namespace SanarRuralUnan
                 txtCorreo.Focus();
             }
         }
-
-        // Navegación al registro de nuevo usuario
-        private void lnkCrearUsuario_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
-        {
-            timerSlides.Stop();
-            this.Hide();
-
-            try
-            {
-                using (crearUsuario formCrear = new crearUsuario())
-                {
-                    formCrear.ShowDialog();
-
-                    string usuarioRegistrado = formCrear.NombreUsuarioRegistrado;
-
-                    if (formCrear.DialogResult == DialogResult.OK && !string.IsNullOrWhiteSpace(usuarioRegistrado))
-                    {
-                        txtCorreo.Text = usuarioRegistrado;
-                        txtContrasena.Clear();
-                        txtContrasena.Focus();
-                    }
-                    else
-                    {
-                        txtContrasena.Clear();
-                        txtCorreo.Focus();
-                    }
-                }
-            }
-            finally
-            {
-                timerSlides.Start();
-                this.Show();
-                this.WindowState = FormWindowState.Maximized;
-                this.BringToFront();
-            }
-        }
     }
 }

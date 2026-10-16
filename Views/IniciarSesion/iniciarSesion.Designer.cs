@@ -56,8 +56,6 @@ namespace SanarRuralUnan
             this.btnVerContrasena = new System.Windows.Forms.Button();
             this.lblErrorContrasena = new System.Windows.Forms.Label();
             this.btnIniciarSesion = new System.Windows.Forms.Button();
-            this.panelLineaInferior = new System.Windows.Forms.Panel();
-            this.lnkCrearUsuario = new System.Windows.Forms.LinkLabel();
             this.timerSlides = new System.Windows.Forms.Timer(this.components);
             this.panelHero.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picLogoHero)).BeginInit();
@@ -248,11 +246,9 @@ namespace SanarRuralUnan
             this.panelCard.Controls.Add(this.btnVerContrasena);
             this.panelCard.Controls.Add(this.lblErrorContrasena);
             this.panelCard.Controls.Add(this.btnIniciarSesion);
-            this.panelCard.Controls.Add(this.panelLineaInferior);
-            this.panelCard.Controls.Add(this.lnkCrearUsuario);
             this.panelCard.Location = new System.Drawing.Point(50, 80);
             this.panelCard.Name = "panelCard";
-            this.panelCard.Size = new System.Drawing.Size(450, 480);
+            this.panelCard.Size = new System.Drawing.Size(450, 360);
             this.panelCard.TabIndex = 0;
             this.panelCard.Paint += new System.Windows.Forms.PaintEventHandler(this.panelCard_Paint);
             //
@@ -378,30 +374,6 @@ namespace SanarRuralUnan
             this.btnIniciarSesion.UseVisualStyleBackColor = false;
             this.btnIniciarSesion.Click += new System.EventHandler(this.btnIniciarSesion_Click);
             //
-            // panelLineaInferior
-            //
-            this.panelLineaInferior.BackColor = Tema.Borde;
-            this.panelLineaInferior.Location = new System.Drawing.Point(40, 344);
-            this.panelLineaInferior.Name = "panelLineaInferior";
-            this.panelLineaInferior.Size = new System.Drawing.Size(370, 1);
-            this.panelLineaInferior.TabIndex = 7;
-            //
-            // lnkCrearUsuario
-            //
-            this.lnkCrearUsuario.ActiveLinkColor = Tema.AzulOscuro;
-            this.lnkCrearUsuario.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.lnkCrearUsuario.Font = Tema.FuenteCuerpo;
-            this.lnkCrearUsuario.LinkColor = Tema.AzulPrimario;
-            this.lnkCrearUsuario.Location = new System.Drawing.Point(40, 362);
-            this.lnkCrearUsuario.Name = "lnkCrearUsuario";
-            this.lnkCrearUsuario.Size = new System.Drawing.Size(370, 24);
-            this.lnkCrearUsuario.TabIndex = 4;
-            this.lnkCrearUsuario.TabStop = true;
-            this.lnkCrearUsuario.Text = "¿No tienes una cuenta? Regístrate aquí";
-            this.lnkCrearUsuario.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.lnkCrearUsuario.VisitedLinkColor = Tema.AzulPrimario;
-            this.lnkCrearUsuario.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.lnkCrearUsuario_LinkClicked);
-            //
             // timerSlides
             //
             this.timerSlides.Interval = 4500;
@@ -464,8 +436,6 @@ namespace SanarRuralUnan
         private System.Windows.Forms.Button btnVerContrasena;
         private System.Windows.Forms.Label lblErrorContrasena;
         private System.Windows.Forms.Button btnIniciarSesion;
-        private System.Windows.Forms.Panel panelLineaInferior;
-        private System.Windows.Forms.LinkLabel lnkCrearUsuario;
         private System.Windows.Forms.Timer timerSlides;
     }
 }
