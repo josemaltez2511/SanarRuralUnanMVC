@@ -1,6 +1,7 @@
 using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using System.Runtime.CompilerServices;
 using System.Windows.Forms;
 
 // Clase central de estilos visuales de Sanar Rural.
@@ -27,6 +28,13 @@ namespace SanarRuralUnan.Helpers
         public static readonly Color Error = Color.FromArgb(198, 83, 83);
         public static readonly Color Advertencia = Color.FromArgb(214, 154, 58);
         public static readonly Color Informacion = AzulPrimario;
+
+        // ===== COLORES PARA SELECCIÓN, HOVER Y ENCABEZADOS DE TABLAS (DataGridView) =====
+        public static readonly Color SeleccionFila = Color.FromArgb(221, 239, 229); // #DDEFE5 - Verde menta claro suave institucional
+        public static readonly Color SeleccionFilaBorde = Color.FromArgb(120, 184, 106); // #78B86A - Borde delimitador sutil de fila seleccionada
+        public static readonly Color SeleccionFilaIndicador = VerdeOscuro; // #4D8E56 - Barra indicadora izquierda de 4px para fila seleccionada
+        public static readonly Color SeleccionTexto = TextoPrincipal; // #173342 - Azul oscuro pizarra de alto contraste (WCAG AAA)
+        public static readonly Color FilaHover = Color.FromArgb(242, 248, 244); // #F2F8F4 - Tono sutil entre Superficie (#F9FCFA) y Fondo (#EDF7F0)
 
         // Alias conservados para los formularios existentes.
         public static readonly Color VerdeAcento = Verde; // Línea decorativa, éxito
@@ -143,8 +151,28 @@ namespace SanarRuralUnan.Helpers
             }
         }
 
+        private class EstadoHoverTabla
+        {
+            public int FilaHover = -1;
+        }
+
+        private static readonly ConditionalWeakTable<DataGridView, EstadoHoverTabla> EstadosHover =
+            new ConditionalWeakTable<DataGridView, EstadoHoverTabla>();
+
         public static void ConfigurarTabla(DataGridView tabla)
         {
+            if (tabla == null) return;
+
+            // 1. Doble búfer vía Reflection para garantizar un redibujado instantáneo sin parpadeo
+            try
+            {
+                typeof(DataGridView).InvokeMember("DoubleBuffered",
+                    System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.SetProperty,
+                    null, tabla, new object[] { true });
+            }
+            catch { }
+
+            // 2. Propiedades estructurales de la tabla
             tabla.BackgroundColor = Superficie;
             tabla.BorderStyle = BorderStyle.None;
             tabla.CellBorderStyle = DataGridViewCellBorderStyle.SingleHorizontal;
@@ -156,19 +184,213 @@ namespace SanarRuralUnan.Helpers
             tabla.AllowUserToDeleteRows = false;
             tabla.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             tabla.RowHeadersVisible = false;
+            tabla.RowHeadersBorderStyle = DataGridViewHeaderBorderStyle.None;
+            tabla.RowTemplate.Height = AltoFilaTabla;
+
+            // 3. Encabezados de columna: verde claro institucional (#E4F1E8) con texto azul oscuro (#174A6B)
             tabla.EnableHeadersVisualStyles = false;
+            tabla.ColumnHeadersBorderStyle = DataGridViewHeaderBorderStyle.None;
+            tabla.ColumnHeadersHeight = AltoEncabezado;
+            tabla.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
+
             tabla.ColumnHeadersDefaultCellStyle.BackColor = FondoSecundario;
             tabla.ColumnHeadersDefaultCellStyle.ForeColor = AzulOscuro;
+            tabla.ColumnHeadersDefaultCellStyle.SelectionBackColor = FondoSecundario;
+            tabla.ColumnHeadersDefaultCellStyle.SelectionForeColor = AzulOscuro;
             tabla.ColumnHeadersDefaultCellStyle.Font = FuenteLabelCampo;
-            tabla.ColumnHeadersHeight = AltoEncabezado;
+
+            // 4. Filas normales (Superficie #F9FCFA) y Filas alternas (Fondo #EDF7F0)
             tabla.DefaultCellStyle.BackColor = Superficie;
             tabla.DefaultCellStyle.ForeColor = TextoPrincipal;
-            tabla.DefaultCellStyle.SelectionBackColor = FondoSecundario;
-            tabla.DefaultCellStyle.SelectionForeColor = TextoPrincipal;
+            tabla.DefaultCellStyle.SelectionBackColor = SeleccionFila;
+            tabla.DefaultCellStyle.SelectionForeColor = SeleccionTexto;
             tabla.DefaultCellStyle.Font = FuenteCuerpo;
+
             tabla.AlternatingRowsDefaultCellStyle.BackColor = Fondo;
-            tabla.RowTemplate.Height = AltoFilaTabla;
+            tabla.AlternatingRowsDefaultCellStyle.ForeColor = TextoPrincipal;
+            tabla.AlternatingRowsDefaultCellStyle.SelectionBackColor = SeleccionFila;
+            tabla.AlternatingRowsDefaultCellStyle.SelectionForeColor = SeleccionTexto;
+            tabla.AlternatingRowsDefaultCellStyle.Font = FuenteCuerpo;
+
+            // 5. Encabezados de fila (por si alguna vista los utiliza)
+            tabla.RowHeadersDefaultCellStyle.BackColor = FondoSecundario;
+            tabla.RowHeadersDefaultCellStyle.ForeColor = AzulOscuro;
+            tabla.RowHeadersDefaultCellStyle.SelectionBackColor = FondoSecundario;
+            tabla.RowHeadersDefaultCellStyle.SelectionForeColor = AzulOscuro;
+
+            // 6. Configurar estilos de encabezado en columnas existentes y futuras
+            foreach (DataGridViewColumn col in tabla.Columns)
+            {
+                AplicarEstiloEncabezadoColumna(col);
+            }
+
+            tabla.ColumnAdded -= Tabla_ColumnAdded_Estilo;
+            tabla.ColumnAdded += Tabla_ColumnAdded_Estilo;
+
+            // 7. Eventos de renderizado personalizado (encabezados consistentes e indicador de selección)
+            tabla.CellPainting -= Tabla_CellPainting_Encabezados;
+            tabla.CellPainting += Tabla_CellPainting_Encabezados;
+
+            tabla.RowPostPaint -= Tabla_RowPostPaint_Indicador;
+            tabla.RowPostPaint += Tabla_RowPostPaint_Indicador;
+
+            tabla.SelectionChanged -= Tabla_SelectionChanged_Redibujar;
+            tabla.SelectionChanged += Tabla_SelectionChanged_Redibujar;
+
+            // 8. Efecto hover sutil al pasar el cursor sobre filas no seleccionadas
+            tabla.CellMouseEnter -= Tabla_CellMouseEnter_Hover;
+            tabla.CellMouseEnter += Tabla_CellMouseEnter_Hover;
+
+            tabla.CellMouseLeave -= Tabla_CellMouseLeave_Hover;
+            tabla.CellMouseLeave += Tabla_CellMouseLeave_Hover;
+
+            tabla.MouseLeave -= Tabla_MouseLeave_Hover;
+            tabla.MouseLeave += Tabla_MouseLeave_Hover;
         }
+
+        private static void AplicarEstiloEncabezadoColumna(DataGridViewColumn col)
+        {
+            if (col == null || col.HeaderCell == null) return;
+            col.HeaderCell.Style.BackColor = FondoSecundario;
+            col.HeaderCell.Style.ForeColor = AzulOscuro;
+            col.HeaderCell.Style.SelectionBackColor = FondoSecundario;
+            col.HeaderCell.Style.SelectionForeColor = AzulOscuro;
+            col.HeaderCell.Style.Font = FuenteLabelCampo;
+        }
+
+        private static void Tabla_ColumnAdded_Estilo(object sender, DataGridViewColumnEventArgs e)
+        {
+            AplicarEstiloEncabezadoColumna(e.Column);
+        }
+
+        private static void Tabla_CellPainting_Encabezados(object sender, DataGridViewCellPaintingEventArgs e)
+        {
+            if (e.RowIndex == -1)
+            {
+                // Fondo verde claro uniforme en cualquier estado (clic, ordenamiento, foco)
+                using (var brushFondo = new SolidBrush(FondoSecundario))
+                {
+                    e.Graphics.FillRectangle(brushFondo, e.CellBounds);
+                }
+
+                // Línea inferior sutil institucional
+                using (var penBorde = new Pen(Borde, 1f))
+                {
+                    e.Graphics.DrawLine(penBorde, e.CellBounds.Left, e.CellBounds.Bottom - 1, e.CellBounds.Right, e.CellBounds.Bottom - 1);
+                }
+
+                if (e.ColumnIndex >= 0)
+                {
+                    // Renderizar texto y flecha de ordenamiento preservando alineación
+                    e.Paint(e.CellBounds, DataGridViewPaintParts.ContentForeground);
+                }
+
+                e.Handled = true;
+            }
+        }
+
+        private static void Tabla_RowPostPaint_Indicador(object sender, DataGridViewRowPostPaintEventArgs e)
+        {
+            var tabla = sender as DataGridView;
+            if (tabla == null) return;
+            if (e.RowIndex < 0 || e.RowIndex >= tabla.Rows.Count) return;
+
+            DataGridViewRow fila = tabla.Rows[e.RowIndex];
+            if (fila.Selected)
+            {
+                // 1. Barra indicadora vertical izquierda de 4px en VerdeOscuro (#4D8E56)
+                int anchoIndicador = 4;
+                Rectangle rectIndicador = new Rectangle(
+                    e.RowBounds.Left,
+                    e.RowBounds.Top,
+                    anchoIndicador,
+                    e.RowBounds.Height - 1
+                );
+                using (var brushIndicador = new SolidBrush(SeleccionFilaIndicador))
+                {
+                    e.Graphics.FillRectangle(brushIndicador, rectIndicador);
+                }
+
+                // 2. Borde sutil superior e inferior de la fila seleccionada en Verde (#78B86A)
+                using (var penBorde = new Pen(SeleccionFilaBorde, 1f))
+                {
+                    e.Graphics.DrawLine(penBorde, e.RowBounds.Left, e.RowBounds.Top, e.RowBounds.Right - 1, e.RowBounds.Top);
+                    e.Graphics.DrawLine(penBorde, e.RowBounds.Left, e.RowBounds.Bottom - 1, e.RowBounds.Right - 1, e.RowBounds.Bottom - 1);
+                }
+            }
+        }
+
+        private static void Tabla_SelectionChanged_Redibujar(object sender, EventArgs e)
+        {
+            var tabla = sender as DataGridView;
+            if (tabla != null && !tabla.IsDisposed)
+            {
+                tabla.Invalidate();
+            }
+        }
+
+        private static void Tabla_CellMouseEnter_Hover(object sender, DataGridViewCellEventArgs e)
+        {
+            var tabla = sender as DataGridView;
+            if (tabla == null) return;
+
+            if (e.RowIndex >= 0 && e.RowIndex < tabla.Rows.Count)
+            {
+                EstadoHoverTabla estado;
+                if (!EstadosHover.TryGetValue(tabla, out estado))
+                {
+                    estado = new EstadoHoverTabla();
+                    EstadosHover.Add(tabla, estado);
+                }
+
+                if (estado.FilaHover >= 0 && estado.FilaHover < tabla.Rows.Count && estado.FilaHover != e.RowIndex)
+                {
+                    int filaAnterior = estado.FilaHover;
+                    estado.FilaHover = -1;
+                    if (!tabla.Rows[filaAnterior].Selected)
+                    {
+                        tabla.Rows[filaAnterior].DefaultCellStyle.BackColor = Color.Empty;
+                    }
+                }
+
+                estado.FilaHover = e.RowIndex;
+                if (!tabla.Rows[e.RowIndex].Selected)
+                {
+                    tabla.Rows[e.RowIndex].DefaultCellStyle.BackColor = FilaHover;
+                }
+            }
+        }
+
+        private static void Tabla_CellMouseLeave_Hover(object sender, DataGridViewCellEventArgs e)
+        {
+            var tabla = sender as DataGridView;
+            if (tabla == null) return;
+
+            if (e.RowIndex >= 0 && e.RowIndex < tabla.Rows.Count)
+            {
+                if (!tabla.Rows[e.RowIndex].Selected)
+                {
+                    tabla.Rows[e.RowIndex].DefaultCellStyle.BackColor = Color.Empty;
+                }
+            }
+        }
+
+        private static void Tabla_MouseLeave_Hover(object sender, EventArgs e)
+        {
+            var tabla = sender as DataGridView;
+            if (tabla == null) return;
+
+            EstadoHoverTabla estado;
+            if (EstadosHover.TryGetValue(tabla, out estado) && estado.FilaHover >= 0)
+            {
+                if (estado.FilaHover < tabla.Rows.Count && !tabla.Rows[estado.FilaHover].Selected)
+                {
+                    tabla.Rows[estado.FilaHover].DefaultCellStyle.BackColor = Color.Empty;
+                }
+                estado.FilaHover = -1;
+            }
+        }
+
 
         // Obtiene la imagen del logo institucional desde los recursos del proyecto.
         public static Image ObtenerLogo()

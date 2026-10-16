@@ -122,13 +122,13 @@ namespace SanarRuralUnan.Views
             btnCrearAcceso.MouseLeave += (s, ev) => { if (btnCrearAcceso.Enabled) btnCrearAcceso.BackColor = Tema.AzulPrimario; };
 
             btnCancelar.MouseEnter += (s, ev) => { btnCancelar.BackColor = Tema.FondoSecundario; };
-            btnCancelar.MouseLeave += (s, ev) => { btnCancelar.BackColor = Color.White; };
+            btnCancelar.MouseLeave += (s, ev) => { btnCancelar.BackColor = Tema.Superficie; };
 
             btnVerContrasena.MouseEnter += (s, ev) => { btnVerContrasena.BackColor = Tema.FondoSecundario; btnVerContrasena.Invalidate(); };
-            btnVerContrasena.MouseLeave += (s, ev) => { btnVerContrasena.BackColor = Color.White; btnVerContrasena.Invalidate(); };
+            btnVerContrasena.MouseLeave += (s, ev) => { btnVerContrasena.BackColor = Tema.Superficie; btnVerContrasena.Invalidate(); };
 
             btnVerConfirmar.MouseEnter += (s, ev) => { btnVerConfirmar.BackColor = Tema.FondoSecundario; btnVerConfirmar.Invalidate(); };
-            btnVerConfirmar.MouseLeave += (s, ev) => { btnVerConfirmar.BackColor = Color.White; btnVerConfirmar.Invalidate(); };
+            btnVerConfirmar.MouseLeave += (s, ev) => { btnVerConfirmar.BackColor = Tema.Superficie; btnVerConfirmar.Invalidate(); };
         }
 
         private void DibujarIconoBotonCrear(object sender, PaintEventArgs e)
@@ -486,12 +486,12 @@ namespace SanarRuralUnan.Views
                 {
                     row.Selected = true;
                     row.Cells["colAccion"].Value = "Seleccionado";
-                    row.DefaultCellStyle.BackColor = Color.FromArgb(235, 245, 251);
+                    row.DefaultCellStyle.BackColor = Color.Empty;
                 }
                 else
                 {
                     row.Cells["colAccion"].Value = "+ Seleccionar";
-                    row.DefaultCellStyle.BackColor = Color.White;
+                    row.DefaultCellStyle.BackColor = Color.Empty;
                 }
             }
         }
