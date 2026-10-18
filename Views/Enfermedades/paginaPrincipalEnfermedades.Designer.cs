@@ -34,6 +34,10 @@ namespace SanarRuralUnan.Views.Enfermedades
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.panelTarjeta = new System.Windows.Forms.Panel();
             this.tabla = new System.Windows.Forms.DataGridView();
+            this.colId = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.colNombre = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.colCategoria = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.colDescripcion = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.colDetalle = new System.Windows.Forms.DataGridViewButtonColumn();
             this.colEditar = new System.Windows.Forms.DataGridViewButtonColumn();
             this.colBaja = new System.Windows.Forms.DataGridViewButtonColumn();
@@ -51,14 +55,14 @@ namespace SanarRuralUnan.Views.Enfermedades
             //
             // panelTarjeta
             //
-            this.panelTarjeta.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(249)))), ((int)(((byte)(252)))), ((int)(((byte)(250)))));
+            this.panelTarjeta.BackColor = Tema.Superficie;
             this.panelTarjeta.Controls.Add(this.tabla);
             this.panelTarjeta.Controls.Add(this.panelBusqueda);
             this.panelTarjeta.Controls.Add(this.panelEncabezado);
             this.panelTarjeta.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panelTarjeta.Location = new System.Drawing.Point(0, 0);
             this.panelTarjeta.Name = "panelTarjeta";
-            this.panelTarjeta.Padding = new System.Windows.Forms.Padding(21);
+            this.panelTarjeta.Padding = new System.Windows.Forms.Padding(24);
             this.panelTarjeta.Size = new System.Drawing.Size(929, 556);
             this.panelTarjeta.TabIndex = 0;
             //
@@ -68,10 +72,15 @@ namespace SanarRuralUnan.Views.Enfermedades
             this.tabla.AccessibleName = "Listado de enfermedades activas";
             this.tabla.AllowUserToAddRows = false;
             this.tabla.AllowUserToDeleteRows = false;
+            this.tabla.AutoGenerateColumns = false;
             this.tabla.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
-            this.tabla.BackgroundColor = System.Drawing.Color.FromArgb(((int)(((byte)(249)))), ((int)(((byte)(252)))), ((int)(((byte)(250)))));
+            this.tabla.BackgroundColor = Tema.Superficie;
             this.tabla.ColumnHeadersHeight = 42;
             this.tabla.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.colId,
+            this.colNombre,
+            this.colCategoria,
+            this.colDescripcion,
             this.colDetalle,
             this.colEditar,
             this.colBaja});
@@ -85,9 +94,39 @@ namespace SanarRuralUnan.Views.Enfermedades
             this.tabla.TabIndex = 2;
             this.tabla.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.Tabla_CellContentClick);
             //
+            // colId
+            //
+            this.colId.DataPropertyName = "IdEnfermedad";
+            this.colId.Name = "colId";
+            this.colId.Visible = false;
+            //
+            // colNombre
+            //
+            this.colNombre.DataPropertyName = "NombreEnfermedad";
+            this.colNombre.FillWeight = 25F;
+            this.colNombre.HeaderText = "Enfermedad";
+            this.colNombre.Name = "colNombre";
+            this.colNombre.ReadOnly = true;
+            //
+            // colCategoria
+            //
+            this.colCategoria.DataPropertyName = "Categoria";
+            this.colCategoria.FillWeight = 17F;
+            this.colCategoria.HeaderText = "Categoría";
+            this.colCategoria.Name = "colCategoria";
+            this.colCategoria.ReadOnly = true;
+            //
+            // colDescripcion
+            //
+            this.colDescripcion.DataPropertyName = "Descripcion";
+            this.colDescripcion.FillWeight = 35F;
+            this.colDescripcion.HeaderText = "Descripción";
+            this.colDescripcion.Name = "colDescripcion";
+            this.colDescripcion.ReadOnly = true;
+            //
             // colDetalle
             //
-            this.colDetalle.FillWeight = 10F;
+            this.colDetalle.FillWeight = 11F;
             this.colDetalle.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.colDetalle.HeaderText = "Detalle";
             this.colDetalle.Name = "colDetalle";
@@ -97,7 +136,7 @@ namespace SanarRuralUnan.Views.Enfermedades
             //
             // colEditar
             //
-            this.colEditar.FillWeight = 8F;
+            this.colEditar.FillWeight = 10F;
             this.colEditar.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.colEditar.HeaderText = "Editar";
             this.colEditar.Name = "colEditar";
@@ -108,12 +147,12 @@ namespace SanarRuralUnan.Views.Enfermedades
             // colBaja
             //
             dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(254)))), ((int)(((byte)(242)))), ((int)(((byte)(242)))));
-            dataGridViewCellStyle1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(198)))), ((int)(((byte)(83)))), ((int)(((byte)(83)))));
+            dataGridViewCellStyle1.BackColor = Tema.BotonPeligroFondo;
+            dataGridViewCellStyle1.ForeColor = Tema.Error;
             this.colBaja.DefaultCellStyle = dataGridViewCellStyle1;
-            this.colBaja.FillWeight = 10F;
+            this.colBaja.FillWeight = 12F;
             this.colBaja.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.colBaja.HeaderText = "Estado";
+            this.colBaja.HeaderText = "Acción";
             this.colBaja.Name = "colBaja";
             this.colBaja.ReadOnly = true;
             this.colBaja.Text = "Dar de baja";
@@ -134,7 +173,8 @@ namespace SanarRuralUnan.Views.Enfermedades
             this.txtBuscar.AccessibleDescription = "Filtra por nombre, categoría o descripción.";
             this.txtBuscar.AccessibleName = "Buscar enfermedades";
             this.txtBuscar.Dock = System.Windows.Forms.DockStyle.Left;
-            this.txtBuscar.Font = new System.Drawing.Font("Segoe UI", 11F);
+            this.txtBuscar.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtBuscar.Font = Tema.FuenteInput;
             this.txtBuscar.Location = new System.Drawing.Point(0, 5);
             this.txtBuscar.Name = "txtBuscar";
             this.txtBuscar.Size = new System.Drawing.Size(361, 27);
@@ -156,8 +196,8 @@ namespace SanarRuralUnan.Views.Enfermedades
             // lblTitulo
             //
             this.lblTitulo.AutoSize = true;
-            this.lblTitulo.Font = new System.Drawing.Font("Segoe UI", 22F, System.Drawing.FontStyle.Bold);
-            this.lblTitulo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(23)))), ((int)(((byte)(74)))), ((int)(((byte)(107)))));
+            this.lblTitulo.Font = Tema.FuenteTitulo;
+            this.lblTitulo.ForeColor = Tema.AzulOscuro;
             this.lblTitulo.Location = new System.Drawing.Point(0, 0);
             this.lblTitulo.Name = "lblTitulo";
             this.lblTitulo.Size = new System.Drawing.Size(218, 41);
@@ -167,8 +207,8 @@ namespace SanarRuralUnan.Views.Enfermedades
             // lblSubtitulo
             //
             this.lblSubtitulo.AutoSize = true;
-            this.lblSubtitulo.Font = new System.Drawing.Font("Segoe UI", 9F);
-            this.lblSubtitulo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(89)))), ((int)(((byte)(112)))), ((int)(((byte)(120)))));
+            this.lblSubtitulo.Font = Tema.FuenteAyuda;
+            this.lblSubtitulo.ForeColor = Tema.TextoSecundario;
             this.lblSubtitulo.Location = new System.Drawing.Point(2, 36);
             this.lblSubtitulo.Name = "lblSubtitulo";
             this.lblSubtitulo.Size = new System.Drawing.Size(283, 15);
@@ -180,12 +220,12 @@ namespace SanarRuralUnan.Views.Enfermedades
             this.btnNuevaEnfermedad.AccessibleDescription = "Abre el formulario para agregar una enfermedad al catálogo.";
             this.btnNuevaEnfermedad.AccessibleName = "Registrar una enfermedad";
             this.btnNuevaEnfermedad.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnNuevaEnfermedad.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(35)))), ((int)(((byte)(120)))), ((int)(((byte)(183)))));
+            this.btnNuevaEnfermedad.BackColor = Tema.AzulPrimario;
             this.btnNuevaEnfermedad.FlatAppearance.BorderSize = 0;
             this.btnNuevaEnfermedad.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnNuevaEnfermedad.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
-            this.btnNuevaEnfermedad.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(249)))), ((int)(((byte)(252)))), ((int)(((byte)(250)))));
-            this.btnNuevaEnfermedad.Location = new System.Drawing.Point(1419, 7);
+            this.btnNuevaEnfermedad.ForeColor = Tema.Superficie;
+            this.btnNuevaEnfermedad.Location = new System.Drawing.Point(709, 8);
             this.btnNuevaEnfermedad.Name = "btnNuevaEnfermedad";
             this.btnNuevaEnfermedad.Size = new System.Drawing.Size(154, 36);
             this.btnNuevaEnfermedad.TabIndex = 2;
@@ -197,7 +237,7 @@ namespace SanarRuralUnan.Views.Enfermedades
             //
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(237)))), ((int)(((byte)(247)))), ((int)(((byte)(240)))));
+            this.BackColor = Tema.Fondo;
             this.ClientSize = new System.Drawing.Size(929, 556);
             this.Controls.Add(this.panelTarjeta);
             this.MinimumSize = new System.Drawing.Size(654, 421);

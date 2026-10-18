@@ -164,8 +164,8 @@ namespace SanarRuralUnan.Views
             btnPersonalAdministrativo.Visible = esAdmin;
 
             Button[] botones = esAdmin
-                ? new Button[] { btnUsuarios, btnAdministradores, btnPersonalAdministrativo, btnDoctores, btnPacientes, btnHospitales, btnCitas }
-                : new Button[] { btnUsuarios, btnDoctores, btnPacientes, btnHospitales, btnCitas };
+                ? new Button[] { btnUsuarios, btnAdministradores, btnPersonalAdministrativo, btnDoctores, btnPacientes, btnHospitales, btnCitas, btnEnfermedades }
+                : new Button[] { btnUsuarios, btnDoctores, btnPacientes, btnHospitales, btnCitas, btnEnfermedades };
 
             int top = 16;
             int gap = 6;
@@ -768,6 +768,13 @@ namespace SanarRuralUnan.Views
                         g.FillRectangle(brush, ix + 9, iy + 8, 2, 2);
                         g.FillRectangle(brush, ix + 5, iy + 11, 2, 2);
                         g.FillRectangle(brush, ix + 9, iy + 11, 2, 2);
+                        break;
+
+                    case "Enfermedades":
+                        // Cruz médica para identificar el catálogo de enfermedades
+                        g.DrawRectangle(pen, ix + 2, iy + 2, 12, 12);
+                        g.FillRectangle(brush, ix + 7, iy + 4, 3, 8);
+                        g.FillRectangle(brush, ix + 4, iy + 7, 9, 3);
                         break;
                 }
             }

@@ -55,7 +55,6 @@ namespace SanarRuralUnan.Views.Enfermedades
             this.panelTarjeta.Padding = new System.Windows.Forms.Padding(36);
             this.panelTarjeta.Name = "panelTarjeta";
             this.panelTarjeta.TabIndex = 0;
-            this.panelTarjeta.Resize += new System.EventHandler(this.panelTarjeta_Resize);
             //
             // lblTitulo
             //
