@@ -34,6 +34,7 @@ namespace SanarRuralUnan.Views
             this.btnPerfil = new System.Windows.Forms.Button();
             this.btnCitas = new System.Windows.Forms.Button();
             this.btnHistorial = new System.Windows.Forms.Button();
+            this.btnEnfermedades = new System.Windows.Forms.Button();
             this.panelSidebarLema = new System.Windows.Forms.Panel();
             this.panelContenido = new System.Windows.Forms.Panel();
             this.panelPlaceholder = new System.Windows.Forms.Panel();
@@ -197,6 +198,7 @@ namespace SanarRuralUnan.Views
             this.panelSidebar.Controls.Add(this.btnPerfil);
             this.panelSidebar.Controls.Add(this.btnCitas);
             this.panelSidebar.Controls.Add(this.btnHistorial);
+            this.panelSidebar.Controls.Add(this.btnEnfermedades);
             this.panelSidebar.Controls.Add(this.panelSidebarLema);
             this.panelSidebar.Dock = System.Windows.Forms.DockStyle.Left;
             this.panelSidebar.Location = new System.Drawing.Point(0, 82);
@@ -259,6 +261,24 @@ namespace SanarRuralUnan.Views
             this.btnHistorial.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.btnHistorial.UseVisualStyleBackColor = false;
             this.btnHistorial.Click += new System.EventHandler(this.btnHistorial_Click);
+            //
+            // btnEnfermedades
+            //
+            this.btnEnfermedades.BackColor = System.Drawing.Color.Transparent;
+            this.btnEnfermedades.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnEnfermedades.FlatAppearance.BorderSize = 0;
+            this.btnEnfermedades.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnEnfermedades.Font = Tema.FuenteBoton;
+            this.btnEnfermedades.ForeColor = Tema.AzulOscuro;
+            this.btnEnfermedades.Location = new System.Drawing.Point(14, 172);
+            this.btnEnfermedades.Name = "btnEnfermedades";
+            this.btnEnfermedades.Padding = new System.Windows.Forms.Padding(28, 0, 0, 0);
+            this.btnEnfermedades.Size = new System.Drawing.Size(167, 44);
+            this.btnEnfermedades.TabIndex = 3;
+            this.btnEnfermedades.Text = "Enfermedades";
+            this.btnEnfermedades.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.btnEnfermedades.UseVisualStyleBackColor = false;
+            this.btnEnfermedades.Click += new System.EventHandler(this.btnEnfermedades_Click);
             //
             // panelSidebarLema
             //
@@ -366,6 +386,7 @@ namespace SanarRuralUnan.Views
         private System.Windows.Forms.Button btnPerfil;
         private System.Windows.Forms.Button btnCitas;
         private System.Windows.Forms.Button btnHistorial;
+        private System.Windows.Forms.Button btnEnfermedades;
         private System.Windows.Forms.Panel panelSidebarLema;
         private System.Windows.Forms.Panel panelContenido;
         private System.Windows.Forms.Panel panelPlaceholder;

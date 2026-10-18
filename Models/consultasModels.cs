@@ -1092,6 +1092,7 @@ namespace SanarRuralUnan.Models
 
         public List<EnfermedadItemDto> listarEnfermedadesActivas()
         {
+            ValidarPermisoCatalogoClinico();
             return db.Enfermedades
                 .Where(e => e.Estado)
                 .OrderBy(e => e.NombreEnfermedad)
@@ -1106,6 +1107,7 @@ namespace SanarRuralUnan.Models
 
         public List<RecomendacionItemDto> obtenerRecomendacionesPorEnfermedad(int idEnfermedad)
         {
+            ValidarPermisoCatalogoClinico();
             return db.RecomendacionesMedicas
                 .Where(r => r.IdEnfermedad == idEnfermedad && r.Estado)
                 .OrderBy(r => r.IdRecomendacion)
@@ -1243,6 +1245,23 @@ namespace SanarRuralUnan.Models
                     };
                 })
                 .ToList();
+        }
+
+        private void ValidarPermisoCatalogoClinico()
+        {
+            if (!usuariosModels.EsUsuarioSesionActivo(db))
+            {
+                throw new InvalidOperationException("Se requiere una sesión activa para consultar el catálogo clínico de enfermedades.");
+            }
+
+            var usuarioSesion = db.Usuarios
+                .Include(usuario => usuario.Roles)
+                .FirstOrDefault(usuario => usuario.IdUsuario == usuariosModels.IdUsuarioActual.Value);
+            var rolActual = usuarioSesion?.Roles;
+            if (rolActual == null || (rolActual.Nombre != "Doctor" && !usuariosModels.EsRolAdministrativo(rolActual.Nombre)))
+            {
+                throw new InvalidOperationException("Solo Doctor y los roles administrativos autorizados pueden consultar el catálogo clínico de enfermedades.");
+            }
         }
     }
 }

@@ -9,6 +9,7 @@ using SanarRuralUnan.Models;
 using SanarRuralUnan.Views.Administradores;
 using SanarRuralUnan.Views.Citas;
 using SanarRuralUnan.Views.Doctores;
+using SanarRuralUnan.Views.Enfermedades;
 using SanarRuralUnan.Views.Hospitales;
 using SanarRuralUnan.Views.Pacientes;
 using SanarRuralUnan.Views.PersonalAdministrativo;
@@ -27,6 +28,7 @@ namespace SanarRuralUnan.Views
         private paginaPrincipalPersonalAdministrativo paginaPersonalAdministrativo;
         private paginaPrincipalDoctores paginaDoctores;
         private paginaPrincipalHospitales paginaHospitales;
+        private paginaPrincipalEnfermedades paginaEnfermedades;
         private paginaPrincipalPacientes paginaPacientes;
         private paginaPrincipalCitas paginaCitas;
 
@@ -74,6 +76,7 @@ namespace SanarRuralUnan.Views
             ConfigurarBotonNavegacion(btnPacientes, "Pacientes");
             ConfigurarBotonNavegacion(btnHospitales, "Hospitales");
             ConfigurarBotonNavegacion(btnCitas, "Citas");
+            ConfigurarBotonNavegacion(btnEnfermedades, "Enfermedades");
 
             ConfigurarSeguridadNavegacion();
 
@@ -265,6 +268,11 @@ namespace SanarRuralUnan.Views
                 formulario = paginaCitas ?? (paginaCitas = new paginaPrincipalCitas());
                 nuevoBoton = btnCitas;
             }
+            else if (nombre == "Enfermedades")
+            {
+                formulario = paginaEnfermedades ?? (paginaEnfermedades = new paginaPrincipalEnfermedades());
+                nuevoBoton = btnEnfermedades;
+            }
 
             // Actualizar apariencia de navegación
             ActualizarEstadoBotones(nuevoBoton);
@@ -279,7 +287,7 @@ namespace SanarRuralUnan.Views
         private void ActualizarEstadoBotones(Button activo)
         {
             botonActivo = activo;
-            Button[] todos = { btnUsuarios, btnAdministradores, btnPersonalAdministrativo, btnDoctores, btnPacientes, btnHospitales, btnCitas };
+            Button[] todos = { btnUsuarios, btnAdministradores, btnPersonalAdministrativo, btnDoctores, btnPacientes, btnHospitales, btnCitas, btnEnfermedades };
 
             foreach (var b in todos)
             {
@@ -359,11 +367,11 @@ namespace SanarRuralUnan.Views
         private void btnPacientes_Click(object sender, EventArgs e) { MostrarSeccion("Pacientes"); }
         private void btnHospitales_Click(object sender, EventArgs e) { MostrarSeccion("Hospitales"); }
         private void btnCitas_Click(object sender, EventArgs e) { MostrarSeccion("Citas"); }
+        private void btnEnfermedades_Click(object sender, EventArgs e) { MostrarSeccion("Enfermedades"); }
 
         private void btnCerrarSesion_Click(object sender, EventArgs e)
         {
             SesionCerradaVoluntariamente = true;
-            new usuariosControllers().CerrarSesion();
             Close();
         }
 
@@ -452,12 +460,14 @@ namespace SanarRuralUnan.Views
 
         private void menuPrincipalAdministrativo_FormClosed(object sender, FormClosedEventArgs e)
         {
+            new usuariosControllers().CerrarSesion();
             timerTransicion.Dispose();
             if (paginaUsuarios != null) paginaUsuarios.Dispose();
             if (paginaAdministradores != null) paginaAdministradores.Dispose();
             if (paginaPersonalAdministrativo != null) paginaPersonalAdministrativo.Dispose();
             if (paginaDoctores != null) paginaDoctores.Dispose();
             if (paginaHospitales != null) paginaHospitales.Dispose();
+            if (paginaEnfermedades != null) paginaEnfermedades.Dispose();
             if (paginaPacientes != null) paginaPacientes.Dispose();
             if (paginaCitas != null) paginaCitas.Dispose();
             if (picLogo.Image != null) picLogo.Image.Dispose();

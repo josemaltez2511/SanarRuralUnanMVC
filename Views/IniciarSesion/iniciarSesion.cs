@@ -530,6 +530,7 @@ namespace SanarRuralUnan
                     }
                     else
                     {
+                        controlador.CerrarSesion();
                         this.Close();
                     }
                 }
