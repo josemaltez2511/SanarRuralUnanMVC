@@ -8,6 +8,7 @@ using SanarRuralUnan.Helpers;
 using SanarRuralUnan.Models;
 using SanarRuralUnan.Views.Citas;
 using SanarRuralUnan.Views.ConsultaMedica;
+using SanarRuralUnan.Views.Enfermedades;
 using SanarRuralUnan.Views.HistorialClinico;
 using SanarRuralUnan.Views.Pacientes;
 
@@ -24,6 +25,7 @@ namespace SanarRuralUnan.Views
         private paginaPrincipalCitas paginaCitas;
         private paginaPrincipalConsultas paginaConsultas;
         private paginaPrincipalHistorial paginaHistorial;
+        private paginaPrincipalEnfermedades paginaEnfermedades;
 
         private readonly int? idDoctorActual;
         private Button botonActivo;
@@ -66,6 +68,7 @@ namespace SanarRuralUnan.Views
             ConfigurarBotonNavegacion(btnCitas, "Citas");
             ConfigurarBotonNavegacion(btnConsultas, "Consultas");
             ConfigurarBotonNavegacion(btnHistorial, "Historial");
+            ConfigurarBotonNavegacion(btnEnfermedades, "Enfermedades");
 
             btnCerrarSesion.Paint += (s, ev) =>
             {
@@ -207,6 +210,11 @@ namespace SanarRuralUnan.Views
                 formulario = paginaHistorial ?? (paginaHistorial = new paginaPrincipalHistorial(idDoctorActual, null));
                 nuevoBoton = btnHistorial;
             }
+            else if (nombre == "Enfermedades")
+            {
+                formulario = paginaEnfermedades ?? (paginaEnfermedades = new paginaPrincipalEnfermedades());
+                nuevoBoton = btnEnfermedades;
+            }
 
             ActualizarEstadoBotones(nuevoBoton);
 
@@ -223,7 +231,7 @@ namespace SanarRuralUnan.Views
         private void ActualizarEstadoBotones(Button activo)
         {
             botonActivo = activo;
-            Button[] todos = { btnPacientes, btnCitas, btnConsultas, btnHistorial };
+            Button[] todos = { btnPacientes, btnCitas, btnConsultas, btnHistorial, btnEnfermedades };
 
             foreach (var b in todos)
             {
@@ -322,11 +330,11 @@ namespace SanarRuralUnan.Views
         private void btnCitas_Click(object sender, EventArgs e) { MostrarSeccion("Citas"); }
         private void btnConsultas_Click(object sender, EventArgs e) { MostrarSeccion("Consultas"); }
         private void btnHistorial_Click(object sender, EventArgs e) { MostrarSeccion("Historial"); }
+        private void btnEnfermedades_Click(object sender, EventArgs e) { MostrarSeccion("Enfermedades"); }
 
         private void btnCerrarSesion_Click(object sender, EventArgs e)
         {
             SesionCerradaVoluntariamente = true;
-            new usuariosControllers().CerrarSesion();
             Close();
         }
 
@@ -421,10 +429,12 @@ namespace SanarRuralUnan.Views
 
         private void menuPrincipalMedicos_FormClosed(object sender, FormClosedEventArgs e)
         {
+            new usuariosControllers().CerrarSesion();
             timerTransicion.Dispose();
             if (paginaPacientes != null) paginaPacientes.Dispose();
             if (paginaCitas != null) paginaCitas.Dispose();
             if (paginaConsultas != null) paginaConsultas.Dispose();
+            if (paginaEnfermedades != null) paginaEnfermedades.Dispose();
             if (picLogo.Image != null) picLogo.Image.Dispose();
         }
 
@@ -706,6 +716,13 @@ namespace SanarRuralUnan.Views
                         g.DrawLine(pen, ix + 5, iy + 7, ix + 12, iy + 7);
                         g.DrawLine(pen, ix + 5, iy + 10, ix + 12, iy + 10);
                         g.DrawLine(pen, ix + 5, iy + 13, ix + 10, iy + 13);
+                        break;
+
+                    case "Enfermedades":
+                        // Cruz sanitaria dentro de un contorno de catálogo
+                        g.DrawRectangle(pen, ix + 2, iy + 2, 13, 13);
+                        g.DrawLine(pen, ix + 8, iy + 5, ix + 8, iy + 12);
+                        g.DrawLine(pen, ix + 5, iy + 8, ix + 11, iy + 8);
                         break;
                 }
             }

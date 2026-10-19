@@ -78,6 +78,7 @@
     <Compile Include="Controllers\citasControllers.cs" />
     <Compile Include="Controllers\consultasControllers.cs" />
     <Compile Include="Controllers\doctoresControllers.cs" />
+    <Compile Include="Controllers\enfermedadesController.cs" />
     <Compile Include="Controllers\hospitalesController.cs" />
     <Compile Include="Controllers\pacientesControllers.cs" />
     <Compile Include="Controllers\personalAdministrativoControllers.cs" />
@@ -129,6 +130,7 @@
     <Compile Include="Models\citasModels.cs" />
     <Compile Include="Models\consultasModels.cs" />
     <Compile Include="Models\doctoresModels.cs" />
+    <Compile Include="Models\enfermedadesModels.cs" />
     <Compile Include="Models\hospitalesModels.cs" />
     <Compile Include="Models\pacientesModels.cs" />
     <Compile Include="Models\personalAdministrativoModels.cs" />
@@ -220,6 +222,18 @@
     </Compile>
     <Compile Include="Views\Doctores\paginaPrincipalDoctores.cs">
       <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Views\Enfermedades\formularioEnfermedad.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Views\Enfermedades\formularioEnfermedad.Designer.cs">
+      <DependentUpon>formularioEnfermedad.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Enfermedades\paginaPrincipalEnfermedades.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Views\Enfermedades\paginaPrincipalEnfermedades.Designer.cs">
+      <DependentUpon>paginaPrincipalEnfermedades.cs</DependentUpon>
     </Compile>
     <Compile Include="Views\Doctores\paginaPrincipalDoctores.Designer.cs">
       <DependentUpon>paginaPrincipalDoctores.cs</DependentUpon>
@@ -477,6 +491,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Views\ConsultaMedica\seleccionarCitaConsulta.resx">
       <DependentUpon>seleccionarCitaConsulta.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\Enfermedades\paginaPrincipalEnfermedades.resx">
+      <DependentUpon>paginaPrincipalEnfermedades.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Views\HistorialClinico\paginaPrincipalHistorial.resx">
       <DependentUpon>paginaPrincipalHistorial.cs</DependentUpon>

@@ -461,6 +461,8 @@ namespace SanarRuralUnan.Models
         // IdRol (> 0) si el inicio de sesión es exitoso.
         public int IniciarSesion(string identificador, string contrasena)
         {
+            CerrarSesion();
+
             if (string.IsNullOrWhiteSpace(identificador) || string.IsNullOrEmpty(contrasena))
                 return -1;
 
